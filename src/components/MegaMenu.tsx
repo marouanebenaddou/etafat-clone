@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 const groupLinks = [
@@ -35,19 +36,21 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
       aria-hidden={!open}
     >
       <div className="absolute inset-0 overflow-hidden pointer-events-none select-none">
-        <span
+        <Image
+          src="/etafat/icon.png"
+          alt=""
           aria-hidden
-          className="absolute font-bold text-white/5"
+          width={1834}
+          height={1608}
+          priority={false}
+          className="absolute opacity-[0.06]"
           style={{
-            fontFamily: "var(--font-figtree)",
-            fontSize: "min(60vw, 800px)",
-            lineHeight: 1,
+            width: "min(70vw, 900px)",
+            height: "auto",
             left: "10%",
-            top: "5%",
+            top: "8%",
           }}
-        >
-          g
-        </span>
+        />
       </div>
 
       <div className="container-etafat pt-[160px] pb-20 relative">

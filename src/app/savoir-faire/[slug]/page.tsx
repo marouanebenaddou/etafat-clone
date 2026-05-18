@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/PageHero";
 import { QuestionCTA } from "@/components/QuestionCTA";
 import { CheckIcon } from "@/components/icons";
-import { skills, skillBySlug } from "@/lib/etafat";
+import { Reveal } from "@/components/Reveal";
+import { skills, skillBySlug, skillImage } from "@/lib/etafat";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -33,34 +34,31 @@ export default async function SkillDetail({
     <>
       <PageHero
         title={s.title}
-        description={s.short}
+        description={s.detail}
+        image={skillImage(s.slug)}
         breadcrumb={[
           { label: "Accueil", href: "/" },
           { label: "Savoir-faire", href: "/savoir-faire/" },
           { label: s.title },
         ]}
-        variant="centered"
       />
-
-      {/* Detail paragraph */}
-      <section className="bg-white py-12 md:py-16">
-        <div className="container-etafat max-w-4xl">
-          <p className="text-body text-base md:text-lg leading-relaxed">{s.detail}</p>
-        </div>
-      </section>
 
       {/* Compétences métier */}
       <section className="bg-[#f5f7f9] py-16 md:py-20">
         <div className="container-etafat max-w-4xl">
-          <h2 className="text-navy mb-8">Compétences métier</h2>
+          <Reveal>
+            <h2 className="text-navy mb-8">Compétences métier</h2>
+          </Reveal>
           <ul className="grid md:grid-cols-2 gap-4">
             {s.competences.map((c, i) => (
-              <li key={i} className="flex items-start gap-3 text-body leading-relaxed">
-                <span className="text-teal mt-1 shrink-0">
-                  <CheckIcon width={16} height={16} />
+              <Reveal key={i} delay={i * 50} as="li">
+                <span className="flex items-start gap-3 text-body leading-relaxed">
+                  <span className="text-teal mt-1 shrink-0">
+                    <CheckIcon width={16} height={16} />
+                  </span>
+                  <span>{c}</span>
                 </span>
-                <span>{c}</span>
-              </li>
+              </Reveal>
             ))}
           </ul>
         </div>

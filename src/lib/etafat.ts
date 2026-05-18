@@ -37,6 +37,11 @@ export function skillBySlug(slug: string): EtafatSkill | undefined {
   return skills.find((s) => s.slug === slug);
 }
 
+/** Photo to display on a savoir-faire detail page hero. */
+export function skillImage(slug: string): string {
+  return `/etafat/skills/${slug}.jpg`;
+}
+
 /** Get the savoir-faire cards to display for a given domain. */
 export function cardsForDomain(domain: EtafatDomain): EtafatDomainCard[] {
   if (domain.cards && domain.cards.length) return domain.cards;
