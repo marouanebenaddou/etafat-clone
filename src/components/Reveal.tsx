@@ -63,10 +63,15 @@ export function Reveal({
     const rect = el.getBoundingClientRect();
     const initiallyVisible =
       rect.top < window.innerHeight && rect.bottom > 0;
-    let raf: number | undefined;
+
+    let raf = 0;
     if (initiallyVisible) {
       raf = requestAnimationFrame(() => setShown(true));
-      if (once) return () => raf !== undefined && cancelAnimationFrame(raf);
+      if (once) {
+        return () => {
+          if (raf) cancelAnimationFrame(raf);
+        };
+      }
     }
 
     const obs = new IntersectionObserver(
@@ -85,7 +90,7 @@ export function Reveal({
     obs.observe(el);
     return () => {
       obs.disconnect();
-      if (raf !== undefined) cancelAnimationFrame(raf);
+      if (raf) cancelAnimationFrame(raf);
     };
   }, [once, reduced]);
 
