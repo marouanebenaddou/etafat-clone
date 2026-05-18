@@ -64,7 +64,7 @@ export function SiteHeader() {
               <Link
                 href="/nous-rejoindre/"
                 className={cn(
-                  "font-medium hover:text-[#2ab5b4] transition-colors",
+                  "font-medium hover:text-[#00669d] transition-colors",
                   open || transparent ? "text-white" : "text-[#313c4e]",
                 )}
               >

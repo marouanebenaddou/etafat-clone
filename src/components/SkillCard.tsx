@@ -36,7 +36,7 @@ export function SkillCard({ index, title, short, href }: SkillCardProps) {
     return (
       <Link
         href={href}
-        className="group block bg-white p-7 border border-[#e5e7eb] rounded-md hover:border-[#2ab5b4] hover:shadow-md transition-all h-full"
+        className="group block bg-white p-7 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all h-full"
       >
         {cardInner}
       </Link>

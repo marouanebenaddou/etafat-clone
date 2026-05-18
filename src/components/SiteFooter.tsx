@@ -31,7 +31,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="w-10 h-10 rounded-full border border-[#2ab5b4] text-[#2ab5b4] hover:bg-[#2ab5b4] hover:text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors"
               >
                 <LinkedInIcon width={16} height={16} />
               </a>
@@ -40,7 +40,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube"
-                className="w-10 h-10 rounded-full border border-[#2ab5b4] text-[#2ab5b4] hover:bg-[#2ab5b4] hover:text-white flex items-center justify-center transition-colors"
+                className="w-10 h-10 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors"
               >
                 <YoutubeIcon width={18} height={18} />
               </a>
@@ -55,11 +55,11 @@ export function SiteFooter() {
               Le Groupe
             </h3>
             <ul className="space-y-3 text-white/80 text-sm">
-              <li><Link href="/identite/" className="hover:text-[#2ab5b4]">Identité</Link></li>
-              <li><Link href="/filiales/" className="hover:text-[#2ab5b4]">Filiales</Link></li>
-              <li><Link href="/engagements/" className="hover:text-[#2ab5b4]">Engagements</Link></li>
-              <li><Link href="/actualites/" className="hover:text-[#2ab5b4]">Actualités</Link></li>
-              <li><Link href="/nous-rejoindre/" className="hover:text-[#2ab5b4]">Nous rejoindre</Link></li>
+              <li><Link href="/identite/" className="hover:text-[#00669d]">Identité</Link></li>
+              <li><Link href="/filiales/" className="hover:text-[#00669d]">Filiales</Link></li>
+              <li><Link href="/engagements/" className="hover:text-[#00669d]">Engagements</Link></li>
+              <li><Link href="/actualites/" className="hover:text-[#00669d]">Actualités</Link></li>
+              <li><Link href="/nous-rejoindre/" className="hover:text-[#00669d]">Nous rejoindre</Link></li>
             </ul>
           </div>
 
@@ -68,10 +68,10 @@ export function SiteFooter() {
               Notre offre
             </h3>
             <ul className="space-y-3 text-white/80 text-sm">
-              <li><Link href="/domaines-activite/" className="hover:text-[#2ab5b4]">Domaines d&apos;activité</Link></li>
-              <li><Link href="/savoir-faire/" className="hover:text-[#2ab5b4]">Savoir-faire</Link></li>
-              <li><Link href="/references/" className="hover:text-[#2ab5b4]">Références</Link></li>
-              <li><Link href="/innovation/" className="hover:text-[#2ab5b4]">Innovation</Link></li>
+              <li><Link href="/domaines-activite/" className="hover:text-[#00669d]">Domaines d&apos;activité</Link></li>
+              <li><Link href="/savoir-faire/" className="hover:text-[#00669d]">Savoir-faire</Link></li>
+              <li><Link href="/references/" className="hover:text-[#00669d]">Références</Link></li>
+              <li><Link href="/innovation/" className="hover:text-[#00669d]">Innovation</Link></li>
             </ul>
           </div>
 
@@ -92,9 +92,9 @@ export function SiteFooter() {
         <div className="border-t border-white/10 pt-6 flex flex-col md:flex-row gap-4 items-center justify-between text-sm">
           <p className="text-white/60">© 2025 Tous droits réservés ETAFAT</p>
           <ul className="flex flex-wrap gap-6 text-white/70">
-            <li><Link href="/mentions-legales/" className="hover:text-[#2ab5b4]">Mentions légales</Link></li>
-            <li><Link href="/politique-confidentialite/" className="hover:text-[#2ab5b4]">Politique de confidentialité</Link></li>
-            <li><Link href="/plan-du-site/" className="hover:text-[#2ab5b4]">Plan du site</Link></li>
+            <li><Link href="/mentions-legales/" className="hover:text-[#00669d]">Mentions légales</Link></li>
+            <li><Link href="/politique-confidentialite/" className="hover:text-[#00669d]">Politique de confidentialité</Link></li>
+            <li><Link href="/plan-du-site/" className="hover:text-[#00669d]">Plan du site</Link></li>
           </ul>
         </div>
       </div>

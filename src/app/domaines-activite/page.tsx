@@ -45,10 +45,10 @@ export default function DomainesPage() {
               <Link
                 key={d.slug}
                 href={`/domaines-activite/${d.slug}/`}
-                className="group bg-white p-8 border border-[#e5e7eb] rounded-md hover:border-[#2ab5b4] hover:shadow-md transition-all flex flex-col h-full"
+                className="group bg-white p-8 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all flex flex-col h-full"
               >
-                <Icon className="w-12 h-12 text-[#2ab5b4] mb-5" />
-                <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#2ab5b4] transition-colors">
+                <Icon className="w-12 h-12 text-[#00669d] mb-5" />
+                <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#00669d] transition-colors">
                   {d.title}
                 </h3>
                 {d.accroche && (

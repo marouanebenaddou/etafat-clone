@@ -62,7 +62,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                   <Link
                     href={l.href}
                     onClick={onClose}
-                    className="text-white/90 hover:text-[#2ab5b4] transition-colors text-2xl md:text-3xl font-medium"
+                    className="text-white/90 hover:text-[#00669d] transition-colors text-2xl md:text-3xl font-medium"
                     style={{ fontFamily: "var(--font-figtree)" }}
                   >
                     {l.label}
@@ -82,7 +82,7 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
                   <Link
                     href={l.href}
                     onClick={onClose}
-                    className="text-white/90 hover:text-[#2ab5b4] transition-colors text-2xl md:text-3xl font-medium"
+                    className="text-white/90 hover:text-[#00669d] transition-colors text-2xl md:text-3xl font-medium"
                     style={{ fontFamily: "var(--font-figtree)" }}
                   >
                     {l.label}

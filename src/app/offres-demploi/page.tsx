@@ -25,10 +25,10 @@ export default function JobsListPage() {
             <Link
               key={j.path}
               href={j.path}
-              className="group flex items-center justify-between gap-6 bg-white border border-[#e5e7eb] rounded-md px-6 py-5 hover:border-[#2ab5b4] hover:shadow-md transition-all"
+              className="group flex items-center justify-between gap-6 bg-white border border-[#e5e7eb] rounded-md px-6 py-5 hover:border-[#00669d] hover:shadow-md transition-all"
             >
               <div className="flex-1 min-w-0">
-                <h3 className="text-navy font-semibold text-base md:text-lg group-hover:text-[#2ab5b4] transition-colors">
+                <h3 className="text-navy font-semibold text-base md:text-lg group-hover:text-[#00669d] transition-colors">
                   {j.title}
                 </h3>
                 {j.description && (

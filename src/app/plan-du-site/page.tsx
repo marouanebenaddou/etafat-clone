@@ -79,7 +79,7 @@ export default function PlanDuSitePage() {
               <ul className="space-y-2 text-body text-sm">
                 {s.links.map((l) => (
                   <li key={l.href}>
-                    <Link href={l.href} className="hover:text-[#2ab5b4] underline-offset-2 hover:underline">
+                    <Link href={l.href} className="hover:text-[#00669d] underline-offset-2 hover:underline">
                       {l.label}
                     </Link>
                   </li>

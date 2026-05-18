@@ -12,8 +12,8 @@
   --font-mono: ui-monospace, monospace;
 
   /* Etafat brand palette */
-  --color-etafat-teal: #2ab5b4;
-  --color-etafat-teal-hover: #239a99;
+  --color-etafat-teal: #00669d;
+  --color-etafat-teal-hover: #04537e;
   --color-etafat-navy: #313c4e;
   --color-etafat-navy-dark: #1b2a40;
   --color-etafat-body: #676767;
@@ -65,19 +65,19 @@
   --card-foreground: #313c4e;
   --popover: #ffffff;
   --popover-foreground: #313c4e;
-  --primary: #2ab5b4;
+  --primary: #00669d;
   --primary-foreground: #ffffff;
   --secondary: #313c4e;
   --secondary-foreground: #ffffff;
   --muted: #f5f7f9;
   --muted-foreground: #676767;
-  --accent: #2ab5b4;
+  --accent: #00669d;
   --accent-foreground: #ffffff;
   --destructive: #dc2626;
   --border: #e5e7eb;
   --input: #e5e7eb;
-  --ring: #2ab5b4;
-  --chart-1: #2ab5b4;
+  --ring: #00669d;
+  --chart-1: #00669d;
   --chart-2: #313c4e;
   --chart-3: #5e6a7e;
   --chart-4: #9ca3af;
@@ -85,12 +85,12 @@
   --radius: 0.625rem;
   --sidebar: #313c4e;
   --sidebar-foreground: #ffffff;
-  --sidebar-primary: #2ab5b4;
+  --sidebar-primary: #00669d;
   --sidebar-primary-foreground: #ffffff;
   --sidebar-accent: rgba(255, 255, 255, 0.05);
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #2ab5b4;
+  --sidebar-ring: #00669d;
 }
 
 .dark {
@@ -100,7 +100,7 @@
   --card-foreground: #ffffff;
   --popover: #1b2a40;
   --popover-foreground: #ffffff;
-  --primary: #2ab5b4;
+  --primary: #00669d;
   --primary-foreground: #ffffff;
   --muted: rgba(255, 255, 255, 0.05);
   --muted-foreground: rgba(255, 255, 255, 0.7);
@@ -180,13 +180,13 @@
     white-space: nowrap;
   }
   .pill-teal {
-    background-color: #2ab5b4;
+    background-color: #00669d;
     color: #ffffff;
-    border-color: #2ab5b4;
+    border-color: #00669d;
   }
   .pill-teal:hover {
-    background-color: #239a99;
-    border-color: #239a99;
+    background-color: #04537e;
+    border-color: #04537e;
   }
   .pill-outline {
     background-color: transparent;
@@ -199,19 +199,19 @@
   }
   .pill-outline-teal {
     background-color: transparent;
-    color: #2ab5b4;
-    border-color: #2ab5b4;
+    color: #00669d;
+    border-color: #00669d;
   }
   .pill-outline-teal:hover {
-    background-color: rgba(42, 181, 180, 0.08);
+    background-color: rgba(0, 102, 157, 0.08);
   }
   .pill-outline-dark {
     background-color: transparent;
-    color: #2ab5b4;
-    border-color: #2ab5b4;
+    color: #00669d;
+    border-color: #00669d;
   }
   .pill-outline-dark:hover {
-    background-color: rgba(42, 181, 180, 0.08);
+    background-color: rgba(0, 102, 157, 0.08);
   }
 
   .arrow-circle {
@@ -221,7 +221,7 @@
     width: 26px;
     height: 26px;
     border-radius: 9999px;
-    background-color: #2ab5b4;
+    background-color: #00669d;
     color: #ffffff;
     flex-shrink: 0;
   }
@@ -233,17 +233,17 @@
     height: 26px;
     border-radius: 9999px;
     background-color: transparent;
-    border: 1.5px solid #2ab5b4;
-    color: #2ab5b4;
+    border: 1.5px solid #00669d;
+    color: #00669d;
     flex-shrink: 0;
   }
 
   .text-navy { color: #313c4e; }
   .text-body { color: #676767; }
-  .text-teal { color: #2ab5b4; }
+  .text-teal { color: #00669d; }
   .bg-navy { background-color: #313c4e; }
   .bg-navy-dark { background-color: #1b2a40; }
-  .bg-teal { background-color: #2ab5b4; }
+  .bg-teal { background-color: #00669d; }
   .bg-light { background-color: #f5f7f9; }
 
   .heading-xl { font-family: var(--font-figtree); font-size: 72px; line-height: 80px; font-weight: 600; color: #313c4e; }

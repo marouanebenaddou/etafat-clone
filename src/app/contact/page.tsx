@@ -29,7 +29,7 @@ export default function ContactPage() {
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#2ab5b4] focus:outline-none transition"
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#00669d] focus:outline-none transition"
               />
             </div>
             <div>
@@ -37,14 +37,14 @@ export default function ContactPage() {
               <input
                 type="email"
                 required
-                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#2ab5b4] focus:outline-none transition"
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#00669d] focus:outline-none transition"
               />
             </div>
             <div>
               <label className="text-sm font-medium text-navy mb-2 block">Société</label>
               <input
                 type="text"
-                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#2ab5b4] focus:outline-none transition"
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#00669d] focus:outline-none transition"
               />
             </div>
             <div>
@@ -52,7 +52,7 @@ export default function ContactPage() {
               <input
                 type="text"
                 required
-                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#2ab5b4] focus:outline-none transition"
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#00669d] focus:outline-none transition"
               />
             </div>
             <div>
@@ -60,7 +60,7 @@ export default function ContactPage() {
               <textarea
                 required
                 rows={6}
-                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#2ab5b4] focus:outline-none transition resize-none"
+                className="w-full px-4 py-3 border border-[#e5e7eb] rounded-md focus:border-[#00669d] focus:outline-none transition resize-none"
               />
             </div>
             <button type="submit" className="pill pill-teal">
@@ -89,7 +89,7 @@ export default function ContactPage() {
                   href="https://www.linkedin.com/company/etafat-expert"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full border border-[#2ab5b4] text-[#2ab5b4] hover:bg-[#2ab5b4] hover:text-white flex items-center justify-center transition-colors"
+                  className="w-11 h-11 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors"
                 >
                   in
                 </a>

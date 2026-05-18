@@ -23,7 +23,7 @@ export default function NousRejoindrePage() {
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Nous rejoindre" }]}
       />
       {page && <PageBody item={page} />}
-      <section className="bg-[#2ab5b4] py-20 text-center text-white">
+      <section className="bg-[#00669d] py-20 text-center text-white">
         <div className="container-etafat">
           <h2 className="text-white mb-6 text-3xl md:text-4xl font-semibold" style={{ color: "#fff" }}>
             Prêt à nous rejoindre ?

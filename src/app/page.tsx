@@ -52,7 +52,7 @@ function PostCard({ post }: { post: Post }) {
           {tag}
         </span>
       </div>
-      <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#2ab5b4] transition-colors">
+      <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#00669d] transition-colors">
         {post.title}
       </h3>
       <p className="text-body line-clamp-2 text-sm mb-3">{post.description}</p>
@@ -115,7 +115,7 @@ export default function HomePage() {
             <p className="text-body mb-8 leading-relaxed">
               Nos équipes, nos technologies de pointe et notre capacité d&apos;innovation nous
               permettent d&apos;intervenir sur les projets les plus ambitieux,{" "}
-              <Link href="/agences/" className="underline text-navy hover:text-[#2ab5b4]">
+              <Link href="/agences/" className="underline text-navy hover:text-[#00669d]">
                 dans le monde entier
               </Link>
               , et d&apos;accompagner nos clients dans leurs décisions.
@@ -154,7 +154,7 @@ export default function HomePage() {
             <button
               type="button"
               aria-label="Lecture vidéo"
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#2ab5b4] hover:scale-105 transition-transform flex items-center justify-center"
+              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
             >
               <PlayIcon width={28} height={28} />
             </button>
@@ -171,10 +171,10 @@ export default function HomePage() {
               <Link
                 key={href}
                 href={href}
-                className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#2ab5b4] hover:shadow-md transition-all"
+                className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
               >
-                <Icon className="w-12 h-12 text-[#2ab5b4] mb-5" />
-                <span className="text-navy text-xl font-medium group-hover:text-[#2ab5b4] transition-colors">
+                <Icon className="w-12 h-12 text-[#00669d] mb-5" />
+                <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
                   {label}
                 </span>
               </Link>
@@ -187,7 +187,7 @@ export default function HomePage() {
       <section className="relative bg-white py-24 md:py-32 text-center overflow-hidden">
         <div
           aria-hidden
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#e8f5f4]"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#e0eef6]"
         />
         <div className="container-etafat relative">
           <h2 className="text-navy text-3xl md:text-5xl font-semibold mb-8 leading-tight">
@@ -288,7 +288,7 @@ export default function HomePage() {
             <button
               type="button"
               aria-label="Lecture vidéo"
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#2ab5b4] hover:scale-105 transition-transform flex items-center justify-center"
+              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
             >
               <PlayIcon width={28} height={28} />
             </button>
@@ -371,7 +371,7 @@ export default function HomePage() {
         </div>
 
         <div className="container-etafat mt-8">
-          <div className="bg-[#2ab5b4] rounded-md p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="bg-[#00669d] rounded-md p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div>
               <h3 className="text-white text-2xl md:text-3xl font-semibold mb-3" style={{ color: "#fff" }}>
                 Rejoignez-nous

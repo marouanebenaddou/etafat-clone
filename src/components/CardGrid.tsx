@@ -31,7 +31,7 @@ export function CardGrid({ items, cols = 3, tag }: CardGridProps) {
               </span>
             )}
           </div>
-          <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#2ab5b4] transition-colors line-clamp-2">
+          <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#00669d] transition-colors line-clamp-2">
             {item.title}
           </h3>
           {item.description && (
@@ -58,10 +58,10 @@ export function MiniCardGrid({
         <Link
           key={item.href}
           href={item.href}
-          className="group flex items-center justify-between px-6 py-5 border border-[#e5e7eb] rounded-md hover:border-[#2ab5b4] hover:shadow-md transition-all text-navy font-medium"
+          className="group flex items-center justify-between px-6 py-5 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all text-navy font-medium"
         >
-          <span className="group-hover:text-[#2ab5b4]">{item.label}</span>
-          <svg viewBox="0 0 14 14" fill="none" width={14} height={14} className="text-[#2ab5b4]">
+          <span className="group-hover:text-[#00669d]">{item.label}</span>
+          <svg viewBox="0 0 14 14" fill="none" width={14} height={14} className="text-[#00669d]">
             <path
               d="M2 7h10m0 0L7.5 2.5M12 7l-4.5 4.5"
               stroke="currentColor"
