@@ -30,12 +30,12 @@ export function PageHero({
   variant = "image-right",
 }: PageHeroProps) {
   // -------- VIDEO BANNER (geofit-style) --------
+  // NOTE: Breadcrumb is intentionally NOT rendered here — geofit places it in
+  // a separate white strip *below* the video. The caller renders it there.
   if (variant === "video-banner" && video) {
     return (
       <section className="relative text-white">
         <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
-          {/* Poster fallback rendered behind the video so users see something
-             instantly while the video buffers — and if autoplay is blocked. */}
           {image && (
             <Image
               src={image}
@@ -59,16 +59,8 @@ export function PageHero({
           >
             <source src={video} type="video/mp4" />
           </video>
-          {/* Dark overlay for legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/65" />
-          <div className="container-etafat relative pb-16">
-            {breadcrumb && (
-              <Reveal y={12} delay={50}>
-                <div className="mb-6 text-white/90">
-                  <Breadcrumb items={breadcrumb} />
-                </div>
-              </Reveal>
-            )}
+          <div className="container-etafat relative pb-12 md:pb-16">
             <Reveal variant="line" duration={1100} delay={150}>
               <h1
                 className="text-white max-w-3xl text-4xl md:text-6xl font-semibold leading-tight"
@@ -84,6 +76,14 @@ export function PageHero({
             )}
           </div>
         </div>
+        {/* Breadcrumb strip rendered just under the video, geofit-style */}
+        {breadcrumb && (
+          <div className="bg-white">
+            <div className="container-etafat py-6">
+              <Breadcrumb items={breadcrumb} />
+            </div>
+          </div>
+        )}
       </section>
     );
   }
@@ -95,14 +95,7 @@ export function PageHero({
         <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
           <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
-          <div className="container-etafat relative pb-16">
-            {breadcrumb && (
-              <Reveal y={12} delay={50}>
-                <div className="mb-6 text-white/85">
-                  <Breadcrumb items={breadcrumb} />
-                </div>
-              </Reveal>
-            )}
+          <div className="container-etafat relative pb-12 md:pb-16">
             <Reveal variant="line" duration={1100} delay={150}>
               <h1
                 className="text-white max-w-3xl text-4xl md:text-6xl font-semibold leading-tight"
@@ -118,6 +111,13 @@ export function PageHero({
             )}
           </div>
         </div>
+        {breadcrumb && (
+          <div className="bg-white">
+            <div className="container-etafat py-6">
+              <Breadcrumb items={breadcrumb} />
+            </div>
+          </div>
+        )}
       </section>
     );
   }
