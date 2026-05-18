@@ -71,6 +71,7 @@ export default async function DomaineDetail({
         ]}
         variant="video-banner"
         video={domainVideo(d.slug)}
+        image={introImage}
       />
 
       {/* Two-column intro (text left, image right) — geofit pattern */}

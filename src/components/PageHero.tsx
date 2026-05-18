@@ -34,6 +34,18 @@ export function PageHero({
     return (
       <section className="relative pt-[116px] text-white">
         <div className="relative h-[60vh] min-h-[460px] max-h-[680px] flex items-end overflow-hidden">
+          {/* Poster fallback rendered behind the video so users see something
+             instantly while the video buffers — and if autoplay is blocked. */}
+          {image && (
+            <Image
+              src={image}
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+          )}
           <video
             poster={image || undefined}
             autoPlay
