@@ -1,27 +1,71 @@
+import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { CardGrid } from "@/components/CardGrid";
 import { QuestionCTA } from "@/components/QuestionCTA";
-import { domainesPages } from "@/lib/content";
+import { domains } from "@/lib/etafat";
+import {
+  TerritoryIcon,
+  EnergyIcon,
+  BuildingIcon,
+  BridgeIcon,
+  LandIcon,
+  LeafWaterIcon,
+  ArrowRightIcon,
+} from "@/components/icons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Domaines d'activité - ETAFAT",
   description:
-    "Le Groupe ETAFAT intervient dans six grands domaines d'activité : énergie, bâtiment, infrastructure, défense, industrie et territoire.",
+    "ETAFAT intervient dans six grands domaines d'activité : aménagement du territoire, énergie & mines, bâtiment & patrimoine, infrastructures, foncier, agriculture & eau.",
+};
+
+const ICONS: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+  "amenagement-du-territoire": TerritoryIcon,
+  "energie-mines": EnergyIcon,
+  "batiment-patrimoine": BuildingIcon,
+  infrastructures: BridgeIcon,
+  foncier: LandIcon,
+  "agriculture-eau": LeafWaterIcon,
 };
 
 export default function DomainesPage() {
-  const items = domainesPages();
   return (
     <>
       <PageHero
-        title="Domaines d'activité"
-        description="Notre savoir-faire géospatial s'applique à de nombreux domaines d'activité, du bâtiment aux grandes infrastructures, en passant par l'énergie, la défense et le territoire."
+        title="Nos domaines d'activité"
+        description="Notre expertise géospatiale s'applique à six grands domaines stratégiques pour les territoires et leurs acteurs."
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Domaines d'activité" }]}
         variant="centered"
       />
       <section className="container-etafat py-16">
-        <CardGrid items={items} cols={3} />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {domains.map((d) => {
+            const Icon = ICONS[d.slug] || TerritoryIcon;
+            return (
+              <Link
+                key={d.slug}
+                href={`/domaines-activite/${d.slug}/`}
+                className="group bg-white p-8 border border-[#e5e7eb] rounded-md hover:border-[#2ab5b4] hover:shadow-md transition-all flex flex-col h-full"
+              >
+                <Icon className="w-12 h-12 text-[#2ab5b4] mb-5" />
+                <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#2ab5b4] transition-colors">
+                  {d.title}
+                </h3>
+                {d.accroche && (
+                  <p className="text-body text-sm leading-relaxed mb-5 flex-1">
+                    {d.accroche}
+                  </p>
+                )}
+                <span className="text-teal text-sm font-semibold inline-flex items-center gap-2">
+                  Découvrir
+                  <span className="arrow-circle">
+                    <ArrowRightIcon width={11} height={11} />
+                  </span>
+                </span>
+              </Link>
+            );
+          })}
+        </div>
       </section>
       <QuestionCTA />
     </>

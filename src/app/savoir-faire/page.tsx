@@ -1,31 +1,36 @@
 import { PageHero } from "@/components/PageHero";
-import { CardGrid } from "@/components/CardGrid";
+import { SkillCard } from "@/components/SkillCard";
 import { QuestionCTA } from "@/components/QuestionCTA";
-import { savoirFairePages, findByPath } from "@/lib/content";
+import { skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Savoir-faire - ETAFAT",
   description:
-    "Découvrez l'ensemble des savoir-faire du Groupe ETAFAT : topographie, cartographie, modélisation 3D, géomètre-expert et bien plus.",
+    "Les 10 savoir-faire d'ETAFAT : topographie, cartographie, modélisation 3D, BIM, SIG, foncier, géospatial intelligence et plus.",
 };
 
 export default function SavoirFairePage() {
-  const items = savoirFairePages();
-  const meta = findByPath(items.length ? items : [], "/savoir-faire/");
   return (
     <>
       <PageHero
-        title="Savoir-faire"
-        description={
-          meta?.description ||
-          "Le Groupe ETAFAT met à votre disposition une large palette d'expertises géospatiales pour répondre à vos projets les plus exigeants."
-        }
+        title="Nos savoir-faire"
+        description="ETAFAT mobilise dix expertises géospatiales complémentaires pour accompagner les projets territoriaux, énergétiques, fonciers et d'infrastructures."
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Savoir-faire" }]}
         variant="centered"
       />
       <section className="container-etafat py-16">
-        <CardGrid items={items} cols={3} />
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+          {skills.map((s) => (
+            <SkillCard
+              key={s.slug}
+              index={s.index}
+              title={s.title}
+              short={s.short}
+              href={`/savoir-faire/${s.slug}/`}
+            />
+          ))}
+        </div>
       </section>
       <QuestionCTA />
     </>

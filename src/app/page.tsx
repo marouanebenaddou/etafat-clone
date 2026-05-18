@@ -2,12 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Pill } from "@/components/Pill";
 import {
+  TerritoryIcon,
   EnergyIcon,
   BuildingIcon,
   BridgeIcon,
-  LockIcon,
-  FactoryIcon,
-  MapPinIcon,
+  LandIcon,
+  LeafWaterIcon,
   PlayIcon,
   ArrowRightIcon,
 } from "@/components/icons";
@@ -16,12 +16,12 @@ import postsRaw from "@/data/posts.json";
 const IMG = (path: string) => `https://geofit.fr/wp-content/uploads/${path}`;
 
 const domaines = [
-  { label: "Énergie et réseaux", href: "/domaines-activite/energie-et-reseaux/", Icon: EnergyIcon },
-  { label: "Bâtiment", href: "/domaines-activite/batiment/", Icon: BuildingIcon },
-  { label: "Infrastructure", href: "/domaines-activite/infrastructure/", Icon: BridgeIcon },
-  { label: "Défense et sécurité", href: "/domaines-activite/defense-et-securite/", Icon: LockIcon },
-  { label: "Industrie", href: "/domaines-activite/industrie/", Icon: FactoryIcon },
-  { label: "Territoire", href: "/domaines-activite/territoire/", Icon: MapPinIcon },
+  { label: "Aménagement du territoire", href: "/domaines-activite/amenagement-du-territoire/", Icon: TerritoryIcon },
+  { label: "Énergie & Mines", href: "/domaines-activite/energie-mines/", Icon: EnergyIcon },
+  { label: "Bâtiment & Patrimoine", href: "/domaines-activite/batiment-patrimoine/", Icon: BuildingIcon },
+  { label: "Infrastructures", href: "/domaines-activite/infrastructures/", Icon: BridgeIcon },
+  { label: "Foncier", href: "/domaines-activite/foncier/", Icon: LandIcon },
+  { label: "Agriculture & Eau", href: "/domaines-activite/agriculture-eau/", Icon: LeafWaterIcon },
 ];
 
 type Post = {
@@ -196,7 +196,7 @@ export default function HomePage() {
           </h2>
           <div className="flex justify-center">
             <Link
-              href="/savoir-faire/geometre-expert/"
+              href="/savoir-faire/cadastre-et-securisation-fonciere/"
               className="text-teal font-semibold inline-flex items-center gap-3 group"
             >
               <span className="underline-offset-4 group-hover:underline">Découvrez nos solutions</span>

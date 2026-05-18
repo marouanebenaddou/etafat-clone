@@ -1,0 +1,1075 @@
+{
+  "domains": [
+    {
+      "title": "Aménagement du territoire",
+      "slug": "amenagement-du-territoire",
+      "accroche": "Mieux planifier, sécuriser, aménager et valoriser les territoires grâce à des données géospatiales fiables.",
+      "intro": [
+        "La gestion et l’aménagement des territoires constituent aujourd’hui un enjeu stratégique majeur, face aux pressions démographiques, économiques, foncières et environnementales croissantes, au Maroc comme à l’international.",
+        "Pour anticiper, planifier, aménager et décider, les collectivités territoriales, administrations publiques, établissements publics, aménageurs, bailleurs de fonds et maîtres d’ouvrage ont besoin de données fiables, d’outils performants et d’une lecture précise de leur territoire.",
+        "ETAFAT mobilise son expertise en topographie, géomatique, SIG, cartographie, foncier et technologies d’acquisition de données pour accompagner ses partenaires à chaque étape : de la collecte terrain à la structuration des bases de données, de l’analyse cartographique à la production d’indicateurs, jusqu’à la mise en place d’outils d’aide à la décision.",
+        "Grâce à son savoir-faire multidisciplinaire, ETAFAT transforme la donnée territoriale en un levier concret pour mieux planifier, sécuriser, aménager et valoriser les territoires."
+      ],
+      "skillSlugs": [
+        "topographie-et-geodesie",
+        "assistance-fonciere",
+        "cadastre-et-securisation-fonciere",
+        "releves-geospatiaux",
+        "cartographie",
+        "geospatial-intelligence",
+        "modelisation-3d-et-bim",
+        "systemes-d-information-geographique",
+        "etudes-territoriales",
+        "conseil-et-audit-geospatial"
+      ]
+    },
+    {
+      "title": "Énergie & Mines",
+      "slug": "energie-mines",
+      "accroche": "Des données géospatiales fiables pour développer, exploiter et moderniser les sites énergétiques et miniers.",
+      "intro": [
+        "Les projets énergétiques et miniers nécessitent une connaissance précise du terrain, des emprises, des infrastructures existantes et des contraintes environnementales, techniques et foncières. Dans ces secteurs stratégiques, la qualité de la donnée géospatiale conditionne la fiabilité des études, la sécurité des opérations et la maîtrise des investissements.",
+        "Pour développer, exploiter ou moderniser des sites énergétiques et miniers, les opérateurs publics et privés, bureaux d’études, industriels, investisseurs et maîtres d’ouvrage ont besoin de données fiables, actualisées et exploitables à chaque étape du projet.",
+        "ETAFAT mobilise son expertise en topographie, géodésie, cartographie, SIG, relevés géospatiaux, modélisation 3D et assistance foncière pour accompagner les projets d’énergie et de mines, depuis les études préliminaires jusqu’au suivi d’exploitation.",
+        "Grâce à ses technologies d’acquisition terrestre, aérienne, hydrographique et numérique, ETAFAT fournit des données précises pour analyser les sites, sécuriser les emprises, cartographier les infrastructures, suivre les ouvrages et appuyer les décisions techniques et stratégiques."
+      ],
+      "cards": [
+        {
+          "index": 1,
+          "name": "Topographie & géodésie",
+          "short": "Réaliser des levés de précision pour appuyer les études, implantations, contrôles et suivis des projets énergétiques et miniers.",
+          "competences": [
+            "Levés topographiques de sites énergétiques et miniers",
+            "Implantation d’ouvrages, plateformes, pistes, réseaux et équipements",
+            "Création et rattachement de réseaux géodésiques",
+            "Plans topographiques et plans de récolement",
+            "Suivi géométrique des ouvrages et plateformes",
+            "Nivellement de précision",
+            "Contrôle des volumes, pentes, profils et emprises"
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Relevés géospatiaux",
+          "short": "Collecter des données terrain, aériennes et 3D pour documenter les sites, infrastructures et zones d’exploitation.",
+          "competences": [
+            "Relevés GNSS et stations totales",
+            "Levés par drone",
+            "Acquisition LiDAR",
+            "Scanner laser 3D",
+            "Mobile Mapping System",
+            "Production de nuages de points",
+            "Relevés de carrières, mines, plateformes et zones d’accès",
+            "Contrôle qualité et structuration des données acquises"
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Cartographie",
+          "short": "Produire des cartes et plans techniques pour analyser, planifier et suivre les projets énergétiques et miniers.",
+          "competences": [
+            "Cartographie des sites d’exploitation",
+            "Plans d’emprise et plans de situation",
+            "Cartographie des accès, pistes et infrastructures",
+            "Cartographie des réseaux et équipements",
+            "Plans topographiques et thématiques",
+            "Cartographie des contraintes environnementales et foncières",
+            "Supports cartographiques pour études, reporting et décision"
+          ]
+        },
+        {
+          "index": 4,
+          "name": "SIG & bases de données géographiques",
+          "short": "Structurer, centraliser et exploiter les données géographiques des sites, réseaux et infrastructures.",
+          "competences": [
+            "Conception de bases de données SIG",
+            "Intégration des données topographiques, foncières et techniques",
+            "Mise en place d’outils de consultation cartographique",
+            "Webmapping et tableaux de bord géographiques",
+            "Gestion des données d’infrastructures et d’équipements",
+            "Suivi spatial des sites et ouvrages",
+            "Maintenance et mise à jour des données géographiques"
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Foncier & sécurisation des emprises",
+          "short": "Identifier, analyser et sécuriser les emprises nécessaires aux projets énergétiques, miniers et industriels.",
+          "competences": [
+            "Analyse des emprises projet",
+            "Vérification des données foncières et cadastrales",
+            "Production de plans parcellaires",
+            "Appui à la sécurisation foncière des sites",
+            "Identification des contraintes d’occupation du sol",
+            "Appui aux démarches d’acquisition ou de régularisation",
+            "Structuration des données foncières dans un SIG"
+          ]
+        },
+        {
+          "index": 6,
+          "name": "Modélisation 3D & BIM",
+          "short": "Créer des modèles numériques pour visualiser, contrôler et gérer les infrastructures énergétiques et minières.",
+          "competences": [
+            "Modélisation 3D de sites et ouvrages",
+            "Scan-to-BIM à partir de nuages de points",
+            "Modèles numériques de terrain",
+            "Modèles numériques de surface",
+            "Calculs de volumes et cubatures",
+            "Suivi d’évolution des sites d’exploitation",
+            "Représentation 3D des infrastructures et équipements"
+          ]
+        },
+        {
+          "index": 7,
+          "name": "Géospatial Intelligence",
+          "short": "Transformer les données géospatiales en indicateurs utiles pour piloter les projets, suivre les sites et anticiper les risques.",
+          "competences": [
+            "Analyse spatiale multicritère",
+            "Production d’indicateurs de suivi",
+            "Analyse des contraintes d’implantation",
+            "Suivi de l’évolution des sites",
+            "Croisement de données topographiques, foncières, environnementales et techniques",
+            "Appui à la décision pour les phases d’étude, construction et exploitation",
+            "Création de tableaux de bord géospatiaux"
+          ]
+        },
+        {
+          "index": 8,
+          "name": "Conseil & audit géospatial",
+          "short": "Accompagner les maîtres d’ouvrage dans la définition, l’évaluation et l’optimisation de leurs besoins géospatiaux.",
+          "competences": [
+            "Audit de données géospatiales existantes",
+            "Conseil en stratégie SIG et cartographique",
+            "Appui à la rédaction de cahiers des charges",
+            "Définition de méthodologies d’acquisition et de traitement",
+            "Contrôle qualité des livrables topographiques et cartographiques",
+            "Assistance à maîtrise d’ouvrage",
+            "Recommandations pour la structuration et la valorisation des données",
+            "## Bâtiment & Patrimoine",
+            "## Accroche courte",
+            "Des données précises et des modèles numériques pour concevoir, documenter, réhabiliter et valoriser les bâtiments et le patrimoine.",
+            "## Texte d’introduction",
+            "Les projets liés au bâtiment et au patrimoine nécessitent une connaissance précise de l’existant, des structures, des volumes, des matériaux, des réseaux et de l’environnement immédiat. Qu’il s’agisse de construction, de réhabilitation, de restauration, de gestion patrimoniale ou de maintenance, la qualité des données relevées conditionne la fiabilité des études et la pertinence des décisions.",
+            "Les maîtres d’ouvrage, architectes, bureaux d’études, gestionnaires de patrimoine, institutions publiques et opérateurs privés ont besoin de données fiables, actualisées et exploitables pour diagnostiquer, concevoir, suivre et gérer leurs bâtiments et ouvrages.",
+            "ETAFAT mobilise son expertise en topographie, scanner laser 3D, photogrammétrie, modélisation 3D, BIM, inspection d’ouvrages et systèmes d’information géographique pour accompagner les projets de bâtiment et de patrimoine à chaque étape.",
+            "Grâce à ses technologies d’acquisition et de traitement de données, ETAFAT transforme les relevés terrain en livrables précis : plans, nuages de points, modèles 3D, maquettes BIM, diagnostics, bases de données patrimoniales et supports d’aide à la décision."
+          ]
+        },
+        {
+          "index": 9,
+          "name": "Conseil & audit géospatial",
+          "short": "Accompagner les maîtres d’ouvrage dans la définition, l’audit et l’optimisation de leurs données bâtimentaires et patrimoniales.",
+          "competences": [
+            "Audit des données existantes",
+            "Analyse de la qualité des plans, maquettes et bases de données",
+            "Définition de méthodologies de relevé et de modélisation",
+            "Appui à la rédaction de cahiers des charges",
+            "Assistance à maîtrise d’ouvrage BIM, SIG ou relevés 3D",
+            "Contrôle qualité des livrables",
+            "Recommandations pour la gestion et la valorisation des données patrimoniales",
+            "Accompagnement des projets de numérisation du patrimoine"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Bâtiment & Patrimoine",
+      "slug": "batiment-patrimoine",
+      "accroche": "Des données précises et des modèles numériques pour concevoir, documenter, réhabiliter et valoriser les bâtiments et le patrimoine.",
+      "intro": [
+        "Les projets liés au bâtiment et au patrimoine nécessitent une connaissance précise de l’existant, des structures, des volumes, des matériaux, des réseaux et de l’environnement immédiat. Qu’il s’agisse de construction, de réhabilitation, de restauration, de gestion patrimoniale ou de maintenance, la qualité des données relevées conditionne la fiabilité des études et la pertinence des décisions.",
+        "Les maîtres d’ouvrage, architectes, bureaux d’études, gestionnaires de patrimoine, institutions publiques et opérateurs privés ont besoin de données fiables, actualisées et exploitables pour diagnostiquer, concevoir, suivre et gérer leurs bâtiments et ouvrages.",
+        "ETAFAT mobilise son expertise en topographie, scanner laser 3D, photogrammétrie, modélisation 3D, BIM, inspection d’ouvrages et systèmes d’information géographique pour accompagner les projets de bâtiment et de patrimoine à chaque étape.",
+        "Grâce à ses technologies d’acquisition et de traitement de données, ETAFAT transforme les relevés terrain en livrables précis : plans, nuages de points, modèles 3D, maquettes BIM, diagnostics, bases de données patrimoniales et supports d’aide à la décision."
+      ],
+      "cards": [
+        {
+          "index": 1,
+          "name": "Relevés géospatiaux",
+          "short": "Collecter des données précises sur les bâtiments, ouvrages et sites patrimoniaux grâce à des technologies de mesure avancées.",
+          "competences": [
+            "Relevés de bâtiments existants",
+            "Relevés intérieurs et extérieurs",
+            "Acquisition par scanner laser 3D",
+            "Acquisition par drone et photogrammétrie",
+            "Production de nuages de points",
+            "Relevés de façades, toitures, volumes et détails architecturaux",
+            "Contrôle qualité des données acquises",
+            "Préparation des données pour plans, BIM, modélisation 3D et diagnostic"
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Topographie & géodésie",
+          "short": "Fournir une base topographique fiable pour les projets de construction, réhabilitation, extension ou aménagement de sites.",
+          "competences": [
+            "Levés topographiques de sites bâtis",
+            "Implantation de bâtiments, ouvrages et aménagements extérieurs",
+            "Plans topographiques et plans cotés",
+            "Plans de récolement",
+            "Nivellement de précision",
+            "Contrôle géométrique des ouvrages",
+            "Suivi des déformations et mouvements éventuels",
+            "Rattachement géodésique des données projet"
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Scanner laser 3D & nuages de points",
+          "short": "Capturer l’existant avec précision pour documenter, analyser et modéliser les bâtiments et ouvrages patrimoniaux.",
+          "competences": [
+            "Acquisition lasergrammétrique haute précision",
+            "Production de nuages de points denses",
+            "Assemblage, nettoyage et géoréférencement des nuages de points",
+            "Relevés de bâtiments complexes",
+            "Documentation des structures existantes",
+            "Extraction de plans, coupes et élévations",
+            "Contrôle dimensionnel des ouvrages",
+            "Préparation des données pour le scan-to-BIM"
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Modélisation 3D & BIM",
+          "short": "Créer des modèles numériques fiables pour concevoir, réhabiliter, gérer et valoriser les bâtiments et patrimoines.",
+          "competences": [
+            "Modélisation 3D de bâtiments existants",
+            "Scan-to-BIM à partir de nuages de points",
+            "Production de maquettes BIM As-Built",
+            "Modélisation architecturale, structurelle et technique",
+            "Création de jumeaux numériques",
+            "Intégration des données topographiques et lasergrammétriques",
+            "Production de livrables compatibles avec les standards BIM",
+            "Appui à la conception, à la maintenance et à la gestion patrimoniale"
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Inspection des structures",
+          "short": "Observer, documenter et suivre l’état des ouvrages afin d’appuyer les diagnostics techniques et les décisions de maintenance.",
+          "competences": [
+            "Inspection visuelle et technique des ouvrages",
+            "Relevés de pathologies apparentes",
+            "Documentation photographique et cartographique des désordres",
+            "Suivi de l’évolution des structures",
+            "Inspection par drone des zones difficiles d’accès",
+            "Contrôle géométrique des éléments structurels",
+            "Production de rapports d’inspection",
+            "Appui aux études de réhabilitation, maintenance et sécurisation"
+          ]
+        },
+        {
+          "index": 6,
+          "name": "Cartographie & plans du bâti",
+          "short": "Produire des plans, cartes et supports techniques pour comprendre, documenter et gérer les bâtiments et sites patrimoniaux.",
+          "competences": [
+            "Plans de masse",
+            "Plans de niveaux",
+            "Plans de façades",
+            "Coupes et élévations",
+            "Plans d’état des lieux",
+            "Cartographie des bâtiments et ouvrages",
+            "Plans patrimoniaux et supports de diagnostic",
+            "Mise en page de livrables cartographiques et techniques",
+            "Intégration des plans dans des environnements SIG ou BIM"
+          ]
+        },
+        {
+          "index": 7,
+          "name": "SIG & gestion patrimoniale",
+          "short": "Structurer les données du patrimoine bâti dans des outils SIG pour mieux gérer, suivre et valoriser les actifs.",
+          "competences": [
+            "Structuration de bases de données patrimoniales",
+            "Géolocalisation des bâtiments, équipements et ouvrages",
+            "Intégration de plans, fiches techniques et données terrain",
+            "Mise en place d’outils de consultation cartographique",
+            "Suivi des interventions, états et diagnostics",
+            "Webmapping patrimonial",
+            "Centralisation des données du patrimoine immobilier",
+            "Aide à la maintenance, à la planification et à la gestion des actifs"
+          ]
+        },
+        {
+          "index": 8,
+          "name": "Géospatial Intelligence",
+          "short": "Transformer les données du bâti et du patrimoine en indicateurs utiles pour analyser, prioriser et décider.",
+          "competences": [
+            "Analyse croisée des données bâtimentaires et territoriales",
+            "Production d’indicateurs patrimoniaux",
+            "Analyse de l’état, de l’usage et de la localisation des actifs",
+            "Priorisation des interventions",
+            "Cartographie des enjeux de réhabilitation ou maintenance",
+            "Tableaux de bord géospatiaux",
+            "Analyse des risques, contraintes et opportunités",
+            "Appui aux stratégies de gestion patrimoniale"
+          ]
+        },
+        {
+          "index": 9,
+          "name": "Conseil & audit géospatial",
+          "short": "Accompagner les maîtres d’ouvrage dans la définition, l’audit et l’optimisation de leurs données bâtimentaires et patrimoniales.",
+          "competences": [
+            "Audit des données existantes",
+            "Analyse de la qualité des plans, maquettes et bases de données",
+            "Définition de méthodologies de relevé et de modélisation",
+            "Appui à la rédaction de cahiers des charges",
+            "Assistance à maîtrise d’ouvrage BIM, SIG ou relevés 3D",
+            "Contrôle qualité des livrables",
+            "Recommandations pour la gestion et la valorisation des données patrimoniales",
+            "Accompagnement des projets de numérisation du patrimoine"
+          ]
+        },
+        {
+          "index": 10,
+          "name": "Conseil & audit foncier géospatial",
+          "short": "Accompagner les institutions et maîtres d’ouvrage dans l’évaluation, la fiabilisation et la modernisation de leurs données foncières.",
+          "competences": [
+            "Audit de données foncières et cadastrales",
+            "Évaluation de la qualité, cohérence et complétude des données",
+            "Conseil en stratégie SIG foncier",
+            "Appui à la rédaction de cahiers des charges",
+            "Définition de méthodologies de collecte et structuration des données",
+            "Assistance à maîtrise d’ouvrage pour projets fonciers et cadastraux",
+            "Contrôle qualité des livrables fonciers, SIG et cartographiques",
+            "Recommandations pour la modernisation des outils fonciers",
+            "Appui aux projets institutionnels de gouvernance foncière",
+            "Accompagnement des projets de sécurisation foncière à grande échelle"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Infrastructures",
+      "slug": "infrastructures",
+      "accroche": "Des données géospatiales fiables pour concevoir, construire, contrôler et gérer les infrastructures.",
+      "intro": [
+        "Les projets d’infrastructures nécessitent une connaissance précise du terrain, des emprises, des ouvrages existants, des contraintes techniques et de l’environnement du projet. Routes, autoroutes, voies ferrées, ports, aéroports, ouvrages d’art, réseaux ou plateformes logistiques exigent des données fiables à chaque étape : études, conception, implantation, travaux, contrôle, exploitation et maintenance.",
+        "Pour sécuriser les décisions, maîtriser les coûts et garantir la qualité des ouvrages, les maîtres d’ouvrage, bureaux d’études, entreprises de travaux, exploitants et institutions publiques ont besoin d’informations géospatiales précises, actualisées et directement exploitables.",
+        "ETAFAT mobilise son expertise en topographie, géodésie, cartographie, SIG, relevés géospatiaux, scanner laser 3D, inspection d’ouvrages, BIM et assistance foncière pour accompagner les projets d’infrastructures dans toutes leurs phases.",
+        "Grâce à ses équipes spécialisées et à ses technologies d’acquisition terrestre, aérienne et numérique, ETAFAT transforme les données terrain en livrables techniques fiables : plans topographiques, plans de récolement, modèles numériques, nuages de points, maquettes 3D, bases de données SIG et supports d’aide à la décision."
+      ],
+      "cards": [
+        {
+          "index": 1,
+          "name": "Topographie & géodésie",
+          "short": "Fournir des levés précis pour les études, l’implantation, le contrôle et le suivi des projets d’infrastructures.",
+          "competences": [
+            "Levés topographiques de corridors, sites et plateformes",
+            "Création et rattachement de réseaux géodésiques",
+            "Levés GNSS et stations totales",
+            "Implantation d’axes, ouvrages, voiries, réseaux et équipements",
+            "Plans topographiques et plans cotés",
+            "Plans de récolement après travaux",
+            "Nivellement de précision",
+            "Contrôle géométrique des ouvrages",
+            "Suivi des déformations et auscultation topographique",
+            "Appui topographique aux études, travaux et phases d’exploitation"
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Relevés géospatiaux",
+          "short": "Collecter des données terrain, aériennes et 3D pour documenter les infrastructures et leur environnement.",
+          "competences": [
+            "Acquisition de données par GNSS, stations totales et niveaux numériques",
+            "Levés par drone et photogrammétrie",
+            "Acquisition LiDAR aérienne ou terrestre",
+            "Scanner laser 3D d’ouvrages et sites complexes",
+            "Mobile Mapping System pour corridors routiers et urbains",
+            "Production de nuages de points",
+            "Relevés de plateformes, voiries, ouvrages d’art et réseaux",
+            "Traitement, géoréférencement et contrôle qualité des données",
+            "Livraison de données exploitables pour SIG, BIM, cartographie et études techniques"
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Cartographie & plans techniques",
+          "short": "Produire des plans et cartes techniques pour analyser, concevoir, suivre et gérer les infrastructures.",
+          "competences": [
+            "Plans de situation et plans d’emprise",
+            "Plans topographiques pour études d’infrastructures",
+            "Cartographie des corridors et zones d’intervention",
+            "Cartographie des ouvrages, réseaux et équipements",
+            "Plans de voirie, plateformes et accès",
+            "Cartographie des contraintes foncières, environnementales et techniques",
+            "Supports cartographiques pour études, dossiers techniques et reporting",
+            "Mise en page de livrables cartographiques professionnels",
+            "Intégration des plans dans des environnements SIG ou BIM"
+          ]
+        },
+        {
+          "index": 4,
+          "name": "SIG & bases de données d’infrastructures",
+          "short": "Structurer, centraliser et exploiter les données géographiques liées aux ouvrages, réseaux et équipements.",
+          "competences": [
+            "Conception de bases de données SIG pour infrastructures",
+            "Intégration de données topographiques, techniques, foncières et cartographiques",
+            "Structuration des données d’ouvrages, réseaux et équipements",
+            "Mise en place d’outils de consultation cartographique",
+            "Webmapping et tableaux de bord géographiques",
+            "Suivi spatial des infrastructures et interventions",
+            "Mise à jour et maintenance des données géographiques",
+            "Contrôle qualité, harmonisation et normalisation des données",
+            "Appui à la gestion patrimoniale des infrastructures"
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Inspection des structures",
+          "short": "Observer, documenter et suivre l’état des ouvrages pour appuyer les diagnostics, la maintenance et la sécurité.",
+          "competences": [
+            "Inspection visuelle et technique d’ouvrages",
+            "Inspection de ponts, ouvrages d’art, bâtiments techniques et infrastructures sensibles",
+            "Relevés de pathologies apparentes",
+            "Documentation photographique et cartographique des désordres",
+            "Inspection par drone des zones difficiles d’accès",
+            "Contrôle géométrique des éléments structurels",
+            "Suivi de l’évolution des désordres",
+            "Production de rapports d’inspection",
+            "Appui aux études de réhabilitation, maintenance et sécurisation"
+          ]
+        },
+        {
+          "index": 6,
+          "name": "Modélisation 3D & BIM Infrastructure",
+          "short": "Créer des modèles numériques pour concevoir, contrôler, documenter et gérer les infrastructures.",
+          "competences": [
+            "Modélisation 3D d’infrastructures linéaires et ouvrages",
+            "Scan-to-BIM à partir de nuages de points",
+            "Production de maquettes numériques As-Built",
+            "Modèles numériques de terrain et de surface",
+            "Modélisation de voiries, plateformes, ouvrages et équipements",
+            "Intégration de données topographiques, lasergrammétriques et photogrammétriques",
+            "Calculs de volumes, cubatures et profils",
+            "Appui à la conception, au suivi de chantier et à l’exploitation",
+            "Production de livrables compatibles avec les standards BIM"
+          ]
+        },
+        {
+          "index": 7,
+          "name": "Foncier & sécurisation des emprises",
+          "short": "Identifier, analyser et sécuriser les emprises nécessaires à la réalisation des projets d’infrastructures.",
+          "competences": [
+            "Identification et analyse des emprises projet",
+            "Vérification des données cadastrales et foncières",
+            "Production de plans parcellaires et plans d’emprise",
+            "Appui à la sécurisation foncière des corridors et sites techniques",
+            "Analyse des occupations du sol",
+            "Identification des contraintes foncières liées au projet",
+            "Appui aux démarches d’acquisition, régularisation ou libération d’emprises",
+            "Structuration des données foncières dans un SIG",
+            "Coordination avec les parties prenantes techniques et institutionnelles"
+          ]
+        },
+        {
+          "index": 8,
+          "name": "Géospatial Intelligence",
+          "short": "Transformer les données d’infrastructures en indicateurs utiles pour piloter, suivre et optimiser les décisions.",
+          "competences": [
+            "Analyse spatiale multicritère",
+            "Croisement de données topographiques, foncières, techniques et environnementales",
+            "Production d’indicateurs de suivi des projets",
+            "Analyse des contraintes d’implantation et d’exploitation",
+            "Suivi de l’évolution des ouvrages et corridors",
+            "Identification des zones sensibles ou prioritaires",
+            "Tableaux de bord géospatiaux",
+            "Appui aux décisions de planification, maintenance et investissement",
+            "Valorisation des données d’infrastructures pour les maîtres d’ouvrage"
+          ]
+        },
+        {
+          "index": 9,
+          "name": "Conseil & audit géospatial",
+          "short": "Accompagner les maîtres d’ouvrage dans l’évaluation, la structuration et l’optimisation de leurs données d’infrastructures.",
+          "competences": [
+            "Audit des données topographiques, cartographiques et SIG",
+            "Évaluation de la qualité et de l’exploitabilité des livrables",
+            "Conseil en stratégie géospatiale pour projets d’infrastructures",
+            "Appui à la rédaction de cahiers des charges techniques",
+            "Définition de méthodologies d’acquisition, contrôle et traitement",
+            "Assistance à maîtrise d’ouvrage géospatiale",
+            "Contrôle qualité des livrables topographiques, BIM, SIG et cartographiques",
+            "Recommandations pour la modernisation des outils de suivi et de gestion",
+            "Accompagnement des projets complexes et multi-acteurs"
+          ]
+        },
+        {
+          "index": 10,
+          "name": "Conseil & audit foncier géospatial",
+          "short": "Accompagner les institutions et maîtres d’ouvrage dans l’évaluation, la fiabilisation et la modernisation de leurs données foncières.",
+          "competences": [
+            "Audit de données foncières et cadastrales",
+            "Évaluation de la qualité, cohérence et complétude des données",
+            "Conseil en stratégie SIG foncier",
+            "Appui à la rédaction de cahiers des charges",
+            "Définition de méthodologies de collecte et structuration des données",
+            "Assistance à maîtrise d’ouvrage pour projets fonciers et cadastraux",
+            "Contrôle qualité des livrables fonciers, SIG et cartographiques",
+            "Recommandations pour la modernisation des outils fonciers",
+            "Appui aux projets institutionnels de gouvernance foncière",
+            "Accompagnement des projets de sécurisation foncière à grande échelle"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Foncier",
+      "slug": "foncier",
+      "accroche": "Des données foncières fiables pour sécuriser les droits, maîtriser les emprises et accompagner le développement des territoires.",
+      "intro": [
+        "Le foncier est au cœur des projets d’aménagement, d’infrastructures, de développement urbain, agricole, industriel et territorial. Sa maîtrise constitue un enjeu stratégique pour sécuriser les investissements, prévenir les conflits, clarifier les droits et garantir la bonne mise en œuvre des projets.",
+        "Face à la complexité des situations foncières, les collectivités, administrations publiques, aménageurs, bailleurs de fonds, opérateurs privés et maîtres d’ouvrage ont besoin de données fiables, de plans précis, de bases cadastrales structurées et d’outils d’aide à la décision.",
+        "ETAFAT mobilise son expertise en topographie, cadastre, géomatique, cartographie, SIG et assistance foncière pour accompagner les projets fonciers à chaque étape : identification des emprises, analyse des situations foncières, levés parcellaires, production de plans, structuration des données, sécurisation des droits et intégration dans des systèmes d’information géographique.",
+        "Grâce à son expérience terrain et à ses technologies d’acquisition et de traitement de données, ETAFAT contribue à transformer l’information foncière en un outil fiable de planification, de sécurisation et de gouvernance territoriale."
+      ],
+      "cards": [
+        {
+          "index": 1,
+          "name": "Assistance foncière",
+          "short": "Accompagner les maîtres d’ouvrage dans l’analyse, la clarification et la sécurisation des situations foncières.",
+          "competences": [
+            "Analyse des situations foncières existantes",
+            "Identification des contraintes foncières liées aux projets",
+            "Appui à la constitution des dossiers fonciers",
+            "Assistance aux procédures d’acquisition, de régularisation ou de sécurisation",
+            "Vérification et fiabilisation des informations cadastrales",
+            "Analyse des occupations du sol",
+            "Appui à la gestion des emprises projet",
+            "Coordination avec les acteurs institutionnels et techniques",
+            "Production de documents, plans et supports fonciers",
+            "Accompagnement des maîtres d’ouvrage dans la prise de décision foncière"
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Cadastre & sécurisation foncière",
+          "short": "Produire et fiabiliser les données cadastrales pour sécuriser les droits, les biens et les limites foncières.",
+          "competences": [
+            "Travaux cadastraux et parcellaires",
+            "Délimitation et matérialisation des limites foncières",
+            "Production de plans cadastraux",
+            "Production de plans parcellaires",
+            "Appui aux opérations d’immatriculation foncière",
+            "Mise à jour et fiabilisation des données cadastrales",
+            "Structuration de bases de données foncières et cadastrales",
+            "Intégration des données cadastrales dans des outils SIG",
+            "Sécurisation des droits de propriété et d’usage",
+            "Accompagnement des projets de modernisation cadastrale"
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Topographie & géodésie",
+          "short": "Réaliser des levés précis pour définir, contrôler et sécuriser les limites, emprises et parcelles.",
+          "competences": [
+            "Levés topographiques fonciers",
+            "Levés parcellaires",
+            "Création et rattachement de réseaux géodésiques",
+            "Levés GNSS de précision",
+            "Délimitation des parcelles et emprises",
+            "Implantation et matérialisation des limites",
+            "Plans topographiques et plans cotés",
+            "Plans de bornage ou de délimitation",
+            "Contrôle géométrique des limites foncières",
+            "Production de données terrain pour les dossiers cadastraux et fonciers"
+          ]
+        },
+        {
+          "index": 4,
+          "name": "Plans parcellaires & emprises",
+          "short": "Identifier, représenter et sécuriser les parcelles et emprises nécessaires aux projets d’aménagement ou d’infrastructure.",
+          "competences": [
+            "Établissement de plans parcellaires",
+            "Identification des propriétaires, occupants ou ayants droit selon les données disponibles",
+            "Délimitation des emprises projet",
+            "Analyse des superpositions entre projet, parcelles et occupation du sol",
+            "Production de plans d’emprise",
+            "Appui aux procédures d’acquisition ou de libération d’emprises",
+            "Cartographie des parcelles impactées",
+            "Structuration des informations parcellaires dans une base de données",
+            "Production de livrables pour les maîtres d’ouvrage et institutions",
+            "Appui à la traçabilité des données foncières"
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Cartographie foncière",
+          "short": "Produire des cartes foncières fiables pour visualiser, analyser et piloter les enjeux liés au territoire.",
+          "competences": [
+            "Cartographie des parcelles et limites foncières",
+            "Cartographie de l’occupation du sol",
+            "Cartographie des emprises et contraintes foncières",
+            "Cartographie des zones d’intervention ou de régularisation",
+            "Production de cartes thématiques foncières",
+            "Mise en page de plans et supports cartographiques",
+            "Analyse spatiale des données foncières",
+            "Production de supports pour concertation, reporting et décision",
+            "Intégration des cartes dans des plateformes SIG ou webmapping",
+            "Mise à jour et harmonisation des référentiels cartographiques"
+          ]
+        },
+        {
+          "index": 6,
+          "name": "SIG foncier & bases cadastrales",
+          "short": "Structurer, centraliser et exploiter les données foncières dans des systèmes d’information géographique performants.",
+          "competences": [
+            "Conception de bases de données foncières",
+            "Structuration de bases cadastrales",
+            "Intégration de données parcellaires, topographiques et administratives",
+            "Contrôle qualité et harmonisation des données",
+            "Mise en place de plateformes SIG foncières",
+            "Webmapping foncier",
+            "Consultation, recherche et analyse des données foncières",
+            "Gestion des mises à jour et de l’historique des données",
+            "Production d’indicateurs fonciers",
+            "Appui à la modernisation des systèmes d’information foncière"
+          ]
+        },
+        {
+          "index": 7,
+          "name": "Études foncières & diagnostics territoriaux",
+          "short": "Analyser les situations foncières pour identifier les contraintes, risques et opportunités liés aux projets.",
+          "competences": [
+            "Diagnostic foncier préalable aux projets",
+            "Analyse des contraintes d’occupation du sol",
+            "Identification des enjeux fonciers et territoriaux",
+            "Analyse des risques liés aux emprises",
+            "Croisement des données cadastrales, topographiques et territoriales",
+            "Études de faisabilité foncière",
+            "Cartographie des zones sensibles ou complexes",
+            "Production d’indicateurs d’aide à la décision",
+            "Appui aux stratégies de mobilisation foncière",
+            "Contribution aux projets d’aménagement et de planification territoriale"
+          ]
+        },
+        {
+          "index": 8,
+          "name": "Relevés géospatiaux",
+          "short": "Collecter des données terrain, aériennes et numériques pour fiabiliser les projets fonciers et cadastraux.",
+          "competences": [
+            "Relevés GNSS",
+            "Levés par stations totales",
+            "Acquisition par drone",
+            "Photogrammétrie",
+            "Acquisition LiDAR selon les besoins du projet",
+            "Production d’orthophotos et supports de terrain",
+            "Relevés d’occupation du sol",
+            "Collecte de données géoréférencées",
+            "Traitement et contrôle qualité des données acquises",
+            "Préparation des données pour SIG, cadastre, cartographie et études foncières"
+          ]
+        },
+        {
+          "index": 9,
+          "name": "Géospatial Intelligence foncière",
+          "short": "Transformer les données foncières en indicateurs utiles pour anticiper, arbitrer et décider.",
+          "competences": [
+            "Analyse spatiale des données foncières",
+            "Croisement des données cadastrales, territoriales et socio-économiques",
+            "Production d’indicateurs fonciers",
+            "Identification des zones à enjeux",
+            "Analyse des conflits d’usage potentiels",
+            "Analyse des contraintes et opportunités foncières",
+            "Tableaux de bord géospatiaux",
+            "Aide à la priorisation des interventions",
+            "Appui à la gouvernance foncière",
+            "Valorisation des données foncières pour la décision publique et privée"
+          ]
+        },
+        {
+          "index": 10,
+          "name": "Conseil & audit foncier géospatial",
+          "short": "Accompagner les institutions et maîtres d’ouvrage dans l’évaluation, la fiabilisation et la modernisation de leurs données foncières.",
+          "competences": [
+            "Audit de données foncières et cadastrales",
+            "Évaluation de la qualité, cohérence et complétude des données",
+            "Conseil en stratégie SIG foncier",
+            "Appui à la rédaction de cahiers des charges",
+            "Définition de méthodologies de collecte et structuration des données",
+            "Assistance à maîtrise d’ouvrage pour projets fonciers et cadastraux",
+            "Contrôle qualité des livrables fonciers, SIG et cartographiques",
+            "Recommandations pour la modernisation des outils fonciers",
+            "Appui aux projets institutionnels de gouvernance foncière",
+            "Accompagnement des projets de sécurisation foncière à grande échelle"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Agriculture & Eau",
+      "slug": "agriculture-eau",
+      "accroche": "Des données géospatiales fiables pour mieux gérer les terres agricoles, les ressources en eau et les projets de développement rural.",
+      "intro": [
+        "Les secteurs de l’agriculture et de l’eau sont au cœur des enjeux de développement durable, de sécurité alimentaire, de gestion des ressources naturelles et d’aménagement des territoires ruraux. La connaissance précise des terres, des périmètres agricoles, des réseaux d’irrigation, des bassins versants, des ouvrages hydrauliques et des ressources disponibles est essentielle pour planifier, exploiter et préserver ces espaces.",
+        "Pour accompagner les projets agricoles, hydrauliques et ruraux, les administrations publiques, collectivités, offices agricoles, agences de bassin, bailleurs de fonds, aménageurs et opérateurs privés ont besoin de données fiables, actualisées et exploitables.",
+        "ETAFAT mobilise son expertise en topographie, cartographie, SIG, relevés géospatiaux, acquisition aérienne, bathymétrie, foncier rural et analyse spatiale pour accompagner les projets liés à l’agriculture et à l’eau, depuis les études préliminaires jusqu’au suivi des aménagements.",
+        "Grâce à ses technologies de mesure terrestre, aérienne, hydrographique et numérique, ETAFAT transforme la donnée géospatiale en outil d’aide à la décision pour mieux planifier les périmètres agricoles, sécuriser les emprises, gérer les ressources en eau et appuyer les politiques de développement rural."
+      ],
+      "cards": [
+        {
+          "index": 1,
+          "name": "Topographie & géodésie",
+          "short": "Réaliser des levés précis pour appuyer les projets agricoles, hydrauliques, d’irrigation et d’aménagement rural.",
+          "competences": [
+            "Levés topographiques de périmètres agricoles",
+            "Levés de canaux, pistes rurales, bassins et ouvrages hydrauliques",
+            "Création et rattachement de réseaux géodésiques",
+            "Levés GNSS et stations totales",
+            "Implantation d’ouvrages hydrauliques, réseaux d’irrigation et aménagements agricoles",
+            "Plans topographiques et plans cotés",
+            "Nivellement de précision",
+            "Plans de récolement après travaux",
+            "Contrôle géométrique des ouvrages et aménagements",
+            "Appui topographique aux études rurales, agricoles et hydrauliques"
+          ]
+        },
+        {
+          "index": 2,
+          "name": "Relevés géospatiaux",
+          "short": "Collecter des données terrain, aériennes et hydrographiques pour documenter les terres, ouvrages et ressources en eau.",
+          "competences": [
+            "Relevés GNSS et stations totales",
+            "Acquisition par drone et photogrammétrie",
+            "Acquisition LiDAR selon les besoins du projet",
+            "Production d’orthophotos et modèles numériques",
+            "Relevés de périmètres agricoles et zones irriguées",
+            "Relevés de réseaux d’irrigation, canaux, bassins et retenues",
+            "Relevés hydrographiques et bathymétriques",
+            "Collecte de données géoréférencées sur le terrain",
+            "Traitement, contrôle qualité et structuration des données acquises",
+            "Livraison de données exploitables pour SIG, cartographie, études techniques et suivi de projets"
+          ]
+        },
+        {
+          "index": 3,
+          "name": "Cartographie agricole & occupation du sol",
+          "short": "Produire des cartes fiables pour représenter, analyser et suivre les terres agricoles, cultures et usages du sol.",
+          "competences": [
+            "Cartographie des périmètres agricoles",
+            "Cartographie de l’occupation du sol",
+            "Cartographie des parcelles agricoles",
+            "Cartographie des cultures et zones exploitées",
+            "Cartographie des zones irriguées et non irriguées",
+            "Cartographie des pistes, accès, réseaux et ouvrages agricoles",
+            "Cartographie des contraintes naturelles, foncières et techniques",
+            "Production de cartes thématiques agricoles",
+            "Mise en page de supports cartographiques pour études et reporting",
+            "Intégration des cartes dans des plateformes SIG ou webmapping"
+          ]
+        },
+        {
+          "index": 4,
+          "name": "SIG agricole & bases de données rurales",
+          "short": "Structurer, centraliser et exploiter les données agricoles, hydrauliques et rurales dans des outils SIG performants.",
+          "competences": [
+            "Conception de bases de données agricoles et rurales",
+            "Structuration des données de parcelles, cultures, réseaux et ouvrages",
+            "Intégration de données topographiques, foncières, hydrauliques et cartographiques",
+            "Mise en place de plateformes SIG agricoles",
+            "Webmapping pour le suivi des périmètres et infrastructures rurales",
+            "Contrôle qualité, harmonisation et mise à jour des données",
+            "Production d’indicateurs agricoles et territoriaux",
+            "Outils de consultation, recherche, analyse et reporting",
+            "Gestion spatiale des aménagements agricoles et hydrauliques",
+            "Appui à la gouvernance et à la valorisation des données rurales"
+          ]
+        },
+        {
+          "index": 5,
+          "name": "Gestion de l’eau & ouvrages hydrauliques",
+          "short": "Cartographier, analyser et suivre les ressources, réseaux et ouvrages liés à la gestion de l’eau.",
+          "competences": [
+            "Cartographie des réseaux d’irrigation",
+            "Relevés de canaux, conduites, bassins, réservoirs et ouvrages hydrauliques",
+            "Plans d’emprise et plans techniques des ouvrages",
+            "Analyse spatiale des infrastructures hydrauliques",
+            "Suivi des périmètres irrigués",
+            "Identification des zones sensibles ou prioritaires",
+            "Production de données pour études hydrauliques et aménagements ruraux",
+            "Intégration des ouvrages et réseaux dans des bases SIG",
+            "Appui à la gestion et à la maintenance des infrastructures d’eau",
+            "Production de supports cartographiques d’aide à la décision"
+          ]
+        },
+        {
+          "index": 6,
+          "name": "Bathymétrie & relevés hydrographiques",
+          "short": "Acquérir des données précises sur les plans d’eau, retenues, barrages, canaux et ouvrages hydrauliques.",
+          "competences": [
+            "Relevés bathymétriques de retenues et plans d’eau",
+            "Relevés hydrographiques de canaux et bassins",
+            "Production de profils et modèles de fonds",
+            "Calculs de volumes et capacités de stockage",
+            "Cartographie des profondeurs",
+            "Suivi de l’envasement selon les besoins du projet",
+            "Appui aux études de gestion des retenues et ouvrages hydrauliques",
+            "Traitement et contrôle qualité des données bathymétriques",
+            "Intégration des résultats dans des supports SIG et cartographiques",
+            "Production de livrables techniques pour maîtres d’ouvrage et bureaux d’études"
+          ]
+        },
+        {
+          "index": 7,
+          "name": "Foncier rural & sécurisation des emprises",
+          "short": "Identifier et sécuriser les parcelles, droits et emprises nécessaires aux projets agricoles et hydrauliques.",
+          "competences": [
+            "Analyse des situations foncières rurales",
+            "Identification des parcelles et emprises projet",
+            "Production de plans parcellaires et plans d’emprise",
+            "Vérification et fiabilisation des données foncières disponibles",
+            "Cartographie des occupations du sol",
+            "Appui à la sécurisation des périmètres agricoles et hydrauliques",
+            "Analyse des contraintes foncières liées aux projets ruraux",
+            "Structuration des données foncières dans un SIG",
+            "Appui aux démarches de régularisation ou mobilisation foncière",
+            "Coordination avec les acteurs techniques et institutionnels"
+          ]
+        },
+        {
+          "index": 8,
+          "name": "Modèles numériques & analyse du relief",
+          "short": "Produire des modèles numériques pour analyser le relief, les écoulements, les pentes et les aménagements.",
+          "competences": [
+            "Production de modèles numériques de terrain",
+            "Production de modèles numériques de surface",
+            "Analyse des pentes et altitudes",
+            "Calculs de cubatures, volumes et terrassements",
+            "Analyse des écoulements et contraintes topographiques",
+            "Appui aux études d’irrigation, drainage et aménagement rural",
+            "Modélisation 3D des sites agricoles et hydrauliques",
+            "Exploitation de données drone, LiDAR ou topographiques",
+            "Préparation de données pour études techniques",
+            "Valorisation des modèles numériques dans des environnements SIG"
+          ]
+        },
+        {
+          "index": 9,
+          "name": "Géospatial Intelligence agricole & hydrique",
+          "short": "Transformer les données agricoles et hydriques en indicateurs utiles pour analyser, prioriser et décider.",
+          "competences": [
+            "Analyse spatiale multicritère",
+            "Croisement de données agricoles, foncières, hydrauliques et territoriales",
+            "Production d’indicateurs de suivi des périmètres agricoles",
+            "Analyse des contraintes et opportunités spatiales",
+            "Suivi de l’évolution de l’occupation du sol",
+            "Identification des zones à potentiel agricole ou à risque",
+            "Appui à la planification des aménagements ruraux",
+            "Tableaux de bord géospatiaux",
+            "Aide à la décision pour les politiques agricoles et hydrauliques",
+            "Valorisation des données pour les institutions, bailleurs et maîtres d’ouvrage"
+          ]
+        },
+        {
+          "index": 10,
+          "name": "Conseil & audit géospatial",
+          "short": "Accompagner les maîtres d’ouvrage dans l’évaluation, la structuration et l’optimisation de leurs données agricoles et hydrauliques.",
+          "competences": [
+            "Audit des données agricoles, hydrauliques et géospatiales",
+            "Évaluation de la qualité, cohérence et exploitabilité des données",
+            "Conseil en stratégie SIG agricole ou hydraulique",
+            "Appui à la rédaction de cahiers des charges techniques",
+            "Définition de méthodologies de collecte et de traitement",
+            "Assistance à maîtrise d’ouvrage géospatiale",
+            "Contrôle qualité des livrables topographiques, SIG et cartographiques",
+            "Recommandations pour la modernisation des outils de suivi",
+            "Appui aux projets institutionnels agricoles, hydrauliques et ruraux",
+            "Accompagnement des projets de développement territorial durable"
+          ]
+        }
+      ]
+    }
+  ],
+  "skills": [
+    {
+      "index": 1,
+      "title": "Topographie & géodésie",
+      "slug": "topographie-et-geodesie",
+      "short": "Réaliser des levés précis pour établir une base fiable aux projets d’aménagement, d’infrastructures et de développement territorial.",
+      "detail": "ETAFAT réalise des prestations de topographie et de géodésie pour fournir aux maîtres d’ouvrage des données terrain fiables, précises et exploitables. Ces données constituent le socle technique indispensable à la conception, au suivi et à la sécurisation des projets d’aménagement du territoire, d’infrastructures, de foncier et de développement urbain.",
+      "competences": [
+        "Levés topographiques terrestres de précision",
+        "Création et rattachement de réseaux géodésiques",
+        "Levés GNSS et observations de précision",
+        "Implantation d’ouvrages, bâtiments, voiries et réseaux",
+        "Plans topographiques, plans cotés et plans de récolement",
+        "Nivellement de précision",
+        "Contrôle géométrique des ouvrages",
+        "Suivi des déformations et auscultation topographique",
+        "Production de données terrain pour les études techniques, SIG et BIM",
+        "Appui topographique aux projets d’aménagement, d’infrastructure et de foncier"
+      ]
+    },
+    {
+      "index": 2,
+      "title": "Assistance foncière",
+      "slug": "assistance-fonciere",
+      "short": "Accompagner les acteurs publics et privés dans la sécurisation foncière et la gestion des droits liés aux projets territoriaux.",
+      "detail": "ETAFAT accompagne les administrations, collectivités, aménageurs et porteurs de projets dans l’analyse, la structuration et la sécurisation des données foncières. Son intervention permet de mieux identifier les emprises, clarifier les situations foncières, fiabiliser les informations cadastrales et faciliter la mise en œuvre de projets structurés et durables.",
+      "competences": [
+        "Analyse et sécurisation des situations foncières",
+        "Identification des emprises nécessaires aux projets",
+        "Appui à la constitution des dossiers fonciers",
+        "Vérification et fiabilisation des données cadastrales",
+        "Accompagnement des maîtres d’ouvrage dans les procédures foncières",
+        "Assistance aux projets d’acquisition, de régularisation ou de mobilisation du foncier",
+        "Appui à la gestion des droits fonciers",
+        "Analyse des contraintes foncières liées aux projets d’aménagement",
+        "Production de plans et documents fonciers",
+        "Coordination avec les parties prenantes institutionnelles et techniques"
+      ]
+    },
+    {
+      "index": 3,
+      "title": "Cadastre & sécurisation foncière",
+      "slug": "cadastre-et-securisation-fonciere",
+      "short": "Mettre en place des solutions cadastrales fiables pour sécuriser les biens, les droits fonciers et les transactions.",
+      "detail": "ETAFAT intervient dans les projets de cadastre, d’immatriculation, de délimitation et de sécurisation foncière à différentes échelles. Grâce à son expertise technique et terrain, l’entreprise contribue à la production de données cadastrales précises, à la fiabilisation des limites foncières et à l’amélioration de la gouvernance des territoires.",
+      "competences": [
+        "Travaux cadastraux et parcellaires",
+        "Délimitation et matérialisation des limites foncières",
+        "Production de plans cadastraux et parcellaires",
+        "Appui aux opérations d’immatriculation foncière",
+        "Structuration de bases de données cadastrales",
+        "Mise à jour et fiabilisation des données foncières",
+        "Sécurisation des droits de propriété et d’usage",
+        "Appui aux projets de réforme ou modernisation cadastrale",
+        "Intégration des données cadastrales dans des systèmes SIG",
+        "Accompagnement des projets de sécurisation foncière à grande échelle"
+      ]
+    },
+    {
+      "index": 4,
+      "title": "Relevés géospatiaux",
+      "slug": "releves-geospatiaux",
+      "short": "Collecter des données géospatiales précises grâce à des technologies terrestres, aériennes, hydrographiques et numériques.",
+      "detail": "ETAFAT mobilise des technologies avancées d’acquisition de données pour répondre aux besoins des projets territoriaux : levés topographiques, GNSS, stations totales, drones, LiDAR, scanner laser, bathymétrie et autres solutions de mesure. Ces relevés permettent de produire une information géographique fiable, actualisée et adaptée aux exigences des projets complexes.",
+      "competences": [
+        "Acquisition de données géospatiales terrestres, aériennes et hydrographiques",
+        "Levés par drone",
+        "Acquisition LiDAR aérienne ou terrestre",
+        "Scanner laser 3D",
+        "Mobile Mapping System",
+        "Bathymétrie et relevés hydrographiques",
+        "Relevés GNSS et stations totales",
+        "Production de nuages de points",
+        "Traitement, contrôle qualité et structuration des données acquises",
+        "Livraison de données exploitables pour SIG, BIM, cartographie et études techniques"
+      ]
+    },
+    {
+      "index": 5,
+      "title": "Cartographie",
+      "slug": "cartographie",
+      "short": "Produire des cartes, plans et supports thématiques adaptés aux besoins d’analyse, de planification et de décision.",
+      "detail": "ETAFAT conçoit et produit des supports cartographiques précis pour représenter, analyser et valoriser les territoires. Ses prestations couvrent la cartographie topographique, thématique, cadastrale, urbaine et environnementale, afin de fournir aux décideurs une lecture claire et opérationnelle de leur environnement.",
+      "competences": [
+        "Production de cartes topographiques",
+        "Cartographie cadastrale et parcellaire",
+        "Cartographie thématique",
+        "Cartographie urbaine et territoriale",
+        "Cartographie des infrastructures et réseaux",
+        "Production de plans de situation, plans d’emprise et plans d’aménagement",
+        "Analyse et représentation de l’occupation du sol",
+        "Mise en page cartographique professionnelle",
+        "Production de supports d’aide à la décision",
+        "Intégration des cartes dans des environnements SIG et webmapping"
+      ]
+    },
+    {
+      "index": 6,
+      "title": "Géospatial Intelligence",
+      "slug": "geospatial-intelligence",
+      "short": "Transformer les données géospatiales en informations utiles pour anticiper, analyser et décider.",
+      "detail": "ETAFAT valorise les données géospatiales en les transformant en indicateurs, analyses et outils d’aide à la décision. En croisant les données terrain, cartographiques, foncières et territoriales, ETAFAT permet aux acteurs publics et privés de mieux comprendre les dynamiques spatiales, d’anticiper les enjeux et d’orienter leurs stratégies d’aménagement.",
+      "competences": [
+        "Analyse croisée de données géospatiales",
+        "Production d’indicateurs territoriaux",
+        "Analyse spatiale multicritère",
+        "Exploitation de données terrain, SIG, cadastrales et cartographiques",
+        "Aide à la décision pour les projets territoriaux",
+        "Détection des contraintes et opportunités spatiales",
+        "Suivi de l’évolution des territoires",
+        "Analyse des dynamiques urbaines, foncières et environnementales",
+        "Valorisation des données géographiques sous forme de tableaux de bord",
+        "Appui aux politiques publiques et stratégies territoriales"
+      ]
+    },
+    {
+      "index": 7,
+      "title": "Modélisation 3D & BIM",
+      "slug": "modelisation-3d-et-bim",
+      "short": "Créer des modèles 3D et jumeaux numériques pour concevoir, simuler, documenter et gérer les projets.",
+      "detail": "ETAFAT accompagne les projets de modélisation 3D, BIM et représentation numérique des bâtiments, infrastructures et territoires. À partir de données terrain, lasergrammétriques ou aériennes, l’entreprise produit des modèles exploitables pour la conception, la gestion patrimoniale, le suivi de chantier, la simulation et la maintenance des ouvrages.",
+      "competences": [
+        "Modélisation 3D de bâtiments, infrastructures et territoires",
+        "Scan-to-BIM à partir de nuages de points",
+        "Production de maquettes numériques BIM",
+        "Modélisation des ouvrages existants en As-Built",
+        "Création de jumeaux numériques",
+        "Intégration de données topographiques, lasergrammétriques et photogrammétriques",
+        "Modélisation d’infrastructures linéaires",
+        "Appui à la conception, au suivi de chantier et à la maintenance",
+        "Production de livrables compatibles avec les standards BIM",
+        "Valorisation 3D des données géospatiales et patrimoniales"
+      ]
+    },
+    {
+      "index": 8,
+      "title": "Systèmes d’information géographique",
+      "slug": "systemes-d-information-geographique",
+      "short": "Concevoir et déployer des SIG performants pour structurer, partager et exploiter les données territoriales.",
+      "detail": "ETAFAT accompagne ses clients dans la conception, la structuration et le déploiement de systèmes d’information géographique adaptés à leurs besoins. De l’analyse fonctionnelle à l’intégration des données, ETAFAT met en place des outils SIG permettant de centraliser, consulter, analyser et valoriser les informations géographiques au service de la décision.",
+      "competences": [
+        "Analyse des besoins SIG",
+        "Conception d’architectures SIG",
+        "Structuration de bases de données géographiques",
+        "Intégration, migration et contrôle qualité des données",
+        "Développement d’applications SIG métier",
+        "Mise en place de plateformes webmapping",
+        "Administration et maintenance de bases de données spatiales",
+        "Création d’outils de consultation, analyse et reporting",
+        "Formation et assistance aux utilisateurs",
+        "Appui à la gouvernance et à la valorisation des données territoriales"
+      ]
+    },
+    {
+      "index": 9,
+      "title": "Études territoriales",
+      "slug": "etudes-territoriales",
+      "short": "Réaliser des études et diagnostics territoriaux pour orienter la planification, l’aménagement et la valorisation des territoires.",
+      "detail": "ETAFAT contribue à la réalisation d’études territoriales fondées sur des données fiables et une lecture spatiale précise. Ces études permettent d’analyser l’occupation du sol, les dynamiques urbaines, les contraintes foncières, les infrastructures existantes et les potentiels de développement, afin d’accompagner les décisions stratégiques des maîtres d’ouvrage.",
+      "competences": [
+        "Diagnostics territoriaux",
+        "Analyse de l’occupation du sol",
+        "Études d’aménagement urbain et rural",
+        "Analyse des contraintes foncières et spatiales",
+        "Études de localisation et d’implantation de projets",
+        "Analyse des infrastructures existantes",
+        "Identification des potentialités de développement territorial",
+        "Production d’indicateurs d’aide à la décision",
+        "Cartographie des enjeux territoriaux",
+        "Appui aux stratégies d’aménagement et de planification"
+      ]
+    },
+    {
+      "index": 10,
+      "title": "Conseil & audit géospatial",
+      "slug": "conseil-et-audit-geospatial",
+      "short": "Apporter conseil et expertise pour évaluer, optimiser et sécuriser les projets géospatiaux et territoriaux.",
+      "detail": "ETAFAT accompagne les organisations dans l’évaluation de leurs besoins, l’audit de leurs données, la définition de méthodologies techniques et l’optimisation de leurs processus géospatiaux. Cette expertise permet de sécuriser les projets, d’améliorer la qualité des données et de garantir la cohérence des solutions mises en œuvre.",
+      "competences": [
+        "Audit de données géospatiales",
+        "Évaluation de la qualité, cohérence et exploitabilité des données",
+        "Conseil en stratégie SIG et géomatique",
+        "Définition de méthodologies techniques",
+        "Appui à la rédaction de cahiers des charges",
+        "Assistance à maîtrise d’ouvrage géospatiale",
+        "Optimisation des processus d’acquisition, traitement et diffusion des données",
+        "Recommandations pour la modernisation des outils géospatiaux",
+        "Accompagnement des projets institutionnels et territoriaux",
+        "Contrôle qualité des livrables cartographiques, SIG, topographiques et fonciers"
+      ]
+    }
+  ]
+}

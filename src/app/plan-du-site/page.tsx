@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { savoirFairePages, domainesPages, agencyPages, posts, portfolio, jobs } from "@/lib/content";
+import { agencyPages, posts, portfolio, jobs } from "@/lib/content";
+import { domains, skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -32,11 +33,11 @@ export default function PlanDuSitePage() {
     },
     {
       title: "Savoir-faire",
-      links: savoirFairePages().map((p) => ({ label: p.title, href: p.path })),
+      links: skills.map((s) => ({ label: s.title, href: `/savoir-faire/${s.slug}/` })),
     },
     {
       title: "Domaines d'activité",
-      links: domainesPages().map((p) => ({ label: p.title, href: p.path })),
+      links: domains.map((d) => ({ label: d.title, href: `/domaines-activite/${d.slug}/` })),
     },
     {
       title: "Agences",

@@ -158,6 +158,45 @@ export function CookieIcon(props: IconProps) {
 }
 
 /* Domain icons (used in homepage grid) */
+
+export function TerritoryIcon(props: IconProps) {
+  /* Map / aménagement du territoire */
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M6 14l12-4 12 4 12-4v28l-12 4-12-4-12 4z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <line x1="18" y1="10" x2="18" y2="38" stroke="currentColor" strokeWidth="1.4" />
+      <line x1="30" y1="14" x2="30" y2="42" stroke="currentColor" strokeWidth="1.4" />
+      <circle cx="36" cy="22" r="2.5" stroke="currentColor" strokeWidth="1.4" />
+    </svg>
+  );
+}
+
+export function LandIcon(props: IconProps) {
+  /* Foncier — terrain with stake */
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M4 36L18 26L26 30L44 18" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <line x1="4" y1="42" x2="44" y2="42" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M24 6v18" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path d="M24 6l8 4-8 4z" fill="currentColor" />
+      <circle cx="14" cy="34" r="2" fill="currentColor" />
+      <circle cx="36" cy="22" r="2" fill="currentColor" />
+    </svg>
+  );
+}
+
+export function LeafWaterIcon(props: IconProps) {
+  /* Agriculture & Eau — leaf + drop */
+  return (
+    <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <path d="M30 6c-12 0-18 8-18 18 0 6 4 10 8 10 8 0 14-12 14-22V6z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M14 26C18 22 24 18 30 14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+      <path d="M34 32c0 4-2 6-4 6s-4-2-4-6c0-3 4-8 4-8s4 5 4 8z" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+
 export function EnergyIcon(props: IconProps) {
   return (
     <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

@@ -2,13 +2,26 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { LogoIcon, MenuIcon, CloseIcon, SearchIcon } from "./icons";
 import { MegaMenu } from "./MegaMenu";
 import { cn } from "@/lib/utils";
 
+/**
+ * Pages whose hero is a full-screen DARK background — header should be
+ * transparent + white text when at the top of the page (over the hero).
+ * On any other page, the header is white-bg from the start.
+ */
+const TRANSPARENT_HERO_PATHS = new Set<string>(["/"]);
+
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
+  const hasDarkHero = TRANSPARENT_HERO_PATHS.has(pathname);
+
+  // "transparent mode" = on a dark-hero page AND not scrolled past the hero AND menu not open
+  const transparent = hasDarkHero && !scrolled && !open;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -28,9 +41,11 @@ export function SiteHeader() {
           "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
           open
             ? "bg-transparent"
-            : scrolled
-              ? "bg-white/95 backdrop-blur shadow-sm"
-              : "bg-white/75 backdrop-blur-sm",
+            : transparent
+              ? "bg-transparent"
+              : scrolled
+                ? "bg-white/95 backdrop-blur shadow-sm"
+                : "bg-white shadow-sm",
         )}
         style={{ height: 116 }}
       >
@@ -39,7 +54,7 @@ export function SiteHeader() {
             <LogoIcon
               className={cn(
                 "h-9 w-auto transition-colors",
-                open ? "text-white" : "text-[#313c4e]",
+                open || transparent ? "text-white" : "text-[#313c4e]",
               )}
             />
           </Link>
@@ -50,7 +65,7 @@ export function SiteHeader() {
                 href="/nous-rejoindre/"
                 className={cn(
                   "font-medium hover:text-[#2ab5b4] transition-colors",
-                  open ? "text-white" : "text-[#313c4e]",
+                  open || transparent ? "text-white" : "text-[#313c4e]",
                 )}
               >
                 Nous rejoindre
@@ -59,7 +74,9 @@ export function SiteHeader() {
                 href="/contact/"
                 className={cn(
                   "pill",
-                  open ? "pill-outline" : "border-2 border-[#313c4e] text-[#313c4e] hover:bg-[#313c4e] hover:text-white",
+                  open || transparent
+                    ? "pill-outline"
+                    : "border-2 border-[#313c4e] text-[#313c4e] hover:bg-[#313c4e] hover:text-white",
                 )}
               >
                 Nous contacter
@@ -69,8 +86,10 @@ export function SiteHeader() {
             <button
               aria-label="Rechercher"
               className={cn(
-                "p-2 rounded-full hover:bg-black/5 transition-colors",
-                open ? "text-white hover:bg-white/10" : "text-[#313c4e]",
+                "p-2 rounded-full transition-colors",
+                open || transparent
+                  ? "text-white hover:bg-white/10"
+                  : "text-[#313c4e] hover:bg-black/5",
               )}
             >
               <SearchIcon width={20} height={20} />
