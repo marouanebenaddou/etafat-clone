@@ -86,11 +86,22 @@ export function SiteFooter() {
             <h3 className="text-white text-lg font-semibold mb-4" style={{ color: "#fff" }}>
               Contact
             </h3>
-            <p className="text-white/80 text-sm mb-5 leading-relaxed">
-              7 Rue Alfred Kastler, 44307<br />NANTES
+            <p className="text-white/80 text-sm mb-3 leading-relaxed">
+              Lot 57, Lotissement Salaj
+              <br />Aïn Diab — 20180
+              <br />Casablanca, Maroc
+            </p>
+            <p className="text-white/80 text-sm mb-1">
+              <a href="tel:+212522798700" className="hover:text-[#00669d]">
+                +212 5 22 79 87 00
+              </a>
+            </p>
+            <p className="text-white/80 text-sm mb-5">
+              <a href="mailto:etafat@etafat.ma" className="hover:text-[#00669d]">
+                etafat@etafat.ma
+              </a>
             </p>
             <div className="flex flex-col gap-3 items-start">
-              <Pill href="/agences/" variant="outline-teal" arrow="right">Nos agences</Pill>
               <Pill href="/contact/" variant="outline-teal" arrow="right">Nous contacter</Pill>
             </div>
           </div>

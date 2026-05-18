@@ -73,23 +73,40 @@ export default function ContactPage() {
               <h3 className="text-navy font-semibold mb-3 text-xl">Siège social</h3>
               <p className="text-body text-sm leading-relaxed">
                 ETAFAT
-                <br />7 Rue Alfred Kastler
-                <br />44307 NANTES
-                <br />FRANCE
+                <br />Lot 57, Lotissement Salaj
+                <br />Aïn Diab — 20180
+                <br />Casablanca, Maroc
               </p>
             </div>
             <div>
               <h3 className="text-navy font-semibold mb-3 text-xl">Téléphone</h3>
-              <p className="text-body text-sm">+33 (0)2 40 16 22 22</p>
+              <p className="text-body text-sm">
+                <a href="tel:+212522798700" className="hover:text-[#00669d]">
+                  +212 5 22 79 87 00
+                </a>
+                {" / "}
+                <a href="tel:+212522798701" className="hover:text-[#00669d]">01</a>
+                {" / "}
+                <a href="tel:+212522798702" className="hover:text-[#00669d]">02</a>
+              </p>
+            </div>
+            <div>
+              <h3 className="text-navy font-semibold mb-3 text-xl">Email</h3>
+              <p className="text-body text-sm">
+                <a href="mailto:etafat@etafat.ma" className="hover:text-[#00669d]">
+                  etafat@etafat.ma
+                </a>
+              </p>
             </div>
             <div>
               <h3 className="text-navy font-semibold mb-3 text-xl">Suivez-nous</h3>
               <div className="flex gap-3">
                 <a
-                  href="https://www.linkedin.com/company/etafat-expert"
+                  href="https://www.linkedin.com/company/etafat"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-11 h-11 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors"
+                  aria-label="LinkedIn ETAFAT"
+                  className="w-11 h-11 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors font-semibold"
                 >
                   in
                 </a>
