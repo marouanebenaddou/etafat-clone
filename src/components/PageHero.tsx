@@ -35,15 +35,18 @@ export function PageHero({
       <section className="relative pt-[116px] text-white">
         <div className="relative h-[60vh] min-h-[460px] max-h-[680px] flex items-end overflow-hidden">
           <video
-            src={video}
             poster={image || undefined}
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
+            disablePictureInPicture
+            controls={false}
             className="absolute inset-0 w-full h-full object-cover"
-          />
+          >
+            <source src={video} type="video/mp4" />
+          </video>
           {/* Dark overlay for legibility */}
           <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/25 to-black/65" />
           <div className="container-etafat relative pb-16">
