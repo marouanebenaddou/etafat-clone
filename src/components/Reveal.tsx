@@ -57,6 +57,18 @@ export function Reveal({
     }
     const el = ref.current;
     if (!el) return;
+
+    // If the element is ALREADY inside the viewport on mount (e.g. hero title),
+    // fire after one frame so the CSS transition still plays.
+    const rect = el.getBoundingClientRect();
+    const initiallyVisible =
+      rect.top < window.innerHeight && rect.bottom > 0;
+    let raf: number | undefined;
+    if (initiallyVisible) {
+      raf = requestAnimationFrame(() => setShown(true));
+      if (once) return () => raf !== undefined && cancelAnimationFrame(raf);
+    }
+
     const obs = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
@@ -71,7 +83,10 @@ export function Reveal({
       { rootMargin: "0px 0px -10% 0px", threshold: 0.05 },
     );
     obs.observe(el);
-    return () => obs.disconnect();
+    return () => {
+      obs.disconnect();
+      if (raf !== undefined) cancelAnimationFrame(raf);
+    };
   }, [once, reduced]);
 
   const style: React.CSSProperties = {
