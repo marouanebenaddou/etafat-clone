@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { LogoIcon, MenuIcon, CloseIcon, SearchIcon } from "./icons";
+import { MenuIcon, CloseIcon, SearchIcon } from "./icons";
 import { MegaMenu } from "./MegaMenu";
 import { cn } from "@/lib/utils";
 
@@ -51,10 +52,17 @@ export function SiteHeader() {
       >
         <div className="container-etafat h-full flex items-center justify-between">
           <Link href="/" aria-label="ETAFAT — Accueil" className="flex items-center">
-            <LogoIcon
+            <Image
+              src="/etafat/logo.png"
+              alt="ETAFAT"
+              width={167}
+              height={143}
+              priority
               className={cn(
-                "h-9 w-auto transition-colors",
-                open || transparent ? "text-white" : "text-[#313c4e]",
+                "h-14 w-auto transition-[filter] duration-300",
+                // when over the dark hero or inside the mega-menu, force the
+                // colored logo to render as a pure white silhouette
+                open || transparent ? "[filter:brightness(0)_invert(1)]" : "",
               )}
             />
           </Link>

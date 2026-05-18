@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { LogoIcon, LinkedInIcon, YoutubeIcon } from "./icons";
+import Image from "next/image";
+import { LinkedInIcon, YoutubeIcon } from "./icons";
 import { Pill } from "./Pill";
 
 export function SiteFooter() {
@@ -7,7 +8,13 @@ export function SiteFooter() {
     <footer className="bg-[#313c4e] text-white pt-20 pb-8">
       <div className="container-etafat">
         <div className="mb-12">
-          <LogoIcon className="h-10 w-auto text-white" />
+          <Image
+            src="/etafat/logo.png"
+            alt="ETAFAT"
+            width={167}
+            height={143}
+            className="h-16 w-auto [filter:brightness(0)_invert(1)]"
+          />
           <p
             className="mt-4 text-white text-lg md:text-xl"
             style={{ fontFamily: "var(--font-figtree)", fontWeight: 500 }}
