@@ -109,3 +109,4 @@ scripts/
     fix-image-urls.mjs     # restores CDN filenames after rebrand
 docs/                      # leftover from template (largely empty)
 ```
+
