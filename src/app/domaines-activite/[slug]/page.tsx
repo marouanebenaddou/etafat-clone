@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { PageHero } from "@/components/PageHero";
 import { SkillCard } from "@/components/SkillCard";
 import { QuestionCTA } from "@/components/QuestionCTA";
+import { Pill } from "@/components/Pill";
+import { Reveal } from "@/components/Reveal";
 import { domains, domainBySlug, cardsForDomain, skillBySlug } from "@/lib/etafat";
 import type { Metadata } from "next";
 
@@ -21,6 +23,16 @@ export async function generateMetadata({
     title: `${d.title} - ETAFAT`,
     description: d.accroche || d.intro[0]?.slice(0, 160),
   };
+}
+
+function nameToSlug(name: string) {
+  return name
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/&/g, "et")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
 }
 
 export default async function DomaineDetail({
@@ -50,42 +62,41 @@ export default async function DomaineDetail({
       <section className="bg-white py-12 md:py-16">
         <div className="container-etafat max-w-4xl">
           {d.intro.map((p, i) => (
-            <p key={i} className="text-body text-base md:text-lg leading-relaxed mb-5">
-              {p}
-            </p>
+            <Reveal key={i} delay={i * 80}>
+              <p className="text-body text-base md:text-lg leading-relaxed mb-5">
+                {p}
+              </p>
+            </Reveal>
           ))}
         </div>
       </section>
 
-      {/* Savoir-faire grid */}
-      <section className="bg-[#f5f7f9] py-16 md:py-24">
+      {/* Savoir-faire grid — compact icon-only layout, 5 cols at lg */}
+      <section className="bg-[#f5f7f9] py-20 md:py-28">
         <div className="container-etafat">
-          <h2 className="text-navy mb-3">Savoir-faire associés</h2>
-          <p className="text-body mb-10 max-w-2xl">
-            Les expertises ETAFAT mobilisées sur les projets {d.title.toLowerCase()}.
-          </p>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {cards.map((c) => {
-              const universal = skillBySlug(
-                c.name
-                  .toLowerCase()
-                  .normalize("NFD")
-                  .replace(/[̀-ͯ]/g, "")
-                  .replace(/&/g, "et")
-                  .replace(/[^a-z0-9]+/g, "-")
-                  .replace(/^-|-$/g, ""),
-              );
+          <Reveal>
+            <h2 className="text-navy mb-14">Les savoir-faire associés</h2>
+          </Reveal>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">
+            {cards.map((c, i) => {
+              const universal = skillBySlug(nameToSlug(c.name));
               return (
-                <SkillCard
-                  key={c.index}
-                  index={c.index}
-                  title={c.name}
-                  short={c.short}
-                  href={universal ? `/savoir-faire/${universal.slug}/` : undefined}
-                />
+                <Reveal key={c.index} delay={i * 60}>
+                  <SkillCard
+                    title={c.name}
+                    href={universal ? `/savoir-faire/${universal.slug}/` : undefined}
+                  />
+                </Reveal>
               );
             })}
           </div>
+          <Reveal delay={cards.length * 60 + 100}>
+            <div className="flex justify-center mt-14">
+              <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
+                Tous nos savoir-faire
+              </Pill>
+            </div>
+          </Reveal>
         </div>
       </section>
 

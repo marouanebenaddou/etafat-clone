@@ -11,6 +11,7 @@ import {
   PlayIcon,
   ArrowRightIcon,
 } from "@/components/icons";
+import { Reveal } from "@/components/Reveal";
 import postsRaw from "@/data/posts.json";
 
 const IMG = (path: string) => `https://geofit.fr/wp-content/uploads/${path}`;
@@ -79,14 +80,18 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-black/15" />
         </div>
         <div className="container-etafat relative z-10 pt-32">
-          <h1 className="text-white max-w-4xl text-4xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] mb-6" style={{ color: "#fff" }}>
-            Donnons du pouvoir
-            <br />à vos données
-          </h1>
-          <p className="max-w-xl text-white/95 text-base md:text-lg leading-relaxed">
-            Notre métier consiste à mesurer, quantifier et analyser les données géospatiales
-            afin de les transformer en véritables outils d&apos;aide à la décision.
-          </p>
+          <Reveal y={40}>
+            <h1 className="text-white max-w-4xl text-4xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] mb-6" style={{ color: "#fff" }}>
+              Donnons du pouvoir
+              <br />à vos données
+            </h1>
+          </Reveal>
+          <Reveal y={30} delay={250}>
+            <p className="max-w-xl text-white/95 text-base md:text-lg leading-relaxed">
+              Notre métier consiste à mesurer, quantifier et analyser les données géospatiales
+              afin de les transformer en véritables outils d&apos;aide à la décision.
+            </p>
+          </Reveal>
         </div>
         <svg
           className="absolute bottom-[-2px] left-0 right-0 w-full"
@@ -102,7 +107,7 @@ export default function HomePage() {
       {/* INTRO */}
       <section className="bg-white py-24 md:py-32">
         <div className="container-etafat grid md:grid-cols-2 gap-12 items-start">
-          <div>
+          <Reveal>
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
               Nos expertises
             </span>
@@ -110,8 +115,8 @@ export default function HomePage() {
               Acquérir, analyser et exploiter
               <br />vos données géospatiales
             </h2>
-          </div>
-          <div>
+          </Reveal>
+          <Reveal delay={120}>
             <p className="text-body mb-8 leading-relaxed">
               Nos équipes, nos technologies de pointe et notre capacité d&apos;innovation nous
               permettent d&apos;intervenir sur les projets les plus ambitieux,{" "}
@@ -123,14 +128,14 @@ export default function HomePage() {
             <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
               Découvrez nos savoir-faire
             </Pill>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* CE QUI DONNE DU SENS */}
       <section className="bg-[#f5f7f9] py-24 md:py-32">
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <div>
+          <Reveal>
             <h2 className="text-navy mb-8 leading-tight">
               Ce qui donne
               <br />du sens à nos métiers
@@ -142,8 +147,8 @@ export default function HomePage() {
             <Pill href="/identite/" variant="outline-teal" arrow="right">
               Notre vision
             </Pill>
-          </div>
-          <div className="relative aspect-[16/10] rounded-md overflow-hidden">
+          </Reveal>
+          <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
             <Image
               src={IMG("2026/01/26-VIDEO-GROUPE-Video_Vision-Miniature_YT.jpg")}
               alt="Vidéo - Notre vision"
@@ -158,26 +163,29 @@ export default function HomePage() {
             >
               <PlayIcon width={28} height={28} />
             </button>
-          </div>
+          </Reveal>
         </div>
       </section>
 
       {/* DOMAINES */}
       <section className="bg-white py-24 md:py-32">
         <div className="container-etafat">
-          <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>
+          <Reveal>
+            <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>
+          </Reveal>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {domaines.map(({ label, href, Icon }) => (
-              <Link
-                key={href}
-                href={href}
-                className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
-              >
-                <Icon className="w-12 h-12 text-[#00669d] mb-5" />
-                <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
-                  {label}
-                </span>
-              </Link>
+            {domaines.map(({ label, href, Icon }, i) => (
+              <Reveal key={href} delay={i * 80}>
+                <Link
+                  href={href}
+                  className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
+                >
+                  <Icon className="w-12 h-12 text-[#00669d] mb-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                  <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
+                    {label}
+                  </span>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -190,21 +198,23 @@ export default function HomePage() {
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#e0eef6]"
         />
         <div className="container-etafat relative">
-          <h2 className="text-navy text-3xl md:text-5xl font-semibold mb-8 leading-tight">
-            Vous avez une
-            <br />problématique foncière&nbsp;?
-          </h2>
-          <div className="flex justify-center">
-            <Link
-              href="/savoir-faire/cadastre-et-securisation-fonciere/"
-              className="text-teal font-semibold inline-flex items-center gap-3 group"
-            >
-              <span className="underline-offset-4 group-hover:underline">Découvrez nos solutions</span>
-              <span className="arrow-circle-outline">
-                <ArrowRightIcon width={11} height={11} />
-              </span>
-            </Link>
-          </div>
+          <Reveal>
+            <h2 className="text-navy text-3xl md:text-5xl font-semibold mb-8 leading-tight">
+              Vous avez une
+              <br />problématique foncière&nbsp;?
+            </h2>
+            <div className="flex justify-center">
+              <Link
+                href="/savoir-faire/cadastre-et-securisation-fonciere/"
+                className="text-teal font-semibold inline-flex items-center gap-3 group"
+              >
+                <span className="underline-offset-4 group-hover:underline">Découvrez nos solutions</span>
+                <span className="arrow-circle-outline">
+                  <ArrowRightIcon width={11} height={11} />
+                </span>
+              </Link>
+            </div>
+          </Reveal>
         </div>
       </section>
 

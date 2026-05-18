@@ -1,6 +1,7 @@
 import { PageHero } from "@/components/PageHero";
 import { SkillCard } from "@/components/SkillCard";
 import { QuestionCTA } from "@/components/QuestionCTA";
+import { Reveal } from "@/components/Reveal";
 import { skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
@@ -19,17 +20,15 @@ export default function SavoirFairePage() {
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Savoir-faire" }]}
         variant="centered"
       />
-      <section className="container-etafat py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {skills.map((s) => (
-            <SkillCard
-              key={s.slug}
-              index={s.index}
-              title={s.title}
-              short={s.short}
-              href={`/savoir-faire/${s.slug}/`}
-            />
-          ))}
+      <section className="bg-[#f5f7f9] py-20 md:py-28">
+        <div className="container-etafat">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">
+            {skills.map((s, i) => (
+              <Reveal key={s.slug} delay={i * 50}>
+                <SkillCard title={s.title} href={`/savoir-faire/${s.slug}/`} />
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
       <QuestionCTA />
