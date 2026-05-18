@@ -33,7 +33,7 @@ export function PageHero({
   if (variant === "video-banner" && video) {
     return (
       <section className="relative text-white">
-        <div className="relative h-[70vh] min-h-[560px] max-h-[760px] flex items-end overflow-hidden">
+        <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
           {/* Poster fallback rendered behind the video so users see something
              instantly while the video buffers — and if autoplay is blocked. */}
           {image && (
@@ -92,7 +92,7 @@ export function PageHero({
   if (variant === "banner" && image) {
     return (
       <section className="relative text-white">
-        <div className="relative h-[65vh] min-h-[520px] max-h-[720px] flex items-end overflow-hidden">
+        <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
           <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
           <div className="container-etafat relative pb-16">
