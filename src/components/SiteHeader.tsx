@@ -13,13 +13,18 @@ import { cn } from "@/lib/utils";
  * transparent + white text when at the top of the page (over the hero).
  * On any other page, the header is white-bg from the start.
  */
-const TRANSPARENT_HERO_PATHS = new Set<string>(["/"]);
+function isDarkHeroPath(pathname: string): boolean {
+  if (pathname === "/" || pathname === "") return true;
+  // Domain detail pages have video heroes: /domaines-activite/<slug>/
+  if (/^\/domaines-activite\/[^/]+\/?$/.test(pathname)) return true;
+  return false;
+}
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-  const hasDarkHero = TRANSPARENT_HERO_PATHS.has(pathname);
+  const hasDarkHero = isDarkHeroPath(pathname);
 
   // "transparent mode" = on a dark-hero page AND not scrolled past the hero AND menu not open
   const transparent = hasDarkHero && !scrolled && !open;
