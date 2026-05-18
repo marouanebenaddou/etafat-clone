@@ -1,0 +1,67 @@
+{
+  "home": [
+    "/"
+  ],
+  "savoirFaire": [
+    "/savoir-faire/",
+    "/savoir-faire/acquisition-aerienne/",
+    "/savoir-faire/assistance-fonciere/",
+    "/savoir-faire/assistance-travaux/",
+    "/savoir-faire/bathymetrie/",
+    "/savoir-faire/cartographie/",
+    "/savoir-faire/conseil-et-audit/",
+    "/savoir-faire/dematerialisation/",
+    "/savoir-faire/detection-de-reseaux/",
+    "/savoir-faire/etudes/",
+    "/savoir-faire/foncier-international/",
+    "/savoir-faire/geoint/",
+    "/savoir-faire/geometre-expert/",
+    "/savoir-faire/metrologie/",
+    "/savoir-faire/modelisation-3d/",
+    "/savoir-faire/surveillance-douvrage/",
+    "/savoir-faire/systeme-dinformation/",
+    "/savoir-faire/topographie/"
+  ],
+  "domaines": [
+    "/domaines-activite/",
+    "/domaines-activite/batiment/",
+    "/domaines-activite/defense-et-securite/",
+    "/domaines-activite/energie-et-reseaux/",
+    "/domaines-activite/industrie/",
+    "/domaines-activite/infrastructure/",
+    "/domaines-activite/territoire/"
+  ],
+  "agencies": [
+    "/etafat-aix-en-provence/",
+    "/etafat-blois/",
+    "/etafat-brive-la-gaillarde/",
+    "/etafat-dijon/",
+    "/etafat-gennevilliers/",
+    "/etafat-guyancourt/",
+    "/etafat-la-reunion/",
+    "/etafat-lille/",
+    "/etafat-lyon/",
+    "/etafat-montpellier/",
+    "/etafat-nantes/",
+    "/etafat-nimes/",
+    "/etafat-rodez/",
+    "/etafat-strasbourg/",
+    "/etafat-toulouse/"
+  ],
+  "misc": [
+    "/actualites/",
+    "/agences/",
+    "/contact/",
+    "/engagements/",
+    "/filiales/",
+    "/identite/",
+    "/innovation/",
+    "/mentions-legales/",
+    "/nous-rejoindre/",
+    "/nous-rejoindre/culture-entreprise/",
+    "/offres-demploi/",
+    "/plan-du-site/",
+    "/politique-confidentialite/",
+    "/references/"
+  ]
+}
