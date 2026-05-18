@@ -1,10 +1,18 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { PageHero } from "@/components/PageHero";
 import { SkillCard } from "@/components/SkillCard";
 import { QuestionCTA } from "@/components/QuestionCTA";
 import { Pill } from "@/components/Pill";
 import { Reveal } from "@/components/Reveal";
-import { domains, domainBySlug, cardsForDomain, skillBySlug } from "@/lib/etafat";
+import {
+  domains,
+  domainBySlug,
+  cardsForDomain,
+  skillBySlug,
+  skillImage,
+  domainVideo,
+} from "@/lib/etafat";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -44,37 +52,61 @@ export default async function DomaineDetail({
   const d = domainBySlug(slug);
   if (!d) notFound();
   const cards = cardsForDomain(d);
+  // First skill's photo is used as the secondary intro image
+  const introImage = (() => {
+    const firstSkill =
+      d.skillSlugs?.[0] ||
+      (d.cards?.[0]?.name ? nameToSlug(d.cards[0].name) : undefined);
+    return firstSkill ? skillImage(firstSkill) : null;
+  })();
 
   return (
     <>
       <PageHero
         title={d.title}
-        description={d.accroche}
         breadcrumb={[
           { label: "Accueil", href: "/" },
           { label: "Domaines d'activité", href: "/domaines-activite/" },
           { label: d.title },
         ]}
-        variant="centered"
+        variant="video-banner"
+        video={domainVideo(d.slug)}
       />
 
-      {/* Intro paragraphs */}
-      <section className="bg-white py-12 md:py-16">
-        <div className="container-etafat max-w-4xl">
-          {d.intro.map((p, i) => (
-            <Reveal key={i} delay={i * 80}>
-              <p className="text-body text-base md:text-lg leading-relaxed mb-5">
-                {p}
-              </p>
-            </Reveal>
-          ))}
+      {/* Two-column intro (text left, image right) — geofit pattern */}
+      <section className="bg-white py-16 md:py-24">
+        <div className="container-etafat">
+          <div className="grid md:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <div>
+              {d.intro.map((p, i) => (
+                <Reveal key={i} delay={i * 80}>
+                  <p className="text-body text-base md:text-lg leading-relaxed mb-5">
+                    {p}
+                  </p>
+                </Reveal>
+              ))}
+            </div>
+            {introImage && (
+              <Reveal variant="zoom-out" duration={1200} delay={150}>
+                <div className="relative aspect-[4/3] rounded-md overflow-hidden">
+                  <Image
+                    src={introImage}
+                    alt={d.title}
+                    fill
+                    sizes="(min-width:768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              </Reveal>
+            )}
+          </div>
         </div>
       </section>
 
       {/* Savoir-faire grid — compact icon-only layout, 5 cols at lg */}
       <section className="bg-[#f5f7f9] py-20 md:py-28">
         <div className="container-etafat">
-          <Reveal>
+          <Reveal variant="line" duration={1000}>
             <h2 className="text-navy mb-14">Les savoir-faire associés</h2>
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">

@@ -42,6 +42,11 @@ export function skillImage(slug: string): string {
   return `/etafat/skills/${slug}.jpg`;
 }
 
+/** Hero video for a domain detail page. */
+export function domainVideo(slug: string): string {
+  return `/etafat/domains/${slug}.mp4`;
+}
+
 /** Get the savoir-faire cards to display for a given domain. */
 export function cardsForDomain(domain: EtafatDomain): EtafatDomainCard[] {
   if (domain.cards && domain.cards.length) return domain.cards;

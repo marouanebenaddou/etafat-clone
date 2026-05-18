@@ -2,28 +2,44 @@
 
 import { useEffect, useRef, useState } from "react";
 
+type RevealVariant = "fade" | "zoom-out" | "line" | "flip-up";
+
 interface RevealProps {
   children: React.ReactNode;
+  /** ms before animation starts after entering viewport */
   delay?: number;
-  /** translate distance in px (default 24) */
+  /** translate distance in px (used by 'fade') */
   y?: number;
-  /** revisitable: if true, animation replays each time it enters viewport */
+  /** which animation to play (matches Salient theme variants) */
+  variant?: RevealVariant;
+  /** if true (default), animation plays once on first entry */
   once?: boolean;
   className?: string;
   as?: keyof React.JSX.IntrinsicElements;
+  /** duration in ms */
+  duration?: number;
 }
 
+const EASE = "cubic-bezier(0.22,1,0.36,1)";
+
 /**
- * Wraps children in a div that fades + slides up on scroll into view.
- * Uses IntersectionObserver. Respects `prefers-reduced-motion`.
+ * Scroll-triggered reveal matching Salient theme animations.
+ *
+ * Variants:
+ * - "fade" (default): fade-in + translateY (matches Salient `fade-in`)
+ * - "zoom-out": starts slightly zoomed-in then settles (matches `zoom-out-reveal`)
+ * - "line": clip-path reveal from below (matches `line-reveal-by-space` for headings)
+ * - "flip-up": 3D rotation up (matches `flip-in-vertical`)
  */
 export function Reveal({
   children,
   delay = 0,
   y = 24,
+  variant = "fade",
   once = true,
   className = "",
   as: Tag = "div",
+  duration = 800,
 }: RevealProps) {
   const ref = useRef<HTMLElement | null>(null);
   const [shown, setShown] = useState(false);
@@ -31,8 +47,7 @@ export function Reveal({
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const mql = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mql.matches);
+    setReduced(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
   useEffect(() => {
@@ -60,11 +75,29 @@ export function Reveal({
   }, [once, reduced]);
 
   const style: React.CSSProperties = {
-    opacity: shown ? 1 : 0,
-    transform: shown ? "translateY(0)" : `translateY(${y}px)`,
-    transition: `opacity 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms, transform 700ms cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+    transition: `opacity ${duration}ms ${EASE} ${delay}ms, transform ${duration}ms ${EASE} ${delay}ms, clip-path ${duration}ms ${EASE} ${delay}ms`,
     willChange: "opacity, transform",
   };
+
+  if (variant === "fade") {
+    style.opacity = shown ? 1 : 0;
+    style.transform = shown ? "translateY(0)" : `translateY(${y}px)`;
+  } else if (variant === "zoom-out") {
+    style.opacity = shown ? 1 : 0;
+    style.transform = shown ? "scale(1)" : "scale(1.08)";
+  } else if (variant === "line") {
+    style.opacity = shown ? 1 : 0;
+    style.clipPath = shown
+      ? "inset(0 0 0 0)"
+      : "inset(0 0 100% 0)";
+    style.transform = shown ? "translateY(0)" : "translateY(20px)";
+  } else if (variant === "flip-up") {
+    style.opacity = shown ? 1 : 0;
+    style.transformOrigin = "50% 100%";
+    style.transform = shown
+      ? "perspective(800px) rotateX(0deg) translateY(0)"
+      : "perspective(800px) rotateX(-12deg) translateY(20px)";
+  }
 
   return (
     // @ts-expect-error dynamic intrinsic element
