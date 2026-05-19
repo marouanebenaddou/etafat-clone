@@ -1,13 +1,12 @@
 import { PageHero } from "@/components/PageHero";
-import { CardGrid } from "@/components/CardGrid";
 import { QuestionCTA } from "@/components/QuestionCTA";
-import { portfolio } from "@/lib/content";
+import { ReferencesExplorer } from "@/components/ReferencesExplorer";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Références - ETAFAT",
+  title: "Nos références - ETAFAT",
   description:
-    "Découvrez les références et projets phares menés par le Groupe ETAFAT en France et à l'international.",
+    "Découvrez les projets phares menés par ETAFAT au Maroc et en Afrique : aménagement, foncier, infrastructures, énergie, agriculture et patrimoine.",
 };
 
 export default function ReferencesPage() {
@@ -15,13 +14,12 @@ export default function ReferencesPage() {
     <>
       <PageHero
         title="Nos références"
-        description="Des projets d'envergure menés en France et à l'international, témoignant de notre expertise géospatiale."
+        description="Des projets d'envergure menés au Maroc et en Afrique, témoignant de notre expertise géospatiale, foncière et territoriale."
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Références" }]}
-        variant="centered"
+        variant="banner"
+        image="/etafat/skills/cartographie.jpg"
       />
-      <section className="container-etafat py-16">
-        <CardGrid items={portfolio} cols={3} tag="Projet" />
-      </section>
+      <ReferencesExplorer />
       <QuestionCTA />
     </>
   );

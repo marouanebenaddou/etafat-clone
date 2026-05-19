@@ -12,7 +12,66 @@ import {
   ArrowRightIcon,
 } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
+import { Landmark, Satellite, Database, Compass, Lightbulb } from "lucide-react";
 import postsRaw from "@/data/posts.json";
+
+const PILLARS: {
+  letter: string;
+  title: string;
+  Icon: typeof Landmark;
+  items: string[];
+}[] = [
+  {
+    letter: "A",
+    title: "Expertise foncière",
+    Icon: Landmark,
+    items: [
+      "Assistance foncière",
+      "Cadastre & sécurisation foncière",
+      "Plans parcellaires & emprises",
+      "Cartographie foncière",
+      "SIG foncier & bases cadastrales",
+    ],
+  },
+  {
+    letter: "B",
+    title: "Acquisition de données",
+    Icon: Satellite,
+    items: [
+      "Topographie & géodésie",
+      "Relevés géospatiaux",
+      "Relevés aériens & LiDAR",
+      "Scanner laser 3D & MMS",
+      "Bathymétrie & hydrographie",
+      "Géoradar & détection de réseaux",
+    ],
+  },
+  {
+    letter: "C",
+    title: "Ingénierie de données",
+    Icon: Database,
+    items: [
+      "Cartographie",
+      "Systèmes d'information géographique",
+      "Modélisation 3D & BIM",
+      "Géospatial Intelligence",
+      "Webmapping & plateformes géospatiales",
+      "Dématérialisation & structuration de données",
+    ],
+  },
+  {
+    letter: "D",
+    title: "Accompagnement projet",
+    Icon: Compass,
+    items: [
+      "Études territoriales",
+      "Conseil & audit géospatial",
+      "Assistance MOA",
+      "Inspection & surveillance d'ouvrage",
+      "Formation & transfert de compétences",
+    ],
+  },
+];
 
 const IMG = (path: string) => `https://geofit.fr/wp-content/uploads/${path}`;
 
@@ -132,8 +191,84 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* QUEL EST VOTRE BESOIN ? */}
+      <section className="bg-[#f5f7f9] py-20 md:py-28">
+        <div className="container-etafat">
+          <Reveal>
+            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block text-center">
+              Nos savoir-faire
+            </span>
+            <h2 className="text-navy text-center mb-4 leading-tight">
+              Quel est votre besoin&nbsp;?
+            </h2>
+            <p className="text-body text-center max-w-3xl mx-auto mb-14 leading-relaxed">
+              ETAFAT mobilise quatre piliers d&apos;expertise complémentaires pour accompagner
+              vos projets, depuis la sécurisation foncière jusqu&apos;à l&apos;exploitation
+              avancée de la donnée géospatiale.
+            </p>
+          </Reveal>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            {PILLARS.map((p, i) => {
+              const Icon = p.Icon;
+              return (
+                <Reveal key={p.letter} delay={i * 100}>
+                  <article className="bg-white p-7 rounded-md border border-[#e5e7eb] h-full hover:shadow-md transition-shadow flex flex-col">
+                    <div className="flex items-start justify-between mb-5">
+                      <div className="w-12 h-12 rounded-full bg-[#e0eef6] flex items-center justify-center">
+                        <Icon size={22} strokeWidth={1.8} className="text-[#00669d]" />
+                      </div>
+                      <span
+                        className="text-teal text-2xl font-semibold"
+                        style={{ fontFamily: "var(--font-figtree)" }}
+                      >
+                        {p.letter}
+                      </span>
+                    </div>
+                    <h3 className="text-navy text-lg font-semibold mb-4 leading-tight">
+                      {p.title}
+                    </h3>
+                    <ul className="space-y-2 text-body text-sm">
+                      {p.items.map((item) => (
+                        <li key={item} className="flex items-start gap-2">
+                          <span className="text-[#00669d] mt-1.5 shrink-0 w-1 h-1 rounded-full bg-[#00669d]" />
+                          <span className="leading-snug">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                </Reveal>
+              );
+            })}
+          </div>
+
+          <Reveal delay={400}>
+            <div className="mt-10 bg-[#00669d] rounded-md p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="flex items-start gap-5">
+                <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur flex items-center justify-center shrink-0">
+                  <Lightbulb size={22} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="text-white text-xl md:text-2xl font-semibold mb-2" style={{ color: "#fff" }}>
+                    L&apos;innovation chez ETAFAT
+                  </h3>
+                  <p className="text-white/90 text-sm leading-relaxed max-w-2xl">
+                    Une équipe dédiée d&apos;ingénieurs et de chercheurs développe en permanence
+                    des solutions sur mesure pour répondre aux enjeux techniques de nos clients
+                    et anticiper les nouveaux usages de la donnée géospatiale.
+                  </p>
+                </div>
+              </div>
+              <Pill href="/innovation/" variant="outline" arrow="right" className="!border-white !text-white shrink-0">
+                Découvrir nos innovations
+              </Pill>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* CE QUI DONNE DU SENS */}
-      <section className="bg-[#f5f7f9] py-24 md:py-32">
+      <section className="bg-white py-24 md:py-32">
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <Reveal>
             <h2 className="text-navy mb-8 leading-tight">
@@ -168,7 +303,7 @@ export default function HomePage() {
       </section>
 
       {/* DOMAINES */}
-      <section className="bg-white py-24 md:py-32">
+      <section className="bg-[#f5f7f9] py-24 md:py-32">
         <div className="container-etafat">
           <Reveal>
             <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>

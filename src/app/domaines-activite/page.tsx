@@ -28,6 +28,21 @@ const ICONS: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> 
   "agriculture-eau": LeafWaterIcon,
 };
 
+const QUESTIONS: Record<string, string> = {
+  "amenagement-du-territoire":
+    "Comment planifier, sécuriser et valoriser durablement vos territoires ?",
+  "energie-mines":
+    "Comment développer, exploiter et moderniser vos sites énergétiques et miniers ?",
+  "batiment-patrimoine":
+    "Comment concevoir, documenter et préserver vos bâtiments et votre patrimoine ?",
+  infrastructures:
+    "Comment concevoir, déployer et suivre vos grandes infrastructures ?",
+  foncier:
+    "Comment sécuriser, maîtriser et valoriser durablement votre foncier ?",
+  "agriculture-eau":
+    "Comment gérer durablement vos ressources agricoles et hydrauliques ?",
+};
+
 export default function DomainesPage() {
   return (
     <>
@@ -51,6 +66,11 @@ export default function DomainesPage() {
                 <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#00669d] transition-colors">
                   {d.title}
                 </h3>
+                {QUESTIONS[d.slug] && (
+                  <p className="text-teal text-sm font-medium leading-snug mb-3">
+                    {QUESTIONS[d.slug]}
+                  </p>
+                )}
                 {d.accroche && (
                   <p className="text-body text-sm leading-relaxed mb-5 flex-1">
                     {d.accroche}
