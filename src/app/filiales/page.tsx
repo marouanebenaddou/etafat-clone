@@ -4,7 +4,8 @@ import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { QuestionCTA } from "@/components/QuestionCTA";
 import { ArrowRightIcon } from "@/components/icons";
-import { MapPin, Phone, Mail } from "lucide-react";
+import { AfricaPresenceMap } from "@/components/AfricaPresenceMap";
+import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -109,7 +110,7 @@ export default function FilialesPage() {
                     />
                     <div className="absolute inset-0 bg-[#00669d]/45" />
                     <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                      <MapPin className="w-6 h-6 text-white" strokeWidth={2} />
+                      <Icon icon="ph:map-pin-duotone" width={24} height={24} className="text-white" />
                     </div>
                   </div>
                   <div className="p-7 flex-1 flex flex-col">
@@ -121,17 +122,17 @@ export default function FilialesPage() {
 
                     <div className="space-y-2 mb-6 text-sm text-body">
                       <p className="flex items-start gap-2">
-                        <MapPin size={16} className="text-[#00669d] mt-0.5 shrink-0" />
+                        <Icon icon="tabler:map-pin" width={16} height={16} className="text-[#00669d] mt-0.5 shrink-0" />
                         <span className="whitespace-pre-line">{f.address}</span>
                       </p>
                       {f.phones.map((phone, j) => (
                         <p key={j} className="flex items-start gap-2">
-                          <Phone size={16} className="text-[#00669d] mt-0.5 shrink-0" />
+                          <Icon icon="tabler:phone" width={16} height={16} className="text-[#00669d] mt-0.5 shrink-0" />
                           <span>{phone}</span>
                         </p>
                       ))}
                       <p className="flex items-start gap-2">
-                        <Mail size={16} className="text-[#00669d] mt-0.5 shrink-0" />
+                        <Icon icon="tabler:mail" width={16} height={16} className="text-[#00669d] mt-0.5 shrink-0" />
                         <a
                           href={`mailto:${f.email}`}
                           className="hover:text-[#00669d] transition-colors break-all"
@@ -171,7 +172,7 @@ export default function FilialesPage() {
             </p>
             <div className="inline-flex items-start gap-3 bg-[#f5f7f9] rounded-md p-5 mt-3 max-w-md">
               <div className="w-10 h-10 rounded-full bg-[#00669d] text-white flex items-center justify-center shrink-0">
-                <MapPin size={18} />
+                <Icon icon="ph:map-pin-duotone" width={20} height={20} />
               </div>
               <p className="text-body text-sm leading-snug">
                 Des équipes locales, des expertises complémentaires et une connaissance fine des réalités terrain.
@@ -181,51 +182,7 @@ export default function FilialesPage() {
 
           {/* Africa map illustration */}
           <Reveal variant="zoom-out" delay={150}>
-            <div className="relative aspect-[4/3] rounded-md overflow-hidden bg-[#f5f7f9] border border-[#e5e7eb] flex items-center justify-center">
-              <svg viewBox="0 0 400 400" className="w-full h-full p-8" aria-label="Carte Afrique">
-                {/* Simplified Africa outline */}
-                <path
-                  d="M180 50 Q220 55 240 70 L260 90 Q265 110 255 130 L245 150 L260 170 Q275 185 270 210 L255 240 Q245 280 220 310 L195 340 Q170 360 150 350 L130 335 Q115 315 110 290 L105 260 Q100 230 110 200 L120 175 Q130 150 145 130 L160 110 Q170 85 180 50 Z"
-                  fill="#e0eef6"
-                  stroke="#00669d"
-                  strokeWidth="1.5"
-                  opacity="0.6"
-                />
-                {/* Morocco pin (Casablanca, top-left) */}
-                <g transform="translate(150, 95)">
-                  <circle cx="0" cy="0" r="16" fill="#00669d" />
-                  <circle cx="0" cy="0" r="6" fill="#fff" />
-                  <text x="20" y="5" className="fill-[#00669d]" style={{ fontSize: "14px", fontWeight: 600 }}>
-                    Casablanca
-                  </text>
-                  <text x="20" y="22" className="fill-[#313c4e]" style={{ fontSize: "11px" }}>
-                    ETAFAT Ingénierie
-                  </text>
-                </g>
-                {/* Sénégal pin (Dakar, bottom-left) */}
-                <g transform="translate(115, 215)">
-                  <circle cx="0" cy="0" r="16" fill="#00669d" />
-                  <circle cx="0" cy="0" r="6" fill="#fff" />
-                  <text x="-65" y="-22" className="fill-[#00669d]" style={{ fontSize: "14px", fontWeight: 600 }}>
-                    Dakar
-                  </text>
-                  <text x="-65" y="-6" className="fill-[#313c4e]" style={{ fontSize: "11px" }}>
-                    ETAFAT Sénégal
-                  </text>
-                </g>
-                {/* CI pin (Abidjan, bottom-middle) */}
-                <g transform="translate(175, 270)">
-                  <circle cx="0" cy="0" r="16" fill="#00669d" />
-                  <circle cx="0" cy="0" r="6" fill="#fff" />
-                  <text x="22" y="5" className="fill-[#00669d]" style={{ fontSize: "14px", fontWeight: 600 }}>
-                    Abidjan
-                  </text>
-                  <text x="22" y="22" className="fill-[#313c4e]" style={{ fontSize: "11px" }}>
-                    ETAFAT Afrique
-                  </text>
-                </g>
-              </svg>
-            </div>
+            <AfricaPresenceMap />
           </Reveal>
         </div>
       </section>

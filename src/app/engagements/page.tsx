@@ -1,22 +1,7 @@
 import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { QuestionCTA } from "@/components/QuestionCTA";
-import {
-  ShieldCheck,
-  Target,
-  Landmark,
-  Lock,
-  Scale,
-  HardHat,
-  Leaf,
-  Award,
-  ClipboardCheck,
-  HardHat as HardHatIcon,
-  FileLock2,
-  Building2,
-  GraduationCap,
-  type LucideIcon,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -25,52 +10,44 @@ export const metadata: Metadata = {
     "Agir avec rigueur, éthique et responsabilité pour des projets géospatiaux fiables et durables.",
 };
 
-const ENGAGEMENTS: { num: string; icon: LucideIcon; title: string; text: string }[] = [
+const ENGAGEMENTS: { icon: string; title: string; text: string }[] = [
   {
-    num: "01",
-    icon: ShieldCheck,
+    icon: "ph:shield-check-duotone",
     title: "Une gouvernance responsable et indépendante",
     text: "Nous préservons notre indépendance pour garantir des analyses objectives, des recommandations fiables et des décisions fondées sur des critères techniques et réglementaires.",
   },
   {
-    num: "02",
-    icon: Target,
+    icon: "ph:target-duotone",
     title: "L'excellence technique au cœur de nos missions",
     text: "Nous mobilisons des expertises pointues et des technologies de pointe pour produire des données précises, fiables et exploitables, répondant aux exigences des projets les plus complexes.",
   },
   {
-    num: "03",
-    icon: Landmark,
+    icon: "ph:bank-duotone",
     title: "Le respect des exigences des bailleurs de fonds",
     text: "Nous respectons les politiques éthiques, sociales, environnementales et opérationnelles des bailleurs de fonds et partenaires institutionnels.",
   },
   {
-    num: "04",
-    icon: Lock,
+    icon: "ph:lock-key-duotone",
     title: "La confidentialité et la sécurité des données",
     text: "Nous protégeons les informations sensibles et mettons en place des accords de confidentialité pour sécuriser les échanges, livrables et données traitées.",
   },
   {
-    num: "05",
-    icon: Scale,
+    icon: "ph:scales-duotone",
     title: "Un code d'éthique et de déontologie",
     text: "Nous agissons avec intégrité, loyauté et transparence dans toutes nos missions, et entretenons des relations de confiance durables avec nos clients, partenaires et collaborateurs.",
   },
   {
-    num: "06",
-    icon: HardHat,
+    icon: "ph:hard-hat-duotone",
     title: "Une politique HSE intégrée à nos interventions",
     text: "Nous veillons à la santé et à la sécurité de nos équipes et partenaires, tout en limitant les impacts environnementaux de nos activités.",
   },
   {
-    num: "07",
-    icon: Leaf,
+    icon: "ph:leaf-duotone",
     title: "Une démarche RSE au service des territoires",
     text: "Nous contribuons durablement au développement des territoires, au bien-être de nos collaborateurs et au respect des parties prenantes.",
   },
   {
-    num: "08",
-    icon: Award,
+    icon: "ph:medal-duotone",
     title: "Un système qualité orienté amélioration continue",
     text: "Nous mettons en œuvre des processus de contrôle et d'amélioration continue pour garantir la qualité, la traçabilité et la performance de nos prestations.",
   },
@@ -85,29 +62,29 @@ const CHIFFRES = [
   { value: "+120", label: "Accords de confidentialité signés" },
 ];
 
-const ACTIONS: { icon: LucideIcon; title: string; text: string }[] = [
+const ACTIONS: { icon: string; title: string; text: string }[] = [
   {
-    icon: ClipboardCheck,
+    icon: "ph:clipboard-text-duotone",
     title: "Qualité et contrôle des livrables",
     text: "Procédures et outils de contrôle qualité à chaque étape pour garantir la cohérence, la précision et l'exploitabilité des données.",
   },
   {
-    icon: HardHatIcon,
+    icon: "ph:hard-hat-duotone",
     title: "Sécurité des missions terrain",
     text: "Application de consignes HSE adaptées aux contextes d'intervention pour protéger nos équipes et nos partenaires.",
   },
   {
-    icon: FileLock2,
+    icon: "ph:file-lock-duotone",
     title: "Protection des données",
     text: "Encadrement des échanges et gestion documentaire sécurisée pour garantir la confidentialité des informations.",
   },
   {
-    icon: Building2,
+    icon: "ph:buildings-duotone",
     title: "Respect des exigences institutionnelles",
     text: "Alignement de nos méthodes avec les exigences des maîtres d'ouvrage, administrations et partenaires techniques.",
   },
   {
-    icon: GraduationCap,
+    icon: "ph:graduation-cap-duotone",
     title: "Transfert de compétences",
     text: "Accompagnement des équipes, partenaires et institutions pour renforcer l'appropriation des outils et des données géospatiales.",
   },
@@ -151,28 +128,20 @@ export default function EngagementsPage() {
             <h2 className="text-navy text-center mb-14">Nos engagements</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {ENGAGEMENTS.map((e, i) => {
-              const Icon = e.icon;
-              return (
-                <Reveal key={e.num} delay={i * 60}>
-                  <div className="bg-white p-7 rounded-md border border-[#e5e7eb] h-full hover:shadow-md transition-shadow">
-                    <div className="w-12 h-12 rounded-full bg-[#e0eef6] flex items-center justify-center mb-5">
-                      <Icon size={22} strokeWidth={1.8} className="text-[#00669d]" />
-                    </div>
-                    <p
-                      className="text-teal text-2xl font-semibold mb-2"
-                      style={{ fontFamily: "var(--font-figtree)" }}
-                    >
-                      {e.num}
-                    </p>
-                    <h3 className="text-navy text-base md:text-lg font-semibold mb-3 leading-tight">
-                      {e.title}
-                    </h3>
-                    <p className="text-body text-sm leading-relaxed">{e.text}</p>
+            {ENGAGEMENTS.map((e, i) => (
+              <Reveal key={e.title} delay={i * 60}>
+                <div className="group relative bg-white p-8 rounded-md border border-[#e5e7eb] h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={e.icon} width={36} height={36} className="text-[#00669d]" />
                   </div>
-                </Reveal>
-              );
-            })}
+                  <h3 className="text-navy text-base md:text-lg font-semibold mb-3 leading-tight">
+                    {e.title}
+                  </h3>
+                  <p className="text-body text-sm leading-relaxed">{e.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -209,18 +178,18 @@ export default function EngagementsPage() {
             <h2 className="text-navy text-center mb-14">Nos actions concrètes</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
-            {ACTIONS.map((a, i) => {
-              const Icon = a.icon;
-              return (
-                <Reveal key={a.title} delay={i * 60}>
-                  <div className="bg-white p-6 rounded-md border border-[#e5e7eb] h-full text-center">
-                    <Icon size={32} strokeWidth={1.6} className="text-[#00669d] mb-4 mx-auto" />
-                    <h3 className="text-navy text-base font-semibold mb-3 leading-tight">{a.title}</h3>
-                    <p className="text-body text-sm leading-relaxed">{a.text}</p>
+            {ACTIONS.map((a, i) => (
+              <Reveal key={a.title} delay={i * 60}>
+                <div className="group relative bg-white p-8 rounded-md border border-[#e5e7eb] h-full text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="mx-auto w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-5 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={a.icon} width={36} height={36} className="text-[#00669d]" />
                   </div>
-                </Reveal>
-              );
-            })}
+                  <h3 className="text-navy text-base font-semibold mb-3 leading-tight">{a.title}</h3>
+                  <p className="text-body text-sm leading-relaxed">{a.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>

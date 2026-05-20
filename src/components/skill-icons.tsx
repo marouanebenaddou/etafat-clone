@@ -1,66 +1,52 @@
-import {
-  Compass,
-  FolderOpen,
-  ShieldCheck,
-  MapPin,
-  Map,
-  Satellite,
-  Box,
-  Layers,
-  PenLine,
-  Search,
-  Eye,
-  Waves,
-  Wheat,
-  type LucideIcon,
-} from "lucide-react";
-
 /**
- * Map each universal savoir-faire slug to a Lucide icon.
- * Line-art style matches the geofit visual language.
+ * Map each universal savoir-faire slug to an Iconify icon name (Phosphor duotone).
  */
-export const SKILL_ICONS: Record<string, LucideIcon> = {
-  "topographie-et-geodesie": Compass,
-  "assistance-fonciere": FolderOpen,
-  "cadastre-et-securisation-fonciere": ShieldCheck,
-  "releves-geospatiaux": MapPin,
-  cartographie: Map,
-  "geospatial-intelligence": Satellite,
-  "modelisation-3d-et-bim": Box,
-  "systemes-d-information-geographique": Layers,
-  "etudes-territoriales": PenLine,
-  "conseil-et-audit-geospatial": Search,
+export const SKILL_ICONS: Record<string, string> = {
+  "topographie-et-geodesie": "ph:mountains-duotone",
+  "assistance-fonciere": "ph:handshake-duotone",
+  "cadastre-et-securisation-fonciere": "ph:shield-check-duotone",
+  "releves-geospatiaux": "ph:crosshair-simple-duotone",
+  cartographie: "ph:map-trifold-duotone",
+  "geospatial-intelligence": "ph:globe-hemisphere-west-duotone",
+  "modelisation-3d-et-bim": "ph:cube-duotone",
+  "systemes-d-information-geographique": "ph:stack-duotone",
+  "etudes-territoriales": "ph:chart-bar-duotone",
+  "conseil-et-audit-geospatial": "ph:magnifying-glass-plus-duotone",
 };
 
 /**
  * Keyword-based fallback: match common ETAFAT skill name patterns to icons.
  * Order matters — first match wins.
  */
-const KEYWORD_RULES: Array<[RegExp, LucideIcon]> = [
-  [/topographie|geodesie|geodes/i, Compass],
-  [/scanner|laser|nuages? de points/i, Eye],
-  [/assistance.+fonc|foncier.+assist/i, FolderOpen],
-  [/cadastre|securisation|securis/i, ShieldCheck],
-  [/inspection.+structure|inspection des ouvrages|inspection/i, Eye],
-  [/bathymetrie|hydrograph|eau|hydraul/i, Waves],
-  [/agric|rural|cultur/i, Wheat],
-  [/parcellair|plans? parcellair|emprise/i, FolderOpen],
-  [/cartograph|plans?|map/i, Map],
-  [/foncier/i, FolderOpen],
-  [/sig|systeme.+information|bases? de donnees|webmapping/i, Layers],
-  [/3d|bim|modelisation|jumeaux/i, Box],
-  [/geospatial.+intelligence|intelligence|geoint|analyse spatial/i, Satellite],
-  [/releve|acquisition|lidar|drone|mobile mapping|gnss/i, MapPin],
-  [/etude/i, PenLine],
-  [/conseil|audit/i, Search],
+const KEYWORD_RULES: Array<[RegExp, string]> = [
+  [/topographie|geodesie|geodes/i, "ph:mountains-duotone"],
+  [/scanner|laser|nuages? de points/i, "ph:scan-duotone"],
+  [/assistance.+fonc|foncier.+assist/i, "ph:handshake-duotone"],
+  [/cadastre|securisation|securis/i, "ph:shield-check-duotone"],
+  [/inspection.+structure|inspection des ouvrages|inspection/i, "ph:hard-hat-duotone"],
+  [/bathymetrie|hydrograph|eau|hydraul/i, "ph:waves-duotone"],
+  [/agric|rural|cultur/i, "ph:plant-duotone"],
+  [/parcellair|plans? parcellair|emprise/i, "ph:grid-four-duotone"],
+  [/cartograph|plans?|map/i, "ph:map-trifold-duotone"],
+  [/foncier/i, "ph:map-pin-area-duotone"],
+  [/sig|systeme.+information|bases? de donnees|webmapping/i, "ph:stack-duotone"],
+  [/3d|bim|modelisation|jumeaux/i, "ph:cube-duotone"],
+  [/geospatial.+intelligence|intelligence|geoint|analyse spatial/i, "ph:globe-hemisphere-west-duotone"],
+  [/drone|aerien|lidar/i, "ph:drone-duotone"],
+  [/releve|acquisition|mobile mapping|gnss/i, "ph:crosshair-simple-duotone"],
+  [/radar|reseau/i, "tabler:radar-2"],
+  [/etude/i, "ph:chart-bar-duotone"],
+  [/conseil|audit/i, "ph:magnifying-glass-plus-duotone"],
+  [/formation|transfert/i, "ph:graduation-cap-duotone"],
+  [/maitrise.+ouvrage|amoa|moa/i, "ph:user-check-duotone"],
 ];
 
 /**
- * Resolve a savoir-faire title to a Lucide icon.
+ * Resolve a savoir-faire title to an Iconify icon name.
  * First tries exact slug match; falls back to keyword pattern matching;
- * defaults to Compass.
+ * defaults to compass.
  */
-export function iconForSkillTitle(title: string): LucideIcon {
+export function iconForSkillTitle(title: string): string {
   const slug = title
     .toLowerCase()
     .normalize("NFD")
@@ -73,5 +59,5 @@ export function iconForSkillTitle(title: string): LucideIcon {
   for (const [re, icon] of KEYWORD_RULES) {
     if (re.test(title)) return icon;
   }
-  return Compass;
+  return "ph:compass-duotone";
 }

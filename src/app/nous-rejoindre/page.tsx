@@ -4,18 +4,7 @@ import { PageHero } from "@/components/PageHero";
 import { Pill } from "@/components/Pill";
 import { Reveal } from "@/components/Reveal";
 import { QuestionCTA } from "@/components/QuestionCTA";
-import {
-  GraduationCap,
-  Globe2,
-  Users,
-  Sparkles,
-  FileSearch,
-  MessageSquare,
-  Handshake,
-  Rocket,
-  Quote,
-  type LucideIcon,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,51 +13,47 @@ export const metadata: Metadata = {
     "Rejoignez ETAFAT et participez à des projets géospatiaux à fort impact au Maroc et en Afrique.",
 };
 
-const POURQUOI: { icon: LucideIcon; title: string; text: string }[] = [
+const POURQUOI: { icon: string; title: string; text: string }[] = [
   {
-    icon: GraduationCap,
+    icon: "ph:graduation-cap-duotone",
     title: "Monter en compétences",
     text: "Bénéficier de formations continues, d'un accompagnement managérial de proximité et d'opportunités d'évolution dans nos différents métiers.",
   },
   {
-    icon: Globe2,
+    icon: "ph:globe-hemisphere-west-duotone",
     title: "Travailler à l'international",
     text: "Intervenir sur des projets variés au Maroc et en Afrique, aux côtés d'institutions publiques, de bailleurs de fonds et de partenaires privés.",
   },
   {
-    icon: Users,
+    icon: "ph:users-three-duotone",
     title: "Rejoindre des équipes engagées",
     text: "Évoluer au sein d'équipes pluridisciplinaires, mobilisées par le sens des missions et la qualité des livrables.",
   },
   {
-    icon: Sparkles,
+    icon: "ph:sparkle-duotone",
     title: "Innover au quotidien",
     text: "Participer au développement de solutions géospatiales avancées, en lien direct avec nos pôles R&D et nos clients.",
   },
 ];
 
-const PROCESSUS: { num: string; icon: LucideIcon; title: string; text: string }[] = [
+const PROCESSUS: { icon: string; title: string; text: string }[] = [
   {
-    num: "01",
-    icon: FileSearch,
+    icon: "ph:file-magnifying-glass-duotone",
     title: "Candidature",
     text: "Postulez à une offre ou envoyez une candidature spontanée. Chaque dossier est étudié par notre équipe RH.",
   },
   {
-    num: "02",
-    icon: MessageSquare,
+    icon: "ph:chat-circle-text-duotone",
     title: "Échange RH",
     text: "Un premier entretien permet de découvrir votre parcours, vos motivations et de vous présenter notre culture.",
   },
   {
-    num: "03",
-    icon: Handshake,
+    icon: "ph:handshake-duotone",
     title: "Entretien métier",
     text: "Un échange avec le manager du pôle concerné approfondit les aspects techniques et opérationnels du poste.",
   },
   {
-    num: "04",
-    icon: Rocket,
+    icon: "ph:rocket-launch-duotone",
     title: "Intégration",
     text: "Un parcours d'intégration personnalisé vous accompagne dès votre arrivée pour une prise de poste sereine.",
   },
@@ -138,22 +123,20 @@ export default function NousRejoindrePage() {
             <h2 className="text-navy text-center mb-14">Une expérience collaborateur unique</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {POURQUOI.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <Reveal key={p.title} delay={i * 80}>
-                  <div className="bg-white p-7 rounded-md border border-[#e5e7eb] h-full hover:shadow-md transition-shadow">
-                    <div className="w-12 h-12 rounded-full bg-[#e0eef6] flex items-center justify-center mb-5">
-                      <Icon size={22} strokeWidth={1.8} className="text-[#00669d]" />
-                    </div>
-                    <h3 className="text-navy text-lg font-semibold mb-3 leading-tight">
-                      {p.title}
-                    </h3>
-                    <p className="text-body text-sm leading-relaxed">{p.text}</p>
+            {POURQUOI.map((p, i) => (
+              <Reveal key={p.title} delay={i * 80}>
+                <div className="group relative bg-white p-8 rounded-md border border-[#e5e7eb] h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={p.icon} width={36} height={36} className="text-[#00669d]" />
                   </div>
-                </Reveal>
-              );
-            })}
+                  <h3 className="text-navy text-lg font-semibold mb-3 leading-tight">
+                    {p.title}
+                  </h3>
+                  <p className="text-body text-sm leading-relaxed">{p.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -168,28 +151,20 @@ export default function NousRejoindrePage() {
             <h2 className="text-navy text-center mb-14">Quatre étapes simples</h2>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PROCESSUS.map((p, i) => {
-              const Icon = p.icon;
-              return (
-                <Reveal key={p.num} delay={i * 100}>
-                  <div className="relative bg-[#f5f7f9] p-7 rounded-md h-full">
-                    <span
-                      className="absolute top-4 right-5 text-[#00669d]/15 text-5xl font-semibold"
-                      style={{ fontFamily: "var(--font-figtree)" }}
-                    >
-                      {p.num}
-                    </span>
-                    <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mb-5 relative">
-                      <Icon size={22} strokeWidth={1.8} className="text-[#00669d]" />
-                    </div>
-                    <h3 className="text-navy text-lg font-semibold mb-3 leading-tight relative">
-                      {p.title}
-                    </h3>
-                    <p className="text-body text-sm leading-relaxed relative">{p.text}</p>
+            {PROCESSUS.map((p, i) => (
+              <Reveal key={p.title} delay={i * 100}>
+                <div className="group relative bg-[#f5f7f9] p-8 rounded-md h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={p.icon} width={36} height={36} className="text-[#00669d]" />
                   </div>
-                </Reveal>
-              );
-            })}
+                  <h3 className="text-navy text-lg font-semibold mb-3 leading-tight">
+                    {p.title}
+                  </h3>
+                  <p className="text-body text-sm leading-relaxed">{p.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -209,7 +184,7 @@ export default function NousRejoindrePage() {
             {TEMOIGNAGES.map((t, i) => (
               <Reveal key={t.name} delay={i * 100}>
                 <div className="bg-white/5 backdrop-blur p-7 rounded-md h-full flex flex-col border border-white/10">
-                  <Quote size={28} className="text-[#00669d] mb-4" strokeWidth={1.8} />
+                  <Icon icon="ph:quotes-duotone" width={32} height={32} className="text-[#00669d] mb-4" />
                   <p className="text-white/90 text-sm leading-relaxed mb-6 italic flex-1">
                     « {t.quote} »
                   </p>

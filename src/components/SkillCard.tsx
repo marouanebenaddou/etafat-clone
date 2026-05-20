@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Icon } from "@iconify/react";
 import { iconForSkillTitle } from "./skill-icons";
 
 interface SkillCardProps {
@@ -11,14 +12,15 @@ interface SkillCardProps {
  * centered icon, title, then an "Explorer" underline link.
  */
 export function SkillCard({ title, href }: SkillCardProps) {
-  const Icon = iconForSkillTitle(title);
+  const iconName = iconForSkillTitle(title);
 
   const inner = (
     <>
       <Icon
+        icon={iconName}
+        width={48}
+        height={48}
         className="mx-auto text-[#00669d] transition-transform duration-300 group-hover:-translate-y-1"
-        size={44}
-        strokeWidth={1.5}
         aria-hidden
       />
       <h3 className="mt-5 text-navy text-base md:text-lg font-medium leading-tight">

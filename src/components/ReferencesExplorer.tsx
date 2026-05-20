@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import { Reveal } from "@/components/Reveal";
-import { MapPin, Calendar, Building2 } from "lucide-react";
+import { Icon } from "@iconify/react";
 
 type Domain =
   | "Tous"
@@ -367,15 +367,15 @@ export function ReferencesExplorer() {
                   </p>
                   <div className="space-y-1.5 pt-4 border-t border-[#e5e7eb] text-xs text-body">
                     <p className="flex items-start gap-2">
-                      <MapPin size={13} className="text-[#00669d] mt-0.5 shrink-0" />
+                      <Icon icon="tabler:map-pin" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
                       <span>{r.location}</span>
                     </p>
                     <p className="flex items-start gap-2">
-                      <Calendar size={13} className="text-[#00669d] mt-0.5 shrink-0" />
+                      <Icon icon="tabler:calendar-event" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
                       <span>{r.year}</span>
                     </p>
                     <p className="flex items-start gap-2">
-                      <Building2 size={13} className="text-[#00669d] mt-0.5 shrink-0" />
+                      <Icon icon="tabler:building" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
                       <span>{r.client}</span>
                     </p>
                   </div>

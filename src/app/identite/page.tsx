@@ -7,17 +7,7 @@ import {
   ArrowRightIcon,
   CheckCircleIcon,
 } from "@/components/icons";
-import {
-  Award,
-  Eye,
-  Scale,
-  ShieldCheck,
-  Lock,
-  Handshake,
-  Users,
-  Mountain,
-  type LucideIcon,
-} from "lucide-react";
+import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -26,39 +16,39 @@ export const metadata: Metadata = {
     "Depuis 1983, ETAFAT accompagne les acteurs publics et privés dans les domaines du foncier, du conseil & ingénierie, de la donnée géospatiale et des SIG.",
 };
 
-const VALEURS: { icon: LucideIcon; title: string; text: string }[] = [
+const VALEURS: { icon: string; title: string; text: string }[] = [
   {
-    icon: Award,
+    icon: "ph:medal-duotone",
     title: "Compétence",
     text: "Nous mobilisons des équipes qualifiées, expérimentées et pluridisciplinaires pour répondre aux exigences techniques de chaque projet.",
   },
   {
-    icon: Eye,
+    icon: "ph:eye-duotone",
     title: "Transparence",
     text: "Nous privilégions une communication claire, un suivi rigoureux et une relation de confiance durable avec nos clients et partenaires.",
   },
   {
-    icon: Scale,
+    icon: "ph:scales-duotone",
     title: "Intégrité",
     text: "Nous conduisons nos missions avec honnêteté, impartialité et respect des règles professionnelles, notamment dans les projets fonciers, institutionnels et territoriaux.",
   },
   {
-    icon: ShieldCheck,
+    icon: "ph:shield-check-duotone",
     title: "Responsabilité",
     text: "Nous assumons pleinement notre rôle dans la réussite des projets confiés, à travers le respect des délais, la qualité des livrables et la maîtrise des impacts.",
   },
   {
-    icon: Lock,
+    icon: "ph:lock-key-duotone",
     title: "Confidentialité",
     text: "Nous protégeons les données sensibles, foncières, techniques, géospatiales et institutionnelles traitées dans le cadre de nos missions.",
   },
   {
-    icon: Handshake,
+    icon: "ph:handshake-duotone",
     title: "Loyauté",
     text: "Nous construisons des relations durables fondées sur la confiance, le respect des engagements et la fidélité à nos principes.",
   },
   {
-    icon: Users,
+    icon: "ph:users-three-duotone",
     title: "Équité",
     text: "Nous adoptons une approche juste, impartiale et respectueuse des parties prenantes, des contextes locaux et des spécificités de chaque projet.",
   },
@@ -171,18 +161,18 @@ export default function IdentitePage() {
             </p>
           </Reveal>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-            {VALEURS.map((v, i) => {
-              const Icon = v.icon;
-              return (
-                <Reveal key={v.title} delay={i * 60}>
-                  <div className="bg-white p-6 rounded-md border border-[#e5e7eb] h-full">
-                    <Icon size={36} strokeWidth={1.5} className="text-[#00669d] mb-4" />
-                    <h3 className="text-navy text-lg font-semibold mb-3">{v.title}</h3>
-                    <p className="text-body text-sm leading-relaxed">{v.text}</p>
+            {VALEURS.map((v, i) => (
+              <Reveal key={v.title} delay={i * 60}>
+                <div className="group relative bg-white p-8 rounded-md border border-[#e5e7eb] h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={v.icon} width={36} height={36} className="text-[#00669d]" />
                   </div>
-                </Reveal>
-              );
-            })}
+                  <h3 className="text-navy text-lg font-semibold mb-3">{v.title}</h3>
+                  <p className="text-body text-sm leading-relaxed">{v.text}</p>
+                </div>
+              </Reveal>
+            ))}
           </div>
         </div>
       </section>
@@ -248,7 +238,7 @@ export default function IdentitePage() {
             {CHIFFRES.map((c, i) => (
               <Reveal key={i} delay={i * 100}>
                 <div className="bg-[#00669d] text-white rounded-md p-8 h-full">
-                  <Mountain size={32} strokeWidth={1.5} className="text-white/80 mb-5" />
+                  <Icon icon="ph:mountains-duotone" width={36} height={36} className="text-white/80 mb-5" />
                   <p className="text-3xl md:text-4xl font-semibold leading-none mb-2" style={{ fontFamily: "var(--font-figtree)", color: "#fff" }}>
                     {c.value}
                     {c.unit && <span className="text-xl ml-1 font-normal">{c.unit}</span>}

@@ -12,19 +12,19 @@ import {
   ArrowRightIcon,
 } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
-import { Landmark, Satellite, Database, Compass, Lightbulb } from "lucide-react";
+import { Icon } from "@iconify/react";
 import postsRaw from "@/data/posts.json";
 
 const PILLARS: {
   letter: string;
   title: string;
-  Icon: typeof Landmark;
+  icon: string;
   items: string[];
 }[] = [
   {
     letter: "A",
     title: "Expertise foncière",
-    Icon: Landmark,
+    icon: "ph:map-pin-area-duotone",
     items: [
       "Assistance foncière",
       "Cadastre & sécurisation foncière",
@@ -36,7 +36,7 @@ const PILLARS: {
   {
     letter: "B",
     title: "Acquisition de données",
-    Icon: Satellite,
+    icon: "ph:drone-duotone",
     items: [
       "Topographie & géodésie",
       "Relevés géospatiaux",
@@ -49,7 +49,7 @@ const PILLARS: {
   {
     letter: "C",
     title: "Ingénierie de données",
-    Icon: Database,
+    icon: "ph:stack-duotone",
     items: [
       "Cartographie",
       "Systèmes d'information géographique",
@@ -62,7 +62,7 @@ const PILLARS: {
   {
     letter: "D",
     title: "Accompagnement projet",
-    Icon: Compass,
+    icon: "ph:users-three-duotone",
     items: [
       "Études territoriales",
       "Conseil & audit géospatial",
@@ -128,27 +128,30 @@ export default function HomePage() {
       {/* HERO */}
       <section className="relative min-h-[100vh] flex items-center text-white overflow-hidden">
         <div className="absolute inset-0">
-          <Image
-            src={IMG("2024/05/dsc6186-scaled-1.jpg")}
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-black/15" />
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster={IMG("2024/05/dsc6186-scaled-1.jpg")}
+            className="absolute inset-0 w-full h-full object-cover"
+          >
+            <source src="/etafat/globe.mp4" type="video/mp4" />
+          </video>
+          <div className="absolute inset-0 bg-black/35" />
         </div>
         <div className="container-etafat relative z-10 pt-32">
           <Reveal y={40}>
             <h1 className="text-white max-w-4xl text-4xl md:text-6xl lg:text-7xl font-semibold leading-[1.1] mb-6" style={{ color: "#fff" }}>
-              Donnons du pouvoir
-              <br />à vos données
+              Révélons le potentiel
+              <br />de vos territoires
             </h1>
           </Reveal>
           <Reveal y={30} delay={250}>
             <p className="max-w-xl text-white/95 text-base md:text-lg leading-relaxed">
-              Notre métier consiste à mesurer, quantifier et analyser les données géospatiales
-              afin de les transformer en véritables outils d&apos;aide à la décision.
+              Nous mesurons, analysons et valorisons les données géospatiales pour aider nos
+              clients à mieux comprendre leurs territoires, sécuriser leurs projets et prendre
+              des décisions fiables.
             </p>
           </Reveal>
         </div>
@@ -177,12 +180,10 @@ export default function HomePage() {
           </Reveal>
           <Reveal delay={120}>
             <p className="text-body mb-8 leading-relaxed">
-              Nos équipes, nos technologies de pointe et notre capacité d&apos;innovation nous
-              permettent d&apos;intervenir sur les projets les plus ambitieux,{" "}
-              <Link href="/agences/" className="underline text-navy hover:text-[#00669d]">
-                dans le monde entier
-              </Link>
-              , et d&apos;accompagner nos clients dans leurs décisions.
+              ETAFAT mobilise son expertise terrain, ses technologies de mesure et sa
+              maîtrise de la donnée géospatiale pour accompagner les projets
+              d&apos;aménagement, de foncier, d&apos;infrastructures et de sécurisation
+              foncière.
             </p>
             <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
               Découvrez nos savoir-faire
@@ -209,44 +210,34 @@ export default function HomePage() {
           </Reveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {PILLARS.map((p, i) => {
-              const Icon = p.Icon;
-              return (
-                <Reveal key={p.letter} delay={i * 100}>
-                  <article className="bg-white p-7 rounded-md border border-[#e5e7eb] h-full hover:shadow-md transition-shadow flex flex-col">
-                    <div className="flex items-start justify-between mb-5">
-                      <div className="w-12 h-12 rounded-full bg-[#e0eef6] flex items-center justify-center">
-                        <Icon size={22} strokeWidth={1.8} className="text-[#00669d]" />
-                      </div>
-                      <span
-                        className="text-teal text-2xl font-semibold"
-                        style={{ fontFamily: "var(--font-figtree)" }}
-                      >
-                        {p.letter}
-                      </span>
-                    </div>
-                    <h3 className="text-navy text-lg font-semibold mb-4 leading-tight">
-                      {p.title}
-                    </h3>
-                    <ul className="space-y-2 text-body text-sm">
-                      {p.items.map((item) => (
-                        <li key={item} className="flex items-start gap-2">
-                          <span className="text-[#00669d] mt-1.5 shrink-0 w-1 h-1 rounded-full bg-[#00669d]" />
-                          <span className="leading-snug">{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </article>
-                </Reveal>
-              );
-            })}
+            {PILLARS.map((p, i) => (
+              <Reveal key={p.letter} delay={i * 100}>
+                <article className="group relative bg-white p-8 rounded-md border border-[#e5e7eb] h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
+                  <div className="w-16 h-16 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-6 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                    <Icon icon={p.icon} width={36} height={36} className="text-[#00669d]" />
+                  </div>
+                  <h3 className="text-navy text-lg font-semibold mb-4 leading-tight">
+                    {p.title}
+                  </h3>
+                  <ul className="space-y-2 text-body text-sm">
+                    {p.items.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <span className="text-[#00669d] mt-1.5 shrink-0 w-1 h-1 rounded-full bg-[#00669d]" />
+                        <span className="leading-snug">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </Reveal>
+            ))}
           </div>
 
           <Reveal delay={400}>
             <div className="mt-10 bg-[#00669d] rounded-md p-8 md:p-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
               <div className="flex items-start gap-5">
                 <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur flex items-center justify-center shrink-0">
-                  <Lightbulb size={22} className="text-white" />
+                  <Icon icon="ph:lightbulb-filament-duotone" width={26} height={26} className="text-white" />
                 </div>
                 <div>
                   <h3 className="text-white text-xl md:text-2xl font-semibold mb-2" style={{ color: "#fff" }}>
@@ -272,15 +263,15 @@ export default function HomePage() {
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
           <Reveal>
             <h2 className="text-navy mb-8 leading-tight">
-              Ce qui donne
-              <br />du sens à nos métiers
+              Ce qui guide
+              <br />notre expertise
             </h2>
             <p className="text-body mb-8 leading-relaxed max-w-md">
               Nous plaçons l&apos;excellence, l&apos;innovation et la responsabilité au centre
               de nos actions.
             </p>
             <Pill href="/identite/" variant="outline-teal" arrow="right">
-              Notre vision
+              Découvrir notre vision
             </Pill>
           </Reveal>
           <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
