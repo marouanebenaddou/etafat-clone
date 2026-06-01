@@ -209,15 +209,7 @@ export default function SavoirFairePage() {
                 {/* Pillar header */}
                 <Reveal>
                   <div className="lg:sticky lg:top-32">
-                    <div className="flex items-center gap-3 mb-5">
-                      <span
-                        className="w-10 h-10 rounded-full bg-[#00669d] text-white flex items-center justify-center font-bold text-lg"
-                        style={{ fontFamily: "var(--font-figtree)" }}
-                      >
-                        {p.letter}
-                      </span>
-                      <div className="w-12 h-0.5 bg-[#00669d]/30" />
-                    </div>
+                    <div className="w-12 h-0.5 bg-[#00669d] mb-5" />
                     <h2 className="text-navy mb-5 leading-tight text-3xl md:text-4xl">
                       {p.title}
                     </h2>
