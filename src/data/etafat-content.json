@@ -1072,6 +1072,224 @@
         "Accompagnement des projets institutionnels et territoriaux",
         "Contrôle qualité des livrables cartographiques, SIG, topographiques et fonciers"
       ]
+    },
+    {
+      "index": 11,
+      "title": "Plans parcellaires & emprises",
+      "slug": "plans-parcellaires-et-emprises",
+      "short": "Établir des plans précis et fiables pour identifier, délimiter et représenter les parcelles, les emprises de projets et les limites foncières.",
+      "detail": "ETAFAT réalise des plans parcellaires précis et fiables pour identifier, délimiter et représenter les parcelles, les emprises de projets et les limites foncières. Grâce à des levés topographiques de haute précision, à l'utilisation de technologies modernes et à une expertise terrain reconnue, nous produisons des plans conformes aux exigences techniques, réglementaires et institutionnelles.",
+      "competences": [
+        "Levé topographique pour l'établissement de plans parcellaires",
+        "Délimitation de parcelles et d'emprises de projets",
+        "Calcul et représentation des superficies",
+        "Production de plans conformes aux normes et standards",
+        "Matérialisation et bornage de limites foncières",
+        "Plans d'emprises pour infrastructures et aménagements",
+        "Plans de récolement et de lotissement",
+        "Plans de la voirie et des réseaux",
+        "Intégration des données dans un système SIG",
+        "Contrôle qualité et vérification terrain",
+        "Fourniture de plans exploitables pour les démarches administratives et techniques"
+      ]
+    },
+    {
+      "index": 12,
+      "title": "Cartographie foncière",
+      "slug": "cartographie-fonciere",
+      "short": "Concevoir des cartes foncières fiables et adaptées aux besoins des institutions, collectivités, aménageurs, opérateurs et porteurs de projets.",
+      "detail": "ETAFAT conçoit des cartes foncières fiables et adaptées aux besoins des institutions, collectivités, aménageurs, opérateurs et porteurs de projets. En transformant les données foncières en supports visuels clairs, ETAFAT facilite la compréhension des parcelles, limites, emprises, occupations et contraintes, afin d'éclairer la planification, la concertation et la prise de décision.",
+      "competences": [
+        "Production de cartes foncières thématiques",
+        "Représentation des parcelles, limites et emprises",
+        "Cartographie des occupations et contraintes foncières",
+        "Croisement des données foncières, cadastrales et géospatiales",
+        "Analyse spatiale appliquée au foncier",
+        "Production d'atlas parcellaires",
+        "Préparation de cartes pour rapports, études et présentations",
+        "Mise en forme de données pour SIG ou géoportails"
+      ]
+    },
+    {
+      "index": 13,
+      "title": "SIG foncier & bases cadastrales",
+      "slug": "sig-foncier-et-bases-cadastrales",
+      "short": "Concevoir, structurer et déployer des SIG fonciers et bases cadastrales pour centraliser, analyser et partager l'information foncière.",
+      "detail": "ETAFAT accompagne ses clients dans la conception, la structuration et le déploiement de SIG fonciers et de bases cadastrales permettant de centraliser, analyser, mettre à jour et partager l'information foncière. Nos solutions facilitent la gestion des parcelles, des droits, des occupations, des emprises et des documents associés, afin de moderniser les outils de gestion et d'améliorer la qualité des décisions.",
+      "competences": [
+        "Conception de modèles de données foncières",
+        "Structuration de bases cadastrales géoréférencées",
+        "Nettoyage, intégration et fiabilisation des données existantes",
+        "Mise en place de systèmes d'information foncière",
+        "Développement de géoportails et interfaces cartographiques",
+        "Digitalisation des procédures foncières",
+        "Gestion documentaire associée aux parcelles",
+        "Formation et accompagnement des utilisateurs"
+      ]
+    },
+    {
+      "index": 14,
+      "title": "Relevés aériens & LiDAR",
+      "slug": "releves-aeriens-et-lidar",
+      "short": "Acquérir des données géospatiales fiables et détaillées par drone, avion et LiDAR pour la cartographie, l'aménagement et le suivi des infrastructures.",
+      "detail": "ETAFAT réalise des relevés aériens de haute précision pour fournir des données géospatiales fiables et détaillées au service de la cartographie, de l'aménagement du territoire et du suivi des infrastructures. Grâce à des plateformes drones et LiDAR aéroportés de pointe et à des méthodes éprouvées, nous couvrons efficacement de vastes territoires avec des résultats précis et exploitables.",
+      "competences": [
+        "Prises de vues aériennes par drone et avion",
+        "Photogrammétrie numérique",
+        "LiDAR aéroporté",
+        "Orthophotos et mosaïques haute résolution",
+        "Modèles Numériques de Terrain (MNT) et de Surface (MNS)",
+        "Planification et optimisation de missions aériennes",
+        "Géoréférencement précis des données",
+        "Couverture de vastes territoires",
+        "Contrôle qualité rigoureux",
+        "Traitement, analyse et restitution de données géospatiales"
+      ]
+    },
+    {
+      "index": 15,
+      "title": "Scanner laser 3D & MMS",
+      "slug": "scanner-laser-3d-et-mms",
+      "short": "Capter l'existant avec précision grâce au scanner laser 3D et au Mobile Mapping System pour modéliser, diagnostiquer et documenter.",
+      "detail": "ETAFAT mobilise les technologies de scanner laser 3D et de Mobile Mapping System (MMS) pour capter l'existant avec précision et produire des nuages de points denses, exploitables pour la modélisation, le diagnostic et la documentation. À partir de ces relevés, nous générons des modèles 3D, des plans, des coupes et des maquettes BIM adaptés aux exigences des projets bâtiment, patrimoine, infrastructure et industrie.",
+      "competences": [
+        "Acquisition lasergrammétrique haute densité",
+        "Production de nuages de points denses et géoréférencés",
+        "Mobile Mapping System pour acquisition dynamique",
+        "Assemblage, nettoyage et géoréférencement des nuages",
+        "Relevés de bâtiments, ouvrages et infrastructures complexes",
+        "Extraction de plans, coupes et élévations",
+        "Scan-to-BIM",
+        "Contrôle dimensionnel des ouvrages",
+        "Documentation 3D de l'existant",
+        "Préparation des données pour modélisation et BIM"
+      ]
+    },
+    {
+      "index": 16,
+      "title": "Bathymétrie & hydrographie",
+      "slug": "bathymetrie-et-hydrographie",
+      "short": "Mener des relevés bathymétriques et hydrographiques de haute précision pour caractériser les fonds aquatiques et les ouvrages associés.",
+      "detail": "ETAFAT mène des relevés bathymétriques de haute précision pour caractériser les profondeurs et le relief des fonds aquatiques. Nous accompagnons les maîtres d'ouvrage et les bureaux d'études dans leurs projets portuaires, fluviaux, lacustres, hydrauliques, environnementaux et industriels, en mobilisant des moyens techniques et des méthodologies adaptées aux exigences de chaque projet.",
+      "competences": [
+        "Levés bathymétriques monofaisceaux et multifaisceaux",
+        "Hydrographie portuaire, fluviale, lacustre et côtière",
+        "Profils en travers et profils longitudinaux",
+        "Modèles Numériques de Fond (MNF)",
+        "Mise en place de référentiels hydrographiques",
+        "Suivi de sédimentation et calcul de volumes",
+        "Relevés de quais, digues, berges et ouvrages annexes",
+        "Détection d'obstacles et zones immergées",
+        "Production de cartes contours et plans bathymétriques",
+        "Intégration dans des outils SIG et BIM"
+      ]
+    },
+    {
+      "index": 17,
+      "title": "Géoradar & détection de réseaux",
+      "slug": "georadar-et-detection-de-reseaux",
+      "short": "Détecter les réseaux enterrés et documenter les ouvrages souterrains pour sécuriser les projets et maîtriser les risques.",
+      "detail": "ETAFAT détecte les réseaux enterrés et documente les ouvrages souterrains avec des technologies de pointe et une expertise reconnue. Nous sécurisons vos projets, réduisons les risques d'endommagement et fournissons des informations souterraines fiables pour une meilleure maîtrise de vos opérations.",
+      "competences": [
+        "Détection de réseaux enterrés (EP, EU, AEP, gaz, électricité, télécoms, chaleur...)",
+        "Investigations par géoradar (GPR) et autres méthodes non intrusives",
+        "Relevés et scan 3D d'ouvrages souterrains",
+        "Géoréférencement des levés topographiques souterrains",
+        "Sécurisation des interventions et gestion des risques",
+        "Cartographie et modélisation des réseaux enterrés",
+        "Plans de synthèse et profils en long",
+        "Contrôle qualité et traçabilité des données",
+        "Intégration des données en SIG et BIM",
+        "Conseil et assistance technique"
+      ]
+    },
+    {
+      "index": 18,
+      "title": "Webmapping & plateformes géospatiales",
+      "slug": "webmapping-et-plateformes-geospatiales",
+      "short": "Concevoir et déployer des outils web interactifs et des plateformes géospatiales pour partager, visualiser et exploiter l'information géographique.",
+      "detail": "ETAFAT conçoit et développe des outils web interactifs et des plateformes géospatiales sur mesure pour partager, visualiser, mettre à jour et exploiter l'information géographique de manière collaborative et sécurisée. Nos solutions s'adaptent à vos besoins, à vos données et à vos usages pour faciliter la prise de décision, améliorer la transparence et renforcer la performance de vos organisations.",
+      "competences": [
+        "Conception de géoportails adaptés aux besoins métiers",
+        "Développement d'applications web cartographiques",
+        "Visualisation interactive de données géospatiales",
+        "Gestion des droits et des usages",
+        "Interopérabilité des données et des systèmes",
+        "Maintenance et accompagnement dans la durée",
+        "Accessibilité multi-supports",
+        "Collaboration entre utilisateurs",
+        "Expérience utilisateur soignée"
+      ]
+    },
+    {
+      "index": 19,
+      "title": "Dématérialisation & structuration de données",
+      "slug": "dematerialisation-et-structuration-de-donnees",
+      "short": "Dématérialiser, organiser et structurer les données géospatiales, foncières et techniques pour les rendre fiables, exploitables et durables.",
+      "detail": "Chez ETAFAT, nous dématérialisons, organisons, structurons et stockons les données géospatiales, foncières et techniques hétérogènes pour les transformer en informations fiables, exploitables et durables. Nous combinons technologies éprouvées, rigueur méthodologique et expertise métier pour garantir la qualité, la traçabilité et la valeur de vos données tout au long de leur cycle de vie.",
+      "competences": [
+        "Numérisation de plans et documents techniques",
+        "Structuration de bases de données",
+        "Contrôle qualité et normalisation",
+        "Intégration de données hétérogènes",
+        "Indexation documentaire",
+        "Préparation pour SIG et applications métier",
+        "Fiabilité et traçabilité des données",
+        "Organisation des flux et des référentiels",
+        "Production de livrables exploitables"
+      ]
+    },
+    {
+      "index": 20,
+      "title": "Assistance à maîtrise d'ouvrage",
+      "slug": "assistance-a-maitrise-d-ouvrage",
+      "short": "Accompagner les maîtres d'ouvrage publics et privés dans la définition, la conduite et la sécurisation de leurs projets géospatiaux et techniques.",
+      "detail": "ETAFAT accompagne les maîtres d'ouvrage publics et privés dans le pilotage stratégique et opérationnel de leurs projets géospatiaux et techniques. Nous vous aidons à définir vos besoins, sélectionner les meilleurs partenaires et suivre la bonne exécution des prestations.",
+      "competences": [
+        "Définition des besoins et des objectifs du projet",
+        "Rédaction de cahiers des charges et procédures d'achat",
+        "Appui à la consultation et à la passation",
+        "Analyse des offres et aide au choix des prestataires",
+        "Pilotage et suivi des prestations et des contrats",
+        "Suivi des délais, des coûts et de la qualité",
+        "Réception des livrables et contrôle qualité",
+        "Coordination des parties prenantes et communication"
+      ]
+    },
+    {
+      "index": 21,
+      "title": "Inspection & surveillance d'ouvrage",
+      "slug": "inspection-et-surveillance-d-ouvrage",
+      "short": "Inspecter et surveiller les ouvrages et infrastructures pour garantir leur sécurité, leur performance et leur durabilité.",
+      "detail": "ETAFAT accompagne les maîtres d'ouvrage et gestionnaires dans l'inspection et la surveillance de leurs ouvrages et infrastructures pour en garantir la sécurité, la performance et la durabilité. Nous mettons en œuvre des méthodes d'inspection précises et des outils géospatiaux avancés pour identifier les pathologies, suivre les déformations et appuyer les décisions de maintenance et de réhabilitation.",
+      "competences": [
+        "Inspection visuelle et instrumentée des ouvrages",
+        "Surveillance d'ouvrages et d'infrastructures",
+        "Suivi des déformations et des mouvements",
+        "Contrôle géométrique et auscultation périodique",
+        "Inspection par drone et géoradar des zones d'accès difficile",
+        "Anticipation des risques et alertes précoces",
+        "Production de rapports d'inspection et de recommandations",
+        "Appui aux décisions de maintenance et de réhabilitation"
+      ]
+    },
+    {
+      "index": 22,
+      "title": "Formation & transfert de compétences",
+      "slug": "formation-et-transfert-de-competences",
+      "short": "Développer les compétences des équipes sur les outils, méthodes et technologies géospatiales pour gagner en autonomie et en performance.",
+      "detail": "ETAFAT accompagne les organisations dans le développement des compétences de leurs équipes sur les outils et méthodes de l'information géospatiale, les techniques de levés, les SIG, le BIM et la gestion des données. Nos formations allient expertise technique, pédagogie active et retours d'expérience pour garantir un transfert de compétences efficace et adapté aux besoins de chaque équipe ou structure.",
+      "competences": [
+        "Formation aux outils SIG",
+        "Accompagnement aux méthodes terrain",
+        "Initiation au BIM et au 3D",
+        "Gestion de la qualité des données",
+        "Prise en main des plateformes géospatiales",
+        "Ateliers pratiques et cas concrets",
+        "Montée en compétences et autonomie progressive",
+        "Pédagogie active et contenus adaptés",
+        "Retours d'expérience et bonnes pratiques"
+      ]
     }
   ]
 }
