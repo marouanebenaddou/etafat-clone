@@ -60,12 +60,11 @@ const PILLARS: Pillar[] = [
       "ETAFAT mobilise des technologies avancées pour acquérir des données géospatiales fiables, précises et adaptées aux besoins de chaque projet.",
     icon: "ph:drone-duotone",
     skills: [
-      { title: "Topographie & géodésie", icon: "ph:mountains-duotone", slug: "topographie-et-geodesie" },
-      { title: "Relevés géospatiaux", icon: "ph:crosshair-simple-duotone", slug: "releves-geospatiaux" },
-      { title: "Relevés aériens & LiDAR", icon: "ph:airplane-tilt-duotone", slug: "releves-aeriens-et-lidar" },
-      { title: "Scanner laser 3D & MMS", icon: "ph:scan-duotone", slug: "scanner-laser-3d-et-mms" },
-      { title: "Bathymétrie & hydrographie", icon: "ph:waves-duotone", slug: "bathymetrie-et-hydrographie" },
-      { title: "Géoradar & détection de réseaux", icon: "tabler:radar-2", slug: "georadar-et-detection-de-reseaux" },
+      { title: "Relevés terrestres", icon: "ph:mountains-duotone" },
+      { title: "Relevés aériens", icon: "ph:airplane-tilt-duotone" },
+      { title: "Relevés souterrains", icon: "tabler:radar-2" },
+      { title: "Relevés bathymétriques", icon: "ph:waves-duotone" },
+      { title: "Relevés de haute précision", icon: "ph:crosshair-simple-duotone" },
     ],
   },
   {
