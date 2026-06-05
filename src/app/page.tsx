@@ -13,7 +13,7 @@ import {
 } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { Icon } from "@iconify/react";
-import postsRaw from "@/data/posts.json";
+import { linkedinPosts } from "@/data/linkedin-posts";
 
 const PILLARS: {
   letter: string;
@@ -84,44 +84,8 @@ const domaines = [
   { label: "Agriculture & Eau", href: "/domaines-activite/agriculture-eau/", Icon: LeafWaterIcon },
 ];
 
-type Post = {
-  path: string;
-  title: string;
-  featuredImage: string;
-  description: string;
-  categories?: string[];
-};
-
-function PostCard({ post }: { post: Post }) {
-  const tag = post.categories?.[0] || (post.path.includes("references") ? "Projet" : "Groupe");
-  return (
-    <Link href={post.path} className="group block">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-md mb-5">
-        {post.featuredImage ? (
-          <Image
-            src={post.featuredImage}
-            alt={post.title}
-            fill
-            sizes="(min-width:768px) 33vw, 100vw"
-            className="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="bg-[#e5e7eb] w-full h-full" />
-        )}
-        <span className="absolute top-3 left-3 pill pill-teal !py-1 !px-3 !text-[11px]">
-          {tag}
-        </span>
-      </div>
-      <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#00669d] transition-colors">
-        {post.title}
-      </h3>
-      <p className="text-body line-clamp-2 text-sm mb-3">{post.description}</p>
-    </Link>
-  );
-}
-
 export default function HomePage() {
-  const latestPosts = (postsRaw as Post[]).slice(0, 3);
+  const latestPosts = linkedinPosts.slice(0, 3);
 
   return (
     <div>
@@ -438,12 +402,40 @@ export default function HomePage() {
           <h2 className="text-navy mb-12">Nos dernières actualités</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {latestPosts.map((post) => (
-              <PostCard key={post.path} post={post} />
+              <a
+                key={post.url}
+                href={post.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${post.title} — voir le post sur LinkedIn`}
+                className="group block"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden rounded-md mb-5 bg-[#e5e7eb]">
+                  <Image
+                    src={post.image}
+                    alt={post.title}
+                    fill
+                    sizes="(min-width:768px) 33vw, 100vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-[#0a66c2] backdrop-blur">
+                    <Icon icon="mdi:linkedin" width={14} height={14} />
+                    LinkedIn
+                  </span>
+                </div>
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-teal">
+                  {post.date}
+                </p>
+                <h3 className="text-navy text-xl font-semibold mb-2 leading-tight group-hover:text-[#00669d] transition-colors line-clamp-2">
+                  {post.title}
+                </h3>
+                <p className="text-body line-clamp-2 text-sm">{post.excerpt}</p>
+              </a>
             ))}
           </div>
           <div className="flex justify-center mt-12">
             <Pill href="/actualites/" variant="outline-teal" arrow="right">
-              Découvrez tous les articles
+              Voir toutes nos actualités
             </Pill>
           </div>
         </div>
