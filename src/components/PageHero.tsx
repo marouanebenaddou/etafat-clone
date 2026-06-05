@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { Breadcrumb } from "./Breadcrumb";
 import { Reveal } from "./Reveal";
+import { ArrowRightIcon } from "./icons";
 
 interface PageHeroProps {
   title: string;
@@ -11,6 +13,7 @@ interface PageHeroProps {
   video?: string | null;
   breadcrumb?: { label: string; href?: string }[];
   variant?: "image-right" | "centered" | "banner" | "video-banner";
+  cta?: { label: string; href: string };
 }
 
 /**
@@ -28,6 +31,7 @@ export function PageHero({
   video,
   breadcrumb,
   variant = "image-right",
+  cta,
 }: PageHeroProps) {
   const paragraphs =
     description == null ? [] : Array.isArray(description) ? description : [description];
@@ -98,10 +102,10 @@ export function PageHero({
     // the text block grows tall (wide screens / browser zoom). The pt-[128px]
     // guarantees the title never tucks behind the header; no max-h so the box
     // can grow to fit the content.
-    const heightClasses =
-      paragraphs.length > 1
-        ? "min-h-[540px] pt-[128px]"
-        : "h-[45vh] min-h-[380px] max-h-[480px]";
+    const tall = paragraphs.length > 1 || !!cta;
+    const heightClasses = tall
+      ? "min-h-[540px] pt-[128px]"
+      : "h-[45vh] min-h-[380px] max-h-[480px]";
     return (
       <section className="relative text-white">
         <div className={`relative ${heightClasses} flex items-end overflow-hidden`}>
@@ -125,6 +129,14 @@ export function PageHero({
                     </p>
                   ))}
                 </div>
+              </Reveal>
+            )}
+            {cta && (
+              <Reveal y={16} delay={650}>
+                <Link href={cta.href} className="pill pill-teal mt-7 inline-flex">
+                  {cta.label}
+                  <ArrowRightIcon width={12} height={12} />
+                </Link>
               </Reveal>
             )}
           </div>
