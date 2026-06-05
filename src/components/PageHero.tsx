@@ -93,9 +93,18 @@ export function PageHero({
 
   // -------- IMAGE BANNER --------
   if (variant === "banner" && image) {
+    // Multi-paragraph heroes need extra height AND a top safe-area so the
+    // bottom-anchored text always clears the fixed 116px header — even when
+    // the text block grows tall (wide screens / browser zoom). The pt-[128px]
+    // guarantees the title never tucks behind the header; no max-h so the box
+    // can grow to fit the content.
+    const heightClasses =
+      paragraphs.length > 1
+        ? "min-h-[540px] pt-[128px]"
+        : "h-[45vh] min-h-[380px] max-h-[480px]";
     return (
       <section className="relative text-white">
-        <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
+        <div className={`relative ${heightClasses} flex items-end overflow-hidden`}>
           <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
           <div className="container-etafat relative pb-12 md:pb-16">
