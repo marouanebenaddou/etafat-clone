@@ -1,396 +1,549 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { Icon } from "@iconify/react";
+import { cn } from "@/lib/utils";
 
-type Domain =
-  | "Tous"
-  | "Aménagement du territoire"
-  | "Énergie & Mines"
-  | "Bâtiment & Patrimoine"
-  | "Infrastructures"
-  | "Foncier"
-  | "Agriculture & Eau";
-
-type Reference = {
+type Project = {
   title: string;
-  domain: Exclude<Domain, "Tous">;
-  location: string;
-  year: string;
-  client: string;
+  subtitle: string;
   description: string;
   image: string;
+  icon?: string;
 };
 
-const REFERENCES: Reference[] = [
-  // Foncier
-  {
-    title: "Immatriculation foncière de zones rurales",
-    domain: "Foncier",
-    location: "Régions de Fès-Meknès & Souss-Massa",
-    year: "2023-2024",
-    client: "ANCFCC",
-    description:
-      "Opérations d'immatriculation foncière sur plusieurs milliers d'hectares, incluant levés topographiques, enquêtes parcellaires et constitution des dossiers fonciers.",
-    image: "/etafat/skills/cadastre-et-securisation-fonciere.jpg",
-  },
-  {
-    title: "Sécurisation foncière de périmètres irrigués",
-    domain: "Foncier",
-    location: "Région du Gharb",
-    year: "2022-2023",
-    client: "Ministère de l'Agriculture",
-    description:
-      "Cartographie cadastrale, sécurisation foncière et accompagnement des ayants droit dans un périmètre d'irrigation de 12 000 hectares.",
-    image: "/etafat/skills/assistance-fonciere.jpg",
-  },
-  {
-    title: "Plans parcellaires d'emprises routières",
-    domain: "Foncier",
-    location: "Maroc",
-    year: "2024",
-    client: "ADM — Autoroutes du Maroc",
-    description:
-      "Établissement des plans parcellaires et constitution des dossiers d'expropriation pour le doublement de tronçons autoroutiers majeurs.",
-    image: "/etafat/skills/topographie-et-geodesie.jpg",
-  },
-  {
-    title: "Cadastre numérique communal",
-    domain: "Foncier",
-    location: "Sénégal",
-    year: "2023",
-    client: "Collectivités territoriales",
-    description:
-      "Création du cadastre numérique de plusieurs communes : levés topographiques, géoréférencement et constitution de la base parcellaire SIG.",
-    image: "/etafat/skills/systemes-d-information-geographique.jpg",
-  },
+type Stat = { icon: string; value: string; unit: string; desc: string };
 
-  // Aménagement du territoire
-  {
-    title: "Schéma directeur d'aménagement urbain",
-    domain: "Aménagement du territoire",
-    location: "Casablanca",
-    year: "2023-2024",
-    client: "Agence Urbaine",
-    description:
-      "Études territoriales, diagnostic urbain, modélisation cartographique et accompagnement à l'élaboration du schéma directeur d'aménagement.",
-    image: "/etafat/skills/etudes-territoriales.jpg",
-  },
-  {
-    title: "Cartographie de l'occupation des sols",
-    domain: "Aménagement du territoire",
-    location: "Région de Marrakech-Safi",
-    year: "2024",
-    client: "Conseil Régional",
-    description:
-      "Production cartographique multi-échelle et analyse SIG de l'occupation des sols pour orienter la planification territoriale régionale.",
-    image: "/etafat/skills/cartographie.jpg",
-  },
-  {
-    title: "Étude d'impact territorial — nouvelle zone industrielle",
-    domain: "Aménagement du territoire",
-    location: "Tanger-Tétouan-Al Hoceima",
-    year: "2023",
-    client: "Acteur public",
-    description:
-      "Diagnostic foncier, étude d'impact et appui à la maîtrise d'ouvrage pour l'implantation d'une nouvelle zone d'activités économiques.",
-    image: "/etafat/skills/conseil-et-audit-geospatial.jpg",
-  },
+type DomainData = {
+  key: string;
+  label: string;
+  navIcon: string;
+  heroWord: string;
+  heroDesc: string;
+  heroImage: string;
+  domainSlug: string;
+  projects: Project[];
+  stats: Stat[];
+  ctaQuestion: string;
+  ctaText: string;
+};
 
-  // Infrastructures
-  {
-    title: "Topographie & relevés LGV",
-    domain: "Infrastructures",
-    location: "Maroc",
-    year: "2023-2024",
-    client: "Maître d'ouvrage ferroviaire",
-    description:
-      "Levés topographiques de précision et plans d'exécution pour un projet ferroviaire à grande vitesse, incluant ouvrages d'art et viaducs.",
-    image: "/etafat/skills/topographie-et-geodesie.jpg",
-  },
-  {
-    title: "Auscultation d'ouvrages d'art",
-    domain: "Infrastructures",
-    location: "Maroc",
-    year: "2024",
-    client: "Gestionnaires routiers",
-    description:
-      "Mise en place d'un dispositif d'auscultation topographique de ponts et viaducs avec suivi périodique de la stabilité des ouvrages.",
-    image: "/etafat/skills/conseil-et-audit-geospatial.jpg",
-  },
-  {
-    title: "Détection de réseaux enterrés",
-    domain: "Infrastructures",
-    location: "Plusieurs métropoles",
-    year: "2023-2024",
-    client: "Concessionnaires & collectivités",
-    description:
-      "Campagnes de détection multi-technologies (géoradar, électromagnétique) et cartographie des réseaux enterrés sur plusieurs centaines de kilomètres.",
-    image: "/etafat/skills/releves-geospatiaux.jpg",
-  },
-  {
-    title: "Modélisation BIM d'un échangeur autoroutier",
-    domain: "Infrastructures",
-    location: "Maroc",
-    year: "2024",
-    client: "Bureau d'études partenaire",
-    description:
-      "Production d'une maquette numérique BIM complète à partir de relevés scanner 3D, intégrée aux études d'exécution de l'échangeur.",
-    image: "/etafat/skills/modelisation-3d-et-bim.jpg",
-  },
+const SK = (name: string) => `/etafat/skills/${name}.jpg`;
 
-  // Énergie & Mines
+const DOMAINS: DomainData[] = [
   {
-    title: "Cartographie de site minier",
-    domain: "Énergie & Mines",
-    location: "Sud du Maroc",
-    year: "2023",
-    client: "Opérateur minier",
-    description:
-      "Production cartographique haute précision, modèles numériques de terrain et suivi topographique périodique d'exploitations à ciel ouvert.",
-    image: "/etafat/skills/topographie-et-geodesie.jpg",
+    key: "Foncier",
+    label: "Foncier",
+    navIcon: "ph:map-trifold-duotone",
+    heroWord: "FONCIER",
+    heroDesc:
+      "ETAFAT accompagne les États, institutions et collectivités dans la sécurisation, la gestion et la valorisation du foncier. De la délimitation des territoires à la formalisation des droits, nous déployons des solutions géospatiales fiables, innovantes et adaptées aux contextes locaux.",
+    heroImage: SK("cadastre-et-securisation-fonciere"),
+    domainSlug: "foncier",
+    projects: [
+      {
+        title: "PRESFOR",
+        subtitle: "Côte d'Ivoire — AFOR",
+        description:
+          "Sécurisation foncière rurale, consolidation des droits concédés et délimitation des territoires de villages.",
+        image: SK("assistance-fonciere"),
+      },
+      {
+        title: "PROCASEF",
+        subtitle: "Sénégal",
+        description:
+          "Sécurisation foncière en milieu rural, formalisation des parcelles et dématérialisation du registre foncier.",
+        image: SK("cadastre-et-securisation-fonciere"),
+      },
+      {
+        title: "PAMOFOR",
+        subtitle: "Côte d'Ivoire",
+        description:
+          "Modernisation cadastrale et sécurisation foncière rurale à grande échelle.",
+        image: SK("systemes-d-information-geographique"),
+      },
+      {
+        title: "Immatriculation Foncière d'Ensemble",
+        subtitle: "Maroc",
+        description:
+          "Délimitation parcellaire, recensement des droits réels et établissement des dossiers cadastraux et juridiques.",
+        image: SK("topographie-et-geodesie"),
+      },
+    ],
+    stats: [
+      { icon: "ph:house-line-duotone", value: "+1 000", unit: "villages", desc: "accompagnés dans la sécurisation foncière rurale." },
+      { icon: "ph:map-trifold-duotone", value: "+1 000 000", unit: "ha", desc: "de territoires délimités et cartographiés." },
+      { icon: "ph:squares-four-duotone", value: "+500 000", unit: "parcelles", desc: "formalisées et intégrées dans des systèmes d'information foncière." },
+    ],
+    ctaQuestion: "Vous avez un projet foncier ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies géospatiales de pointe pour sécuriser les droits, structurer l'information foncière et valoriser durablement les territoires.",
   },
   {
-    title: "Études géospatiales — parc photovoltaïque",
-    domain: "Énergie & Mines",
-    location: "Région orientale",
-    year: "2023-2024",
-    client: "Développeur énergies renouvelables",
-    description:
-      "Études foncières, cartographie d'emprise, relevés topographiques et accompagnement géospatial pour un parc solaire de grande puissance.",
-    image: "/etafat/skills/etudes-territoriales.jpg",
+    key: "Aménagement du territoire",
+    label: "Aménagement du territoire",
+    navIcon: "ph:buildings-duotone",
+    heroWord: "AMÉNAGEMENT DU TERRITOIRE",
+    heroDesc:
+      "ETAFAT accompagne les collectivités et les acteurs publics dans la planification territoriale et le développement urbain durable. Grâce à la donnée géospatiale et aux outils numériques, nous concevons des solutions fiables pour mieux planifier, décider et aménager les territoires.",
+    heroImage: SK("etudes-territoriales"),
+    domainSlug: "amenagement-du-territoire",
+    projects: [
+      {
+        title: "Maquette numérique 3D de Rabat",
+        subtitle: "Maroc — Agence Urbaine de Rabat",
+        description:
+          "Réalisation des prises de vues aériennes, acquisition LiDAR, production d'une maquette 3D détaillée et mise en place d'un géoportail 3D pour la planification urbaine.",
+        image: SK("modelisation-3d-et-bim"),
+      },
+      {
+        title: "Plans d'urbanisme de N'Djaména",
+        subtitle: "Tchad — PILIER",
+        description:
+          "Réalisation des Plans de Villes Augmentés (PVA) et mise à jour des plans d'urbanisme et cadastraux pour accompagner la planification et la résilience urbaine.",
+        image: SK("cartographie"),
+      },
+      {
+        title: "ZUNE de Bouskoura",
+        subtitle: "Maroc — GIE ZUNE Bouskoura",
+        description:
+          "Études techniques et géospatiales pour l'aménagement de la Zone d'Urbanisation Nouvelle : mobilité, voiries, réseaux VRD et plan d'aménagement sur 1200 ha.",
+        image: SK("etudes-territoriales"),
+      },
+      {
+        title: "Corniche de Dar Bouazza",
+        subtitle: "Maroc — Casa Aménagement",
+        description:
+          "Études géospatiales et suivi pour la requalification des espaces publics, la promenade littorale et la valorisation du paysage côtier.",
+        image: SK("conseil-et-audit-geospatial"),
+      },
+    ],
+    stats: [
+      { icon: "ph:buildings-duotone", value: "+100", unit: "villes", desc: "accompagnées dans la planification et le développement urbain." },
+      { icon: "ph:globe-hemisphere-west-duotone", value: "+20", unit: "géoportails", desc: "déployés pour la planification et la gestion territoriale." },
+      { icon: "ph:database-duotone", value: "+50", unit: "bases de données", desc: "urbaines et territoriales produites et mises à jour." },
+    ],
+    ctaQuestion: "Vous avez un projet d'aménagement ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies géospatiales de pointe pour concevoir des solutions sur mesure, faciliter la décision et accompagner le développement durable de vos territoires.",
   },
   {
-    title: "Relevés LiDAR aérien — corridor électrique",
-    domain: "Énergie & Mines",
-    location: "Maroc",
-    year: "2024",
-    client: "Gestionnaire de réseau",
-    description:
-      "Acquisition LiDAR aéroportée et production de modèles 3D pour l'analyse de gabarit et le dimensionnement d'une ligne haute tension.",
-    image: "/etafat/skills/releves-geospatiaux.jpg",
-  },
-
-  // Bâtiment & Patrimoine
-  {
-    title: "Numérisation 3D de monument historique",
-    domain: "Bâtiment & Patrimoine",
-    location: "Médina de Fès",
-    year: "2023",
-    client: "Acteur du patrimoine",
-    description:
-      "Relevé scanner laser 3D haute densité, modélisation et plans architecturaux d'un édifice classé en vue de sa restauration.",
-    image: "/etafat/skills/modelisation-3d-et-bim.jpg",
-  },
-  {
-    title: "Inspection structurelle de bâtiments",
-    domain: "Bâtiment & Patrimoine",
-    location: "Casablanca",
-    year: "2024",
-    client: "Gestionnaire immobilier",
-    description:
-      "Inspection technique d'un parc immobilier, relevés 3D et préconisations de mise en conformité structurelle et sécuritaire.",
-    image: "/etafat/skills/conseil-et-audit-geospatial.jpg",
-  },
-  {
-    title: "Maquette BIM patrimoniale",
-    domain: "Bâtiment & Patrimoine",
-    location: "Maroc",
-    year: "2023-2024",
-    client: "Maître d'ouvrage public",
-    description:
-      "Production d'une maquette BIM patrimoniale exhaustive à partir de relevés scanner 3D pour la gestion long terme d'un ensemble bâti.",
-    image: "/etafat/skills/modelisation-3d-et-bim.jpg",
-  },
-
-  // Agriculture & Eau
-  {
-    title: "Cartographie de périmètres irrigués",
-    domain: "Agriculture & Eau",
-    location: "Régions agricoles du Maroc",
-    year: "2023-2024",
-    client: "ORMVA",
-    description:
-      "Production cartographique, mises à jour SIG et suivi parcellaire de périmètres irrigués couvrant plusieurs dizaines de milliers d'hectares.",
-    image: "/etafat/skills/cartographie.jpg",
+    key: "Énergie & Mines",
+    label: "Énergie & Mines",
+    navIcon: "ph:sun-duotone",
+    heroWord: "ÉNERGIE & MINES",
+    heroDesc:
+      "ETAFAT sécurise les sites industriels, les emprises minières et les infrastructures énergétiques grâce à des données géospatiales fiables et des solutions sur mesure pour optimiser la planification, la gestion des actifs et la conformité réglementaire.",
+    heroImage: SK("geospatial-intelligence"),
+    domainSlug: "energie-mines",
+    projects: [
+      {
+        title: "SIG des opérations minières",
+        subtitle: "Mauritanie — MAADEN",
+        description:
+          "Mise en place d'une plateforme SIG de gestion des opérations minières : digitalisation des données terrain, suivi des actifs et reporting en temps réel.",
+        image: SK("systemes-d-information-geographique"),
+      },
+      {
+        title: "Pipeline PETROCI",
+        subtitle: "Côte d'Ivoire — PETROCI",
+        description:
+          "Détection et géoréférencement de plus de 300 km de réseaux enterrés le long du pipeline PETROCI pour sécuriser les travaux et les exploitations.",
+        image: SK("releves-geospatiaux"),
+      },
+      {
+        title: "Détection de réseaux enterrés",
+        subtitle: "Maroc — JESA",
+        description:
+          "Campagne GPR, marquage au sol et production de plans géoréférencés pour la détection des réseaux enterrés sur plusieurs sites industriels.",
+        image: SK("releves-geospatiaux"),
+      },
+      {
+        title: "Maquette BIM de l'usine Sidi Ali",
+        subtitle: "Maroc — Les Eaux Minérales d'Oulmès",
+        description:
+          "Réalisation d'un scan 3D et d'une maquette BIM LOD 350 de l'usine Sidi Ali pour la gestion des actifs et la maintenance via une plateforme collaborative.",
+        image: SK("modelisation-3d-et-bim"),
+      },
+    ],
+    stats: [
+      { icon: "ph:flow-arrow-duotone", value: "+300 km", unit: "de réseaux", desc: "détectés et géoréférencés sur plusieurs projets." },
+      { icon: "ph:desktop-duotone", value: "+1", unit: "plateforme métier", desc: "déployée pour la gestion des opérations et des actifs." },
+      { icon: "ph:users-three-duotone", value: "+4", unit: "expertises mobilisées", desc: "pour des solutions intégrées et sur mesure." },
+    ],
+    ctaQuestion: "Vous avez un projet énergie ou mines ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies géospatiales de pointe pour sécuriser vos infrastructures, optimiser vos opérations et valoriser durablement vos actifs énergétiques et miniers.",
   },
   {
-    title: "Bathymétrie de retenues hydrauliques",
-    domain: "Agriculture & Eau",
-    location: "Maroc",
-    year: "2023",
-    client: "Agence de bassin hydraulique",
-    description:
-      "Levés bathymétriques de barrages et retenues, modèles numériques de fond et estimation des volumes utiles pour la gestion de la ressource.",
-    image: "/etafat/skills/releves-geospatiaux.jpg",
+    key: "Bâtiment & Patrimoine",
+    label: "Bâtiment & Patrimoine",
+    navIcon: "ph:bank-duotone",
+    heroWord: "BÂTIMENT & PATRIMOINE",
+    heroDesc:
+      "ETAFAT accompagne les institutions et collectivités dans la documentation, la préservation et la valorisation des bâtiments et du patrimoine. Grâce au scan 3D, au HBIM, au SIG et à des solutions digitales sur mesure, nous produisons des données fiables pour mieux connaître, gérer et transmettre ces biens d'exception.",
+    heroImage: SK("modelisation-3d-et-bim"),
+    domainSlug: "batiment-patrimoine",
+    projects: [
+      {
+        title: "HBIM de la Capitainerie d'Azemmour",
+        subtitle: "Maroc — Agence Urbaine d'El Jadida",
+        description:
+          "Numérisation avancée du site par scan 3D, production de nuages de points et développement d'un modèle HBIM détaillé pour la gestion patrimoniale.",
+        image: SK("modelisation-3d-et-bim"),
+      },
+      {
+        title: "Bâtiments menaçant ruine",
+        subtitle: "Maroc — ANRUR",
+        description:
+          "Mise en place d'une solution digitale intégrée : collecte terrain, base de données, géoportail et application mobile pour le suivi et la gestion des bâtiments.",
+        image: SK("systemes-d-information-geographique"),
+      },
+      {
+        title: "Hôtel Harmattan",
+        subtitle: "Côte d'Ivoire — Integral Trading Africa",
+        description:
+          "Relevé complet par scanner laser 3D et élaboration d'un modèle BIM LOD 3 pour la rénovation et la gestion technique de l'ouvrage.",
+        image: SK("conseil-et-audit-geospatial"),
+      },
+      {
+        title: "Palais Présidentiel",
+        subtitle: "Côte d'Ivoire — Integral Trading Africa",
+        description:
+          "Réalisation d'un relevé 3D détaillé et développement d'un modèle BIM pour la gestion, la maintenance et la prise de décision.",
+        image: SK("geospatial-intelligence"),
+      },
+    ],
+    stats: [
+      { icon: "ph:buildings-duotone", value: "+30 000", unit: "m² BIM", desc: "modélisés pour la documentation et la gestion de bâtiments et de sites patrimoniaux." },
+      { icon: "ph:bank-duotone", value: "+4", unit: "projets patrimoniaux", desc: "menés à bien pour la préservation et la valorisation du patrimoine." },
+      { icon: "ph:monitor-duotone", value: "+1", unit: "système de veille", desc: "déployé pour le suivi et la gestion du patrimoine bâti." },
+    ],
+    ctaQuestion: "Vous avez un projet bâtiment ou patrimoine ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies digitales de pointe pour documenter, préserver et valoriser votre patrimoine bâti, dans le respect de son histoire et des normes actuelles.",
   },
   {
-    title: "Plateforme SIG de gestion agricole",
-    domain: "Agriculture & Eau",
-    location: "Côte d'Ivoire",
-    year: "2024",
-    client: "Coopérative agricole",
-    description:
-      "Déploiement d'une plateforme webSIG pour le suivi parcellaire, la cartographie des cultures et l'aide à la décision agricole.",
-    image: "/etafat/skills/systemes-d-information-geographique.jpg",
+    key: "Infrastructures",
+    label: "Infrastructures",
+    navIcon: "ph:road-horizon-duotone",
+    heroWord: "INFRASTRUCTURES",
+    heroDesc:
+      "ETAFAT accompagne les maîtres d'ouvrage, entreprises et collectivités dans la sécurisation, la conception et la documentation de leurs projets d'infrastructures grâce à la topographie, à la 3D, aux drones et à l'ingénierie géospatiale.",
+    heroImage: SK("topographie-et-geodesie"),
+    domainSlug: "infrastructures",
+    projects: [
+      {
+        title: "Autoroute Tit Mellil – Berrechid – Casablanca",
+        subtitle: "Maroc — Autoroutes du Maroc",
+        description:
+          "Modélisation 3D de l'axe autoroutier sur 27 km : plateforme, ouvrages d'art, équipements et environnement.",
+        image: SK("topographie-et-geodesie"),
+      },
+      {
+        title: "Autoroute Sidi Allal El Bahraoui – Rabat",
+        subtitle: "Maroc — ADM",
+        description:
+          "Visualisation et simulation 3D pour la conception et le suivi du projet autoroutier.",
+        image: SK("modelisation-3d-et-bim"),
+      },
+      {
+        title: "Ligne de tramway T2 de Casablanca",
+        subtitle: "Maroc — Casa Transport",
+        description:
+          "PVA drone, visualisation 3D et suivi de l'intégration du tramway dans son environnement urbain.",
+        image: SK("releves-geospatiaux"),
+      },
+      {
+        title: "BHNS L5 et L6",
+        subtitle: "Maroc — Casa Transport",
+        description:
+          "Synthèse des réseaux concessionnaires et production des livrables pour la coordination technique.",
+        image: SK("conseil-et-audit-geospatial"),
+      },
+    ],
+    stats: [
+      { icon: "ph:road-horizon-duotone", value: "+27 km", unit: "modélisés", desc: "de linéaires d'infrastructures routières en 3D." },
+      { icon: "ph:buildings-duotone", value: "+5", unit: "projets d'infrastructure", desc: "accompagnés de la conception à la livraison." },
+      { icon: "tabler:drone", value: "+1", unit: "orthophoto 4 cm", desc: "pour un suivi précis et une meilleure aide à la décision." },
+    ],
+    ctaQuestion: "Vous avez un projet d'infrastructure ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies géospatiales de pointe pour sécuriser vos infrastructures, optimiser les études, faciliter la coordination et garantir la performance de vos projets.",
+  },
+  {
+    key: "Agriculture & Eau",
+    label: "Agriculture & Eau",
+    navIcon: "ph:drop-duotone",
+    heroWord: "AGRICULTURE & EAU",
+    heroDesc:
+      "ETAFAT accompagne les acteurs publics et privés dans la réussite de leurs projets agricoles, ruraux et hydrauliques grâce à la topographie, au LiDAR, à la bathymétrie, à la cartographie et à des solutions digitales innovantes au service d'une gestion durable de l'eau et des territoires.",
+    heroImage: SK("releves-geospatiaux"),
+    domainSlug: "agriculture-eau",
+    projects: [
+      {
+        title: "Plan topographique de Sousse",
+        subtitle: "Tunisie — Commune de Sousse",
+        description:
+          "Acquisition LiDAR aéroporté, production d'orthophotos haute résolution et réalisation d'un plan topographique détaillé avec transfert de compétences.",
+        image: SK("topographie-et-geodesie"),
+      },
+      {
+        title: "Baie de Cocody",
+        subtitle: "Côte d'Ivoire — SGTM",
+        description:
+          "Levés bathymétriques et topographiques pour la caractérisation du milieu et l'optimisation technique, environnementale et financière du projet.",
+        image: SK("releves-geospatiaux"),
+      },
+      {
+        title: "Zoo d'Aïn Sebaâ",
+        subtitle: "Maroc — Casa Aménagement",
+        description:
+          "Études topographiques et modélisation 3D pour les travaux VRD, les réseaux d'eau, les bassins et l'aménagement paysager du parc zoologique.",
+        image: SK("etudes-territoriales"),
+      },
+      {
+        title: "Solution web MAMDA",
+        subtitle: "Maroc — MAMDA",
+        description:
+          "Mise en œuvre d'une solution digitale intégrant notre expertise agricole pour le multirisque climatique à travers une application web et mobile.",
+        image: SK("systemes-d-information-geographique"),
+      },
+    ],
+    stats: [
+      { icon: "ph:globe-hemisphere-west-duotone", value: "+12", unit: "pays couverts", desc: "en Afrique, au Moyen-Orient et en Europe." },
+      { icon: "ph:airplane-tilt-duotone", value: "+200 000", unit: "km² PVA & LiDAR", desc: "acquis et traités pour des projets agricoles et hydrauliques." },
+      { icon: "ph:globe-duotone", value: "+20", unit: "géoportails web", desc: "développés pour le suivi, la gestion et la valorisation des territoires." },
+    ],
+    ctaQuestion: "Vous avez un projet agriculture ou eau ?",
+    ctaText:
+      "Nos équipes mobilisent des expertises complémentaires et des technologies de pointe pour sécuriser vos décisions, optimiser vos ressources en eau et valoriser durablement vos territoires agricoles et ruraux.",
   },
 ];
 
-const DOMAINS: Domain[] = [
-  "Tous",
-  "Aménagement du territoire",
-  "Énergie & Mines",
-  "Bâtiment & Patrimoine",
-  "Infrastructures",
-  "Foncier",
-  "Agriculture & Eau",
-];
+// Thumbnails cropped from the domain mockups (public/etafat/references/<slug>-<n>.jpg)
+for (const d of DOMAINS) {
+  d.projects.forEach((p, i) => {
+    p.image = `/etafat/references/${d.domainSlug}-${i + 1}.jpg`;
+  });
+}
+
+const ALL: DomainData = {
+  key: "Tous",
+  label: "Tous les domaines",
+  navIcon: "ph:squares-four-duotone",
+  heroWord: "",
+  heroDesc:
+    "Des projets d'envergure menés au Maroc, en Afrique et à l'international, témoignant de l'expertise géospatiale, foncière et territoriale d'ETAFAT au service des territoires et de leurs acteurs.",
+  heroImage: SK("cartographie"),
+  domainSlug: "",
+  projects: DOMAINS.flatMap((d) =>
+    d.projects.map((p) => ({ ...p, icon: d.navIcon })),
+  ),
+  stats: [
+    { icon: "ph:globe-hemisphere-west-duotone", value: "+12", unit: "pays d'intervention", desc: "en Afrique, au Moyen-Orient et en Europe." },
+    { icon: "ph:squares-four-duotone", value: "6", unit: "domaines d'activité", desc: "couverts par nos expertises géospatiales." },
+    { icon: "ph:medal-duotone", value: "+40", unit: "ans d'expérience", desc: "au service des territoires et de leurs acteurs." },
+  ],
+  ctaQuestion: "Vous avez un projet géospatial ?",
+  ctaText:
+    "Nos équipes mobilisent des expertises complémentaires et des technologies géospatiales de pointe pour sécuriser, structurer et valoriser durablement vos territoires.",
+};
+
+const TABS = [ALL, ...DOMAINS];
 
 export function ReferencesExplorer() {
-  const [active, setActive] = useState<Domain>("Tous");
-
-  const filtered = useMemo(
-    () => (active === "Tous" ? REFERENCES : REFERENCES.filter((r) => r.domain === active)),
+  const [active, setActive] = useState<string>("Tous");
+  const data = useMemo(
+    () => TABS.find((d) => d.key === active) ?? ALL,
     [active],
   );
-
-  const stats = useMemo(() => {
-    const total = REFERENCES.length;
-    const byDomain: Record<string, number> = {};
-    for (const r of REFERENCES) {
-      byDomain[r.domain] = (byDomain[r.domain] || 0) + 1;
-    }
-    return { total, byDomain };
-  }, []);
+  const projects = data.projects.map((p) => ({ ...p, icon: p.icon ?? data.navIcon }));
 
   return (
-    <section className="bg-[#f5f7f9] py-16 md:py-20">
-      <div className="container-etafat">
-        {/* Stats summary */}
-        <Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-            <div className="bg-white rounded-md p-5 text-center">
-              <p
-                className="text-teal text-3xl font-semibold mb-1"
-                style={{ fontFamily: "var(--font-figtree)" }}
-              >
-                {stats.total}+
-              </p>
-              <p className="text-body text-xs leading-snug">Projets référencés</p>
-            </div>
-            <div className="bg-white rounded-md p-5 text-center">
-              <p
-                className="text-teal text-3xl font-semibold mb-1"
-                style={{ fontFamily: "var(--font-figtree)" }}
-              >
-                6
-              </p>
-              <p className="text-body text-xs leading-snug">Domaines d&apos;activité</p>
-            </div>
-            <div className="bg-white rounded-md p-5 text-center">
-              <p
-                className="text-teal text-3xl font-semibold mb-1"
-                style={{ fontFamily: "var(--font-figtree)" }}
-              >
-                3
-              </p>
-              <p className="text-body text-xs leading-snug">Pays d&apos;intervention</p>
-            </div>
-            <div className="bg-white rounded-md p-5 text-center">
-              <p
-                className="text-teal text-3xl font-semibold mb-1"
-                style={{ fontFamily: "var(--font-figtree)" }}
-              >
-                42
-              </p>
-              <p className="text-body text-xs leading-snug">Années d&apos;expérience</p>
-            </div>
-          </div>
-        </Reveal>
+    <>
+      {/* HERO */}
+      <section className="relative overflow-hidden bg-[#0a1e30]">
+        <Image
+          src={data.heroImage}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-right"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0a1e30] via-[#0a1e30]/92 to-[#0a1e30]/30" />
+        <div className="container-etafat relative pt-[148px] pb-16 md:pb-20">
+          <nav aria-label="Fil d'Ariane" className="mb-8 text-sm text-white/70">
+            <Link href="/" className="hover:text-white">
+              Accueil
+            </Link>
+            <span className="mx-2">›</span>
+            <span className={data.key === "Tous" ? "text-white" : ""}>Références</span>
+            {data.key !== "Tous" && (
+              <>
+                <span className="mx-2">›</span>
+                <span className="text-white">{data.label}</span>
+              </>
+            )}
+          </nav>
+          <h1
+            className="text-4xl font-semibold leading-[1.05] md:text-6xl"
+            style={{ color: "#fff" }}
+          >
+            NOS RÉFÉRENCES
+            {data.heroWord && (
+              <>
+                <br />
+                <span className="text-[#3ea7e0]">{data.heroWord}</span>
+              </>
+            )}
+          </h1>
+          <p className="mt-6 max-w-xl text-base leading-relaxed text-white/85">
+            {data.heroDesc}
+          </p>
+        </div>
+      </section>
 
-        {/* Filter tabs */}
-        <Reveal delay={100}>
-          <div className="flex flex-wrap gap-2 mb-10 justify-center">
-            {DOMAINS.map((d) => {
-              const count =
-                d === "Tous" ? stats.total : stats.byDomain[d] || 0;
-              const isActive = d === active;
+      {/* FILTER NAV */}
+      <div className="border-b border-[#e5e7eb] bg-white">
+        <div className="container-etafat">
+          <ul className="flex items-center gap-3 overflow-x-auto py-6">
+            {TABS.map((d) => {
+              const isActive = d.key === active;
               return (
-                <button
-                  key={d}
-                  onClick={() => setActive(d)}
-                  className={`pill text-xs uppercase transition-colors ${
-                    isActive
-                      ? "pill-teal"
-                      : "border-2 border-[#e5e7eb] bg-white text-[#313c4e] hover:border-[#00669d] hover:text-[#00669d]"
-                  }`}
-                >
-                  <span>{d}</span>
-                  <span
-                    className={`ml-2 text-[10px] ${
-                      isActive ? "text-white/80" : "text-body/60"
-                    }`}
+                <li key={d.key} className="shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setActive(d.key)}
+                    aria-pressed={isActive}
+                    className={cn(
+                      "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors",
+                      isActive
+                        ? "border-[#00669d] bg-[#00669d] text-white"
+                        : "border-[#e5e7eb] bg-white text-navy hover:border-[#00669d] hover:text-[#00669d]",
+                    )}
                   >
-                    ({count})
-                  </span>
-                </button>
+                    <Icon icon={d.navIcon} width={18} height={18} />
+                    {d.label}
+                  </button>
+                </li>
               );
             })}
-          </div>
-        </Reveal>
+          </ul>
+        </div>
+      </div>
 
-        {/* Cards grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((r, i) => (
-            <Reveal key={`${r.domain}-${r.title}`} delay={(i % 6) * 60}>
-              <article className="bg-white rounded-md overflow-hidden border border-[#e5e7eb] h-full flex flex-col hover:shadow-lg transition-shadow">
-                <div className="relative aspect-[16/10]">
-                  <Image
-                    src={r.image}
-                    alt={r.title}
-                    fill
-                    sizes="(min-width:1024px) 33vw, (min-width:768px) 50vw, 100vw"
-                    className="object-cover"
+      {/* PROJECT CARDS */}
+      <section className="bg-white py-14 md:py-16">
+        <div className="container-etafat">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {projects.map((p, i) => (
+              <Reveal key={`${data.key}-${p.title}`} delay={(i % 4) * 80}>
+                <article className="group flex h-full flex-col overflow-hidden rounded-md border border-[#e5e7eb] bg-white transition-shadow hover:shadow-lg">
+                  <div className="relative aspect-[16/11] overflow-hidden">
+                    <Image
+                      src={p.image}
+                      alt={p.title}
+                      fill
+                      sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <h3 className="mb-1.5 text-lg font-semibold leading-tight text-navy">
+                      {p.title}
+                    </h3>
+                    <p className="mb-3 text-sm font-medium text-teal">{p.subtitle}</p>
+                    <p className="mb-5 flex-1 text-sm leading-relaxed text-body">
+                      {p.description}
+                    </p>
+                    <Link
+                      href={`/domaines-activite/${
+                        TABS.find((d) =>
+                          d.projects.some((pr) => pr.title === p.title),
+                        )?.domainSlug || ""
+                      }/`}
+                      className="inline-flex items-center gap-1.5 text-sm font-medium text-[#00669d]"
+                    >
+                      Voir le projet
+                      <Icon icon="tabler:arrow-right" width={15} height={15} />
+                    </Link>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* STATS */}
+      <section className="bg-white pb-16 md:pb-20">
+        <div className="container-etafat">
+          <div className="grid gap-8 rounded-md bg-[#f5f7f9] p-8 md:grid-cols-3 md:p-10">
+            {data.stats.map((s, i) => (
+              <Reveal key={s.unit} delay={i * 90}>
+                <div className="flex items-start gap-5">
+                  <Icon
+                    icon={s.icon}
+                    width={52}
+                    height={52}
+                    className="shrink-0 text-[#00669d]"
                   />
-                  <span className="absolute top-3 left-3 pill pill-teal !py-1 !px-3 !text-[10px] uppercase">
-                    {r.domain}
-                  </span>
-                </div>
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-navy text-lg font-semibold mb-3 leading-tight">
-                    {r.title}
-                  </h3>
-                  <p className="text-body text-sm leading-relaxed mb-5 flex-1">
-                    {r.description}
-                  </p>
-                  <div className="space-y-1.5 pt-4 border-t border-[#e5e7eb] text-xs text-body">
-                    <p className="flex items-start gap-2">
-                      <Icon icon="tabler:map-pin" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
-                      <span>{r.location}</span>
+                  <div>
+                    <p
+                      className="text-3xl font-semibold leading-none text-[#00669d] md:text-4xl"
+                      style={{ fontFamily: "var(--font-figtree)" }}
+                    >
+                      {s.value}
                     </p>
-                    <p className="flex items-start gap-2">
-                      <Icon icon="tabler:calendar-event" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
-                      <span>{r.year}</span>
-                    </p>
-                    <p className="flex items-start gap-2">
-                      <Icon icon="tabler:building" width={14} height={14} className="text-[#00669d] mt-0.5 shrink-0" />
-                      <span>{r.client}</span>
-                    </p>
+                    <p className="mt-1 font-semibold text-navy">{s.unit}</p>
+                    <p className="mt-1 text-sm leading-snug text-body">{s.desc}</p>
                   </div>
                 </div>
-              </article>
-            </Reveal>
-          ))}
+              </Reveal>
+            ))}
+          </div>
         </div>
+      </section>
 
-        {filtered.length === 0 && (
-          <p className="text-body text-center py-12">
-            Aucune référence dans ce domaine pour le moment.
-          </p>
-        )}
-      </div>
-    </section>
+      {/* CTA */}
+      <section className="bg-[#eef3f8] py-14 md:py-16">
+        <div className="container-etafat flex flex-col items-start gap-8 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-start gap-6">
+            <div className="hidden h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#0a3d62] text-white sm:flex">
+              <Icon icon="ph:handshake-duotone" width={32} height={32} />
+            </div>
+            <div className="max-w-2xl">
+              <h2 className="mb-2 text-2xl font-semibold leading-tight text-navy md:text-3xl">
+                {data.ctaQuestion}
+              </h2>
+              <p className="text-sm leading-relaxed text-body md:text-base">
+                {data.ctaText}
+              </p>
+            </div>
+          </div>
+          <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+            <Link
+              href="/contact/"
+              className="pill pill-teal !bg-[#0a3d62] uppercase"
+            >
+              <Icon icon="tabler:mail" width={16} height={16} />
+              Nous contacter
+            </Link>
+            <Link
+              href="/savoir-faire/"
+              className="pill border-2 border-[#0a3d62] uppercase text-[#0a3d62] hover:bg-[#0a3d62] hover:text-white"
+            >
+              Découvrir nos savoir-faire
+              <Icon icon="tabler:arrow-right" width={16} height={16} />
+            </Link>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
