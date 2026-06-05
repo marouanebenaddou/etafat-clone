@@ -150,8 +150,7 @@ export default function EngagementsPage() {
       <section className="bg-white py-20 md:py-24">
         <div className="container-etafat">
           <Reveal>
-            <h2 className="text-navy text-center mb-3">Nos engagements en chiffres</h2>
-            <p className="text-body text-center text-sm mb-12">* Chiffres indicatifs — données 2023-2024</p>
+            <h2 className="text-navy text-center mb-12">Nos engagements en chiffres</h2>
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
             {CHIFFRES.map((c, i) => (
