@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 
 const groupLinks = [
   { label: "Identité", href: "/identite/" },
-  { label: "Agences", href: "/agences/" },
   { label: "Filiales", href: "/filiales/" },
   { label: "Engagements", href: "/engagements/" },
   { label: "Actualités", href: "/actualites/" },

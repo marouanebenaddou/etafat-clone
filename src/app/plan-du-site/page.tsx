@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { agencyPages, posts, portfolio, jobs } from "@/lib/content";
+import { posts, portfolio, jobs } from "@/lib/content";
 import { domains, skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
@@ -14,7 +14,6 @@ export default function PlanDuSitePage() {
       title: "Le Groupe",
       links: [
         { label: "Identité", href: "/identite/" },
-        { label: "Agences", href: "/agences/" },
         { label: "Filiales", href: "/filiales/" },
         { label: "Engagements", href: "/engagements/" },
         { label: "Actualités", href: "/actualites/" },
@@ -38,10 +37,6 @@ export default function PlanDuSitePage() {
     {
       title: "Domaines d'activité",
       links: domains.map((d) => ({ label: d.title, href: `/domaines-activite/${d.slug}/` })),
-    },
-    {
-      title: "Agences",
-      links: agencyPages().map((p) => ({ label: p.title, href: p.path })),
     },
     {
       title: "Actualités",
