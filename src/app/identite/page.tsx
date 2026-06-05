@@ -9,6 +9,7 @@ import {
 } from "@/components/icons";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
+import { IdentiteSubNav } from "./IdentiteSubNav";
 
 export const metadata: Metadata = {
   title: "Notre identité - ETAFAT",
@@ -62,11 +63,11 @@ const CHIFFRES = [
 ];
 
 const HISTOIRE = [
-  { year: "1983", title: "Création d'ETAFAT", text: "Création d'ETAFAT, avec une expertise initiale portée par les métiers du foncier, de la topographie et de la donnée géospatiale." },
-  { year: "1999", title: "1er projet à l'international", text: "ETAFAT franchit une nouvelle étape avec le lancement de ses premières interventions à l'international, marquant le début de son ouverture vers de nouveaux marchés." },
-  { year: "2012", title: "Activité de PVA", text: "L'entreprise renforce ses capacités en prises de vues aériennes, consolidant son savoir-faire dans l'acquisition massive de données géospatiales." },
-  { year: "2020", title: "Développement à l'échelle Africaine", text: "ETAFAT accélère son développement sur le continent africain et accompagne des projets territoriaux, fonciers, cartographiques et institutionnels à plus grande échelle." },
-  { year: "2025", title: "1er Projet en Asie", text: "ETAFAT poursuit son ouverture internationale avec un premier projet en Asie, confirmant sa capacité à intervenir dans des contextes variés et exigeants." },
+  { year: "1983", title: "Création d'ETAFAT" },
+  { year: "1999", title: "1er Projet à l'International" },
+  { year: "2012", title: "Activité de PVA" },
+  { year: "2020", title: "Développement à l'échelle Africaine" },
+  { year: "2025", title: "1er Projet en Asie" },
 ];
 
 const FILIALES = [
@@ -98,7 +99,10 @@ export default function IdentitePage() {
     <>
       <PageHero
         title="Notre identité"
-        description="Depuis 1983, ETAFAT accompagne les acteurs publics et privés dans les domaines du foncier, du conseil & ingénierie, de la donnée géospatiale et des systèmes d'information géographique."
+        description={[
+          "Depuis 1983, ETAFAT accompagne les acteurs publics et privés dans les domaines du foncier, du conseil & ingénierie, de la donnée géospatiale et des systèmes d'information géographique.",
+          "Notre expertise, notre exigence et nos valeurs guident chaque projet pour construire des territoires durables et performants.",
+        ]}
         breadcrumb={[
           { label: "Accueil", href: "/" },
           { label: "Le Groupe", href: "/identite/" },
@@ -108,8 +112,10 @@ export default function IdentitePage() {
         image="/etafat/skills/etudes-territoriales.jpg"
       />
 
+      <IdentiteSubNav />
+
       {/* NOTRE VISION */}
-      <section className="bg-white py-20 md:py-28">
+      <section id="vision" className="bg-white py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <Reveal>
@@ -122,13 +128,10 @@ export default function IdentitePage() {
             </Reveal>
             <Reveal delay={120}>
               <p className="text-body leading-relaxed mb-4">
-                Depuis sa création, ETAFAT place la donnée géospatiale au cœur de la compréhension, de la planification et de la valorisation des territoires.
-              </p>
-              <p className="text-body leading-relaxed mb-4">
-                Nous croyons que des données fiables, précises et bien structurées permettent aux institutions, opérateurs publics, aménageurs et entreprises de prendre de meilleures décisions, de sécuriser leurs projets et de maîtriser les enjeux fonciers, techniques et territoriaux.
+                Nous croyons que des données fiables, précises et bien structurées permettent de mieux comprendre, planifier, sécuriser et valoriser les territoires.
               </p>
               <p className="text-body leading-relaxed">
-                Notre vision est de mettre notre expertise en topographie, foncier, cartographie, SIG, ingénierie et technologies géospatiales au service de projets durables, utiles et adaptés aux réalités du terrain, au Maroc, en Afrique et à l&apos;international.
+                Notre ambition est de mettre notre expertise en topographie, foncier, cartographie, SIG et ingénierie au service de projets durables, utiles et adaptés aux réalités du terrain, au Maroc, en Afrique et à l&apos;international.
               </p>
             </Reveal>
           </div>
@@ -147,18 +150,12 @@ export default function IdentitePage() {
       </section>
 
       {/* NOS VALEURS */}
-      <section className="bg-[#f5f7f9] py-20 md:py-28">
+      <section id="valeurs" className="bg-[#f5f7f9] py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat">
           <Reveal>
-            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
+            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-10 block">
               Nos valeurs portées par un collectif
             </span>
-            <h2 className="text-navy mb-4 max-w-2xl leading-tight">
-              Nos valeurs guident notre manière de travailler
-            </h2>
-            <p className="text-body mb-12 max-w-2xl">
-              Chez ETAFAT, nos valeurs guident notre manière de travailler, de collaborer et d&apos;accompagner nos clients. Elles traduisent notre exigence professionnelle, notre responsabilité et notre engagement à produire des données fiables, sécurisées et exploitables.
-            </p>
           </Reveal>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {VALEURS.map((v, i) => (
@@ -178,7 +175,7 @@ export default function IdentitePage() {
       </section>
 
       {/* DIRECTION GÉNÉRALE */}
-      <section className="bg-[#0a1e30] text-white py-20 md:py-28">
+      <section id="direction" className="bg-[#0a1e30] text-white py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <Reveal>
@@ -193,11 +190,8 @@ export default function IdentitePage() {
               <p className="text-white/85 leading-relaxed mb-4">
                 La Direction Générale d&apos;ETAFAT porte une vision claire : consolider le rôle de l&apos;entreprise comme acteur de référence dans l&apos;acquisition, le traitement et la valorisation des données géospatiales.
               </p>
-              <p className="text-white/85 leading-relaxed mb-4">
-                Cette gouvernance s&apos;appuie sur l&apos;expertise des équipes, la modernisation continue des moyens technologiques et une culture d&apos;exigence orientée vers la qualité, l&apos;innovation et la satisfaction client.
-              </p>
               <p className="text-white/85 leading-relaxed mb-8">
-                À travers ses choix stratégiques, ETAFAT poursuit son développement au Maroc, en Afrique et à l&apos;international, tout en restant fidèle à ses valeurs.
+                Cette gouvernance s&apos;appuie sur l&apos;expertise des équipes, la modernisation continue des moyens technologiques et une culture d&apos;exigence orientée vers la qualité, l&apos;innovation et la satisfaction client.
               </p>
             </Reveal>
             <Reveal delay={250}>
@@ -221,18 +215,12 @@ export default function IdentitePage() {
       </section>
 
       {/* ETAFAT EN CHIFFRES */}
-      <section className="bg-white py-20 md:py-24">
+      <section id="chiffres-cles" className="bg-white py-20 md:py-24 scroll-mt-[170px]">
         <div className="container-etafat">
           <Reveal>
-            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
+            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-10 block">
               ETAFAT en chiffres
             </span>
-            <h2 className="text-navy mb-4 leading-tight max-w-2xl">
-              Des réalisations concrètes au service des territoires
-            </h2>
-            <p className="text-body mb-12 max-w-3xl">
-              Depuis plus de 40 ans, ETAFAT accompagne des projets d&apos;envergure dans les domaines du foncier, de la cartographie, de l&apos;aménagement, des systèmes d&apos;information géographique et de l&apos;acquisition de données.
-            </p>
           </Reveal>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CHIFFRES.map((c, i) => (
@@ -252,16 +240,13 @@ export default function IdentitePage() {
       </section>
 
       {/* HISTORIQUE — 42 ans d'évolution */}
-      <section className="bg-[#f5f7f9] py-20 md:py-28">
+      <section id="historique" className="bg-[#f5f7f9] py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat">
           <Reveal>
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
               Historique
             </span>
             <h2 className="text-navy mb-12 leading-tight">42 ans d&apos;évolution</h2>
-            <p className="text-body mb-16 max-w-3xl">
-              L&apos;histoire d&apos;ETAFAT est celle d&apos;une entreprise marocaine qui a su évoluer avec les besoins des territoires, les exigences des projets et les avancées technologiques du secteur géospatial.
-            </p>
           </Reveal>
           <div className="relative">
             {/* horizontal connector */}
@@ -276,8 +261,7 @@ export default function IdentitePage() {
                     <div className="mx-auto md:mx-0 w-14 h-14 rounded-full bg-[#00669d] flex items-center justify-center mb-4">
                       <CheckCircleIcon className="w-6 h-6 text-white" />
                     </div>
-                    <h3 className="text-navy text-base font-semibold mb-2">{h.title}</h3>
-                    <p className="text-body text-sm leading-relaxed">{h.text}</p>
+                    <h3 className="text-navy text-base font-semibold">{h.title}</h3>
                   </div>
                 </Reveal>
               ))}
@@ -286,19 +270,31 @@ export default function IdentitePage() {
         </div>
       </section>
 
+      {/* LOCALISATION — placeholder */}
+      <section id="localisation" className="bg-white py-20 md:py-28 scroll-mt-[170px] border-t border-[#e5e7eb]">
+        <div className="container-etafat">
+          <Reveal>
+            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
+              Localisation
+            </span>
+            <h2 className="text-navy mb-4 leading-tight">Où nous trouver</h2>
+            <p className="text-body max-w-3xl">
+              Section à compléter — carte, adresses et coordonnées des sites ETAFAT.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
       {/* NOS FILIALES — preview */}
-      <section className="bg-white py-20 md:py-28">
+      <section className="bg-[#f5f7f9] py-20 md:py-28">
         <div className="container-etafat">
           <Reveal>
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
               Nos filiales
             </span>
-            <h2 className="text-navy mb-4 leading-tight">
+            <h2 className="text-navy mb-12 leading-tight">
               Un groupe structuré pour accompagner les projets au Maroc et à l&apos;international
             </h2>
-            <p className="text-body mb-12 max-w-3xl">
-              Le développement d&apos;ETAFAT s&apos;appuie sur des entités complémentaires, capables de répondre aux besoins des projets d&apos;ingénierie, de développement territorial et d&apos;expansion internationale.
-            </p>
           </Reveal>
           <div className="grid md:grid-cols-3 gap-6">
             {FILIALES.map((f, i) => (

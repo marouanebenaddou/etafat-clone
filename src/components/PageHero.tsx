@@ -6,7 +6,7 @@ import { Reveal } from "./Reveal";
 
 interface PageHeroProps {
   title: string;
-  description?: string;
+  description?: string | string[];
   image?: string | null;
   video?: string | null;
   breadcrumb?: { label: string; href?: string }[];
@@ -29,6 +29,9 @@ export function PageHero({
   breadcrumb,
   variant = "image-right",
 }: PageHeroProps) {
+  const paragraphs =
+    description == null ? [] : Array.isArray(description) ? description : [description];
+
   // -------- VIDEO BANNER (geofit-style) --------
   // NOTE: Breadcrumb is intentionally NOT rendered here — geofit places it in
   // a separate white strip *below* the video. The caller renders it there.
@@ -104,9 +107,15 @@ export function PageHero({
                 {title}
               </h1>
             </Reveal>
-            {description && (
+            {paragraphs.length > 0 && (
               <Reveal y={16} delay={500}>
-                <p className="text-white/90 mt-5 max-w-xl text-lg">{description}</p>
+                <div className="mt-5 max-w-xl space-y-3">
+                  {paragraphs.map((p, i) => (
+                    <p key={i} className="text-white/90 text-lg">
+                      {p}
+                    </p>
+                  ))}
+                </div>
               </Reveal>
             )}
           </div>
