@@ -37,20 +37,20 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     ],
     "references": [
       {
-        "title": "PRESFOR",
-        "subtitle": "CÔTE D'IVOIRE / AFOR",
+        "title": "PRESFOR — CÔTE D'IVOIRE / AFOR",
+        "subtitle": "",
         "description": "Appui à la sécurisation foncière et à la mise en valeur des forêts classées dans le cadre du projet PRESFOR.",
         "image": "/etafat/references/foncier-1.jpg"
       },
       {
-        "title": "PROCASEF",
-        "subtitle": "SÉNÉGAL",
+        "title": "PROCASEF — SÉNÉGAL",
+        "subtitle": "",
         "description": "Appui à la sécurisation foncière des zones d'aménagement agricole dans les régions de Sédhiou, Kolda et Ziguinchor.",
         "image": "/etafat/references/foncier-2.jpg"
       },
       {
-        "title": "IMMATRICULATION FONCIÈRE D'ENSEMBLE",
-        "subtitle": "MAROC / ANCFCC",
+        "title": "IMMATRICULATION FONCIÈRE D'ENSEMBLE — MAROC / ANCFCC",
+        "subtitle": "",
         "description": "Réalisation de l'immatriculation foncière d'ensemble dans plusieurs provinces du Royaume.",
         "image": "/etafat/references/foncier-4.jpg"
       }
@@ -63,7 +63,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "cadastre-et-securisation-fonciere": {
     "slug": "cadastre-et-securisation-fonciere",
     "title": "Cadastre & sécurisation foncière",
-    "heroDesc": "ETAFAT accompagne les institutions, administrations et collectivités dans leurs projets de cadastre, d'immatriculation et de sécurisation foncière. Notre intervention permet de fiabiliser les droits, clarifier les limites, structurer les données cadastrales et renforcer la gouvernance foncière des territoires. Grâce à une approche combinant topographie cadastrale, enquêtes terrain, cartographie, SIG et ingénierie de données, nous produisons une information foncière fiable, exploitable et adaptée aux besoins des projets publics, institutionnels et territoriaux.",
+    "heroDesc": "ETAFAT accompagne les institutions, administrations et collectivités dans leurs projets de cadastre, d'immatriculation et de sécurisation foncière.\n\nNotre intervention permet de fiabiliser les droits, clarifier les limites, structurer les données cadastrales et renforcer la gouvernance foncière des territoires.\n\nGrâce à une approche combinant topographie cadastrale, enquêtes terrain, cartographie, SIG et ingénierie de données, nous produisons une information foncière fiable, exploitable et adaptée aux besoins des projets publics, institutionnels et territoriaux.",
     "competences": [
       "Délimitation des parcelles et des territoires",
       "Réalisation d'opérations de topographie cadastrale",
@@ -74,7 +74,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       "Structuration de bases de données foncières et cadastrales",
       "Intégration des données dans les systèmes SIG",
       "Contrôle, fiabilisation et harmonisation des données foncières",
-      "Appui aux programmes de sécurisation foncière",
+      "Appui aux programmes de sécurisation foncière rurale et urbaine",
       "Production de dossiers techniques, cadastraux et cartographiques"
     ],
     "atouts": [
@@ -100,7 +100,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT accompagne depuis plusieurs décennies des projets majeurs de cadastre, d'immatriculation et de sécurisation foncière au Maroc, en Afrique et à l'international. Nos références couvrent des programmes de sécurisation foncière rurale, de modernisation cadastrale, de formalisation de parcelles et de structuration de données foncières (PRESFOR, PAMOFOR, PROCASEF, Immatriculation Foncière d'Ensemble, etc.).",
+    "referencesIntro": "ETAFAT accompagne depuis plusieurs décennies des projets majeurs de cadastre, d'immatriculation et de sécurisation foncière au Maroc, en Afrique et à l'international.\n\nNos références couvrent des programmes de sécurisation foncière rurale, de modernisation cadastrale, de formalisation de parcelles et de structuration de données foncières.\n\nCette expérience démontre notre capacité à intervenir sur des projets complexes, avec de grands volumes de données, plusieurs parties prenantes et des exigences fortes en matière de fiabilité, de qualité et de traçabilité.\n\nParmi nos références : PRESFOR, PAMOFOR, PROCASEF, Immatriculation Foncière d'Ensemble, etc.",
     "cta": {
       "question": "Vous avez un projet de cadastre ou de sécurisation foncière ?",
       "text": "Nos équipes vous accompagnent pour fiabiliser les droits, structurer l'information foncière et sécuriser durablement vos territoires."
@@ -241,7 +241,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "topographie-et-geodesie": {
     "slug": "topographie-et-geodesie",
     "title": "Relevés terrestres",
-    "heroDesc": "ETAFAT réalise des relevés terrestres de haute précision pour accompagner la conception, la construction, l'exploitation et la maintenance des infrastructures et des aménagements.\n\nGrâce à des équipes expérimentées et des technologies performantes, nous garantissons des données fiables, rigoureuses et adaptées aux exigences de chaque projet.",
+    "heroDesc": "ETAFAT réalise des relevés terrestres de haute précision pour accompagner la conception, la construction, l'exploitation et la maintenance des infrastructures et des aménagements.\n\nGrâce à des équipes expérimentées et des équipements performants, nous garantissons des données fiables, rigoureuses et adaptées aux exigences de chaque projet.",
     "competences": [
       "Levés topographiques à haute précision",
       "Implantations et piquetages",
@@ -269,7 +269,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "LIVRABLES EXPLOITABLES",
-        "text": "Données structurées, contrôlées et prêtes à l'emploi (DAO/BIM/GIS)."
+        "text": "Données structurées, contrôlées et prêtes où l'emploi (DAO/BIM/GIS)."
       },
       {
         "title": "INTERVENTION SUR PROJETS COMPLEXES",
@@ -277,7 +277,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT accompagne depuis de nombreuses années des maîtres d'ouvrage publics et privés, des entreprises et des bureaux d'études dans la réussite de projets variés : infrastructures linéaires, ouvrages d'art, infrastructures urbaines, sites industriels, ports, carrières, etc.\n\nNotre exigence de qualité et notre réactivité font de nous un partenaire de confiance sur le terrain.",
+    "referencesIntro": "ETAFAT accompagne depuis de nombreuses années des maîtres d'ouvrage publics et privés, des entreprises et des bureaux d'études dans la réussite de projets variés : infrastructures linéaires, ouvrages d'art, aménagements urbains, sites industriels, ports, carrières, etc. Notre exigence de qualité et notre réactivité font de nous un partenaire de confiance sur le terrain.",
     "cta": {
       "question": "Un projet de relevé terrestre ?",
       "text": "Nos équipes sont à votre écoute pour vous apporter des solutions précises, adaptées à vos besoins et à vos contraintes terrain."
@@ -286,7 +286,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "releves-aeriens-et-lidar": {
     "slug": "releves-aeriens-et-lidar",
     "title": "Relevés aériens",
-    "heroDesc": "ETAFAT réalise des relevés aériens de haute précision pour fournir des données géospatiales fiables et détaillées au service de la cartographie, de l'aménagement du territoire et du suivi des infrastructures.\n\nGrâce à des plateformes drones et LiDAR aéroportée de pointe et à des méthodes éprouvées, nous couvrons efficacement de vastes territoires avec des résultats précis et exploitables.",
+    "heroDesc": "ETAFAT réalise des relevés aériens de haute précision pour fournir des données géospatiales fiables et détaillées au service de la cartographie, de l'aménagement du territoire et du suivi des infrastructures.\n\nGrâce à des plateformes drones et LiDAR aéroporté de pointe et à des méthodes éprouvées, nous couvrons efficacement de vastes territoires avec des résultats précis et exploitables.",
     "competences": [
       "Prises de vues aériennes par drone et avion",
       "Photogrammétrie numérique",
@@ -302,7 +302,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "atouts": [
       {
         "title": "COUVERTURE ÉTENDUE",
-        "text": "Nous collectons des données sur de vastes zones, y compris difficiles d'accès."
+        "text": "Nous collectons des données sur de larges zones, y compris difficiles d'accès."
       },
       {
         "title": "HAUTE RÉSOLUTION",
@@ -322,7 +322,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT accompagne depuis de nombreuses années des maîtres d'ouvrage publics et privés, des entreprises et des bureaux d'études dans la réalisation de relevés aériens pour des projets de cartographie, d'aménagement du territoire, de suivi d'infrastructures, de gestion environnementale et de prévention des risques.",
     "cta": {
       "question": "Un projet de relevé aérien ?",
       "text": "Nos équipes sont à votre écoute pour vous apporter des solutions précises, adaptées à vos besoins et à vos contraintes terrain."
@@ -334,12 +334,12 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "heroDesc": "ETAFAT détecte les réseaux enterrés et documente les ouvrages souterrains avec des technologies de pointe et une expertise reconnue.\n\nNous sécurisons vos projets, réduisons les risques d'endommagement et fournissons des informations souterraines fiables pour une meilleure maîtrise de vos opérations.",
     "competences": [
       "Détection de réseaux enterrés (EP, EU, AEP, gaz, élec., télécoms, chaleur...)",
-      "Investigations 3D géoradar (GPR) et autres méthodes non intrusives",
-      "Relevés et lazo 3D d'ouvrages souterrains",
+      "Investigations 3D par géoradar (GPR) et autres méthodes non invasives",
+      "Relevés et lasti 3D d'ouvrages souterrains",
       "Géoréférencement et levés topographiques souterrains",
       "Sécurité des interventions et gestion des risques",
       "Cartographie et modélisation des réseaux enterrés",
-      "Plans de synthèse et profils en long",
+      "Plans de gestion et profils en long",
       "Contrôle qualité et traçabilité des données",
       "Intégration des données en SIG et BIM",
       "Conseil et assistance technique"
@@ -367,7 +367,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT accompagne maîtres d'ouvrage publics et privés, entreprises de travaux, exploitants de réseaux et bureaux d'études dans des projets variés : infrastructures urbaines, réseaux enterrés, ouvrages souterrains, tunnels, parkings, sites industriels, etc. Notre exigence de qualité et notre réactivité font de nous un partenaire de confiance sous vos projets.",
     "cta": {
       "question": "Un projet de relevé souterrain ?",
       "text": "Nos équipes sont à votre écoute pour vous apporter des solutions précises, adaptées à vos besoins et à vos contraintes souterraines."
@@ -386,17 +386,17 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       "Suivi de sédimentation et calculs de volumes",
       "Relevés de quais, digues, berges et ouvrages immergés",
       "Traitement et contrôle qualité des données",
-      "Production de livrables cartographiques et 3D",
+      "Production de livrables cartographiques sur standards",
       "Intégration topo-hydro et modélisation 2D/3D"
     ],
     "atouts": [
       {
         "title": "EXPERTISE AQUATIQUE",
-        "text": "Équipe spécialisée en hydrographie et connaissance approfondie des milieux aquatiques."
+        "text": "Équipes spécialisées en hydrographie et connaissance approfondie des milieux aquatiques."
       },
       {
         "title": "ÉQUIPEMENTS SPÉCIALISÉS",
-        "text": "Systèmes sonar mono et multifaisceaux, sondes de haute précision, embarcations et navires adaptés."
+        "text": "Systèmes sonar mono et multifaisceaux, sondes de haute précision, marégraphes et navires adaptés."
       },
       {
         "title": "PRÉCISION DES PROFONDEURS",
@@ -404,7 +404,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "MODÈLES EXPLOITABLES",
-        "text": "MNT et nuages de points densifiés, livrables compatibles DAO/BIM, SIG et modélisations hydrauliques."
+        "text": "MNT et nuage de points densifiés, livrables compatibles DAO/BIM, SIG et modélisations hydrauliques."
       },
       {
         "title": "COMPLÉMENTARITÉ TOPO-HYDRO",
@@ -412,7 +412,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT accompagne depuis de nombreuses années les acteurs publics et privés (ports, collectivités, concessionnaires, bureaux d'études, industries) dans des projets variés : aménagements portuaires et fluviaux, barrages et retenues, dragages, suivis environnementaux, études de navigation, etc. Notre exigence de qualité et notre expertise technique garantissent des données fiables, cohérentes et prêtes à l'emploi.",
     "cta": {
       "question": "Un projet de relevé bathymétrique ?",
       "text": "Nos experts sont à votre écoute pour vous proposer des solutions adaptées à vos objectifs, à votre environnement et à vos contraintes opérationnelles."
@@ -421,15 +421,15 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "scanner-laser-3d-et-mms": {
     "slug": "scanner-laser-3d-et-mms",
     "title": "Relevés de haute précision",
-    "heroDesc": "ETAFAT accompagne vos projets nécessitant des mesures et contrôles dimensionnels de très haute précision, grâce à une expertise reconnue en géométrie, topographie, instrumentation et métrologie. Grâce à des équipements de pointe et à des méthodes rigoureuses, nous réalisons des relevés précis, fiables et traçables pour garantir la qualité, la conformité et la performance de vos ouvrages, équipements et installations.",
+    "heroDesc": "ETAFAT accompagne vos projets nécessitant des mesures et contrôles dimensionnels de très haute précision, grâce à une expertise reconnue en géométrie, topographie, instrumentation et métrologie.\n\nGrâce à des équipements de pointe et à des méthodes rigoureuses, nous réalisons des relevés précis, fiables et traçables pour garantir la qualité, la conformité et la performance de vos ouvrages, équipements et installations.",
     "competences": [
       "Contrôle dimensionnel et géométrique haute précision",
       "Mise en place et gestion de référentiels",
       "Mesure 3D avancée : laser tracker, tracker optique, bras de mesure, photogrammétrie",
       "Contrôle de conformité d'ouvrage",
       "Étalonnage et vérification d'instrument",
-      "Reverse engineering et installation 3D",
-      "Association et contrôle de précision",
+      "Reverse engineering et modélisation 3D",
+      "Auscultation et contrôle de précision",
       "Géoréférencement et recalage de précision",
       "Intégration des données dans vos workflows DAO, BIM et SIG",
       "Conseil et assistance technique"
@@ -437,11 +437,11 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "atouts": [
       {
         "title": "PRÉCISION EXTRÊME",
-        "text": "Des mesures et contrôles de très haute précision, adaptés aux environnements les plus exigeants."
+        "text": "Des mesures et contrôles de très haute précision, adaptées aux environnements les plus exigeants."
       },
       {
         "title": "MOYENS TECHNIQUES",
-        "text": "Équipements de pointe et logiciels métier performants pour des résultats fiables et exploitables."
+        "text": "Équipements de pointe et logiciels métier performants pour des résultats fiables et traçables."
       },
       {
         "title": "DÉVELOPPEMENT DES COMPÉTENCES",
@@ -453,28 +453,28 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "INTERVENTION SUR PROJETS COMPLEXES",
-        "text": "Une expertise adaptée aux secteurs industriels, techniques et infrastructurels les plus exigeants."
+        "text": "Une expertise adaptée aux secteurs industriels, techniques et infrastructures les plus exigeants."
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT accompagne depuis de nombreuses années les maîtres d'ouvrage, entreprises, bureaux d'études et industriels dans des missions de relevés de haute précision, de contrôle dimensionnel et d'assistance technique. Notre expérience garantit des prestations fiables, rigoureuses et adaptées aux environnements les plus exigeants.",
     "cta": {
       "question": "Un projet de relevé de haute précision ?",
-      "text": "Parlons-en avec étude pour vous proposer des solutions sur mesure, adaptées à vos objectifs et à vos contraintes techniques."
+      "text": "Nos équipes sont à votre écoute pour vous proposer des solutions sur mesure, adaptées à vos objectifs et à vos contraintes techniques."
     }
   },
   "cartographie": {
     "slug": "cartographie",
     "title": "Cartographie",
-    "heroDesc": "La cartographie transforme des données géospatiales complexes en cartes claires, fiables et exploitables pour comprendre les territoires et éclairer la décision. Chez ETAFAT, nous concevons des cartes sur mesure, alliant rigueur scientifique, sens du détail et maîtrise des normes pour répondre aux besoins des acteurs publics et privés, au Maroc, en Afrique et à l'international.",
+    "heroDesc": "La cartographie transforme des données géospatiales complexes en cartes claires, fiables et exploitables pour comprendre les territoires et éclairer la décision.\n\nChez ETAFAT, nous concevons des cartes sur mesure, alliant rigueur scientifique, souci du détail et maîtrise des normes pour répondre aux besoins des acteurs publics et privés, au Maroc, en Afrique et à l'international.",
     "competences": [
       "Production de cartes thématiques adaptées aux enjeux métiers",
       "Cartographie topographique à différentes échelles",
       "Représentation et visualisation des données géospatiales",
       "Mise en page cartographique et conception graphique",
       "Réalisation d'atlas et de supports cartographiques décisionnels",
-      "Normalisation et harmonisation des données et des styles",
-      "Croisement et intégration de données multi-sources",
+      "Normalisation et harmonisation des données et styles",
+      "Croisement et intégration des données multi-sources",
       "Préparation et structuration des données pour SIG et géoportails"
     ],
     "atouts": [
@@ -505,7 +505,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "systemes-d-information-geographique": {
     "slug": "systemes-d-information-geographique",
     "title": "Systèmes d'information géographique",
-    "heroDesc": "ETAFAT conçoit et déploie des solutions SIG robustes pour centraliser, analyser et exploiter vos données spatiales. Nous aidons les institutions et les porteurs de projets à transformer la donnée géographique en valeur opérationnelle. De l'architecture des données à la mise en place de géoportails et d'outils d'aide à la décision, nous vous accompagnons à chaque étape pour une meilleure connaissance du territoire et une gestion plus efficace.",
+    "heroDesc": "ETAFAT conçoit et déploie des solutions SIG robustes pour centraliser, analyser et exploiter vos données spatiales. Nous aidons les institutions et les porteurs de projets à transformer la donnée géographique en valeur opérationnelle.\n\nDe l'architecture des données à la mise en place de géoportails et d'outils d'aide à la décision, nous vous accompagnons à chaque étape pour une meilleure connaissance du territoire et une gestion plus efficace.",
     "competences": [
       "Conception et développement de SIG métier",
       "Structuration et administration de bases de données géospatiales",
@@ -574,7 +574,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT a contribué à de nombreux projets en modélisation 3D et BIM au Maroc, en Afrique et à l'international, pour des institutions publiques, bailleurs de fonds et organisations privées.",
     "cta": {
       "question": "Vous avez un projet de modélisation 3D ou BIM ?",
       "text": "Parlons de vos besoins et construisons ensemble des solutions sur mesure."
@@ -597,7 +597,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "atouts": [
       {
         "title": "Lecture stratégique",
-        "text": "Nous traitons les phénomènes spatiaux clés pour comprendre les enjeux, anticiper les tendances et orienter vos décisions."
+        "text": "Nous révélons les dynamiques spatiales clés pour comprendre les enjeux, anticiper les tendances et orienter vos décisions."
       },
       {
         "title": "Analyse multi-sources",
@@ -609,14 +609,14 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "Décision éclairée",
-        "text": "Nous transformons la donnée en insights clairs et exploitables pour des décisions plus sûres et plus efficaces."
+        "text": "Nous transformons la donnée en insights clairs et actionnables pour des décisions plus sûres et plus efficaces."
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT a contribué à de nombreux projets d'intelligence géospatiale en Afrique et à l'international, au service d'institutions publiques, d'organisations internationales et d'acteurs privés.",
     "cta": {
       "question": "Vous avez un besoin en intelligence géospatiale ?",
-      "text": "Parlons de vos enjeux et construisons ensemble des solutions adaptées."
+      "text": "Parlons de vos enjeux et construisons ensemble des solutions sur mesure."
     }
   },
   "webmapping-et-plateformes-geospatiales": {
@@ -638,7 +638,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "Collaboration",
-        "text": "Favorises le partage et la co-construction grâce à des outils collaboratifs intégrés et des workflows dédiés."
+        "text": "Favorisez le partage et la co-construction grâce à des outils collaboratifs intégrés et des workflows dédiés."
       },
       {
         "title": "Interopérabilité",
@@ -650,7 +650,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT a accompagné de nombreux organismes publics et privés dans la mise en place de plateformes géospatiales performantes et évolutives au Maroc, en Afrique et à l'international.",
     "cta": {
       "question": "Vous souhaitez déployer une plateforme géospatiale ?",
       "text": "Parlons de vos besoins et construisons ensemble la solution adaptée."
@@ -659,7 +659,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "dematerialisation-et-structuration-de-donnees": {
     "slug": "dematerialisation-et-structuration-de-donnees",
     "title": "Dématérialisation & structuration de données",
-    "heroDesc": "Chez ETAFAT, nous dématérialisons, organisons, structurons et sécurisons vos données géographiques, foncières et techniques hétérogènes pour les transformer en informations fiables, cohérentes et pleinement exploitables. Nous combinons technologies éprouvées, rigueur méthodologique et expertise métier pour garantir la qualité, la traçabilité et la valeur de vos données tout au long de leur cycle de vie.",
+    "heroDesc": "Chez ETAFAT, nous dématérialisons, organisons, structurons et sécurisons vos données géographiques, foncières et techniques hétérogènes pour les transformer en informations fiables, cohérentes et pleinement exploitables.\n\nNous combinons technologies éprouvées, rigueur méthodologique et expertise métier pour garantir la qualité, la traçabilité et la valeur de vos données tout au long de leur cycle de vie.",
     "competences": [
       "Numérisation de plans et archives",
       "Structuration de bases de données",
@@ -679,7 +679,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "Organisation des flux",
-        "text": "Des processus maîtrisés et structurés pour fluidifier vos chaînes de production de données."
+        "text": "Des données organisées et structurées pour fluidifier vos chaînes de production de données."
       },
       {
         "title": "Exploitation facilitée",
@@ -687,16 +687,16 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT a accompagné de nombreux projets de dématérialisation et de structuration de données géographiques, foncières et techniques au Maroc, en Afrique et à l'international, pour des institutions publiques, bailleurs de fonds et organisations privées.",
+    "referencesIntro": "ETAFAT a accompagné de nombreux projets de dématérialisation et de structuration de données géographiques, foncières et techniques au Maroc, en Afrique et à l'international, pour des institutions publiques, bailleurs de fonds et opérateurs privés.",
     "cta": {
       "question": "Vous souhaitez structurer et valoriser vos données ?",
-      "text": "Parlons de vos besoins et construisons ensemble des solutions sur mesure."
+      "text": "Parlons de vos besoins et construisons ensemble solution sur mesure."
     }
   },
   "etudes-territoriales": {
     "slug": "etudes-territoriales",
     "title": "Études territoriales",
-    "heroDesc": "ETAFAT réalise des études territoriales pour comprendre, planifier et anticiper l'évolution des territoires. Nous mobilisons l'analyse spatiale, les données géographiques et une expertise multidisciplinaire pour produire des diagnostics précis et des scénarios prospectifs. Nos études accompagnent les acteurs publics et privés dans la conception de stratégies d'aménagement, l'évaluation des impacts, la gestion durable des ressources et la mise en œuvre de politiques territoriales efficaces.",
+    "heroDesc": "ETAFAT réalise des études territoriales pour comprendre, planifier et anticiper l'évolution des territoires. Nous mobilisons l'analyse spatiale, les données géographiques et une expertise multidisciplinaire pour produire des diagnostics précis et des scénarios prospectifs.\n\nNos études accompagnent les acteurs publics et privés dans la conception de stratégies d'aménagement, l'évaluation des impacts, la gestion durable des ressources et la mise en œuvre de politiques territoriales efficaces.",
     "competences": [
       "Diagnostic territorial et socio-économique",
       "Analyse spatiale et modélisation territoriale",
@@ -716,7 +716,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "LECTURE TERRITORIALE APPROFONDIE",
-        "text": "Des analyses fines des dynamiques et des interactions pour identifier les leviers de développement et les risques."
+        "text": "Des analyses fines des dynamiques en cours pour mieux identifier les leviers de développement et les risques."
       },
       {
         "title": "AIDE À LA DÉCISION STRATÉGIQUE",
@@ -724,7 +724,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "ADAPTATION AUX CONTEXTES LOCAUX",
-        "text": "Des solutions sur mesure, co-construites avec les acteurs territoriaux et adaptées aux spécificités locales."
+        "text": "Des solutions sur mesure, conçues à partir des réalités territoriales et adaptées aux spécificités locales."
       }
     ],
     "references": [],
@@ -737,7 +737,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "conseil-et-audit-geospatial": {
     "slug": "conseil-et-audit-geospatial",
     "title": "Conseil & audit géospatial",
-    "heroDesc": "ETAFAT accompagne les organisations dans l'évaluation de leurs pratiques géospatiales, de la qualité de leurs données et de la performance de leurs dispositifs. Nos audits et conseils apportent un regard expert et indépendant pour identifier les forces et les axes d'amélioration, formuler des recommandations concrètes et optimiser la qualité, la gouvernance et la prise de décision.",
+    "heroDesc": "ETAFAT accompagne les organisations dans l'évaluation de leurs pratiques géospatiales, de la qualité de leurs données et de la performance de leurs dispositifs.\n\nNos audits et conseils apportent un regard expert et indépendant pour identifier les forces et les axes d'amélioration, formuler des recommandations concrètes et optimiser la qualité, la gouvernance et la prise de décision.",
     "competences": [
       "Audit de dispositifs SIG et géospatiaux",
       "Évaluation de la qualité des données",
@@ -770,7 +770,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "referencesIntro": "ETAFAT intervient auprès d'institutions publiques, d'organismes de gestion et de collectivités dans le cadre de missions de conseil, d'audit et d'appui institutionnel. Notre expertise couvre l'évaluation de dispositifs SIG, la qualité des données, la gouvernance, la performance des processus et la conformité réglementaire. Nous contribuons à renforcer la maturité géospatiale et la capacité d'action de nos clients.",
     "cta": {
       "question": "Un partenaire de confiance pour vos conseils et audits géospatiaux",
-      "text": "Évaluer, recommander, améliorer : ensemble pour des décisions plus éclairées."
+      "text": "Évaluer, recommander, améliorer : ensemble vers des décisions plus éclairées."
     }
   },
   "assistance-a-maitrise-d-ouvrage": {
@@ -790,7 +790,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "atouts": [
       {
         "title": "VISION PROJET",
-        "text": "Une compréhension globale de vos enjeux pour des solutions adaptées à vos objectifs et à votre territoire."
+        "text": "Une compréhension claire de vos enjeux pour des solutions adaptées à vos objectifs et à votre territoire."
       },
       {
         "title": "PILOTAGE SÉCURISÉ",
@@ -806,7 +806,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT met son expérience de l'assistance à maîtrise d'ouvrage au service d'institutions publiques, de collectivités, d'établissements et d'entreprises. De la définition stratégique à la réception des livrables, nous sécurisons la réussite de vos projets en apportant expertise, transparence et engagement.",
     "cta": {
       "question": "Un accompagnement fiable pour des projets réussis",
       "text": "Confiez-nous vos projets : ensemble, construisons des solutions durables et performantes pour vos territoires."
@@ -837,7 +837,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       },
       {
         "title": "ANTICIPATION DES RISQUES",
-        "text": "Une détection précoce des anomalies et des tendances pour identifier les signaux faibles et prévenir les dégradations."
+        "text": "Une analyse des anomalies et des tendances pour identifier les signaux faibles et prévenir les dégradations."
       },
       {
         "title": "SUIVI DANS LA DURÉE",
@@ -845,7 +845,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT intervient sur de nombreux projets d'inspection et de surveillance d'ouvrages d'art, de bâtiments et d'infrastructures linéaires pour des maîtres d'ouvrage publics et privés. Notre expertise couvre des contextes variés et des ouvrages de tous types telles, avec des approches adaptées aux enjeux de sécurité, de performance et de durabilité.",
     "cta": {
       "question": "Un partenaire de confiance pour inspecter, surveiller et sécuriser vos ouvrages.",
       "text": "Ensemble, protégeons vos infrastructures et assurons leur pérennité."
@@ -860,7 +860,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       "Accompagnement aux méthodes terrain",
       "Initiation au BIM et à la 3D",
       "Gestion et qualité des données",
-      "Prise en main des données géospatiales",
+      "Prise en main des plateformes géospatiales",
       "Ateliers pratiques et cas concrets",
       "Montée en compétences des équipes",
       "Transfert méthodologique et opérationnel"
@@ -884,7 +884,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "Découvrez l'ensemble des projets et réalisations menés par ETAFAT au Maroc, en Afrique et à l'international.",
+    "referencesIntro": "ETAFAT intervient auprès d'institutions publiques, de collectivités locales, d'entreprises et de bureaux d'études pour concevoir et dispenser des formations techniques et opérationnelles adaptées à leurs enjeux et à leurs outils. Notre expérience terrain et notre approche pédagogique éprouvée garantissent des résultats concrets et mesurables.",
     "cta": {
       "question": "Développons ensemble les compétences de vos équipes pour plus d'impact et d'autonomie.",
       "text": ""
