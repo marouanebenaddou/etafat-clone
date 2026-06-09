@@ -42,7 +42,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "FONCIER",
     heroDesc:
       "ETAFAT accompagne les États, institutions et collectivités dans la sécurisation, la gestion et la valorisation du foncier. De la délimitation des territoires à la formalisation des droits, nous déployons des solutions géospatiales fiables, innovantes et adaptées aux contextes locaux.",
-    heroImage: SK("cadastre-et-securisation-fonciere"),
+    heroImage: "/etafat/references/hero-foncier.jpg",
     domainSlug: "foncier",
     projects: [
       {
@@ -90,7 +90,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "AMÉNAGEMENT DU TERRITOIRE",
     heroDesc:
       "ETAFAT accompagne les collectivités et les acteurs publics dans la planification territoriale et le développement urbain durable. Grâce à la donnée géospatiale et aux outils numériques, nous concevons des solutions fiables pour mieux planifier, décider et aménager les territoires.",
-    heroImage: SK("etudes-territoriales"),
+    heroImage: "/etafat/references/hero-amenagement-du-territoire.jpg",
     domainSlug: "amenagement-du-territoire",
     projects: [
       {
@@ -138,7 +138,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "ÉNERGIE & MINES",
     heroDesc:
       "ETAFAT sécurise les sites industriels, les emprises minières et les infrastructures énergétiques grâce à des données géospatiales fiables et des solutions sur mesure pour optimiser la planification, la gestion des actifs et la conformité réglementaire.",
-    heroImage: SK("geospatial-intelligence"),
+    heroImage: "/etafat/references/hero-energie-mines.jpg",
     domainSlug: "energie-mines",
     projects: [
       {
@@ -186,7 +186,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "BÂTIMENT & PATRIMOINE",
     heroDesc:
       "ETAFAT accompagne les institutions et collectivités dans la documentation, la préservation et la valorisation des bâtiments et du patrimoine. Grâce au scan 3D, au HBIM, au SIG et à des solutions digitales sur mesure, nous produisons des données fiables pour mieux connaître, gérer et transmettre ces biens d'exception.",
-    heroImage: SK("modelisation-3d-et-bim"),
+    heroImage: "/etafat/references/hero-batiment-patrimoine.jpg",
     domainSlug: "batiment-patrimoine",
     projects: [
       {
@@ -234,7 +234,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "INFRASTRUCTURES",
     heroDesc:
       "ETAFAT accompagne les maîtres d'ouvrage, entreprises et collectivités dans la sécurisation, la conception et la documentation de leurs projets d'infrastructures grâce à la topographie, à la 3D, aux drones et à l'ingénierie géospatiale.",
-    heroImage: SK("topographie-et-geodesie"),
+    heroImage: "/etafat/references/hero-infrastructures.jpg",
     domainSlug: "infrastructures",
     projects: [
       {
@@ -282,7 +282,7 @@ const DOMAINS: DomainData[] = [
     heroWord: "AGRICULTURE & EAU",
     heroDesc:
       "ETAFAT accompagne les acteurs publics et privés dans la réussite de leurs projets agricoles, ruraux et hydrauliques grâce à la topographie, au LiDAR, à la bathymétrie, à la cartographie et à des solutions digitales innovantes au service d'une gestion durable de l'eau et des territoires.",
-    heroImage: SK("releves-geospatiaux"),
+    heroImage: "/etafat/references/hero-agriculture-eau.jpg",
     domainSlug: "agriculture-eau",
     projects: [
       {
