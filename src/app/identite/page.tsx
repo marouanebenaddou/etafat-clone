@@ -111,6 +111,7 @@ export default function IdentitePage() {
         ]}
         variant="banner"
         image="/etafat/skills/etudes-territoriales.jpg"
+        video="/etafat/videos/aerial-territory.mp4"
       />
 
       <IdentiteSubNav />

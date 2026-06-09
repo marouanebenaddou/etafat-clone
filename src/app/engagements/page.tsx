@@ -103,6 +103,7 @@ export default function EngagementsPage() {
         ]}
         variant="banner"
         image="/etafat/skills/conseil-et-audit-geospatial.jpg"
+        video="/etafat/videos/aerial-territory.mp4"
       />
 
       {/* Intro paragraphs */}

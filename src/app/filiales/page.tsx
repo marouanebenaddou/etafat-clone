@@ -75,6 +75,7 @@ export default function FilialesPage() {
         ]}
         variant="banner"
         image="/etafat/skills/assistance-fonciere.jpg"
+        video="/etafat/videos/aerial-territory.mp4"
       />
 
       {/* Intro */}

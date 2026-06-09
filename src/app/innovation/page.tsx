@@ -50,12 +50,12 @@ const AXES = [
 ];
 
 const EXPERTISES = [
-  { title: "Nuages de points", image: "/etafat/skills/modelisation-3d-et-bim.jpg" },
-  { title: "Photogrammétrie", image: "/etafat/skills/cartographie.jpg" },
-  { title: "LiDAR & scanner 3D", image: "/etafat/skills/releves-geospatiaux.jpg" },
+  { title: "Nuages de points", image: "/etafat/innovation/exp-nuages-de-points.jpg" },
+  { title: "Photogrammétrie", image: "/etafat/innovation/exp-photogrammetrie.jpg" },
+  { title: "LiDAR & scanner 3D", image: "/etafat/skills/modelisation-3d-et-bim.jpg" },
   { title: "SIG & bases de données spatiales", image: "/etafat/skills/systemes-d-information-geographique.jpg" },
-  { title: "Webmapping", image: "/etafat/skills/geospatial-intelligence.jpg" },
-  { title: "BIM & jumeaux numériques", image: "/etafat/skills/conseil-et-audit-geospatial.jpg" },
+  { title: "Webmapping", image: "/etafat/innovation/exp-webmapping.jpg" },
+  { title: "BIM & jumeaux numériques", image: "/etafat/innovation/exp-bim-jumeaux.jpg" },
 ];
 
 const STATS = [
@@ -75,12 +75,12 @@ const ARTICLES = [
   {
     title: "Du LiDAR au jumeau numérique",
     text: "De la capture 3D à la modélisation intelligente, vers des jumeaux numériques au service de la planification urbaine.",
-    image: "/etafat/skills/modelisation-3d-et-bim.jpg",
+    image: "/etafat/innovation/exp-bim-jumeaux.jpg",
   },
   {
     title: "Les géoportails comme outils d'aide à la décision",
     text: "Diffuser la bonne information, au bon moment, pour des décisions éclairées et partagées.",
-    image: "/etafat/skills/systemes-d-information-geographique.jpg",
+    image: "/etafat/innovation/exp-webmapping.jpg",
   },
 ];
 
@@ -123,7 +123,7 @@ export default function InnovationPage() {
               className="group relative block aspect-[4/3] overflow-hidden rounded-md"
             >
               <Image
-                src="/etafat/skills/geospatial-intelligence.jpg"
+                src="/etafat/innovation/innovation-hero.jpg"
                 alt="L'innovation géospatiale chez ETAFAT"
                 fill
                 priority

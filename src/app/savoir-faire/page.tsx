@@ -156,6 +156,7 @@ export default function SavoirFairePage() {
         breadcrumb={[{ label: "Accueil", href: "/" }, { label: "Savoir-faire" }]}
         variant="banner"
         image="/etafat/skills/cartographie.jpg"
+        video="/etafat/videos/aerial-territory.mp4"
       />
 
       {/* QUEL EST VOTRE BESOIN ? — 4 pillar overview cards */}
