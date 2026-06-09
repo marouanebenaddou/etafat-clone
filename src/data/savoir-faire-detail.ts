@@ -37,20 +37,20 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     ],
     "references": [
       {
-        "title": "PRESFOR — CÔTE D'IVOIRE / AFOR",
-        "subtitle": "",
+        "title": "PRESFOR",
+        "subtitle": "CÔTE D'IVOIRE / AFOR",
         "description": "Appui à la sécurisation foncière et à la mise en valeur des forêts classées dans le cadre du projet PRESFOR.",
         "image": "/etafat/references/foncier-1.jpg"
       },
       {
-        "title": "PROCASEF — SÉNÉGAL",
-        "subtitle": "",
+        "title": "PROCASEF",
+        "subtitle": "SÉNÉGAL",
         "description": "Appui à la sécurisation foncière des zones d'aménagement agricole dans les régions de Sédhiou, Kolda et Ziguinchor.",
         "image": "/etafat/references/foncier-2.jpg"
       },
       {
-        "title": "IMMATRICULATION FONCIÈRE D'ENSEMBLE — MAROC / ANCFCC",
-        "subtitle": "",
+        "title": "IMMATRICULATION FONCIÈRE D'ENSEMBLE",
+        "subtitle": "MAROC / ANCFCC",
         "description": "Réalisation de l'immatriculation foncière d'ensemble dans plusieurs provinces du Royaume.",
         "image": "/etafat/references/foncier-4.jpg"
       }
@@ -109,7 +109,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "plans-parcellaires-et-emprises": {
     "slug": "plans-parcellaires-et-emprises",
     "title": "Plans parcellaires & emprises",
-    "heroDesc": "ETAFAT réalise des plans parcellaires précis et fiables pour identifier, délimiter et représenter les parcelles, les emprises de projets et les limites foncières. Grâce à des levés topographiques de haute précision, à l'utilisation de technologies modernes et à une expertise terrain reconnue, nous produisons des plans conformes aux exigences techniques, réglementaires et institutionnelles.",
+    "heroDesc": "ETAFAT réalise des plans parcellaires précis et fiables pour identifier, délimiter et représenter les parcelles, les emprises de projets et les limites foncières.\n\nGrâce à des levés topographiques de haute précision, à l'utilisation de technologies modernes et à une expertise terrain reconnue, nous produisons des plans conformes aux exigences techniques, réglementaires et institutionnelles.",
     "competences": [
       "Levé topographique pour l'établissement de plans parcellaires",
       "Délimitation de parcelles et d'emprises de projets",
@@ -118,7 +118,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       "Matérialisation et bornage de limites foncières",
       "Plans d'emprises pour infrastructures et aménagements",
       "Plans de morcellement et de lotissement",
-      "Plans de voirie",
+      "Plans d'alignement et de voirie",
       "Intégration des données dans un système SIG",
       "Contrôle qualité et vérification terrain",
       "Fourniture de plans exploitables pour les démarches administratives et techniques"
@@ -126,15 +126,15 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "atouts": [
       {
         "title": "PRÉCISION ET FIABILITÉ",
-        "text": "Des levés de haute précision et un contrôle rigoureux pour des plans exacts et conformes à vos exigences."
+        "text": "Des levés de haute précision et un contrôle rigoureux pour des plans exacts et conformes aux exigences."
       },
       {
         "title": "EXPERTISE TERRAIN ÉPROUVÉE",
-        "text": "Une solide expérience sur tous les types de terrains et dans des contextes institutionnels et géographiques."
+        "text": "Une solide expérience sur tous les types de terrains et dans divers contextes institutionnels et géographiques."
       },
       {
         "title": "OUTILS ET TECHNOLOGIES MODERNES",
-        "text": "L'utilisation d'équipements de pointe et de solutions numériques performantes pour des livrables précis et rapides."
+        "text": "Utilisation d'équipements de pointe et de solutions numériques performantes pour des livrables précis et rapides."
       },
       {
         "title": "CONFORMITÉ RÉGLEMENTAIRE",
@@ -146,7 +146,7 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT accompagne des projets d'aménagement, d'infrastructures, de développement territorial et de sécurisation foncière nécessitant des plans parcellaires et des plans d'emprises précis et fiables. Nos références couvrent des études, des levés et des productions de plans à grande échelle pour des institutions publiques, des collectivités locales et des partenaires techniques et financiers. Cette expérience nous permet de garantir des livrables de qualité, exploitables et conformes aux exigences techniques et foncières de chaque projet.",
+    "referencesIntro": "ETAFAT accompagne des projets d'aménagement, d'infrastructures, de développement territorial et de sécurisation foncière nécessitant des plans parcellaires et des plans d'emprises précis et fiables.\n\nNos références couvrent des études, des levés et des productions de plans à grande échelle pour des institutions publiques, des collectivités locales et des partenaires techniques et financiers.\n\nCette expérience nous permet de garantir des livrables de qualité, exploitables et conformes aux exigences techniques et réglementaires.",
     "cta": {
       "question": "Besoin de plans parcellaires ou de plans d'emprises ?",
       "text": "ETAFAT vous accompagne pour produire des plans précis, conformes et adaptés à vos projets."
