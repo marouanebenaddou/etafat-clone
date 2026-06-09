@@ -102,7 +102,8 @@ export function PageHero({
     // the text block grows tall (wide screens / browser zoom). The pt-[128px]
     // guarantees the title never tucks behind the header; no max-h so the box
     // can grow to fit the content.
-    const tall = paragraphs.length > 1 || !!cta;
+    const descLen = paragraphs.join(" ").length;
+    const tall = paragraphs.length > 1 || !!cta || descLen > 180;
     const heightClasses = tall
       ? "min-h-[540px] pt-[128px]"
       : "h-[45vh] min-h-[380px] max-h-[480px]";
