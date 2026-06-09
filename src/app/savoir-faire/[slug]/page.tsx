@@ -4,6 +4,8 @@ import { QuestionCTA } from "@/components/QuestionCTA";
 import { CheckIcon } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { skills, skillBySlug, skillImage } from "@/lib/etafat";
+import { SavoirFaireDetail } from "@/components/SavoirFaireDetail";
+import { savoirFaireDetails } from "@/data/savoir-faire-detail";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
@@ -16,6 +18,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  const detail = savoirFaireDetails[slug];
+  if (detail) {
+    return { title: `${detail.title} - ETAFAT`, description: detail.heroDesc };
+  }
   const s = skillBySlug(slug);
   if (!s) return { title: "ETAFAT" };
   return { title: `${s.title} - ETAFAT`, description: s.short };
@@ -27,6 +33,13 @@ export default async function SkillDetail({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  const detail = savoirFaireDetails[slug];
+  if (detail) {
+    return <SavoirFaireDetail data={detail} heroImage={skillImage(slug)} />;
+  }
+
+  // Fallback for skills without a dedicated design (e.g. relevés géospatiaux)
   const s = skillBySlug(slug);
   if (!s) notFound();
 
