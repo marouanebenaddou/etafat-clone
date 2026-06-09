@@ -160,9 +160,9 @@ export default function IdentitePage() {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
             {VALEURS.map((v, i) => (
               <Reveal key={v.title} delay={i * 60}>
-                <div className="group relative bg-white p-5 rounded-md border border-[#e5e7eb] h-full hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
+                <div className="group relative bg-white p-5 rounded-md border border-[#e5e7eb] h-full text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-4 mx-auto group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
                     <Icon icon={v.icon} width={26} height={26} className="text-[#00669d]" />
                   </div>
                   <h3 className="text-navy text-base font-semibold mb-2 leading-tight">{v.title}</h3>
