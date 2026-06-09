@@ -124,11 +124,11 @@ export function PageHero({
               <source src={video} type="video/mp4" />
             </video>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/30" />
           <div className="container-etafat relative pb-12 md:pb-16">
             <Reveal variant="line" duration={1100} delay={150}>
               <h1
-                className="text-white max-w-3xl text-4xl md:text-6xl font-semibold leading-tight"
+                className="text-white max-w-3xl text-4xl md:text-6xl font-semibold leading-tight [text-shadow:0_2px_14px_rgba(0,0,0,0.55)]"
                 style={{ color: "#fff" }}
               >
                 {title}
@@ -138,7 +138,7 @@ export function PageHero({
               <Reveal y={16} delay={500}>
                 <div className="mt-5 max-w-xl space-y-3">
                   {paragraphs.map((p, i) => (
-                    <p key={i} className="text-white/90 text-lg">
+                    <p key={i} className="text-white/90 text-lg [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
                       {p}
                     </p>
                   ))}
