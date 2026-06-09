@@ -9,7 +9,6 @@ const LINKS = [
   { label: "Direction", id: "direction" },
   { label: "Chiffres clés", id: "chiffres-cles" },
   { label: "Historique", id: "historique" },
-  { label: "Localisation", id: "localisation" },
 ];
 
 export function IdentiteSubNav() {
