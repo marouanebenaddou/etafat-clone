@@ -110,7 +110,7 @@ export function PageHero({
     return (
       <section className="relative text-white">
         <div className={`relative ${heightClasses} flex items-end overflow-hidden`}>
-          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover ken-burns" />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/55" />
           <div className="container-etafat relative pb-12 md:pb-16">
             <Reveal variant="line" duration={1100} delay={150}>

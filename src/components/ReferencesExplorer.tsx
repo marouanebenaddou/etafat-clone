@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
+import { CountUp } from "@/components/CountUp";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
 
@@ -373,7 +374,7 @@ export function ReferencesExplorer() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-right"
+          className="object-cover object-right ken-burns"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0a1e30] via-[#0a1e30]/92 to-[#0a1e30]/30" />
         <div className="container-etafat relative pt-[148px] pb-16 md:pb-20">
@@ -498,7 +499,7 @@ export function ReferencesExplorer() {
                       className="text-3xl font-semibold leading-none text-[#00669d] md:text-4xl"
                       style={{ fontFamily: "var(--font-figtree)" }}
                     >
-                      {s.value}
+                      <CountUp value={s.value} />
                     </p>
                     <p className="mt-1 font-semibold text-navy">{s.unit}</p>
                     <p className="mt-1 text-sm leading-snug text-body">{s.desc}</p>

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
+import { CountUp } from "@/components/CountUp";
 import { Pill } from "@/components/Pill";
 import {
   ArrowRightIcon,
@@ -228,7 +229,7 @@ export default function IdentitePage() {
                 <div className="bg-[#00669d] text-white rounded-md p-8 h-full">
                   <Icon icon="ph:mountains-duotone" width={36} height={36} className="text-white/80 mb-5" />
                   <p className="text-3xl md:text-4xl font-semibold leading-none mb-2" style={{ fontFamily: "var(--font-figtree)", color: "#fff" }}>
-                    {c.value}
+                    <CountUp value={c.value} />
                     {c.unit && <span className="text-xl ml-1 font-normal">{c.unit}</span>}
                   </p>
                   <p className="text-white/85 text-sm leading-snug mt-3">{c.label}</p>
