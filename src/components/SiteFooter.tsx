@@ -19,7 +19,7 @@ export function SiteFooter() {
             className="mt-4 text-white text-lg md:text-xl"
             style={{ fontFamily: "var(--font-figtree)", fontWeight: 500 }}
           >
-            Donnons du pouvoir à vos données
+            Révélons le potentiel de vos territoires
           </p>
         </div>
 
