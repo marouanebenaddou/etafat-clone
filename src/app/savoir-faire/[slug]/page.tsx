@@ -4,6 +4,7 @@ import { QuestionCTA } from "@/components/QuestionCTA";
 import { CheckIcon } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { skills, skillBySlug, skillImage } from "@/lib/etafat";
+import { RelatedSkills } from "@/components/RelatedSkills";
 import { SavoirFaireDetail } from "@/components/SavoirFaireDetail";
 import { savoirFaireDetails } from "@/data/savoir-faire-detail";
 import type { Metadata } from "next";
@@ -76,6 +77,8 @@ export default async function SkillDetail({
           </ul>
         </div>
       </section>
+
+      <RelatedSkills currentSlug={s.slug} />
 
       <QuestionCTA />
     </>

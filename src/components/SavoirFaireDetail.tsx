@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
+import { RelatedSkills } from "@/components/RelatedSkills";
 import { CheckCircleIcon, ArrowRightIcon } from "@/components/icons";
 import { Icon } from "@iconify/react";
 
@@ -173,6 +174,9 @@ export function SavoirFaireDetail({
           </div>
         </section>
       )}
+
+      {/* Les savoir-faire associés */}
+      <RelatedSkills currentSlug={data.slug} />
 
       {/* CTA */}
       <section className="bg-[#00669d] py-16 text-white">
