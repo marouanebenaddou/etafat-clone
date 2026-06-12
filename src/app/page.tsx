@@ -156,6 +156,65 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* CE QUI DONNE DU SENS */}
+      <section className="bg-[#f5f7f9] py-24 md:py-32">
+        <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <Reveal>
+            <h2 className="text-navy mb-8 leading-tight">
+              Ce qui guide
+              <br />notre expertise
+            </h2>
+            <p className="text-body mb-8 leading-relaxed max-w-md">
+              Nous plaçons l&apos;excellence, l&apos;innovation et la responsabilité au centre
+              de nos actions.
+            </p>
+            <Pill href="/identite/" variant="outline-teal" arrow="right">
+              Découvrir notre vision
+            </Pill>
+          </Reveal>
+          <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
+            <Image
+              src={IMG("2026/01/26-VIDEO-GROUPE-Video_Vision-Miniature_YT.jpg")}
+              alt="Vidéo - Notre vision"
+              fill
+              sizes="(min-width:768px) 50vw, 100vw"
+              className="object-cover"
+            />
+            <button
+              type="button"
+              aria-label="Lecture vidéo"
+              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
+            >
+              <PlayIcon width={28} height={28} />
+            </button>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* DOMAINES */}
+      <section className="bg-white py-24 md:py-32">
+        <div className="container-etafat">
+          <Reveal>
+            <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>
+          </Reveal>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {domaines.map(({ label, href, Icon }, i) => (
+              <Reveal key={href} delay={i * 80}>
+                <Link
+                  href={href}
+                  className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
+                >
+                  <Icon className="w-12 h-12 text-[#00669d] mb-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                  <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
+                    {label}
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* QUEL EST VOTRE BESOIN ? */}
       <section className="bg-[#f5f7f9] py-20 md:py-28">
         <div className="container-etafat">
@@ -219,65 +278,6 @@ export default function HomePage() {
               </Pill>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* CE QUI DONNE DU SENS */}
-      <section className="bg-white py-24 md:py-32">
-        <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <Reveal>
-            <h2 className="text-navy mb-8 leading-tight">
-              Ce qui guide
-              <br />notre expertise
-            </h2>
-            <p className="text-body mb-8 leading-relaxed max-w-md">
-              Nous plaçons l&apos;excellence, l&apos;innovation et la responsabilité au centre
-              de nos actions.
-            </p>
-            <Pill href="/identite/" variant="outline-teal" arrow="right">
-              Découvrir notre vision
-            </Pill>
-          </Reveal>
-          <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
-            <Image
-              src={IMG("2026/01/26-VIDEO-GROUPE-Video_Vision-Miniature_YT.jpg")}
-              alt="Vidéo - Notre vision"
-              fill
-              sizes="(min-width:768px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <button
-              type="button"
-              aria-label="Lecture vidéo"
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
-            >
-              <PlayIcon width={28} height={28} />
-            </button>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* DOMAINES */}
-      <section className="bg-[#f5f7f9] py-24 md:py-32">
-        <div className="container-etafat">
-          <Reveal>
-            <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>
-          </Reveal>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {domaines.map(({ label, href, Icon }, i) => (
-              <Reveal key={href} delay={i * 80}>
-                <Link
-                  href={href}
-                  className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
-                >
-                  <Icon className="w-12 h-12 text-[#00669d] mb-5 transition-transform duration-300 group-hover:-translate-y-1" />
-                  <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
-                    {label}
-                  </span>
-                </Link>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 
