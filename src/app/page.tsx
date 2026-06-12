@@ -1,16 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Pill } from "@/components/Pill";
-import {
-  TerritoryIcon,
-  EnergyIcon,
-  BuildingIcon,
-  BridgeIcon,
-  LandIcon,
-  LeafWaterIcon,
-  PlayIcon,
-  ArrowRightIcon,
-} from "@/components/icons";
+import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { VideoGate } from "@/components/VideoGate";
 import { Icon } from "@iconify/react";
@@ -77,12 +68,12 @@ const PILLARS: {
 const IMG = (path: string) => `https://geofit.fr/wp-content/uploads/${path}`;
 
 const domaines = [
-  { label: "Aménagement du territoire", href: "/domaines-activite/amenagement-du-territoire/", Icon: TerritoryIcon },
-  { label: "Énergie & Mines", href: "/domaines-activite/energie-mines/", Icon: EnergyIcon },
-  { label: "Bâtiment & Patrimoine", href: "/domaines-activite/batiment-patrimoine/", Icon: BuildingIcon },
-  { label: "Infrastructures", href: "/domaines-activite/infrastructures/", Icon: BridgeIcon },
-  { label: "Foncier", href: "/domaines-activite/foncier/", Icon: LandIcon },
-  { label: "Agriculture & Eau", href: "/domaines-activite/agriculture-eau/", Icon: LeafWaterIcon },
+  { label: "Aménagement du territoire", slug: "amenagement-du-territoire" },
+  { label: "Énergie & Mines", slug: "energie-mines" },
+  { label: "Bâtiment & Patrimoine", slug: "batiment-patrimoine" },
+  { label: "Infrastructures", slug: "infrastructures" },
+  { label: "Foncier", slug: "foncier" },
+  { label: "Agriculture & Eau", slug: "agriculture-eau" },
 ];
 
 export default function HomePage() {
@@ -202,13 +193,19 @@ export default function HomePage() {
             <h2 className="text-navy mb-12">Nos domaines d&apos;activités</h2>
           </Reveal>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {domaines.map(({ label, href, Icon }, i) => (
-              <Reveal key={href} delay={i * 80}>
+            {domaines.map(({ label, slug }, i) => (
+              <Reveal key={slug} delay={i * 80}>
                 <Link
-                  href={href}
+                  href={`/domaines-activite/${slug}/`}
                   className="group flex flex-col items-center justify-center py-12 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all"
                 >
-                  <Icon className="w-12 h-12 text-[#00669d] mb-5 transition-transform duration-300 group-hover:-translate-y-1" />
+                  <Image
+                    src={`/etafat/domaines/icons/${slug}.png`}
+                    alt=""
+                    width={128}
+                    height={128}
+                    className="w-24 h-24 md:w-28 md:h-28 mb-5 object-contain transition-transform duration-300 group-hover:-translate-y-1"
+                  />
                   <span className="text-navy text-xl font-medium group-hover:text-[#00669d] transition-colors">
                     {label}
                   </span>
