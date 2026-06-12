@@ -53,6 +53,40 @@ const DOMAIN_INTRO_PHOTOS = new Set([
   "agriculture-eau",
 ]);
 
+// Domain cards use domain-specific wording (e.g. "SIG & bases de données
+// géographiques") that doesn't map 1:1 to one of the 22 canonical savoir-faire
+// slugs. This aliases each variant — keyed by its nameToSlug() output — to the
+// closest real skill so every "savoir-faire associé" card gets an Explorer link.
+const SKILL_NAME_ALIASES: Record<string, string> = {
+  "sig-et-bases-de-donnees-geographiques": "systemes-d-information-geographique",
+  "sig-et-bases-de-donnees-d-infrastructures": "systemes-d-information-geographique",
+  "sig-et-gestion-patrimoniale": "systemes-d-information-geographique",
+  "sig-agricole-et-bases-de-donnees-rurales": "systemes-d-information-geographique",
+  "foncier-et-securisation-des-emprises": "cadastre-et-securisation-fonciere",
+  "foncier-rural-et-securisation-des-emprises": "cadastre-et-securisation-fonciere",
+  "scanner-laser-3d-et-nuages-de-points": "scanner-laser-3d-et-mms",
+  "inspection-des-structures": "inspection-et-surveillance-d-ouvrage",
+  "cartographie-et-plans-du-bati": "cartographie",
+  "cartographie-et-plans-techniques": "cartographie",
+  "cartographie-agricole-et-occupation-du-sol": "cartographie",
+  "conseil-et-audit-foncier-geospatial": "conseil-et-audit-geospatial",
+  "modelisation-3d-et-bim-infrastructure": "modelisation-3d-et-bim",
+  "modeles-numeriques-et-analyse-du-relief": "modelisation-3d-et-bim",
+  "etudes-foncieres-et-diagnostics-territoriaux": "etudes-territoriales",
+  "geospatial-intelligence-fonciere": "geospatial-intelligence",
+  "geospatial-intelligence-agricole-et-hydrique": "geospatial-intelligence",
+  "gestion-de-l-eau-et-ouvrages-hydrauliques": "bathymetrie-et-hydrographie",
+  "bathymetrie-et-releves-hydrographiques": "bathymetrie-et-hydrographie",
+};
+
+/** Resolve a domain card name to its canonical savoir-faire, if any. */
+function cardSkillSlug(name: string): string | undefined {
+  const slug = nameToSlug(name);
+  if (skillBySlug(slug)) return slug;
+  const alias = SKILL_NAME_ALIASES[slug];
+  return alias && skillBySlug(alias) ? alias : undefined;
+}
+
 export default async function DomaineDetail({
   params,
 }: {
@@ -126,12 +160,12 @@ export default async function DomaineDetail({
           </Reveal>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">
             {cards.map((c, i) => {
-              const universal = skillBySlug(nameToSlug(c.name));
+              const slug = cardSkillSlug(c.name);
               return (
                 <Reveal key={c.index} delay={i * 60}>
                   <SkillCard
                     title={c.name}
-                    href={universal ? `/savoir-faire/${universal.slug}/` : undefined}
+                    href={slug ? `/savoir-faire/${slug}/` : "/savoir-faire/"}
                   />
                 </Reveal>
               );
