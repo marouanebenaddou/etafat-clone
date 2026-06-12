@@ -48,22 +48,23 @@ export default function DomainesPage() {
         variant="centered"
       />
       <section className="container-etafat py-16">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {domains.map((d) => {
             return (
               <Link
                 key={d.slug}
                 href={`/domaines-activite/${d.slug}/`}
-                className="group bg-white p-8 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all flex flex-col h-full"
+                className="group relative flex flex-col h-full text-center bg-white border border-[#e5e7eb] rounded-xl px-8 pt-10 pb-8 overflow-hidden hover:border-[#00669d] hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
               >
+                <span className="absolute inset-x-0 top-0 h-1.5 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
                 <Image
                   src={iconSrc(d.slug)}
                   alt=""
-                  width={80}
-                  height={80}
-                  className="w-20 h-20 mb-5 transition-transform duration-300 group-hover:-translate-y-1"
+                  width={176}
+                  height={176}
+                  className="mx-auto mb-6 w-40 h-40 object-contain transition-transform duration-300 group-hover:scale-105"
                 />
-                <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#00669d] transition-colors">
+                <h3 className="text-navy text-xl md:text-2xl font-semibold mb-3 leading-tight group-hover:text-[#00669d] transition-colors">
                   {d.title}
                 </h3>
                 {QUESTIONS[d.slug] && (
@@ -72,11 +73,11 @@ export default function DomainesPage() {
                   </p>
                 )}
                 {d.accroche && (
-                  <p className="text-body text-sm leading-relaxed mb-5 flex-1">
+                  <p className="text-body text-sm leading-relaxed mb-6 flex-1">
                     {d.accroche}
                   </p>
                 )}
-                <span className="text-teal text-sm font-semibold inline-flex items-center gap-2">
+                <span className="mt-auto inline-flex items-center justify-center gap-2 text-teal text-sm font-semibold">
                   Découvrir
                   <span className="arrow-circle">
                     <ArrowRightIcon width={11} height={11} />
