@@ -4,33 +4,44 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 /**
- * Full-screen loading gate for pages with a hero video.
+ * One-time loading gate for the hero video.
  *
- * Keeps a navy splash (ETAFAT logo + spinner) over the whole page until the
- * hero <video> — marked with the `data-hero-video` attribute — has buffered
- * enough to start playing, then fades the splash out so the page reveals with
- * the video already running. A 5s safety timeout guarantees the gate never
- * blocks the page, and media errors also release it.
+ * Shows a navy splash (ETAFAT logo + spinner) over the page on the INITIAL
+ * site load, holding until the hero <video> — marked `data-hero-video` — can
+ * play, then fades out. It is consumed after the first reveal, so client-side
+ * navigation between pages never shows the splash again (until a full reload).
+ * A 5s safety timeout and media-error handling guarantee it never hangs.
  */
+let gateConsumed = false;
+
 export function VideoGate() {
-  const [ready, setReady] = useState(false);
+  // On a fresh page load the gate hasn't been consumed → show splash.
+  // On in-app navigation it's already consumed → start revealed (no splash).
+  const [ready, setReady] = useState(() => gateConsumed);
+  // Whether THIS mount is the initial gate (vs a later navigation mount).
+  const [isInitialGate] = useState(() => !gateConsumed);
 
   useEffect(() => {
+    if (gateConsumed) {
+      setReady(true);
+      return;
+    }
+
+    const reveal = () => {
+      gateConsumed = true;
+      setReady(true);
+    };
+
     const video = document.querySelector<HTMLVideoElement>("[data-hero-video]");
-    if (!video) {
-      setReady(true);
+    if (!video || video.readyState >= 3) {
+      reveal();
       return;
     }
-    // Already buffered enough to play a frame.
-    if (video.readyState >= 3) {
-      setReady(true);
-      return;
-    }
-    const reveal = () => setReady(true);
+
     video.addEventListener("canplay", reveal, { once: true });
     video.addEventListener("loadeddata", reveal, { once: true });
     video.addEventListener("error", reveal, { once: true });
-    // Safety: never hold the page for more than 5s (slow networks, codec stalls…).
+    // Safety: never hold the page for more than 5s.
     const timer = window.setTimeout(reveal, 5000);
     return () => {
       video.removeEventListener("canplay", reveal);
@@ -40,7 +51,7 @@ export function VideoGate() {
     };
   }, []);
 
-  // Lock page scroll while the splash is covering the page.
+  // Lock page scroll only while the splash is actually covering the page.
   useEffect(() => {
     if (ready) return;
     const prev = document.body.style.overflow;
@@ -49,6 +60,10 @@ export function VideoGate() {
       document.body.style.overflow = prev;
     };
   }, [ready]);
+
+  // Navigation mounts never render the splash; only the initial gate does
+  // (and it stays mounted long enough to fade out).
+  if (!isInitialGate) return null;
 
   return (
     <div
