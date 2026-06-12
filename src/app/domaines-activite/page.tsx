@@ -1,16 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { PageHero } from "@/components/PageHero";
 import { QuestionCTA } from "@/components/QuestionCTA";
 import { domains } from "@/lib/etafat";
-import {
-  TerritoryIcon,
-  EnergyIcon,
-  BuildingIcon,
-  BridgeIcon,
-  LandIcon,
-  LeafWaterIcon,
-  ArrowRightIcon,
-} from "@/components/icons";
+import { ArrowRightIcon } from "@/components/icons";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -19,14 +12,16 @@ export const metadata: Metadata = {
     "ETAFAT intervient dans six grands domaines d'activité : aménagement du territoire, énergie & mines, bâtiment & patrimoine, infrastructures, foncier, agriculture & eau.",
 };
 
-const ICONS: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
-  "amenagement-du-territoire": TerritoryIcon,
-  "energie-mines": EnergyIcon,
-  "batiment-patrimoine": BuildingIcon,
-  infrastructures: BridgeIcon,
-  foncier: LandIcon,
-  "agriculture-eau": LeafWaterIcon,
-};
+const ICON_SLUGS = new Set([
+  "amenagement-du-territoire",
+  "energie-mines",
+  "batiment-patrimoine",
+  "infrastructures",
+  "foncier",
+  "agriculture-eau",
+]);
+const iconSrc = (slug: string) =>
+  `/etafat/domaines/icons/${ICON_SLUGS.has(slug) ? slug : "amenagement-du-territoire"}.png`;
 
 const QUESTIONS: Record<string, string> = {
   "amenagement-du-territoire":
@@ -55,14 +50,19 @@ export default function DomainesPage() {
       <section className="container-etafat py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {domains.map((d) => {
-            const Icon = ICONS[d.slug] || TerritoryIcon;
             return (
               <Link
                 key={d.slug}
                 href={`/domaines-activite/${d.slug}/`}
                 className="group bg-white p-8 border border-[#e5e7eb] rounded-md hover:border-[#00669d] hover:shadow-md transition-all flex flex-col h-full"
               >
-                <Icon className="w-12 h-12 text-[#00669d] mb-5" />
+                <Image
+                  src={iconSrc(d.slug)}
+                  alt=""
+                  width={80}
+                  height={80}
+                  className="w-20 h-20 mb-5 transition-transform duration-300 group-hover:-translate-y-1"
+                />
                 <h3 className="text-navy text-xl font-semibold mb-3 leading-tight group-hover:text-[#00669d] transition-colors">
                   {d.title}
                 </h3>
