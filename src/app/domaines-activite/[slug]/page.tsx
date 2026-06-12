@@ -43,6 +43,16 @@ function nameToSlug(name: string) {
     .replace(/^-|-$/g, "");
 }
 
+// Domaines with a dedicated intro photo in /public/etafat/domaines/intro/.
+const DOMAIN_INTRO_PHOTOS = new Set([
+  "amenagement-du-territoire",
+  "energie-mines",
+  "batiment-patrimoine",
+  "infrastructures",
+  "foncier",
+  "agriculture-eau",
+]);
+
 export default async function DomaineDetail({
   params,
 }: {
@@ -59,6 +69,10 @@ export default async function DomaineDetail({
       (d.cards?.[0]?.name ? nameToSlug(d.cards[0].name) : undefined);
     return firstSkill ? skillImage(firstSkill) : null;
   })();
+  // Dedicated domaine photo for the intro section (hero keeps its video).
+  const introPhoto = DOMAIN_INTRO_PHOTOS.has(d.slug)
+    ? `/etafat/domaines/intro/${d.slug}.jpg`
+    : introImage;
 
   return (
     <>
@@ -87,11 +101,11 @@ export default async function DomaineDetail({
                 </Reveal>
               ))}
             </div>
-            {introImage && (
+            {introPhoto && (
               <Reveal variant="zoom-out" duration={1200} delay={150}>
                 <div className="relative aspect-[4/3] rounded-md overflow-hidden">
                   <Image
-                    src={introImage}
+                    src={introPhoto}
                     alt={d.title}
                     fill
                     sizes="(min-width:768px) 50vw, 100vw"
