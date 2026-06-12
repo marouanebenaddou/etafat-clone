@@ -12,6 +12,7 @@ import {
   ArrowRightIcon,
 } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
+import { VideoGate } from "@/components/VideoGate";
 import { Icon } from "@iconify/react";
 import { linkedinPosts } from "@/data/linkedin-posts";
 
@@ -91,12 +92,15 @@ export default function HomePage() {
     <div>
       {/* HERO */}
       <section className="relative min-h-[100vh] flex items-center text-white overflow-hidden">
+        <VideoGate />
         <div className="absolute inset-0">
           <video
+            data-hero-video
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             poster={IMG("2024/05/dsc6186-scaled-1.jpg")}
             className="absolute inset-0 w-full h-full object-cover"
           >

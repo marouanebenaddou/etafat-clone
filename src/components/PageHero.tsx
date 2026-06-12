@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Breadcrumb } from "./Breadcrumb";
 import { Reveal } from "./Reveal";
+import { VideoGate } from "./VideoGate";
 import { ArrowRightIcon } from "./icons";
 
 interface PageHeroProps {
@@ -42,6 +43,7 @@ export function PageHero({
   if (variant === "video-banner" && video) {
     return (
       <section className="relative text-white">
+        <VideoGate />
         <div className="relative h-[45vh] min-h-[380px] max-h-[480px] flex items-end overflow-hidden">
           {image && (
             <Image
@@ -54,6 +56,7 @@ export function PageHero({
             />
           )}
           <video
+            data-hero-video
             poster={image || undefined}
             autoPlay
             loop
@@ -109,15 +112,17 @@ export function PageHero({
       : "h-[45vh] min-h-[380px] max-h-[480px]";
     return (
       <section className="relative text-white">
+        {video && <VideoGate />}
         <div className={`relative ${heightClasses} flex items-end overflow-hidden`}>
           <Image src={image} alt="" fill priority sizes="100vw" className="object-cover ken-burns" />
           {video && (
             <video
+              data-hero-video
               autoPlay
               loop
               muted
               playsInline
-              preload="metadata"
+              preload="auto"
               poster={image}
               className="absolute inset-0 h-full w-full object-cover"
             >
