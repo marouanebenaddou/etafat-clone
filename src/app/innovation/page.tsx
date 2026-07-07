@@ -104,7 +104,7 @@ export default function InnovationPage() {
             <Reveal delay={220}>
               <div className="space-y-4 text-body leading-relaxed">
                 <p>
-                  Chez ETAFAT, l&apos;innovation est au cœur de nos méthodes et de notre ADN. Elle nous permet d&apos;apporter des réponses toujours plus précises, fiables et opérationnelles aux enjeux fonciers, territoriaux et environnementaux.
+                  Chez ETAFAT, l&apos;innovation est au cœur de notre ADN. Elle nous permet d&apos;apporter des réponses toujours plus précises, fiables et opérationnelles aux enjeux fonciers, territoriaux et environnementaux.
                 </p>
                 <p>
                   De l&apos;acquisition sur le terrain à la modélisation 3D, du SIG à la transformation digitale, nous mobilisons les meilleures technologies pour transformer la donnée en valeur et en décision.
