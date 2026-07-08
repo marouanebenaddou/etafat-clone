@@ -56,7 +56,7 @@ const DOMAINS: DomainData[] = [
         title: "PROCASEF",
         subtitle: "Sénégal",
         description:
-          "Sécurisation foncière en milieu rural, formalisation des parcelles et dématérialisation du registre foncier.",
+          "Sécurisation foncière en milieu rural, formalisation des droits sur les parcelles et dématérialisation du registre foncier.",
         image: SK("cadastre-et-securisation-fonciere"),
       },
       {
@@ -94,10 +94,10 @@ const DOMAINS: DomainData[] = [
     domainSlug: "amenagement-du-territoire",
     projects: [
       {
-        title: "Maquette numérique 3D de Rabat",
-        subtitle: "Maroc — Agence Urbaine de Rabat",
+        title: "Maquette numérique 3D de Laâyoune",
+        subtitle: "Maroc — Agence Urbaine de Laâyoune",
         description:
-          "Réalisation des prises de vues aériennes, acquisition LiDAR, production d'une maquette 3D détaillée et mise en place d'un géoportail 3D pour la planification urbaine.",
+          "Réalisation de prises de vues aériennes LiDAR, production d'une maquette 3D détaillée et mise en place d'un géoportail 3D pour la planification urbaine.",
         image: SK("modelisation-3d-et-bim"),
       },
       {
@@ -108,17 +108,17 @@ const DOMAINS: DomainData[] = [
         image: SK("cartographie"),
       },
       {
-        title: "ZUNE de Bouskoura",
-        subtitle: "Maroc — GIE ZUNE Bouskoura",
+        title: "ZUN de Bouskoura",
+        subtitle: "Maroc — GIE ZUN Bouskoura",
         description:
-          "Études techniques et géospatiales pour l'aménagement de la Zone d'Urbanisation Nouvelle : mobilité, voiries, réseaux VRD et plan d'aménagement sur 1200 ha.",
+          "Études techniques et géospatiales pour l'aménagement de la Zone d'Urbanisation Nouvelle — ZUN : mobilité, voiries, réseaux VRD et plan d'aménagement sur 1200 ha.",
         image: SK("etudes-territoriales"),
       },
       {
         title: "Corniche de Dar Bouazza",
         subtitle: "Maroc — Casa Aménagement",
         description:
-          "Études géospatiales et suivi pour la requalification des espaces publics, la promenade littorale et la valorisation du paysage côtier.",
+          "Étude, ingénierie et suivi pour la requalification des espaces publics, la promenade littorale et la valorisation du paysage côtier.",
         image: SK("conseil-et-audit-geospatial"),
       },
     ],
@@ -152,7 +152,7 @@ const DOMAINS: DomainData[] = [
         title: "Pipeline PETROCI",
         subtitle: "Côte d'Ivoire — PETROCI",
         description:
-          "Détection et géoréférencement de plus de 300 km de réseaux enterrés le long du pipeline PETROCI pour sécuriser les travaux et les exploitations.",
+          "Détection et géoréférencement des réseaux PETROCI le long de l'autoroute Abidjan — Yamoussoukro, afin de sécuriser les travaux et les exploitations.",
         image: SK("releves-geospatiaux"),
       },
       {
@@ -205,14 +205,14 @@ const DOMAINS: DomainData[] = [
       },
       {
         title: "Hôtel Harmattan",
-        subtitle: "Côte d'Ivoire — Integral Trading Africa",
+        subtitle: "Côte d'Ivoire — PFO",
         description:
           "Relevé complet par scanner laser 3D et élaboration d'un modèle BIM LOD 3 pour la rénovation et la gestion technique de l'ouvrage.",
         image: SK("conseil-et-audit-geospatial"),
       },
       {
         title: "Palais Présidentiel",
-        subtitle: "Côte d'Ivoire — Integral Trading Africa",
+        subtitle: "Côte d'Ivoire — PFO",
         description:
           "Réalisation d'un relevé 3D détaillé et développement d'un modèle BIM pour la gestion, la maintenance et la prise de décision.",
         image: SK("geospatial-intelligence"),
