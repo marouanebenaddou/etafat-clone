@@ -55,6 +55,11 @@ const SKILL_IMAGE_FALLBACKS: Record<string, string> = {
   "assistance-a-maitrise-d-ouvrage": "conseil-et-audit-geospatial",
   "inspection-et-surveillance-d-ouvrage": "conseil-et-audit-geospatial",
   "formation-et-transfert-de-competences": "etudes-territoriales",
+  // Ingénierie Conseil (ETAFAT ING) — new savoir-faire, borrow related images
+  "etudes-de-faisabilite-et-diagnostics": "etudes-territoriales",
+  "etudes-techniques-aps-apd-pro": "modelisation-3d-et-bim",
+  "controle-et-surveillance-des-travaux": "conseil-et-audit-geospatial",
+  "maitrise-d-oeuvre-et-pilotage-de-projets": "conseil-et-audit-geospatial",
 };
 export function skillImage(slug: string): string {
   const resolved = SKILL_IMAGE_FALLBACKS[slug] ?? slug;
@@ -231,6 +236,35 @@ const RELATED_SKILLS: Record<string, string[]> = {
     "etudes-territoriales",
     "systemes-d-information-geographique",
     "geospatial-intelligence",
+  ],
+  // --- Ingénierie Conseil (ETAFAT ING) — related to existing skills ---
+  "etudes-de-faisabilite-et-diagnostics": [
+    "etudes-territoriales",
+    "conseil-et-audit-geospatial",
+    "assistance-a-maitrise-d-ouvrage",
+    "geospatial-intelligence",
+    "systemes-d-information-geographique",
+  ],
+  "etudes-techniques-aps-apd-pro": [
+    "modelisation-3d-et-bim",
+    "topographie-et-geodesie",
+    "conseil-et-audit-geospatial",
+    "assistance-a-maitrise-d-ouvrage",
+    "cartographie",
+  ],
+  "controle-et-surveillance-des-travaux": [
+    "inspection-et-surveillance-d-ouvrage",
+    "conseil-et-audit-geospatial",
+    "assistance-a-maitrise-d-ouvrage",
+    "topographie-et-geodesie",
+    "releves-geospatiaux",
+  ],
+  "maitrise-d-oeuvre-et-pilotage-de-projets": [
+    "assistance-a-maitrise-d-ouvrage",
+    "conseil-et-audit-geospatial",
+    "etudes-territoriales",
+    "inspection-et-surveillance-d-ouvrage",
+    "formation-et-transfert-de-competences",
   ],
 };
 

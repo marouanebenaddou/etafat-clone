@@ -776,37 +776,39 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
   "assistance-a-maitrise-d-ouvrage": {
     "slug": "assistance-a-maitrise-d-ouvrage",
     "title": "Assistance à maîtrise d'ouvrage",
-    "heroDesc": "ETAFAT accompagne les maîtres d'ouvrage publics et privés dans toutes les étapes de leurs projets en apportant méthode, expertise et rigueur. Nous vous aidons à définir vos besoins, préparer vos consultations, sélectionner les meilleurs partenaires et suivre la bonne exécution des prestations.\n\nNotre mission : sécuriser vos projets, maîtriser les risques et garantir des résultats conformes à vos objectifs, dans le respect des délais, des coûts et de la qualité attendue.",
+    "heroDesc": "À travers ETAFAT ING, nous accompagnons les maîtres d'ouvrage publics et privés dans la préparation et la conduite de leurs projets, en apportant méthode, expertise et rigueur.\n\nDe la définition des besoins au suivi de l'exécution, nous sécurisons vos projets, maîtrisons les risques et garantissons des résultats conformes à vos objectifs de délais, de coûts et de qualité.",
     "competences": [
-      "Définition des besoins et des objectifs du projet",
-      "Rédaction des cahiers des charges et pièces de consultation",
-      "Appui à la consultation et à la mise en concurrence",
-      "Analyse des offres et aide au choix des prestataires",
-      "Pilotage et suivi des prestataires et des contrats",
-      "Suivi des études, des coûts et de la qualité",
-      "Validation des livrables et contrôle de conformité",
-      "Coordination des parties prenantes et communication"
+      "Définition et formalisation des besoins du maître d'ouvrage",
+      "Élaboration du programme fonctionnel et technique",
+      "Appui à la planification et au montage du projet",
+      "Définition des objectifs et des indicateurs de performance",
+      "Préparation des cahiers des charges et dossiers de consultation",
+      "Assistance à l'analyse technique des offres",
+      "Appui à la sélection des prestataires et des entreprises",
+      "Coordination des différents intervenants du projet",
+      "Suivi des coûts, des délais, de la qualité et des risques",
+      "Assistance aux opérations de réception et de clôture"
     ],
     "atouts": [
       {
-        "title": "VISION PROJET",
-        "text": "Une compréhension claire de vos enjeux pour des solutions adaptées à vos objectifs et à votre territoire."
+        "title": "UN ACCOMPAGNEMENT INDÉPENDANT",
+        "text": "Une expertise mobilisée exclusivement au service des objectifs et des intérêts du maître d'ouvrage."
       },
       {
-        "title": "PILOTAGE SÉCURISÉ",
-        "text": "Des méthodes éprouvées pour maîtriser les risques, les délais, les budgets et la qualité tout au long du projet."
+        "title": "UNE VISION GLOBALE DU PROJET",
+        "text": "Une maîtrise des dimensions techniques, organisationnelles, contractuelles, financières et opérationnelles."
       },
       {
-        "title": "COORDINATION EFFICACE",
-        "text": "Une interface unique pour fluidifier les échanges et mobiliser les bonnes compétences au service du projet."
+        "title": "UNE COORDINATION EFFICACE",
+        "text": "Une interface structurée entre le maître d'ouvrage, les concepteurs, les entreprises et les autres parties prenantes."
       },
       {
-        "title": "AIDE À LA DÉCISION",
-        "text": "Des analyses et recommandations objectives pour éclairer vos choix et optimiser la performance de vos projets."
+        "title": "UNE MAÎTRISE RENFORCÉE DES RISQUES",
+        "text": "Une identification anticipée des difficultés pour sécuriser les décisions, les délais, les coûts et la qualité."
       }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT met son expérience de l'assistance à maîtrise d'ouvrage au service d'institutions publiques, de collectivités, d'établissements et d'entreprises. De la définition stratégique à la réception des livrables, nous sécurisons la réussite de vos projets en apportant expertise, transparence et engagement.",
+    "referencesIntro": "ETAFAT ING accompagne des maîtres d'ouvrage publics et privés dans la préparation et la conduite de projets complexes. Nos interventions sont adaptées au niveau de maturité de chaque opération et permettent de renforcer les capacités de pilotage, de coordination et de prise de décision.",
     "cta": {
       "question": "Un accompagnement fiable pour des projets réussis",
       "text": "Confiez-nous vos projets : ensemble, construisons des solutions durables et performantes pour vos territoires."
@@ -888,6 +890,122 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
     "cta": {
       "question": "Développons ensemble les compétences de vos équipes pour plus d'impact et d'autonomie.",
       "text": ""
+    }
+  },
+  "etudes-de-faisabilite-et-diagnostics": {
+    "slug": "etudes-de-faisabilite-et-diagnostics",
+    "title": "Études de faisabilité & diagnostics",
+    "heroDesc": "À travers ETAFAT ING, nous réalisons les études de faisabilité et les diagnostics qui sécurisent vos décisions en amont des projets d'aménagement, d'infrastructures et d'équipements.\n\nDe l'analyse des besoins à l'évaluation des scénarios, nos équipes croisent expertise technique, connaissance du terrain et maîtrise de la donnée pour éclairer vos choix et préparer les phases suivantes.",
+    "competences": [
+      "Analyse des besoins et définition des objectifs du projet",
+      "Collecte et analyse des données existantes",
+      "Diagnostic technique et fonctionnel des infrastructures",
+      "Reconnaissance des sites et identification des contraintes",
+      "Analyse des enjeux territoriaux et environnementaux",
+      "Étude et comparaison des scénarios d'aménagement",
+      "Évaluation préliminaire des coûts et des délais",
+      "Analyse des risques techniques et opérationnels",
+      "Évaluation de la viabilité économique du projet",
+      "Élaboration des recommandations et du programme d'intervention"
+    ],
+    "atouts": [
+      { "title": "UNE APPROCHE MULTICRITÈRE", "text": "Une analyse croisée des dimensions techniques, économiques, territoriales, environnementales et opérationnelles." },
+      { "title": "UNE CONNAISSANCE PRÉCISE DU TERRAIN", "text": "Des diagnostics fondés sur des investigations, des relevés et une compréhension concrète des réalités locales." },
+      { "title": "DES SCÉNARIOS OBJECTIFS ET COMPARABLES", "text": "Des solutions évaluées selon des critères clairement définis afin d'éclairer les choix du maître d'ouvrage." },
+      { "title": "UNE AIDE FIABLE À LA DÉCISION", "text": "Des recommandations opérationnelles permettant de sécuriser les investissements et de préparer les phases suivantes." }
+    ],
+    "references": [],
+    "referencesIntro": "ETAFAT ING intervient sur des missions de diagnostic et de faisabilité portant sur des projets d'aménagement, d'infrastructures, de développement territorial et d'équipements. Notre approche associe expertise technique, connaissance du terrain et maîtrise de la donnée pour proposer des solutions réalistes et adaptées aux objectifs de chaque projet.",
+    "cta": {
+      "question": "Un projet à cadrer en amont ?",
+      "text": "ETAFAT ING vous accompagne de l'analyse des besoins à la décision, pour des projets réalistes, maîtrisés et adaptés à vos objectifs."
+    }
+  },
+  "etudes-techniques-aps-apd-pro": {
+    "slug": "etudes-techniques-aps-apd-pro",
+    "title": "Études techniques : APS, APD & PRO",
+    "heroDesc": "À travers ETAFAT ING, nous menons les études techniques de vos projets, de l'Avant-Projet Sommaire (APS) à l'Avant-Projet Détaillé (APD) et au Projet (PRO), pour des dossiers cohérents, complets et exploitables.\n\nNos équipes assurent la continuité entre les phases de conception et produisent plans, dimensionnements, métrés et estimations directement utilisables pour la réalisation des travaux.",
+    "competences": [
+      "Analyse du programme et des données techniques disponibles",
+      "Définition et comparaison des variantes de conception",
+      "Élaboration des études d'Avant-Projet Sommaire (APS)",
+      "Réalisation des études d'Avant-Projet Détaillé (APD)",
+      "Développement des études de Projet (PRO)",
+      "Dimensionnement des ouvrages et des infrastructures",
+      "Production des plans, profils et détails techniques",
+      "Élaboration des métrés et des estimations financières",
+      "Coordination des différentes disciplines techniques",
+      "Vérification de la conformité réglementaire et normative"
+    ],
+    "atouts": [
+      { "title": "UNE CONCEPTION PROGRESSIVE ET MAÎTRISÉE", "text": "Un approfondissement structuré des études, depuis les premières variantes jusqu'à la définition complète du projet." },
+      { "title": "UNE EXPERTISE MULTIDISCIPLINAIRE", "text": "La mobilisation coordonnée de compétences complémentaires pour traiter toutes les dimensions techniques du projet." },
+      { "title": "DES ÉTUDES PRÉCISES ET EXPLOITABLES", "text": "Des plans, dimensionnements, métrés et estimations directement utilisables pour préparer la réalisation des travaux." },
+      { "title": "UNE OPTIMISATION TECHNICO-ÉCONOMIQUE", "text": "Des solutions conçues pour concilier performance, faisabilité, coûts, délais et durabilité." }
+    ],
+    "references": [],
+    "referencesIntro": "ETAFAT ING réalise des études techniques pour des projets d'aménagement, d'infrastructures, de voirie, de réseaux et d'équipements. Nos équipes assurent la continuité entre les différentes phases de conception afin de fournir des dossiers cohérents, complets et adaptés aux conditions réelles de mise en œuvre.",
+    "cta": {
+      "question": "Des études techniques fiables pour vos projets",
+      "text": "ETAFAT ING conçoit des dossiers APS, APD et PRO précis, coordonnés et optimisés, prêts pour la réalisation."
+    }
+  },
+  "controle-et-surveillance-des-travaux": {
+    "slug": "controle-et-surveillance-des-travaux",
+    "title": "Contrôle & surveillance des travaux",
+    "heroDesc": "À travers ETAFAT ING, nous assurons le contrôle et la surveillance de vos travaux pour garantir leur conformité, leur qualité et le respect des délais et des coûts.\n\nDe la vérification des plans d'exécution au suivi de chantier et aux réceptions, nos équipes veillent à la bonne exécution des ouvrages et au traitement des non-conformités.",
+    "competences": [
+      "Vérification des documents et des plans d'exécution",
+      "Contrôle de l'implantation des ouvrages",
+      "Surveillance de l'exécution des travaux sur le terrain",
+      "Contrôle de la conformité des matériaux et des équipements",
+      "Suivi des essais et des contrôles de qualité",
+      "Vérification des quantités et des attachements de travaux",
+      "Suivi du planning et de l'avancement des travaux",
+      "Identification et traitement des non-conformités",
+      "Élaboration des rapports de chantier et tableaux de bord",
+      "Assistance aux réceptions provisoire et définitive"
+    ],
+    "atouts": [
+      { "title": "UN ACCOMPAGNEMENT INDÉPENDANT", "text": "Une expertise mobilisée exclusivement au service des objectifs et des intérêts du maître d'ouvrage." },
+      { "title": "UNE VISION GLOBALE DU PROJET", "text": "Une maîtrise des dimensions techniques, organisationnelles, contractuelles, financières et opérationnelles." },
+      { "title": "UNE COORDINATION EFFICACE", "text": "Une interface structurée entre le maître d'ouvrage, les concepteurs, les entreprises et les autres parties prenantes." },
+      { "title": "UNE MAÎTRISE RENFORCÉE DES RISQUES", "text": "Une identification anticipée des difficultés pour sécuriser les décisions, les délais, les coûts et la qualité." }
+    ],
+    "references": [],
+    "referencesIntro": "ETAFAT ING accompagne des maîtres d'ouvrage publics et privés dans la préparation et la conduite de projets complexes. Nos interventions sont adaptées au niveau de maturité de chaque opération et permettent de renforcer les capacités de pilotage, de coordination et de prise de décision.",
+    "cta": {
+      "question": "Des travaux conformes, maîtrisés et sécurisés",
+      "text": "ETAFAT ING contrôle et surveille vos chantiers pour garantir qualité, conformité et respect des engagements."
+    }
+  },
+  "maitrise-d-oeuvre-et-pilotage-de-projets": {
+    "slug": "maitrise-d-oeuvre-et-pilotage-de-projets",
+    "title": "Maîtrise d'œuvre & pilotage de projets",
+    "heroDesc": "À travers ETAFAT ING, nous assurons la maîtrise d'œuvre et le pilotage de vos opérations d'aménagement, d'infrastructures et d'équipements, de la conception à la réception des travaux.\n\nNotre expérience de la coordination technique et du suivi opérationnel permet d'accompagner vos projets jusqu'à leur réception dans des conditions maîtrisées.",
+    "competences": [
+      "Organisation et planification générale du projet",
+      "Coordination des études et des intervenants techniques",
+      "Direction de l'exécution des travaux",
+      "Ordonnancement, pilotage et coordination des opérations",
+      "Contrôle de l'avancement physique et financier",
+      "Suivi des coûts et des délais contractuels",
+      "Gestion des interfaces entre les différents marchés",
+      "Analyse des modifications et adaptations techniques",
+      "Organisation des réunions et production des rapports de suivi",
+      "Assistance aux opérations de réception et de clôture"
+    ],
+    "atouts": [
+      { "title": "UN PILOTAGE INTÉGRÉ", "text": "Une vision consolidée de l'ensemble des composantes, des intervenants et des étapes du projet." },
+      { "title": "UNE COORDINATION RIGOUREUSE", "text": "Une organisation claire des responsabilités et des interfaces pour fluidifier l'exécution des prestations." },
+      { "title": "UN SUIVI CONTINU DES PERFORMANCES", "text": "Des outils de reporting pour suivre précisément la qualité, les coûts, les délais et les risques." },
+      { "title": "UNE PRÉSENCE AU PLUS PRÈS DU PROJET", "text": "Un accompagnement opérationnel et réactif pour anticiper les difficultés et accélérer les décisions." }
+    ],
+    "references": [],
+    "referencesIntro": "ETAFAT ING assure des missions de maîtrise d'œuvre et de pilotage pour des opérations d'aménagement, d'infrastructures et d'équipements. Notre expérience de la coordination technique et du suivi opérationnel permet d'accompagner les projets jusqu'à leur réception dans des conditions maîtrisées.",
+    "cta": {
+      "question": "Un pilotage maîtrisé, de la conception à la réception",
+      "text": "ETAFAT ING coordonne et pilote vos projets pour des résultats conformes, dans les délais et les budgets."
     }
   }
 };

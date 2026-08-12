@@ -91,23 +91,19 @@ const PILLARS: Pillar[] = [
   },
   {
     letter: "D",
-    anchor: "accompagnement-projet",
-    title: "Accompagnement projet",
+    anchor: "ingenierie-conseil",
+    title: "Ingénierie Conseil",
     short:
-      "Conseiller, auditer et accompagner les maîtres d'ouvrage dans la réussite de leurs projets géospatiaux.",
+      "Accompagner les maîtres d'ouvrage de la conception au suivi et à la réception des travaux.",
     description:
-      "ETAFAT accompagne ses clients dans la définition, la conduite et la sécurisation de leurs projets géospatiaux.",
-    icon: "ph:users-three-duotone",
+      "À travers ETAFAT ING, nous accompagnons les maîtres d'ouvrage de la conception au suivi et à la réception des travaux.",
+    icon: "ph:compass-tool-duotone",
     skills: [
-      { title: "Études territoriales", icon: "ph:chart-bar-duotone", slug: "etudes-territoriales" },
-      {
-        title: "Conseil & audit géospatial",
-        icon: "ph:magnifying-glass-plus-duotone",
-        slug: "conseil-et-audit-geospatial",
-      },
+      { title: "Études de faisabilité & diagnostics", icon: "ph:clipboard-text-duotone", slug: "etudes-de-faisabilite-et-diagnostics" },
+      { title: "Études techniques : APS, APD & PRO", icon: "ph:blueprint-duotone", slug: "etudes-techniques-aps-apd-pro" },
       { title: "Assistance à maîtrise d'ouvrage", icon: "ph:user-check-duotone", slug: "assistance-a-maitrise-d-ouvrage" },
-      { title: "Inspection & surveillance d'ouvrage", icon: "ph:hard-hat-duotone", slug: "inspection-et-surveillance-d-ouvrage" },
-      { title: "Formation & transfert de compétences", icon: "ph:graduation-cap-duotone", slug: "formation-et-transfert-de-competences" },
+      { title: "Contrôle & surveillance des travaux", icon: "ph:hard-hat-duotone", slug: "controle-et-surveillance-des-travaux" },
+      { title: "Maîtrise d'œuvre & pilotage de projets", icon: "ph:users-three-duotone", slug: "maitrise-d-oeuvre-et-pilotage-de-projets" },
     ],
   },
 ];

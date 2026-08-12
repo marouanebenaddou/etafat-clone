@@ -10,7 +10,11 @@ import { savoirFaireDetails } from "@/data/savoir-faire-detail";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
-  return skills.map((s) => ({ slug: s.slug }));
+  const slugs = new Set<string>([
+    ...skills.map((s) => s.slug),
+    ...Object.keys(savoirFaireDetails),
+  ]);
+  return Array.from(slugs).map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({

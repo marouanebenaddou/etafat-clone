@@ -53,14 +53,14 @@ const PILLARS: {
   },
   {
     letter: "D",
-    title: "Accompagnement projet",
-    icon: "ph:users-three-duotone",
+    title: "Ingénierie Conseil",
+    icon: "ph:compass-tool-duotone",
     items: [
-      "Études territoriales",
-      "Conseil & audit géospatial",
-      "Assistance MOA",
-      "Inspection & surveillance d'ouvrage",
-      "Formation & transfert de compétences",
+      "Études de faisabilité & diagnostics",
+      "Études techniques : APS, APD & PRO",
+      "Assistance à maîtrise d'ouvrage",
+      "Contrôle & surveillance des travaux",
+      "Maîtrise d'œuvre & pilotage de projets",
     ],
   },
 ];
