@@ -37,12 +37,12 @@ const VALEURS: { icon: string; title: string; text: string }[] = [
   {
     icon: "ph:shield-check-duotone",
     title: "Responsabilité",
-    text: "Nous assumons pleinement notre rôle dans la réussite des projets confiés, à travers le respect des délais, la qualité des livrables et la maîtrise des impacts.",
+    text: "Nous assumons pleinement nos engagements en veillant au respect des délais, à la qualité des livrables et à la maîtrise des impacts.",
   },
   {
     icon: "ph:lock-key-duotone",
     title: "Confidentialité",
-    text: "Nous protégeons les données sensibles, foncières, techniques, géospatiales et institutionnelles traitées dans le cadre de nos missions.",
+    text: "Nous garantissons la protection des données sensibles, foncières, techniques, géospatiales et institutionnelles confiées dans le cadre de nos missions.",
   },
   {
     icon: "ph:handshake-duotone",
@@ -154,21 +154,22 @@ export default function IdentitePage() {
       {/* NOS VALEURS */}
       <section id="valeurs" className="bg-[#f5f7f9] py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat">
-          <Reveal>
-            <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-10 block">
+          <Reveal variant="line" duration={1000}>
+            <h2 className="text-[#00669d] text-2xl md:text-4xl font-bold uppercase tracking-tight mb-14 leading-tight">
               Nos valeurs portées par un collectif
-            </span>
+            </h2>
           </Reveal>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {VALEURS.map((v, i) => (
               <Reveal key={v.title} delay={i * 60}>
-                <div className="group relative bg-white p-5 rounded-md border border-[#e5e7eb] h-full text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden">
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-                  <div className="w-12 h-12 rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-4 mx-auto group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                    <Icon icon={v.icon} width={26} height={26} className="text-[#00669d]" />
+                <div className="group h-full rounded-xl bg-white p-8 border border-[#e5e7eb] text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#eaf3fb] to-[#f0f7fc] transition-transform duration-300 group-hover:scale-110">
+                    <Icon icon={v.icon} width={44} height={44} className="text-[#00669d]" />
                   </div>
-                  <h3 className="text-navy text-base font-semibold mb-2 leading-tight">{v.title}</h3>
-                  <p className="text-body text-[13px] leading-relaxed">{v.text}</p>
+                  <h3 className="text-[#00669d] text-lg font-bold uppercase tracking-wide mb-3 leading-tight">
+                    {v.title}
+                  </h3>
+                  <p className="text-body text-sm leading-relaxed">{v.text}</p>
                 </div>
               </Reveal>
             ))}
