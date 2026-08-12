@@ -169,7 +169,7 @@ export default function FilialesPage() {
               Une présence au service des territoires
             </h2>
             <p className="text-body leading-relaxed mb-5">
-              De Casablanca à Dakar, en passant par Abidjan, ETAFAT renforce sa présence régionale pour accompagner les projets de développement territorial, de sécurisation foncière, d&apos;aménagement, d&apos;infrastructures et de valorisation de la donnée géospatiale.
+              De Casablanca à Abidjan, en passant par Dakar, ETAFAT renforce sa présence régionale pour accompagner les projets de développement territorial, de sécurisation foncière, d&apos;aménagement, d&apos;infrastructures et de valorisation de la donnée géospatiale.
             </p>
             <div className="inline-flex items-start gap-3 bg-[#f5f7f9] rounded-md p-5 mt-3 max-w-md">
               <div className="w-10 h-10 rounded-full bg-[#00669d] text-white flex items-center justify-center shrink-0">

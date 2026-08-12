@@ -60,7 +60,7 @@ const CHIFFRES = [
   { value: "+200 000", unit: "km²", label: "Superficie couverte en prises de vues aériennes" },
   { value: "+1 000 000", unit: "ha", label: "Superficie immatriculée" },
   { value: "+35", unit: "", label: "Solutions SIG métier développées" },
-  { value: "+10 000", unit: "ha", label: "Accompagnés dans des projets d'aménagement urbain" },
+  { value: "+10 000", unit: "ha", label: "de projets d'aménagement urbain" },
 ];
 
 const HISTOIRE = [
@@ -133,7 +133,7 @@ export default function IdentitePage() {
                 Nous croyons que des données fiables, précises et bien structurées permettent de mieux comprendre, planifier, sécuriser et valoriser les territoires.
               </p>
               <p className="text-body leading-relaxed">
-                Notre ambition est de mettre notre expertise en topographie, foncier, cartographie, SIG et ingénierie au service de projets durables, utiles et adaptés aux réalités du terrain, au Maroc, en Afrique et à l&apos;international.
+                Notre ambition est de mettre notre expertise en topographie, foncier, cartographie, SIG et ingénierie au service de projets durables, utiles et adaptés aux réalités du terrain, au Maroc, en Afrique et partout ailleurs au Monde.
               </p>
             </Reveal>
           </div>
@@ -190,7 +190,7 @@ export default function IdentitePage() {
             </Reveal>
             <Reveal delay={120}>
               <p className="text-white/85 leading-relaxed mb-4">
-                La Direction Générale d&apos;ETAFAT porte une vision claire : consolider le rôle de l&apos;entreprise comme acteur de référence dans l&apos;acquisition, le traitement et la valorisation des données géospatiales.
+                Nous portons une vision claire : consolider le rôle de l&apos;entreprise comme acteur de référence dans l&apos;acquisition, le traitement et la valorisation des données géospatiales.
               </p>
               <p className="text-white/85 leading-relaxed mb-8">
                 Cette gouvernance s&apos;appuie sur l&apos;expertise des équipes, la modernisation continue des moyens technologiques et une culture d&apos;exigence orientée vers la qualité, l&apos;innovation et la satisfaction client.
@@ -241,14 +241,14 @@ export default function IdentitePage() {
         </div>
       </section>
 
-      {/* HISTORIQUE — 42 ans d'évolution */}
+      {/* HISTORIQUE — 43 ans d'évolution */}
       <section id="historique" className="bg-[#f5f7f9] py-20 md:py-28 scroll-mt-[170px]">
         <div className="container-etafat">
           <Reveal>
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
               Historique
             </span>
-            <h2 className="text-navy mb-12 leading-tight">42 ans d&apos;évolution</h2>
+            <h2 className="text-navy mb-12 leading-tight">43 ans d&apos;évolution</h2>
           </Reveal>
           <div className="relative">
             {/* horizontal connector */}

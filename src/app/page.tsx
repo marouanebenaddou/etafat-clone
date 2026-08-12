@@ -140,9 +140,9 @@ export default function HomePage() {
           <Reveal delay={120}>
             <p className="text-body mb-8 leading-relaxed">
               ETAFAT mobilise son expertise terrain, ses technologies de mesure et sa
-              maîtrise de la donnée géospatiale pour accompagner les projets
-              d&apos;aménagement, de foncier, d&apos;infrastructures et de sécurisation
-              foncière.
+              maîtrise de la donnée géospatiale pour accompagner, à travers le monde, des
+              projets d&apos;aménagement, de gestion foncière, d&apos;infrastructures et de
+              sécurisation foncière.
             </p>
             <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
               Découvrez nos savoir-faire
@@ -268,7 +268,7 @@ export default function HomePage() {
                     L&apos;innovation chez ETAFAT
                   </h3>
                   <p className="text-white/90 text-sm leading-relaxed max-w-2xl">
-                    Une équipe dédiée d&apos;ingénieurs et de chercheurs développe en permanence
+                    Une équipe dédiée, d&apos;ingénieurs et de chercheurs, développe en permanence
                     des solutions sur mesure pour répondre aux enjeux techniques de nos clients
                     et anticiper les nouveaux usages de la donnée géospatiale.
                   </p>
@@ -279,86 +279,6 @@ export default function HomePage() {
               </Pill>
             </div>
           </Reveal>
-        </div>
-      </section>
-
-      {/* PROBLÉMATIQUE FONCIÈRE */}
-      <section className="relative bg-white py-24 md:py-32 text-center overflow-hidden">
-        <div
-          aria-hidden
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] h-[420px] rounded-full bg-[#e0eef6]"
-        />
-        <div className="container-etafat relative">
-          <Reveal>
-            <h2 className="text-navy text-3xl md:text-5xl font-semibold mb-8 leading-tight">
-              Vous avez une
-              <br />problématique foncière&nbsp;?
-            </h2>
-            <div className="flex justify-center">
-              <Link
-                href="/savoir-faire/cadastre-et-securisation-fonciere/"
-                className="text-teal font-semibold inline-flex items-center gap-3 group"
-              >
-                <span className="underline-offset-4 group-hover:underline">Découvrez nos solutions</span>
-                <span className="arrow-circle-outline">
-                  <ArrowRightIcon width={11} height={11} />
-                </span>
-              </Link>
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      {/* INNOVATION + ENGAGEMENTS */}
-      <section className="bg-white pb-24">
-        <div className="container-etafat grid md:grid-cols-2 gap-6 md:gap-8">
-          <article className="relative rounded-md overflow-hidden min-h-[480px] flex flex-col justify-end p-10 text-white">
-            <Image
-              src={IMG("2025/01/Ingenieur-Chercheur.jpg")}
-              alt=""
-              fill
-              sizes="(min-width:768px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/55" />
-            <div className="relative">
-              <h3 className="text-white text-2xl md:text-3xl font-semibold mb-4" style={{ color: "#fff" }}>
-                Au cœur de l&apos;innovation
-              </h3>
-              <p className="text-white/90 text-sm leading-relaxed mb-6 max-w-md">
-                Une équipe, composée d&apos;ingénieurs et de chercheurs, se consacre à
-                l&apos;élaboration de solutions innovantes afin de répondre aux besoins du
-                Groupe et de ses clients.
-              </p>
-              <Pill href="/innovation/" variant="outline" arrow="right">
-                Notre innovation
-              </Pill>
-            </div>
-          </article>
-
-          <article className="relative rounded-md overflow-hidden min-h-[480px] flex flex-col justify-end p-10 text-white">
-            <Image
-              src={IMG("2024/03/AdobeStock_244344329-scaled.jpeg")}
-              alt=""
-              fill
-              sizes="(min-width:768px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <div className="absolute inset-0 bg-black/55" />
-            <div className="relative">
-              <h3 className="text-white text-2xl md:text-3xl font-semibold mb-4" style={{ color: "#fff" }}>
-                Nos engagements
-              </h3>
-              <p className="text-white/90 text-sm leading-relaxed mb-6 max-w-md">
-                Nous plaçons l&apos;excellence, l&apos;innovation et la responsabilité au
-                centre de nos actions. Découvrez comment nos engagements en matière de
-                qualité, de durabilité et d&apos;éthique guident chacune de nos réalisations.
-              </p>
-              <Pill href="/engagements/" variant="outline" arrow="right">
-                Les engagements du Groupe
-              </Pill>
-            </div>
-          </article>
         </div>
       </section>
 

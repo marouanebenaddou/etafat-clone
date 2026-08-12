@@ -64,7 +64,7 @@ export function SiteHeader() {
               height={143}
               priority
               className={cn(
-                "h-14 w-auto transition-[filter] duration-300",
+                "h-20 w-auto transition-[filter] duration-300",
                 // when over the dark hero or inside the mega-menu, force the
                 // colored logo to render as a pure white silhouette
                 open || transparent ? "[filter:brightness(0)_invert(1)]" : "",
