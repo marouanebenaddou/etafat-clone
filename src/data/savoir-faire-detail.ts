@@ -967,13 +967,13 @@ export const savoirFaireDetails: Record<string, SavoirFaireDetailData> =
       "Assistance aux réceptions provisoire et définitive"
     ],
     "atouts": [
-      { "title": "UN ACCOMPAGNEMENT INDÉPENDANT", "text": "Une expertise mobilisée exclusivement au service des objectifs et des intérêts du maître d'ouvrage." },
-      { "title": "UNE VISION GLOBALE DU PROJET", "text": "Une maîtrise des dimensions techniques, organisationnelles, contractuelles, financières et opérationnelles." },
-      { "title": "UNE COORDINATION EFFICACE", "text": "Une interface structurée entre le maître d'ouvrage, les concepteurs, les entreprises et les autres parties prenantes." },
-      { "title": "UNE MAÎTRISE RENFORCÉE DES RISQUES", "text": "Une identification anticipée des difficultés pour sécuriser les décisions, les délais, les coûts et la qualité." }
+      { "title": "UNE PRÉSENCE ACTIVE SUR LE TERRAIN", "text": "Un suivi régulier des travaux permettant d'identifier rapidement les écarts et les difficultés d'exécution." },
+      { "title": "UN CONTRÔLE TECHNIQUE RIGOUREUX", "text": "Une vérification méthodique de la conformité des ouvrages, des matériaux et des méthodes de réalisation." },
+      { "title": "UNE TRAÇABILITÉ COMPLÈTE", "text": "Des constats, rapports, tableaux de bord et documents de suivi assurant une information fiable du maître d'ouvrage." },
+      { "title": "UNE GESTION RÉACTIVE DES ÉCARTS", "text": "Une détection anticipée des non-conformités et un suivi précis des actions correctives jusqu'à leur résolution." }
     ],
     "references": [],
-    "referencesIntro": "ETAFAT ING accompagne des maîtres d'ouvrage publics et privés dans la préparation et la conduite de projets complexes. Nos interventions sont adaptées au niveau de maturité de chaque opération et permettent de renforcer les capacités de pilotage, de coordination et de prise de décision.",
+    "referencesIntro": "ETAFAT ING intervient dans le contrôle et la surveillance de travaux d'aménagement, d'infrastructures, de voirie, de réseaux et d'équipements. Nos missions reposent sur une présence terrain, une documentation rigoureuse et une coordination permanente avec le maître d'ouvrage, les entreprises et les autres intervenants.",
     "cta": {
       "question": "Des travaux conformes, maîtrisés et sécurisés",
       "text": "ETAFAT ING contrôle et surveille vos chantiers pour garantir qualité, conformité et respect des engagements."
