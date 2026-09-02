@@ -18,41 +18,21 @@ export const metadata: Metadata = {
     "Depuis 1983, ETAFAT accompagne les acteurs publics et privés dans les domaines du foncier, du conseil & ingénierie, de la donnée géospatiale et des SIG.",
 };
 
-const VALEURS: { icon: string; title: string; text: string }[] = [
+const VALEURS: { image: string; title: string; text: string }[] = [
   {
-    icon: "ph:medal-duotone",
-    title: "Compétence",
-    text: "Nous mobilisons des équipes qualifiées, expérimentées et pluridisciplinaires pour répondre aux exigences techniques de chaque projet.",
-  },
-  {
-    icon: "ph:eye-duotone",
+    image: "/etafat/valeurs/transparence.png",
     title: "Transparence",
     text: "Nous privilégions une communication claire, un suivi rigoureux et une relation de confiance durable avec nos clients et partenaires.",
   },
   {
-    icon: "ph:scales-duotone",
-    title: "Intégrité",
-    text: "Nous conduisons nos missions avec honnêteté, impartialité et respect des règles professionnelles, notamment dans les projets fonciers, institutionnels et territoriaux.",
-  },
-  {
-    icon: "ph:shield-check-duotone",
+    image: "/etafat/valeurs/responsabilite.png",
     title: "Responsabilité",
     text: "Nous assumons pleinement nos engagements en veillant au respect des délais, à la qualité des livrables et à la maîtrise des impacts.",
   },
   {
-    icon: "ph:lock-key-duotone",
+    image: "/etafat/valeurs/confidentialite.png",
     title: "Confidentialité",
     text: "Nous garantissons la protection des données sensibles, foncières, techniques, géospatiales et institutionnelles confiées dans le cadre de nos missions.",
-  },
-  {
-    icon: "ph:handshake-duotone",
-    title: "Loyauté",
-    text: "Nous construisons des relations durables fondées sur la confiance, le respect des engagements et la fidélité à nos principes.",
-  },
-  {
-    icon: "ph:users-three-duotone",
-    title: "Équité",
-    text: "Nous adoptons une approche juste, impartiale et respectueuse des parties prenantes, des contextes locaux et des spécificités de chaque projet.",
   },
 ];
 
@@ -159,17 +139,21 @@ export default function IdentitePage() {
               Nos valeurs portées par un collectif
             </h2>
           </Reveal>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             {VALEURS.map((v, i) => (
-              <Reveal key={v.title} delay={i * 60}>
-                <div className="group h-full rounded-xl bg-white p-8 border border-[#e5e7eb] text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                  <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-[#eaf3fb] to-[#f0f7fc] transition-transform duration-300 group-hover:scale-110">
-                    <Icon icon={v.icon} width={44} height={44} className="text-[#00669d]" />
-                  </div>
-                  <h3 className="text-[#00669d] text-lg font-bold uppercase tracking-wide mb-3 leading-tight">
+              <Reveal key={v.title} delay={i * 80}>
+                <div className="group h-full rounded-xl bg-white p-8 md:p-10 border border-[#e5e7eb] transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                  <Image
+                    src={v.image}
+                    alt=""
+                    width={160}
+                    height={160}
+                    className="mx-auto mb-8 h-28 w-28 md:h-36 md:w-36 object-contain transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <h3 className="text-[#00669d] text-xl font-bold uppercase tracking-wide mb-4 leading-tight">
                     {v.title}
                   </h3>
-                  <p className="text-body text-sm leading-relaxed">{v.text}</p>
+                  <p className="text-body leading-relaxed">{v.text}</p>
                 </div>
               </Reveal>
             ))}
