@@ -150,7 +150,7 @@ export default function IdentitePage() {
                     height={160}
                     className="mx-auto mb-8 h-28 w-28 md:h-36 md:w-36 object-contain transition-transform duration-300 group-hover:scale-105"
                   />
-                  <h3 className="text-[#00669d] text-xl font-bold uppercase tracking-wide mb-4 leading-tight">
+                  <h3 className="text-[#00669d] text-xl font-bold uppercase tracking-wide mb-4 leading-tight text-center">
                     {v.title}
                   </h3>
                   <p className="text-body leading-relaxed">{v.text}</p>
