@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { posts, portfolio, jobs } from "@/lib/content";
+import { posts, portfolio } from "@/lib/content";
 import { domains, skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
@@ -45,10 +45,6 @@ export default function PlanDuSitePage() {
     {
       title: "Références",
       links: portfolio.map((p) => ({ label: p.title, href: p.path })),
-    },
-    {
-      title: "Offres d'emploi",
-      links: jobs.map((j) => ({ label: j.title, href: j.path })),
     },
     {
       title: "Légal",

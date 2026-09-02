@@ -292,7 +292,7 @@ export default function HomePage() {
             <p className="text-white/80 leading-relaxed mb-8 max-w-md">
               Depuis sa création, le Groupe n&apos;a cessé d&apos;évoluer. En s&apos;appuyant
               sur ses équipes engagées, ETAFAT contribue chaque jour à aménager et sécuriser
-              le territoire et le foncier, en France et dans le monde.
+              le territoire et le foncier, au Maroc et dans le monde.
             </p>
             <Pill href="/identite/" variant="outline" arrow="right">
               Notre identité
@@ -399,7 +399,7 @@ export default function HomePage() {
                 <p className="text-body text-sm leading-relaxed mb-6">
                   Nous avons à cœur de conserver un management de proximité dans nos
                   agences, en mettant un accent tout particulier sur l&apos;accès à la
-                  formation et l&apos;opportunité de développer ses compétences, en France
+                  formation et l&apos;opportunité de développer ses compétences, au Maroc
                   comme à l&apos;International.
                 </p>
                 <Pill href="/nous-rejoindre/" variant="outline-teal" arrow="right">
@@ -430,8 +430,8 @@ export default function HomePage() {
                 les mettre en valeur sur des projets à impact.
               </p>
             </div>
-            <Pill href="/offres-demploi/" variant="outline" arrow="right" className="!border-white !text-white">
-              Consultez les offres d&apos;emploi
+            <Pill href="/nous-rejoindre/" variant="outline" arrow="right" className="!border-white !text-white">
+              Rejoignez ETAFAT
             </Pill>
           </div>
         </div>

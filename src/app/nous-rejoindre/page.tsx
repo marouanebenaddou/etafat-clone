@@ -70,7 +70,6 @@ export default function NousRejoindrePage() {
         variant="banner"
         image="/etafat/skills/etudes-territoriales.jpg"
         video="/etafat/videos/aerial-territory.mp4"
-        cta={{ label: "Consultez nos offres d'emploi", href: "/offres-demploi/" }}
       />
 
       <NousRejoindreSubNav />

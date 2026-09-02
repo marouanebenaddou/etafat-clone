@@ -13,7 +13,6 @@ const ITEMS: Item[] = [
   { label: "Processus de recrutement", id: "processus" },
   { label: "Témoignages", id: "temoignages" },
   { label: "Vision", id: "vision" },
-  { label: "Offres d'emploi", href: "/offres-demploi/" },
 ];
 
 export function NousRejoindreSubNav() {
