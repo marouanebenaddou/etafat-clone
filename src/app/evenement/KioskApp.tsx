@@ -295,9 +295,7 @@ function ThemesScreen({ onBack, onOpen }: { onBack: () => void; onOpen: (t: Even
       <TopBar onBack={onBack} crumb={{ sub: "Nos réalisations", label: "Choisissez une thématique" }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {EVENEMENT_THEMES.map((t, i) => {
-            const count = projetsForTheme(t.slug).length;
-            return (
+          {EVENEMENT_THEMES.map((t, i) => (
               <motion.button
                 key={t.slug}
                 type="button"
@@ -319,12 +317,11 @@ function ThemesScreen({ onBack, onOpen }: { onBack: () => void; onOpen: (t: Even
                   <p className="mt-2 text-sm text-[var(--k-muted)] leading-relaxed">{t.tagline}</p>
                 </div>
                 <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[var(--k-accent)]">
-                  {count} projet{count > 1 ? "s" : ""}
+                  Explorer
                   <Icon icon="ph:arrow-right-bold" width={16} height={16} className="transition-transform group-hover:translate-x-1" />
                 </span>
               </motion.button>
-            );
-          })}
+          ))}
         </div>
       </div>
     </motion.section>
@@ -357,7 +354,6 @@ function ProjectsScreen({ theme, onBack, onOpen }: { theme: EvenementTheme; onBa
                   <ThemePlaceholder icon={theme.icon} />
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-                <span className="absolute left-3 top-3 rounded-full bg-black/45 px-2.5 py-1 text-[11px] font-semibold text-white backdrop-blur">N°{p.n}</span>
                 <MediaBadges p={p} />
               </div>
               <div className="flex flex-1 flex-col p-5">
@@ -406,7 +402,7 @@ function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; them
 
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: theme?.label, label: `Projet N°${projet.n}` }} />
+      <TopBar onBack={onBack} crumb={{ sub: "Projet phare", label: theme?.label ?? "Projet" }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <motion.div
