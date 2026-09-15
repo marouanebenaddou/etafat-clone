@@ -12,7 +12,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#081a2c",
+  themeColor: "#eef4f9",
 };
 
 export default function EvenementPage() {

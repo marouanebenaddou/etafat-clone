@@ -81,7 +81,7 @@ export function KioskApp() {
   const [view, setView] = useState<View>("intro");
   const [theme, setTheme] = useState<EvenementTheme | null>(null);
   const [projet, setProjet] = useState<EvenementProjet | null>(null);
-  const [mode, setMode] = useState<Mode>("dark");
+  const [mode, setMode] = useState<Mode>("light");
 
   useEffect(() => {
     try {
