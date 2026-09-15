@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Figtree, Open_Sans } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SiteFooter } from "@/components/SiteFooter";
-import { CookieButton } from "@/components/CookieButton";
+import { SiteChrome } from "@/components/SiteChrome";
 
 const openSans = Open_Sans({
   variable: "--font-open-sans",
@@ -36,10 +34,7 @@ export default function RootLayout({
       className={`${openSans.variable} ${figtree.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <CookieButton />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );
