@@ -12,6 +12,18 @@ dist/
 # Scrape cache (regeneratable via `node scripts/scrape.mjs`)
 .cache/
 
+# Kiosk APK build (regeneratable via `node scripts/build-kiosk.mjs` + gradle)
+cap-www/
+android/.gradle/
+android/build/
+android/app/build/
+android/capacitor-cordova-android-plugins/build/
+android/local.properties
+android/app/src/main/assets/public/
+android/app/src/main/assets/capacitor.config.json
+android/app/src/main/assets/capacitor.plugins.json
+*.apk
+
 # Environment
 .env
 .env.local

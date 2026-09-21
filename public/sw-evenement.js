@@ -7,6 +7,7 @@ const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
   "/etafat/logo.png",
+  "/vendor/model-viewer-3.5.0.min.js",
   "/etafat/videos/aerial-territory.mp4",
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
@@ -97,6 +98,7 @@ self.addEventListener("fetch", (event) => {
   // Kiosk media + immutable Next static assets -> cache-first.
   if (
     url.pathname.startsWith("/etafat/evenement/") ||
+    url.pathname.startsWith("/vendor/") ||
     url.pathname === "/etafat/logo.png" ||
     url.pathname === "/etafat/videos/aerial-territory.mp4" ||
     url.pathname === "/evenement.webmanifest" ||

@@ -64,7 +64,8 @@ function ModelViewer({ src }: { src: string }) {
     if (!document.querySelector("script[data-model-viewer]")) {
       const s = document.createElement("script");
       s.type = "module";
-      s.src = "https://cdn.jsdelivr.net/npm/@google/model-viewer@3.5.0/dist/model-viewer.min.js";
+      // Bundled locally (no CDN) so BIM .glb maquettes render fully offline on the borne.
+      s.src = "/vendor/model-viewer-3.5.0.min.js";
       s.setAttribute("data-model-viewer", "");
       document.head.appendChild(s);
     }

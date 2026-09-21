@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">ETAFAT Borne</string>
+    <string name="title_activity_main">ETAFAT Borne</string>
+    <string name="package_name">ma.etafat.borne</string>
+    <string name="custom_url_scheme">ma.etafat.borne</string>
+</resources>

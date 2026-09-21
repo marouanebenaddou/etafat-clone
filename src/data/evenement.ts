@@ -4,7 +4,8 @@
 export type EvenementMedia = {
   images?: string[];
   videos?: string[];
-  model?: string | null; // GLB/GLTF 3D model (maquette)
+  model?: string | null; // GLB/GLTF 3D model (maquette BIM) — served locally for offline
+  tiles?: string | null; // Cesium 3D Tiles tileset.json (jumeau numérique) — served locally for offline
   plans?: string[]; // PDF/image plans (converted from DWG)
 };
 export type EvenementProjet = {
