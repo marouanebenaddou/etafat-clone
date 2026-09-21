@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { Icon } from "@iconify/react";
+import { Icon, addCollection } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   EVENEMENT_THEMES,
@@ -10,6 +10,11 @@ import {
   type EvenementProjet,
   type EvenementTheme,
 } from "@/data/evenement";
+import evenementIcons from "@/data/evenement-icons.json";
+
+// Register the kiosk's icons offline so they render WITHOUT the Iconify API
+// (the borne must work with no internet connection).
+addCollection(evenementIcons as Parameters<typeof addCollection>[0]);
 
 /* ----------------------------- helpers ----------------------------- */
 
@@ -200,6 +205,7 @@ function LogoMark({ className = "", dark }: { className?: string; dark: boolean 
       width={167}
       height={143}
       priority
+      unoptimized
       className={`w-auto ${dark ? "[filter:brightness(0)_invert(1)]" : ""} ${className}`}
     />
   );
@@ -349,7 +355,7 @@ function ProjectsScreen({ theme, onBack, onOpen }: { theme: EvenementTheme; onBa
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden">
                 {p.photo ? (
-                  <Image src={p.photo} alt="" fill sizes="(min-width:1280px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  <Image src={p.photo} alt="" fill unoptimized sizes="(min-width:1280px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
                 ) : (
                   <ThemePlaceholder icon={theme.icon} />
                 )}
@@ -412,7 +418,7 @@ function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; them
             className={`relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-[var(--k-border)] lg:sticky lg:top-4 ${CARD}`}
           >
             {projet.photo ? (
-              <Image src={projet.photo} alt="" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" />
+              <Image src={projet.photo} alt="" fill unoptimized sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" />
             ) : (
               <ThemePlaceholder icon={theme?.icon ?? "ph:map-pin-duotone"} />
             )}
@@ -516,7 +522,7 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
             ) : kind === "model" ? (
               <div className="h-full w-full max-w-5xl"><ModelViewer src={items[idx]} /></div>
             ) : (
-              <div className="relative h-full w-full"><Image src={items[idx]} alt="" fill sizes="100vw" className="object-contain" /></div>
+              <div className="relative h-full w-full"><Image src={items[idx]} alt="" fill unoptimized sizes="100vw" className="object-contain" /></div>
             )}
           </motion.div>
         </AnimatePresence>
@@ -536,7 +542,7 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
               {kind === "videos" ? (
                 <span className="flex h-full w-full items-center justify-center bg-white/10"><Icon icon="ph:play-fill" width={18} height={18} className="text-white" /></span>
               ) : (
-                <Image src={it} alt="" fill sizes="80px" className="object-cover" />
+                <Image src={it} alt="" fill unoptimized sizes="80px" className="object-cover" />
               )}
             </button>
           ))}

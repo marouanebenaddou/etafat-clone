@@ -1,10 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { KioskApp } from "./KioskApp";
+import { OfflineRegister } from "./OfflineRegister";
 
 export const metadata: Metadata = {
   title: "ETAFAT — Projets phares | Borne tactile",
   description:
     "Présentation interactive des projets phares du Groupe ETAFAT, par thématique.",
+  manifest: "/evenement.webmanifest",
+  appleWebApp: { capable: true, statusBarStyle: "default", title: "ETAFAT Borne" },
+  icons: { apple: "/etafat/evenement/icon-192.png" },
 };
 
 export const viewport: Viewport = {
@@ -16,5 +20,10 @@ export const viewport: Viewport = {
 };
 
 export default function EvenementPage() {
-  return <KioskApp />;
+  return (
+    <>
+      <OfflineRegister />
+      <KioskApp />
+    </>
+  );
 }
