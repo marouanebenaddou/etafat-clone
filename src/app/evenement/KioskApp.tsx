@@ -135,17 +135,15 @@ function BackgroundFX({ mode }: { mode: Mode }) {
             : "radial-gradient(120% 120% at 50% -10%, #ffffff 0%, #eef4f9 55%, #dfeaf2 100%)",
         }}
       />
-      <motion.div
+      {/* Static blurred glows — rasterized once (animating a 120px-blur layer
+          re-rasterizes every frame and janks weak GPUs like the borne's). */}
+      <div
         className="absolute -top-1/3 left-1/2 h-[80vh] w-[80vh] -translate-x-1/2 rounded-full blur-[120px]"
-        style={{ background: dark ? "rgba(0,102,157,0.20)" : "rgba(0,102,157,0.10)" }}
-        animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.8, 0.5] }}
-        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+        style={{ background: dark ? "rgba(0,102,157,0.20)" : "rgba(0,102,157,0.10)", opacity: 0.7 }}
       />
-      <motion.div
+      <div
         className="absolute bottom-[-20%] right-[-10%] h-[60vh] w-[60vh] rounded-full blur-[120px]"
-        style={{ background: dark ? "rgba(42,181,180,0.15)" : "rgba(42,181,180,0.12)" }}
-        animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.7, 0.4] }}
-        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        style={{ background: dark ? "rgba(42,181,180,0.15)" : "rgba(42,181,180,0.12)", opacity: 0.6 }}
       />
       <div
         className="absolute inset-0"
@@ -216,9 +214,9 @@ function IntroScreen({ onStart, mode }: { onStart: () => void; mode: Mode }) {
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} className="mt-4 flex flex-col items-center gap-3">
         <motion.span
-          className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] backdrop-blur"
-          animate={{ scale: [1, 1.12, 1], boxShadow: ["0 0 0 0 rgba(42,181,180,0.4)", "0 0 0 18px rgba(42,181,180,0)", "0 0 0 0 rgba(42,181,180,0)"] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeOut" }}
+          className="flex h-16 w-16 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)]"
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
         >
           <Icon icon="ph:hand-tap-duotone" width={30} height={30} />
         </motion.span>
@@ -235,7 +233,7 @@ function TopBar({ onBack, crumb }: { onBack: () => void; crumb: { label: string;
       <button
         type="button"
         onClick={onBack}
-        className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] backdrop-blur transition-colors hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
+        className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] transition-colors hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
         aria-label="Retour"
       >
         <Icon icon="ph:arrow-left-bold" width={22} height={22} />
@@ -275,7 +273,7 @@ function ThemesScreen({ onBack, onOpen }: { onBack: () => void; onOpen: (t: Even
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.08 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 whileTap={{ scale: 0.97 }}
-                className={`group relative flex h-full flex-col items-start gap-5 overflow-hidden rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-7 text-left backdrop-blur transition-colors hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] ${CARD}`}
+                className={`group relative flex h-full flex-col items-start gap-5 overflow-hidden rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-7 text-left transition-colors hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] ${CARD}`}
               >
                 <span className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-[var(--k-accent)] transition-transform duration-300 group-hover:scale-x-100" />
                 <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--k-accent)] to-[#00669d] text-white transition-transform duration-300 group-hover:scale-110">
@@ -316,7 +314,7 @@ function ProjectsScreen({ theme, onBack, onOpen }: { theme: EvenementTheme; onBa
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.05, 0.5), duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               whileTap={{ scale: 0.97 }}
-              className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] text-left backdrop-blur transition-colors hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] ${CARD}`}
+              className={`group flex h-full flex-col overflow-hidden rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] text-left transition-colors hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] ${CARD}`}
             >
               <div className="relative aspect-[16/10] w-full overflow-hidden">
                 {p.photo ? (
@@ -358,7 +356,7 @@ function MediaBadges({ p }: { p: EvenementProjet }) {
   return (
     <div className="absolute bottom-3 right-3 flex gap-1.5">
       {tiles.map((t) => (
-        <span key={t.key} className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur">
+        <span key={t.key} className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50">
           <Icon icon={t.icon} width={15} height={15} className="text-white" />
         </span>
       ))}
@@ -417,7 +415,7 @@ function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; them
                         key={t.key}
                         type="button"
                         onClick={() => setViewer(t.key)}
-                        className={`group flex flex-col items-center gap-3 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-5 text-center backdrop-blur transition-all hover:-translate-y-1 hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
+                        className={`group flex flex-col items-center gap-3 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-5 text-center transition hover:-translate-y-1 hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
                       >
                         <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--k-accent)] to-[#00669d] text-white transition-transform group-hover:scale-110">
                           <Icon icon={t.icon} width={30} height={30} />
@@ -523,7 +521,7 @@ function NavArrow({ side, onClick }: { side: "left" | "right"; onClick: () => vo
       type="button"
       onClick={onClick}
       aria-label={side === "left" ? "Précédent" : "Suivant"}
-      className={`absolute top-1/2 z-10 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white backdrop-blur transition-colors hover:bg-black/70 active:scale-95 ${side === "left" ? "left-3 md:left-6" : "right-3 md:right-6"}`}
+      className={`absolute top-1/2 z-10 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white transition-colors hover:bg-black/70 active:scale-95 ${side === "left" ? "left-3 md:left-6" : "right-3 md:right-6"}`}
     >
       <Icon icon={side === "left" ? "ph:caret-left-bold" : "ph:caret-right-bold"} width={24} height={24} />
     </button>
