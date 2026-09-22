@@ -87,21 +87,9 @@ export function KioskApp() {
   const [view, setView] = useState<View>("intro");
   const [theme, setTheme] = useState<EvenementTheme | null>(null);
   const [projet, setProjet] = useState<EvenementProjet | null>(null);
-  const [mode, setMode] = useState<Mode>("light");
-
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("etafat-kiosk-mode");
-      if (saved === "light" || saved === "dark") setMode(saved);
-    } catch {}
-  }, []);
-  const toggleMode = useCallback(() => {
-    setMode((m) => {
-      const next = m === "dark" ? "light" : "dark";
-      try { localStorage.setItem("etafat-kiosk-mode", next); } catch {}
-      return next;
-    });
-  }, []);
+  // Kiosk is locked to day (light) mode — no toggle (it overlapped the media
+  // overlay's close button on the borne).
+  const mode: Mode = "light";
 
   const openTheme = useCallback((t: EvenementTheme) => { setTheme(t); setView("projects"); }, []);
   const openProjet = useCallback((p: EvenementProjet) => { setProjet(p); setView("detail"); }, []);
@@ -113,7 +101,6 @@ export function KioskApp() {
       className="relative flex h-[100dvh] w-full flex-col overflow-hidden text-[var(--k-text)] select-none"
     >
       <BackgroundFX mode={mode} />
-      <ModeToggle mode={mode} onToggle={toggleMode} />
 
       <AnimatePresence mode="wait">
         {view === "intro" && <IntroScreen key="intro" mode={mode} onStart={() => setView("themes")} />}
@@ -134,29 +121,6 @@ export function KioskApp() {
   );
 }
 
-/* --------------------------- mode toggle --------------------------- */
-function ModeToggle({ mode, onToggle }: { mode: Mode; onToggle: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-label={mode === "dark" ? "Passer en mode jour" : "Passer en mode nuit"}
-      className={`fixed right-5 top-5 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] backdrop-blur transition-colors hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
-    >
-      <AnimatePresence mode="wait" initial={false}>
-        <motion.span
-          key={mode}
-          initial={{ rotate: -90, opacity: 0 }}
-          animate={{ rotate: 0, opacity: 1 }}
-          exit={{ rotate: 90, opacity: 0 }}
-          transition={{ duration: 0.25 }}
-        >
-          <Icon icon={mode === "dark" ? "ph:sun-duotone" : "ph:moon-stars-duotone"} width={24} height={24} />
-        </motion.span>
-      </AnimatePresence>
-    </button>
-  );
-}
 
 /* --------------------------- background ---------------------------- */
 function BackgroundFX({ mode }: { mode: Mode }) {
