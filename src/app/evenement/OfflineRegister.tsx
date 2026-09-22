@@ -9,6 +9,11 @@ import { useEffect } from "react";
  */
 export function OfflineRegister() {
   useEffect(() => {
+    // Inside the native Android APK (Capacitor) everything is already bundled,
+    // so skip the SW — it isn't needed and would intercept WebView requests.
+    if (typeof window !== "undefined" && (window as unknown as { Capacitor?: unknown }).Capacitor) {
+      return;
+    }
     if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw-evenement.js", { scope: "/" })

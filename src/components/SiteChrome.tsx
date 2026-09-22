@@ -12,7 +12,13 @@ import { CookieButton } from "./CookieButton";
  */
 export function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isKiosk = pathname === "/evenement" || pathname?.startsWith("/evenement/");
+  // In the native Android APK the kiosk is served at the root path ("/"), so the
+  // pathname check alone wouldn't catch it — detect the Capacitor WebView too.
+  const isNativeApp =
+    typeof window !== "undefined" &&
+    !!(window as unknown as { Capacitor?: unknown }).Capacitor;
+  const isKiosk =
+    isNativeApp || pathname === "/evenement" || pathname?.startsWith("/evenement/");
 
   if (isKiosk) {
     return <main className="flex-1">{children}</main>;
