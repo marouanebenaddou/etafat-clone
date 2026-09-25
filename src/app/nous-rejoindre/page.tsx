@@ -4,7 +4,7 @@ import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { ArrowRightIcon } from "@/components/icons";
 import { NousRejoindreSubNav } from "./NousRejoindreSubNav";
-import { VisionVideo } from "./VisionVideo";
+import { VideoLightbox } from "@/components/VideoLightbox";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
@@ -270,7 +270,14 @@ export default function NousRejoindrePage() {
               </p>
             </Reveal>
             <Reveal delay={250}>
-              <VisionVideo src="/etafat/videos/vision-etafat.mp4" />
+              <VideoLightbox
+                src="/etafat/videos/vision-etafat.mp4"
+                ariaLabel="Vidéo — Notre vision"
+                className="pill border-2 border-white text-white transition-colors hover:bg-white hover:text-[#00669d]"
+              >
+                <Icon icon="ph:play-fill" width={14} height={14} />
+                Voir la vidéo
+              </VideoLightbox>
             </Reveal>
           </div>
         </div>

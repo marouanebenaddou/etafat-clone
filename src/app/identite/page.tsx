@@ -101,9 +101,6 @@ export default function IdentitePage() {
         <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div>
             <Reveal>
-              <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
-                Notre vision
-              </span>
               <h2 className="text-navy mb-6 leading-tight">
                 Révéler la valeur des territoires par la donnée géospatiale
               </h2>

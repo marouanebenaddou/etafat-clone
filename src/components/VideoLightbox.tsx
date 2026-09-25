@@ -5,11 +5,24 @@ import { createPortal } from "react-dom";
 import { Icon } from "@iconify/react";
 
 /**
- * "Voir la vidéo" button for the Vision section. Clicking opens the self-hosted
- * corporate video full-screen with sound (the click is the user gesture that
- * lets it autoplay). Closes on ✕, backdrop click, or Escape.
+ * Reusable click-to-play video lightbox. `children` is the visible trigger
+ * (a pill, or a poster + play button). Clicking opens the self-hosted video
+ * full-screen with sound (the click is the user gesture that allows autoplay).
+ * The overlay is rendered through a portal to document.body so it is never
+ * trapped by a transformed ancestor (e.g. a <Reveal>). Closes on ✕, backdrop
+ * click, or Escape, and locks body scroll while open.
  */
-export function VisionVideo({ src }: { src: string }) {
+export function VideoLightbox({
+  src,
+  className,
+  ariaLabel = "Lecture vidéo",
+  children,
+}: {
+  src: string;
+  className?: string;
+  ariaLabel?: string;
+  children: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
@@ -33,10 +46,10 @@ export function VisionVideo({ src }: { src: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="pill border-2 border-white text-white transition-colors hover:bg-white hover:text-[#00669d]"
+        aria-label={ariaLabel}
+        className={className}
       >
-        <Icon icon="ph:play-fill" width={14} height={14} />
-        Voir la vidéo
+        {children}
       </button>
 
       {open && mounted && createPortal(
@@ -45,7 +58,7 @@ export function VisionVideo({ src }: { src: string }) {
           onClick={() => setOpen(false)}
           role="dialog"
           aria-modal="true"
-          aria-label="Vidéo — Notre vision"
+          aria-label={ariaLabel}
         >
           <button
             type="button"

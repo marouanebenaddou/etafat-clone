@@ -4,6 +4,7 @@ import { Pill } from "@/components/Pill";
 import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { VideoGate } from "@/components/VideoGate";
+import { VideoLightbox } from "@/components/VideoLightbox";
 import { Icon } from "@iconify/react";
 import { linkedinPosts } from "@/data/linkedin-posts";
 
@@ -168,20 +169,22 @@ export default function HomePage() {
             </Pill>
           </Reveal>
           <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
-            <Image
-              src={IMG("2026/01/26-VIDEO-GROUPE-Video_Vision-Miniature_YT.jpg")}
-              alt="Vidéo - Notre vision"
-              fill
-              sizes="(min-width:768px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <button
-              type="button"
-              aria-label="Lecture vidéo"
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
+            <VideoLightbox
+              src="/etafat/videos/vision-etafat.mp4"
+              ariaLabel="Vidéo — Notre vision"
+              className="group relative block h-full w-full"
             >
-              <PlayIcon width={28} height={28} />
-            </button>
+              <Image
+                src="/etafat/videos/vision-aerial.jpg"
+                alt="Vidéo - Notre vision"
+                fill
+                sizes="(min-width:768px) 50vw, 100vw"
+                className="object-cover"
+              />
+              <span className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] transition-transform group-hover:scale-105 flex items-center justify-center">
+                <PlayIcon width={28} height={28} />
+              </span>
+            </VideoLightbox>
           </Reveal>
         </div>
       </section>
@@ -299,20 +302,22 @@ export default function HomePage() {
             </Pill>
           </div>
           <div className="relative aspect-[16/10] rounded-md overflow-hidden">
-            <Image
-              src={IMG("2024/09/miniature-histoire-geofit.jpg")}
-              alt="Vidéo - Le voyage de Etafat"
-              fill
-              sizes="(min-width:768px) 50vw, 100vw"
-              className="object-cover"
-            />
-            <button
-              type="button"
-              aria-label="Lecture vidéo"
-              className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] hover:scale-105 transition-transform flex items-center justify-center"
+            <VideoLightbox
+              src="/etafat/videos/vision-etafat.mp4"
+              ariaLabel="Vidéo — Le voyage d'ETAFAT"
+              className="group relative block h-full w-full"
             >
-              <PlayIcon width={28} height={28} />
-            </button>
+              <Image
+                src="/etafat/videos/vision-poster.jpg"
+                alt="Vidéo - Le voyage d'ETAFAT"
+                fill
+                sizes="(min-width:768px) 50vw, 100vw"
+                className="object-cover"
+              />
+              <span className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] transition-transform group-hover:scale-105 flex items-center justify-center">
+                <PlayIcon width={28} height={28} />
+              </span>
+            </VideoLightbox>
           </div>
         </div>
       </section>
