@@ -4,6 +4,7 @@ import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { ArrowRightIcon } from "@/components/icons";
 import { NousRejoindreSubNav } from "./NousRejoindreSubNav";
+import { VisionVideo } from "./VisionVideo";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
@@ -264,9 +265,12 @@ export default function NousRejoindrePage() {
               <p className="mb-4 leading-relaxed text-white/90">
                 Nous transformons les données géospatiales en informations utiles pour éclairer les décisions et façonner des territoires plus durables et mieux connectés.
               </p>
-              <p className="leading-relaxed text-white/90">
+              <p className="mb-8 leading-relaxed text-white/90">
                 Rejoindre ETAFAT, c&apos;est mettre vos talents au service d&apos;un avenir qui a du sens.
               </p>
+            </Reveal>
+            <Reveal delay={250}>
+              <VisionVideo src="/etafat/videos/vision-etafat.mp4" />
             </Reveal>
           </div>
         </div>
