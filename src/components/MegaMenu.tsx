@@ -19,6 +19,13 @@ const offerLinks = [
   { label: "Innovation", href: "/innovation/" },
 ];
 
+// "Le Groupe" and "Notre offre" read as the main section titles, with their
+// entries below as sub-items (clear hierarchy, per Camille's note).
+const columns = [
+  { title: "Le Groupe", links: groupLinks },
+  { title: "Notre offre", links: offerLinks },
+];
+
 interface MegaMenuProps {
   open: boolean;
   onClose: () => void;
@@ -54,45 +61,30 @@ export function MegaMenu({ open, onClose }: MegaMenuProps) {
 
       <div className="container-etafat pt-[160px] pb-20 relative">
         <div className="grid md:grid-cols-2 gap-12 md:gap-20">
-          <section>
-            <h2 className="text-white text-2xl md:text-3xl font-semibold mb-8" style={{ color: "#fff" }}>
-              Le Groupe
-            </h2>
-            <ul className="space-y-5">
-              {groupLinks.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    onClick={onClose}
-                    className="text-white/90 hover:text-[#00669d] transition-colors text-2xl md:text-3xl font-medium"
-                    style={{ fontFamily: "var(--font-figtree)" }}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-white text-2xl md:text-3xl font-semibold mb-8" style={{ color: "#fff" }}>
-              Notre offre
-            </h2>
-            <ul className="space-y-5">
-              {offerLinks.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    onClick={onClose}
-                    className="text-white/90 hover:text-[#00669d] transition-colors text-2xl md:text-3xl font-medium"
-                    style={{ fontFamily: "var(--font-figtree)" }}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </section>
+          {columns.map((col) => (
+            <section key={col.title}>
+              <h2
+                className="text-white text-3xl md:text-4xl font-semibold"
+                style={{ color: "#fff", fontFamily: "var(--font-figtree)" }}
+              >
+                {col.title}
+              </h2>
+              <div className="mt-3 mb-8 h-0.5 w-12 bg-[#00669d]" />
+              <ul className="space-y-3.5">
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    <Link
+                      href={l.href}
+                      onClick={onClose}
+                      className="text-white/80 hover:text-[#00669d] transition-colors text-lg md:text-xl font-medium"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
         </div>
       </div>
     </div>

@@ -171,8 +171,8 @@ const DOMAINS: DomainData[] = [
       },
     ],
     stats: [
-      { icon: "ph:flow-arrow-duotone", value: "+300 km", unit: "de réseaux", desc: "détectés et géoréférencés sur plusieurs projets." },
-      { icon: "ph:desktop-duotone", value: "+1", unit: "plateforme métier", desc: "déployée pour la gestion des opérations et des actifs." },
+      { icon: "ph:flow-arrow-duotone", value: "+20 000 km", unit: "de réseaux", desc: "détectés et géoréférencés sur plusieurs projets." },
+      { icon: "ph:desktop-duotone", value: "+3", unit: "plateformes métiers", desc: "déployées pour la gestion des opérations et des actifs." },
       { icon: "ph:users-three-duotone", value: "+4", unit: "expertises mobilisées", desc: "pour des solutions intégrées et sur mesure." },
     ],
     ctaQuestion: "Vous avez un projet énergie ou mines ?",

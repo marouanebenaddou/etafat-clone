@@ -1,6 +1,13 @@
 import { PageHero } from "@/components/PageHero";
 import { miscPageBySlug } from "@/lib/content";
+import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
+
+const SOCIALS = [
+  { label: "LinkedIn", href: "https://www.linkedin.com/company/etafat", icon: "ph:linkedin-logo-bold" },
+  { label: "Facebook", href: "https://www.facebook.com/ETAFAT", icon: "ph:facebook-logo-bold" },
+  { label: "Instagram", href: "https://www.instagram.com/etafat_ma/", icon: "ph:instagram-logo-bold" },
+];
 
 export const metadata: Metadata = {
   title: "Nous contacter - ETAFAT",
@@ -101,15 +108,18 @@ export default function ContactPage() {
             <div>
               <h3 className="text-navy font-semibold mb-3 text-xl">Suivez-nous</h3>
               <div className="flex gap-3">
-                <a
-                  href="https://www.linkedin.com/company/etafat"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn ETAFAT"
-                  className="w-11 h-11 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors font-semibold"
-                >
-                  in
-                </a>
+                {SOCIALS.map((s) => (
+                  <a
+                    key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${s.label} ETAFAT`}
+                    className="w-11 h-11 rounded-full border border-[#00669d] text-[#00669d] hover:bg-[#00669d] hover:text-white flex items-center justify-center transition-colors"
+                  >
+                    <Icon icon={s.icon} width={20} height={20} />
+                  </a>
+                ))}
               </div>
             </div>
           </aside>

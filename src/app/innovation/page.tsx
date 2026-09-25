@@ -278,25 +278,21 @@ export default function InnovationPage() {
           <div className="grid gap-8 md:grid-cols-3">
             {ARTICLES.map((a, i) => (
               <Reveal key={a.title} delay={i * 100}>
-                <Link href="/actualites/" className="group block">
+                <div className="block">
                   <div className="relative mb-5 aspect-[16/10] overflow-hidden rounded-md bg-[#e5e7eb]">
                     <Image
                       src={a.image}
                       alt={a.title}
                       fill
                       sizes="(min-width:768px) 33vw, 100vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      className="object-cover"
                     />
                   </div>
-                  <h3 className="mb-2 text-lg font-semibold leading-tight text-navy transition-colors group-hover:text-[#00669d]">
+                  <h3 className="mb-2 text-lg font-semibold leading-tight text-navy">
                     {a.title}
                   </h3>
-                  <p className="mb-3 text-sm leading-relaxed text-body">{a.text}</p>
-                  <span className="inline-flex items-center gap-1.5 text-sm font-medium text-[#00669d]">
-                    Lire l&apos;article
-                    <ArrowRightIcon width={13} height={13} />
-                  </span>
-                </Link>
+                  <p className="text-sm leading-relaxed text-body">{a.text}</p>
+                </div>
               </Reveal>
             ))}
           </div>
