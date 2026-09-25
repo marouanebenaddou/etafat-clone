@@ -17,6 +17,28 @@ export type LinkedInPost = {
 // Latest posts pulled from the ETAFAT LinkedIn page
 // (https://www.linkedin.com/company/5160946). Images are stored locally in
 // /public/etafat/actualites. Ordered most-recent first.
+//
+// ─── HOW TO ADD A NEW POST ────────────────────────────────────────────────
+// Easiest — one command (optimises the image + inserts the entry for you):
+//   node scripts/add-actualite.mjs \
+//     --image ~/Downloads/mon-post.jpg \
+//     --url "https://www.linkedin.com/feed/update/urn:li:activity:XXXX" \
+//     --title "Titre du post" \
+//     --category Projet \                 // Divers | Engagements | Groupe | Presse | Projet
+//     --date "5 septembre 2026" \
+//     --excerpt "Une ou deux phrases de résumé."
+//
+// Or by hand: drop a square-ish image in /public/etafat/actualites/ and paste a
+// new object at the TOP of the array below (most-recent first):
+//   {
+//     title: "…",
+//     date: "5 septembre 2026",
+//     category: "Projet",
+//     excerpt: "…",
+//     image: "/etafat/actualites/etafat-post-16.jpg",
+//     url: "https://www.linkedin.com/feed/update/urn:li:activity:XXXX",
+//   },
+// ──────────────────────────────────────────────────────────────────────────
 export const linkedinPosts: LinkedInPost[] = [
   {
     title: "Aïd Al-Adha Moubarak",
