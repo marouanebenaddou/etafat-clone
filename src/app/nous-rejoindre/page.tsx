@@ -218,27 +218,14 @@ export default function NousRejoindrePage() {
               <p className="mb-6 leading-relaxed text-body">
                 Ils partagent leur parcours, leurs missions et ce qui fait la richesse de leur expérience chez ETAFAT.
               </p>
-              <a
-                href={YOUTUBE}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group relative mb-6 block aspect-video overflow-hidden rounded-md"
+              <video
+                controls
+                preload="metadata"
+                poster="/etafat/videos/temoignage-poster.jpg"
+                className="mb-6 aspect-video w-full rounded-md bg-black object-cover"
               >
-                <Image
-                  src="/etafat/skills/topographie-et-geodesie.jpg"
-                  alt="Interviews des collaborateurs ETAFAT"
-                  fill
-                  sizes="(min-width:768px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <span className="absolute inset-0 bg-black/25" />
-                <span className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#00669d] shadow-lg transition-transform group-hover:scale-110">
-                  <Icon icon="ph:play-fill" width={22} height={22} />
-                </span>
-                <span className="absolute bottom-3 right-3 rounded bg-black/70 px-2 py-0.5 text-xs font-medium text-white">
-                  2:18
-                </span>
-              </a>
+                <source src="/etafat/videos/temoignage-collaborateurs.mp4" type="video/mp4" />
+              </video>
               <a
                 href={YOUTUBE}
                 target="_blank"
@@ -277,20 +264,9 @@ export default function NousRejoindrePage() {
               <p className="mb-4 leading-relaxed text-white/90">
                 Nous transformons les données géospatiales en informations utiles pour éclairer les décisions et façonner des territoires plus durables et mieux connectés.
               </p>
-              <p className="mb-8 leading-relaxed text-white/90">
+              <p className="leading-relaxed text-white/90">
                 Rejoindre ETAFAT, c&apos;est mettre vos talents au service d&apos;un avenir qui a du sens.
               </p>
-            </Reveal>
-            <Reveal delay={250}>
-              <a
-                href={YOUTUBE}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="pill border-2 border-white text-white transition-colors hover:bg-white hover:text-[#00669d]"
-              >
-                <Icon icon="ph:play-fill" width={14} height={14} />
-                Voir la vidéo
-              </a>
             </Reveal>
           </div>
         </div>
