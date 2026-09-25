@@ -459,20 +459,9 @@ export function ReferencesExplorer() {
                       {p.title}
                     </h3>
                     <p className="mb-3 text-sm font-medium text-teal">{p.subtitle}</p>
-                    <p className="mb-5 flex-1 text-sm leading-relaxed text-body">
+                    <p className="flex-1 text-sm leading-relaxed text-body">
                       {p.description}
                     </p>
-                    <Link
-                      href={`/domaines-activite/${
-                        TABS.find((d) =>
-                          d.projects.some((pr) => pr.title === p.title),
-                        )?.domainSlug || ""
-                      }/`}
-                      className="inline-flex items-center gap-1.5 text-sm font-medium text-[#00669d]"
-                    >
-                      Voir le projet
-                      <Icon icon="tabler:arrow-right" width={15} height={15} />
-                    </Link>
                   </div>
                 </article>
               </Reveal>
