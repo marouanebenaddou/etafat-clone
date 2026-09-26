@@ -41,6 +41,14 @@ export type LinkedInPost = {
 // ──────────────────────────────────────────────────────────────────────────
 export const linkedinPosts: LinkedInPost[] = [
   {
+    title: "#OpenDays2026 — Le foncier rural au service de l'investissement",
+    date: "22 septembre 2026",
+    category: "Projet",
+    excerpt: "Le foncier rural au service de l'investissement, de l'emploi et du développement, à l'occasion des OpenDays 2026 en Côte d'Ivoire.",
+    image: "/etafat/actualites/etafat-post-16.jpg",
+    url: "https://www.linkedin.com/company/etafat/posts/",
+  },
+  {
     title: "Aïd Al-Adha Moubarak",
     date: "27 mai 2026",
     category: "Divers",
