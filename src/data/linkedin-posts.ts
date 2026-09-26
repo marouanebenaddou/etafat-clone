@@ -49,6 +49,33 @@ export const linkedinPosts: LinkedInPost[] = [
     url: "https://www.linkedin.com/company/etafat/posts/",
   },
   {
+    title: "JFA 2026 — Le futur du foncier se dessine à Abidjan",
+    date: "17 septembre 2026",
+    category: "Groupe",
+    excerpt:
+      "ETAFAT aux Journées du Foncier d'Abidjan : échanges et innovations au service de la sécurisation foncière en Afrique.",
+    image: "/etafat/actualites/etafat-post-18.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7506259278568030208/",
+  },
+  {
+    title: "Journées du Foncier 2026 — On vous y attend",
+    date: "12 septembre 2026",
+    category: "Groupe",
+    excerpt:
+      "Rendez-vous aux Journées du Foncier d'Abidjan : ETAFAT et l'AFOR vous donnent rendez-vous autour du foncier ivoirien.",
+    image: "/etafat/actualites/etafat-post-19.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7504478367870545921/",
+  },
+  {
+    title: "ETAFAT au service de la transformation des territoires africains",
+    date: "8 septembre 2026",
+    category: "Groupe",
+    excerpt:
+      "De la donnée géospatiale à la décision : ETAFAT accompagne la transformation durable des territoires à travers l'Afrique.",
+    image: "/etafat/actualites/etafat-post-20.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7502999312335818752/",
+  },
+  {
     title: "PRESFOR — Sécurisation foncière rurale en Côte d'Ivoire",
     date: "24 août 2026",
     category: "Projet",
@@ -56,6 +83,78 @@ export const linkedinPosts: LinkedInPost[] = [
       "Dans le cadre du PRESFOR, le Groupement ETAFAT/CGEA2TF (GEC) a délimité et levé les parcelles agricoles de Monsieur le Ministre d'État — un signal fort pour la sécurisation du foncier rural dans le Gontougo.",
     image: "/etafat/actualites/etafat-post-17.jpg",
     url: "https://www.linkedin.com/feed/update/urn:li:activity:7497675055066353664/",
+  },
+  {
+    title: "Fête de la Jeunesse",
+    date: "21 août 2026",
+    category: "Engagements",
+    excerpt:
+      "À l'occasion de la Fête de la Jeunesse et du 63e anniversaire de Sa Majesté le Roi Mohammed VI, ETAFAT célèbre la jeunesse marocaine, force vive du Royaume.",
+    image: "/etafat/actualites/etafat-post-21.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7496597918167097344/",
+  },
+  {
+    title: "Anniversaire de la Révolution du Roi et du Peuple",
+    date: "20 août 2026",
+    category: "Divers",
+    excerpt:
+      "En ce 20 août, ETAFAT commémore le 73e anniversaire de la Révolution du Roi et du Peuple, symbole d'unité et d'engagement national.",
+    image: "/etafat/actualites/etafat-post-22.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7496163603448938498/",
+  },
+  {
+    title: "66 ans d'indépendance de la Côte d'Ivoire",
+    date: "7 août 2026",
+    category: "Divers",
+    excerpt:
+      "ETAFAT célèbre les 66 ans d'indépendance de la Côte d'Ivoire, terre d'engagement et de projets au service du développement.",
+    image: "/etafat/actualites/etafat-post-23.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7491576065224732672/",
+  },
+  {
+    title: "Des images aériennes aux données géospatiales",
+    date: "7 août 2026",
+    category: "Projet",
+    excerpt:
+      "Transformer des images aériennes en données géospatiales fiables : au cœur du savoir-faire d'ETAFAT pour éclairer la décision.",
+    image: "/etafat/actualites/etafat-post-24.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7491410317902602242/",
+  },
+  {
+    title: "Fête du Trône",
+    date: "30 juillet 2026",
+    category: "Divers",
+    excerpt:
+      "À l'occasion de la Fête du Trône, ETAFAT renouvelle son attachement aux valeurs de progrès et de développement du Royaume.",
+    image: "/etafat/actualites/etafat-post-25.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7488511219914448897/",
+  },
+  {
+    title: "Accompagner le développement urbain par la donnée géospatiale",
+    date: "27 juillet 2026",
+    category: "Projet",
+    excerpt:
+      "De l'imagerie satellite à l'analyse territoriale, ETAFAT accompagne un développement urbain maîtrisé et durable.",
+    image: "/etafat/actualites/etafat-post-26.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7487424057219493888/",
+  },
+  {
+    title: "Au service du développement durable des chaînes de valeur",
+    date: "24 juin 2026",
+    category: "Projet",
+    excerpt:
+      "Fiers d'accompagner le développement durable des chaînes de valeur agricoles et territoriales par la donnée géospatiale.",
+    image: "/etafat/actualites/etafat-post-27.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7475460569274224640/",
+  },
+  {
+    title: "Une nation derrière ses couleurs",
+    date: "13 juin 2026",
+    category: "Divers",
+    excerpt:
+      "Plus qu'un match : ETAFAT partage la fierté d'une nation rassemblée derrière ses couleurs.",
+    image: "/etafat/actualites/etafat-post-28.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7471497219112689664/",
   },
   {
     title: "Aïd Al-Adha Moubarak",
