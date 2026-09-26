@@ -49,6 +49,15 @@ export const linkedinPosts: LinkedInPost[] = [
     url: "https://www.linkedin.com/company/etafat/posts/",
   },
   {
+    title: "PRESFOR — Sécurisation foncière rurale en Côte d'Ivoire",
+    date: "24 août 2026",
+    category: "Projet",
+    excerpt:
+      "Dans le cadre du PRESFOR, le Groupement ETAFAT/CGEA2TF (GEC) a délimité et levé les parcelles agricoles de Monsieur le Ministre d'État — un signal fort pour la sécurisation du foncier rural dans le Gontougo.",
+    image: "/etafat/actualites/etafat-post-17.jpg",
+    url: "https://www.linkedin.com/feed/update/urn:li:activity:7497675055066353664/",
+  },
+  {
     title: "Aïd Al-Adha Moubarak",
     date: "27 mai 2026",
     category: "Divers",
