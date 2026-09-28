@@ -7,8 +7,6 @@ export type BorneApp = {
   icon: string;
   tagline: string;
   pkg: string; // Android package name to launch on the borne
-  login?: string;
-  password?: string;
 };
 
 export const BORNE_APPS: BorneApp[] = [
@@ -19,8 +17,6 @@ export const BORNE_APPS: BorneApp[] = [
     tagline:
       "Sécurisation foncière rurale — enquêtes, délimitation et levé des parcelles (Sénégal).",
     pkg: "ma.etafat.procasef",
-    login: "agent.leve@procasef.sn",
-    password: "123456",
   },
   {
     key: "presfor",
@@ -28,8 +24,6 @@ export const BORNE_APPS: BorneApp[] = [
     icon: "ph:plant-duotone",
     tagline: "Renforcement de la sécurisation foncière rurale (Côte d'Ivoire).",
     pkg: "com.devari.etafat.presfor",
-    login: "agent2@gmail.com",
-    password: "123456",
   },
   {
     key: "srm",
@@ -37,7 +31,5 @@ export const BORNE_APPS: BorneApp[] = [
     icon: "ph:buildings-duotone",
     tagline: "Suivi et relevé de terrain — projet SRM, Casablanca.",
     pkg: "com.srm.collecte.casa",
-    login: "agent2@gmail.com",
-    password: "123456",
   },
 ];

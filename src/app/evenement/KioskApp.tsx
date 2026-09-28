@@ -346,15 +346,6 @@ function useBorne(): BorneBridge | null {
   return bridge;
 }
 
-function KeyIcon() {
-  return (
-    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" className="text-[var(--k-accent)]">
-      <circle cx={8} cy={15} r={4} stroke="currentColor" strokeWidth={2} />
-      <path d="M10.8 12.2 20 3m-3 0 3 3m-6 0 2 2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 function AppsScreen({ onBack }: { onBack: () => void }) {
   const borne = useBorne();
   const [status, setStatus] = useState<Record<string, "ok" | "missing" | "preview">>({});
@@ -406,13 +397,6 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     </div>
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-[var(--k-muted)]">{app.tagline}</p>
-                  {app.login && (
-                    <div className="mt-4 inline-flex flex-col gap-1 rounded-xl bg-[var(--k-chip)] px-4 py-3 text-sm">
-                      <span className="flex items-center gap-2 font-semibold text-[var(--k-text)]"><KeyIcon /> Compte de démonstration</span>
-                      <span className="text-[var(--k-muted)]">Identifiant&nbsp;: <b className="text-[var(--k-text)]">{app.login}</b></span>
-                      <span className="text-[var(--k-muted)]">Mot de passe&nbsp;: <b className="text-[var(--k-text)]">{app.password}</b></span>
-                    </div>
-                  )}
                 </div>
                 <div className="shrink-0 self-center text-center">
                   <button
