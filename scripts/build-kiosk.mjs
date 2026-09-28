@@ -24,7 +24,7 @@ const copies = [
   "_next", // JS/CSS/fonts chunks
   "vendor", // bundled model-viewer (offline BIM .glb)
   "etafat/evenement", // project photos + app icons  (+ future models/tiles)
-  "etafat/videos", // intro/aerial videos
+  "etafat/videos/aerial-territory.mp4", // the only video the kiosk uses
   "etafat/logo.png", // brand mark
 ];
 for (const rel of copies) {

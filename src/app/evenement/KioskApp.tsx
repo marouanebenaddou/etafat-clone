@@ -11,7 +11,6 @@ import {
   type EvenementTheme,
 } from "@/data/evenement";
 import evenementIcons from "@/data/evenement-icons.json";
-import QRCode from "qrcode";
 import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
 
 // Register the kiosk's icons offline so they render WITHOUT the Iconify API
@@ -327,54 +326,26 @@ function ThemesScreen({ onBack, onOpen, onApps }: { onBack: () => void; onOpen: 
 }
 
 /* ------------------------- APPLICATIONS ---------------------------- */
-// The borne's local HTTP server (ApkServer) exposes its base URL to the WebView
-// as window.BorneServer.getBaseUrl() (and/or window.__BORNE_BASE). Poll for it.
-function useBorneBase(): string | null {
-  const [base, setBase] = useState<string | null>(null);
+// The 3 field apps are installed on the borne. MainActivity exposes a JS bridge
+// (window.BorneApps) to launch them by package name and check install state.
+type BorneBridge = { launch: (pkg: string) => string; installed: (pkg: string) => string };
+
+function useBorne(): BorneBridge | null {
+  const [bridge, setBridge] = useState<BorneBridge | null>(null);
   useEffect(() => {
     let tries = 0;
     const read = () => {
-      const w = window as unknown as { BorneServer?: { getBaseUrl?: () => string }; __BORNE_BASE?: string };
-      const b = w.__BORNE_BASE || (w.BorneServer?.getBaseUrl?.() ?? "");
-      if (b) { setBase(b.replace(/\/$/, "")); return true; }
+      const w = window as unknown as { BorneApps?: BorneBridge };
+      if (w.BorneApps && typeof w.BorneApps.launch === "function") { setBridge(w.BorneApps); return true; }
       return false;
     };
     if (read()) return;
-    const id = setInterval(() => { if (read() || ++tries > 45) clearInterval(id); }, 800);
+    const id = setInterval(() => { if (read() || ++tries > 30) clearInterval(id); }, 500);
     return () => clearInterval(id);
   }, []);
-  return base;
+  return bridge;
 }
 
-function DownloadQR({ base, path }: { base: string | null; path: string }) {
-  const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const url = base ? base + path : null;
-  useEffect(() => {
-    if (!url) { setDataUrl(null); return; }
-    QRCode.toDataURL(url, { margin: 1, width: 480, color: { dark: "#12293f", light: "#ffffff" } })
-      .then(setDataUrl)
-      .catch(() => setDataUrl(null));
-  }, [url]);
-  if (!dataUrl) {
-    return (
-      <div className="flex aspect-square w-full items-center justify-center rounded-xl border border-dashed border-[var(--k-border)] bg-[var(--k-surface-2)] p-4 text-center text-xs leading-relaxed text-[var(--k-muted)]">
-        QR de téléchargement<br />disponible sur la borne
-      </div>
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img src={dataUrl} alt="QR de téléchargement" className="aspect-square w-full rounded-xl bg-white" />
-  );
-}
-
-function WifiIcon() {
-  return (
-    <svg width={22} height={22} viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--k-accent)]">
-      <path d="M12 18.5h.01M5.5 12.8a9 9 0 0 1 13 0M2.5 9.3a14 14 0 0 1 19 0M8.7 16.1a4.5 4.5 0 0 1 6.6 0" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
-    </svg>
-  );
-}
 function KeyIcon() {
   return (
     <svg width={16} height={16} viewBox="0 0 24 24" fill="none" className="text-[var(--k-accent)]">
@@ -383,25 +354,35 @@ function KeyIcon() {
     </svg>
   );
 }
-function DownloadIcon() {
-  return (
-    <svg width={16} height={16} viewBox="0 0 24 24" fill="none">
-      <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
 
 function AppsScreen({ onBack }: { onBack: () => void }) {
-  const base = useBorneBase();
+  const borne = useBorne();
+  const [status, setStatus] = useState<Record<string, "ok" | "missing" | "preview">>({});
+
+  useEffect(() => {
+    if (!borne) return;
+    const s: Record<string, "ok" | "missing" | "preview"> = {};
+    for (const app of BORNE_APPS) {
+      try { s[app.key] = borne.installed(app.pkg) === "1" ? "ok" : "missing"; } catch { /* ignore */ }
+    }
+    setStatus((p) => ({ ...p, ...s }));
+  }, [borne]);
+
+  const launch = (app: BorneApp) => {
+    if (!borne) { setStatus((p) => ({ ...p, [app.key]: "preview" })); return; }
+    let r = "";
+    try { r = borne.launch(app.pkg); } catch { /* ignore */ }
+    if (r !== "ok") setStatus((p) => ({ ...p, [app.key]: "missing" }));
+  };
+
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Applications terrain", label: "Télécharger nos applications" }} />
+      <TopBar onBack={onBack} crumb={{ sub: "Applications terrain", label: "Nos applications" }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-6">
         <div className="mx-auto max-w-5xl space-y-5">
-          <div className="flex items-center gap-3 rounded-xl border border-[var(--k-border)] bg-[var(--k-surface)] p-4 text-sm text-[var(--k-muted)]">
-            <WifiIcon />
-            <p>Connectez-vous au réseau Wi‑Fi de la borne, puis scannez le code pour installer l&apos;application sur votre téléphone.</p>
-          </div>
+          <p className="rounded-xl border border-[var(--k-border)] bg-[var(--k-surface)] p-4 text-sm text-[var(--k-muted)]">
+            Touchez une application pour la lancer directement sur la borne.
+          </p>
 
           {BORNE_APPS.map((app: BorneApp, i) => (
             <motion.div
@@ -419,7 +400,9 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     </span>
                     <div>
                       <h2 className="text-2xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{app.name}</h2>
-                      <p className="text-xs text-[var(--k-muted)]">Application Android · {app.size}</p>
+                      {status[app.key] === "missing" && (
+                        <p className="text-xs font-medium text-[#b7791f]">Non installée sur la borne</p>
+                      )}
                     </div>
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-[var(--k-muted)]">{app.tagline}</p>
@@ -431,28 +414,20 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     </div>
                   )}
                 </div>
-                <div className="w-full max-w-[200px] shrink-0 self-center text-center">
-                  <DownloadQR base={base} path={`/apks/${app.apk}`} />
-                  <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--k-accent)]"><DownloadIcon /> Scanner pour installer</p>
+                <div className="shrink-0 self-center text-center">
+                  <button
+                    type="button"
+                    onClick={() => launch(app)}
+                    className="inline-flex items-center gap-2 rounded-full bg-[var(--k-accent)] px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform active:scale-95"
+                  >
+                    <Icon icon="ph:play-fill" width={18} height={18} />
+                    Lancer l&apos;application
+                  </button>
+                  {status[app.key] === "preview" && (
+                    <p className="mt-2 text-xs text-[var(--k-muted)]">Disponible sur la borne</p>
+                  )}
                 </div>
               </div>
-
-              {app.demo && (
-                <div className="border-t border-[var(--k-border)] bg-[var(--k-surface-2)] p-6">
-                  <p className="text-sm font-semibold text-[var(--k-text)]">{app.demo.title}</p>
-                  <p className="mt-1 text-xs text-[var(--k-muted)]">{app.demo.note}</p>
-                  <div className="mt-4 flex flex-wrap gap-4">
-                    {app.demo.codes.map((c, j) => (
-                      <div key={c} className="w-28 text-center">
-                        <div className="rounded-xl border border-[var(--k-border)] bg-white p-2">
-                          <Image src={c} alt={`Zone de démonstration ${j + 1}`} width={200} height={200} unoptimized className="h-auto w-full" />
-                        </div>
-                        <p className="mt-1 text-[11px] text-[var(--k-muted)]">Mermoz / Sacré‑Cœur</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </motion.div>
           ))}
         </div>
