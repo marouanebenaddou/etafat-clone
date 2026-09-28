@@ -11,6 +11,8 @@ import {
   type EvenementTheme,
 } from "@/data/evenement";
 import evenementIcons from "@/data/evenement-icons.json";
+import QRCode from "qrcode";
+import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
 
 // Register the kiosk's icons offline so they render WITHOUT the Iconify API
 // (the borne must work with no internet connection).
@@ -32,7 +34,7 @@ function mediaTiles(p: EvenementProjet) {
 }
 
 type MediaKind = "images" | "videos" | "model" | "plans";
-type View = "intro" | "themes" | "projects" | "detail";
+type View = "intro" | "themes" | "projects" | "detail" | "apps";
 type Mode = "dark" | "light";
 
 const PALETTE: Record<Mode, React.CSSProperties> = {
@@ -104,7 +106,8 @@ export function KioskApp() {
 
       <AnimatePresence mode="wait">
         {view === "intro" && <IntroScreen key="intro" mode={mode} onStart={() => setView("themes")} />}
-        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} />}
+        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} onApps={() => setView("apps")} />}
+        {view === "apps" && <AppsScreen key="apps" onBack={() => setView("themes")} />}
         {view === "projects" && theme && (
           <ProjectsScreen key="projects" theme={theme} onBack={() => setView("themes")} onOpen={openProjet} />
         )}
@@ -258,11 +261,37 @@ const screenMotion = {
 };
 
 /* --------------------------- THEMES -------------------------------- */
-function ThemesScreen({ onBack, onOpen }: { onBack: () => void; onOpen: (t: EvenementTheme) => void }) {
+function ThemesScreen({ onBack, onOpen, onApps }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void }) {
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
       <TopBar onBack={onBack} crumb={{ sub: "Nos réalisations", label: "Choisissez une thématique" }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
+        {/* Main tile — field applications */}
+        <motion.button
+          type="button"
+          onClick={onApps}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          whileTap={{ scale: 0.98 }}
+          className={`group mx-auto mb-6 flex w-full max-w-6xl items-center gap-5 overflow-hidden rounded-2xl border border-transparent bg-gradient-to-r from-[#00669d] to-[#2ab5b4] p-6 md:p-7 text-left text-white ${CARD}`}
+        >
+          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+            <Icon icon="ph:map-trifold-duotone" width={38} height={38} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Applications terrain</p>
+            <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
+              PROCASEF · PRESFOR · SRM — télécharger nos applications
+            </h2>
+            <p className="mt-1 hidden text-sm text-white/85 sm:block">Installez nos applications de terrain et scannez les zones de démonstration.</p>
+          </div>
+          <span className="hidden shrink-0 items-center gap-2 text-sm font-semibold sm:inline-flex">
+            Ouvrir
+            <Icon icon="ph:arrow-right-bold" width={18} height={18} className="transition-transform group-hover:translate-x-1" />
+          </span>
+        </motion.button>
+
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {EVENEMENT_THEMES.map((t, i) => (
               <motion.button
@@ -290,6 +319,141 @@ function ThemesScreen({ onBack, onOpen }: { onBack: () => void; onOpen: (t: Even
                   <Icon icon="ph:arrow-right-bold" width={16} height={16} className="transition-transform group-hover:translate-x-1" />
                 </span>
               </motion.button>
+          ))}
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+/* ------------------------- APPLICATIONS ---------------------------- */
+// The borne's local HTTP server (ApkServer) exposes its base URL to the WebView
+// as window.BorneServer.getBaseUrl() (and/or window.__BORNE_BASE). Poll for it.
+function useBorneBase(): string | null {
+  const [base, setBase] = useState<string | null>(null);
+  useEffect(() => {
+    let tries = 0;
+    const read = () => {
+      const w = window as unknown as { BorneServer?: { getBaseUrl?: () => string }; __BORNE_BASE?: string };
+      const b = w.__BORNE_BASE || (w.BorneServer?.getBaseUrl?.() ?? "");
+      if (b) { setBase(b.replace(/\/$/, "")); return true; }
+      return false;
+    };
+    if (read()) return;
+    const id = setInterval(() => { if (read() || ++tries > 45) clearInterval(id); }, 800);
+    return () => clearInterval(id);
+  }, []);
+  return base;
+}
+
+function DownloadQR({ base, path }: { base: string | null; path: string }) {
+  const [dataUrl, setDataUrl] = useState<string | null>(null);
+  const url = base ? base + path : null;
+  useEffect(() => {
+    if (!url) { setDataUrl(null); return; }
+    QRCode.toDataURL(url, { margin: 1, width: 480, color: { dark: "#12293f", light: "#ffffff" } })
+      .then(setDataUrl)
+      .catch(() => setDataUrl(null));
+  }, [url]);
+  if (!dataUrl) {
+    return (
+      <div className="flex aspect-square w-full items-center justify-center rounded-xl border border-dashed border-[var(--k-border)] bg-[var(--k-surface-2)] p-4 text-center text-xs leading-relaxed text-[var(--k-muted)]">
+        QR de téléchargement<br />disponible sur la borne
+      </div>
+    );
+  }
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src={dataUrl} alt="QR de téléchargement" className="aspect-square w-full rounded-xl bg-white" />
+  );
+}
+
+function WifiIcon() {
+  return (
+    <svg width={22} height={22} viewBox="0 0 24 24" fill="none" className="shrink-0 text-[var(--k-accent)]">
+      <path d="M12 18.5h.01M5.5 12.8a9 9 0 0 1 13 0M2.5 9.3a14 14 0 0 1 19 0M8.7 16.1a4.5 4.5 0 0 1 6.6 0" stroke="currentColor" strokeWidth={2} strokeLinecap="round" />
+    </svg>
+  );
+}
+function KeyIcon() {
+  return (
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none" className="text-[var(--k-accent)]">
+      <circle cx={8} cy={15} r={4} stroke="currentColor" strokeWidth={2} />
+      <path d="M10.8 12.2 20 3m-3 0 3 3m-6 0 2 2" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+function DownloadIcon() {
+  return (
+    <svg width={16} height={16} viewBox="0 0 24 24" fill="none">
+      <path d="M12 3v12m0 0 4-4m-4 4-4-4M4 21h16" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function AppsScreen({ onBack }: { onBack: () => void }) {
+  const base = useBorneBase();
+  return (
+    <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
+      <TopBar onBack={onBack} crumb={{ sub: "Applications terrain", label: "Télécharger nos applications" }} />
+      <div className="flex-1 overflow-y-auto px-6 md:px-10 py-6">
+        <div className="mx-auto max-w-5xl space-y-5">
+          <div className="flex items-center gap-3 rounded-xl border border-[var(--k-border)] bg-[var(--k-surface)] p-4 text-sm text-[var(--k-muted)]">
+            <WifiIcon />
+            <p>Connectez-vous au réseau Wi‑Fi de la borne, puis scannez le code pour installer l&apos;application sur votre téléphone.</p>
+          </div>
+
+          {BORNE_APPS.map((app: BorneApp, i) => (
+            <motion.div
+              key={app.key}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.06 * i, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className={`overflow-hidden rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] ${CARD}`}
+            >
+              <div className="flex flex-col gap-6 p-6 md:flex-row md:items-center">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-4">
+                    <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--k-accent)] to-[#00669d] text-white">
+                      <Icon icon={app.icon} width={32} height={32} />
+                    </span>
+                    <div>
+                      <h2 className="text-2xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{app.name}</h2>
+                      <p className="text-xs text-[var(--k-muted)]">Application Android · {app.size}</p>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-sm leading-relaxed text-[var(--k-muted)]">{app.tagline}</p>
+                  {app.login && (
+                    <div className="mt-4 inline-flex flex-col gap-1 rounded-xl bg-[var(--k-chip)] px-4 py-3 text-sm">
+                      <span className="flex items-center gap-2 font-semibold text-[var(--k-text)]"><KeyIcon /> Compte de démonstration</span>
+                      <span className="text-[var(--k-muted)]">Identifiant&nbsp;: <b className="text-[var(--k-text)]">{app.login}</b></span>
+                      <span className="text-[var(--k-muted)]">Mot de passe&nbsp;: <b className="text-[var(--k-text)]">{app.password}</b></span>
+                    </div>
+                  )}
+                </div>
+                <div className="w-full max-w-[200px] shrink-0 self-center text-center">
+                  <DownloadQR base={base} path={`/apks/${app.apk}`} />
+                  <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--k-accent)]"><DownloadIcon /> Scanner pour installer</p>
+                </div>
+              </div>
+
+              {app.demo && (
+                <div className="border-t border-[var(--k-border)] bg-[var(--k-surface-2)] p-6">
+                  <p className="text-sm font-semibold text-[var(--k-text)]">{app.demo.title}</p>
+                  <p className="mt-1 text-xs text-[var(--k-muted)]">{app.demo.note}</p>
+                  <div className="mt-4 flex flex-wrap gap-4">
+                    {app.demo.codes.map((c, j) => (
+                      <div key={c} className="w-28 text-center">
+                        <div className="rounded-xl border border-[var(--k-border)] bg-white p-2">
+                          <Image src={c} alt={`Zone de démonstration ${j + 1}`} width={200} height={200} unoptimized className="h-auto w-full" />
+                        </div>
+                        <p className="mt-1 text-[11px] text-[var(--k-muted)]">Mermoz / Sacré‑Cœur</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
           ))}
         </div>
       </div>
