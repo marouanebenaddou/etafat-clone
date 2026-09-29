@@ -284,7 +284,7 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe }: { onBack: () => void;
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Notre présence</p>
-              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
+              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
                 Nos pays d&apos;intervention
               </h2>
               <p className="mt-1 text-sm text-white/85">{PRESENCE_COUNT} pays sur 4 continents — explorez le globe.</p>
@@ -305,7 +305,7 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe }: { onBack: () => void;
             </span>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Applications terrain</p>
-              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
+              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
                 PROCASEF · PRESFOR · SRM
               </h2>
               <p className="mt-1 text-sm text-white/85">Lancez nos applications de terrain sur la borne.</p>
