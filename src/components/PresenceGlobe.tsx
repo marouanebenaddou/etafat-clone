@@ -125,6 +125,13 @@ export function PresenceGlobe({
     let hoveredIso: number | null = null;
     let lastInteract = performance.now(); // hold on the start view briefly before drifting
     let flyTarget: [number, number] | null = null;
+    let zoom = 1;                                        // pinch / wheel zoom factor
+    const ZOOM_MIN = 1, ZOOM_MAX = 6;
+    const pointers = new Map<number, { x: number; y: number }>(); // active touch/mouse points
+    let pinchStartDist = 0, pinchStartZoom = 1;
+    let introStart = Infinity;                          // set when the globe first scrolls into view
+    const INTRO_MS = reduce ? 0 : 1400;                 // entrance "assemble" animation
+    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
 
     const projection = geoOrthographic().precision(0.4);
     const path = geoPath(projection, ctx);
@@ -145,27 +152,46 @@ export function PresenceGlobe({
     const ro = new ResizeObserver(resize);
     ro.observe(wrap);
 
+    // Kick off the entrance animation only once the globe is actually in view
+    // (immediately on the full-screen kiosk; on scroll on the website).
+    const io = typeof IntersectionObserver !== "undefined"
+      ? new IntersectionObserver((entries) => {
+          if (introStart === Infinity && entries.some((en) => en.isIntersecting)) {
+            introStart = performance.now();
+            io?.disconnect();
+          }
+        }, { threshold: 0.25 })
+      : null;
+    if (io) io.observe(wrap); else introStart = performance.now();
+
     const isVisible = (lonlat: [number, number]) => {
       const center: [number, number] = [-rotation[0], -rotation[1]];
       return geoDistance(center, lonlat) < Math.PI / 2 - 0.02;
     };
 
     const draw = () => {
-      projection.rotate([rotation[0], rotation[1]]);
+      // entrance: the globe scales up, fades in and spins to rest before it settles
+      const ip = INTRO_MS ? clamp((performance.now() - introStart) / INTRO_MS, 0, 1) : 1;
+      const e = easeOut(ip);
+      const introScale = 0.35 + 0.65 * e;
+      const introSpin = (1 - e) * -150;
+      const R = radius * zoom * introScale;
+      projection.scale(R).rotate([rotation[0] + introSpin, rotation[1]]);
       ctx.clearRect(0, 0, width, height);
+      ctx.globalAlpha = e;
       const cx = width / 2, cy = height / 2;
 
       // atmosphere glow
-      const glow = ctx.createRadialGradient(cx, cy, radius * 0.9, cx, cy, radius * 1.18);
+      const glow = ctx.createRadialGradient(cx, cy, R * 0.9, cx, cy, R * 1.18);
       glow.addColorStop(0, colors.glow);
       glow.addColorStop(1, "rgba(0,0,0,0)");
       ctx.fillStyle = glow;
       ctx.beginPath();
-      ctx.arc(cx, cy, radius * 1.18, 0, 2 * Math.PI);
+      ctx.arc(cx, cy, R * 1.18, 0, 2 * Math.PI);
       ctx.fill();
 
       // ocean sphere (radial gradient for a soft 3D feel)
-      const oc = ctx.createRadialGradient(cx - radius * 0.3, cy - radius * 0.35, radius * 0.1, cx, cy, radius);
+      const oc = ctx.createRadialGradient(cx - R * 0.3, cy - R * 0.35, R * 0.1, cx, cy, R);
       oc.addColorStop(0, colors.ocean1);
       oc.addColorStop(1, colors.ocean2);
       ctx.beginPath();
@@ -206,33 +232,24 @@ export function PresenceGlobe({
         ctx.stroke();
       }
 
-      // markers + hovered label
-      let hoverLabel: { x: number; y: number; text: string } | null = null;
-      for (const a of active) {
-        if (!isVisible(a.centroid)) continue;
-        const p = projection(a.centroid);
-        if (!p) continue;
-        const isHover = hoveredIso === a.country.iso;
-        ctx.beginPath();
-        ctx.arc(p[0], p[1], isHover ? 5 : 3, 0, 2 * Math.PI);
-        ctx.fillStyle = isHover ? colors.hover : colors.marker;
-        ctx.fill();
-        ctx.strokeStyle = "#ffffff";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        if (isHover) hoverLabel = { x: p[0], y: p[1], text: a.country.name };
+      // hovered country name chip (centroid dots removed)
+      if (hoveredIso != null) {
+        const a = active.find((x) => x.country.iso === hoveredIso);
+        const p = a && isVisible(a.centroid) ? projection(a.centroid) : null;
+        if (a && p) {
+          ctx.font = "600 13px var(--font-figtree, system-ui, sans-serif)";
+          const text = a.country.name;
+          const tw = ctx.measureText(text).width;
+          const bx = p[0] + 10, by = p[1] - 22;
+          ctx.fillStyle = "rgba(255,255,255,0.92)";
+          ctx.beginPath();
+          (ctx as CanvasRenderingContext2D & { roundRect?: (x: number, y: number, w: number, h: number, r: number) => void }).roundRect?.(bx - 6, by - 14, tw + 12, 22, 6);
+          ctx.fill();
+          ctx.fillStyle = colors.label;
+          ctx.fillText(text, bx, by);
+        }
       }
-      if (hoverLabel) {
-        ctx.font = "600 13px var(--font-figtree, system-ui, sans-serif)";
-        const tw = ctx.measureText(hoverLabel.text).width;
-        const bx = hoverLabel.x + 10, by = hoverLabel.y - 22;
-        ctx.fillStyle = "rgba(255,255,255,0.92)";
-        ctx.beginPath();
-        (ctx as CanvasRenderingContext2D & { roundRect?: (x: number, y: number, w: number, h: number, r: number) => void }).roundRect?.(bx - 6, by - 14, tw + 12, 22, 6);
-        ctx.fill();
-        ctx.fillStyle = colors.label;
-        ctx.fillText(hoverLabel.text, bx, by);
-      }
+      ctx.globalAlpha = 1;
     };
 
     let raf = 0;
@@ -267,41 +284,71 @@ export function PresenceGlobe({
       return null;
     };
 
+    const skipIntro = () => { if (INTRO_MS) introStart = performance.now() - INTRO_MS; };
+
     const onDown = (e: PointerEvent) => {
-      dragging = true;
-      downAt = performance.now();
       const [x, y] = pointer(e);
-      last = { x, y, moved: 0 };
-      lastInteract = performance.now();
+      pointers.set(e.pointerId, { x, y });
       canvas.setPointerCapture?.(e.pointerId);
+      lastInteract = performance.now();
+      skipIntro();
+      if (pointers.size === 1) {
+        dragging = true;
+        downAt = performance.now();
+        last = { x, y, moved: 0 };
+      } else if (pointers.size === 2) {
+        dragging = false; // second finger down -> pinch to zoom
+        const [a, b] = [...pointers.values()];
+        pinchStartDist = Math.hypot(a.x - b.x, a.y - b.y);
+        pinchStartZoom = zoom;
+      }
     };
+
     const onMove = (e: PointerEvent) => {
       const [x, y] = pointer(e);
-      lastInteract = performance.now(); // pointer over the globe pauses auto-rotation
-      if (dragging) {
+      // hover (no button pressed) -> highlight the country under the cursor
+      if (!pointers.has(e.pointerId)) {
+        const c = hitTest([x, y]);
+        const iso = c ? c.iso : null;
+        if (iso !== hoveredIso) { hoveredIso = iso; canvas.style.cursor = iso ? "pointer" : "grab"; }
+        return;
+      }
+      pointers.set(e.pointerId, { x, y });
+      lastInteract = performance.now();
+      if (pointers.size >= 2) { // pinch-zoom
+        const [a, b] = [...pointers.values()];
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (pinchStartDist > 0) zoom = clamp(pinchStartZoom * (dist / pinchStartDist), ZOOM_MIN, ZOOM_MAX);
+        flyTarget = null;
+        return;
+      }
+      if (dragging) { // one-finger spin
         const dx = x - last.x, dy = y - last.y;
         last.moved += Math.abs(dx) + Math.abs(dy);
         rotation[0] += dx * 0.28;
         rotation[1] = clamp(rotation[1] - dy * 0.28, -85, 85);
         last.x = x; last.y = y;
-        lastInteract = performance.now();
         flyTarget = null;
-      } else {
-        const c = hitTest([x, y]);
-        const iso = c ? c.iso : null;
-        if (iso !== hoveredIso) {
-          hoveredIso = iso;
-          canvas.style.cursor = iso ? "pointer" : "grab";
-        }
       }
     };
-    const onUp = (e: PointerEvent) => {
-      const wasTap = dragging && last.moved < 6 && performance.now() - downAt < 400;
-      dragging = false;
-      lastInteract = performance.now();
+
+    const endPointer = (e: PointerEvent) => {
+      const tap = dragging && pointers.size === 1 && last.moved < 6 && performance.now() - downAt < 400;
+      const tapPt = pointer(e);
+      pointers.delete(e.pointerId);
       canvas.releasePointerCapture?.(e.pointerId);
-      if (wasTap) {
-        const c = hitTest(pointer(e));
+      lastInteract = performance.now();
+      if (pointers.size < 2) pinchStartDist = 0;
+      if (pointers.size === 1) {
+        // one finger remains after a pinch -> resume dragging from it (no tap)
+        const [only] = [...pointers.values()];
+        last = { x: only.x, y: only.y, moved: 999 };
+        dragging = true;
+        return;
+      }
+      dragging = false;
+      if (pointers.size === 0 && tap) {
+        const c = hitTest(tapPt);
         if (c) {
           const a = active.find((x) => x.country.iso === c.iso);
           if (a) flyTarget = [-a.centroid[0], -a.centroid[1]];
@@ -310,18 +357,30 @@ export function PresenceGlobe({
       }
     };
 
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      zoom = clamp(zoom * Math.exp(-e.deltaY * 0.0015), ZOOM_MIN, ZOOM_MAX);
+      lastInteract = performance.now();
+      skipIntro();
+    };
+
     canvas.style.cursor = "grab";
     canvas.addEventListener("pointerdown", onDown);
     canvas.addEventListener("pointermove", onMove);
-    canvas.addEventListener("pointerup", onUp);
+    canvas.addEventListener("pointerup", endPointer);
+    canvas.addEventListener("pointercancel", endPointer);
+    canvas.addEventListener("wheel", onWheel, { passive: false });
     canvas.addEventListener("pointerleave", () => { hoveredIso = null; });
 
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io?.disconnect();
       canvas.removeEventListener("pointerdown", onDown);
       canvas.removeEventListener("pointermove", onMove);
-      canvas.removeEventListener("pointerup", onUp);
+      canvas.removeEventListener("pointerup", endPointer);
+      canvas.removeEventListener("pointercancel", endPointer);
+      canvas.removeEventListener("wheel", onWheel);
     };
   }, [active, colors.active, colors.activeStroke, colors.glow, colors.graticule, colors.hover, colors.label, colors.land, colors.landStroke, colors.marker, colors.ocean1, colors.ocean2]);
 
