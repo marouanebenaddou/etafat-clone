@@ -10,7 +10,7 @@ import {
   geoContains,
   type GeoPermissibleObjects,
 } from "d3-geo";
-import { feature } from "topojson-client";
+import { feature, merge } from "topojson-client";
 import worldRaw from "@/data/world-110m.json";
 import { PRESENCE_BY_ISO, type PresenceCountry } from "@/data/presence";
 
@@ -49,6 +49,26 @@ const COUNTRIES = (feature(WORLD as never, (WORLD.objects.countries as never)) a
   features: Feat[];
 }).features;
 
+// Morocco is shown as a single country: dissolve the Morocco (504) + Western
+// Sahara (732) border by merging their topojson geometries into one feature, so
+// there's no grey seam between them.
+const MOROCCO_ISO = 504;
+const WSAHARA_ISO = 732;
+const MOROCCO_MERGED: Feat = (() => {
+  const geoms = (worldRaw as unknown as {
+    objects: { countries: { geometries: Array<{ id?: string | number }> } };
+  }).objects.countries.geometries;
+  const parts = geoms.filter((g) => Number(g.id) === MOROCCO_ISO || Number(g.id) === WSAHARA_ISO);
+  const plain = COUNTRIES.find((f) => Number(f.id) === MOROCCO_ISO);
+  if (parts.length < 2) return plain as Feat;
+  return {
+    type: "Feature",
+    id: MOROCCO_ISO,
+    geometry: merge(worldRaw as never, parts as never) as unknown,
+    properties: { name: "Maroc" },
+  } as Feat;
+})();
+
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
@@ -79,8 +99,12 @@ export function PresenceGlobe({
   const active = useMemo(() => {
     const list: { country: PresenceCountry; feature: Feat; centroid: [number, number] }[] = [];
     for (const f of COUNTRIES) {
-      const country = PRESENCE_BY_ISO.get(Number(f.id));
-      if (country) list.push({ country, feature: f, centroid: geoCentroid(f as unknown as GeoPermissibleObjects) as [number, number] });
+      const iso = Number(f.id);
+      if (iso === WSAHARA_ISO) continue; // merged into Morocco
+      const country = PRESENCE_BY_ISO.get(iso);
+      if (!country) continue;
+      const feat = iso === MOROCCO_ISO ? MOROCCO_MERGED : f;
+      list.push({ country, feature: feat, centroid: geoCentroid(feat as unknown as GeoPermissibleObjects) as [number, number] });
     }
     return list;
   }, []);
@@ -158,7 +182,12 @@ export function PresenceGlobe({
 
       // inactive land
       ctx.beginPath();
-      for (const f of COUNTRIES) if (!PRESENCE_BY_ISO.has(Number(f.id))) path(f as unknown as GeoPermissibleObjects);
+      for (const f of COUNTRIES) {
+        const iso = Number(f.id);
+        if (iso === WSAHARA_ISO) continue; // drawn as part of Morocco
+        if (PRESENCE_BY_ISO.has(iso)) continue; // active, drawn below
+        path((iso === MOROCCO_ISO ? MOROCCO_MERGED : f) as unknown as GeoPermissibleObjects);
+      }
       ctx.fillStyle = colors.land;
       ctx.fill();
       ctx.strokeStyle = colors.landStroke;
