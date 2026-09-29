@@ -1,8 +1,10 @@
 /* ETAFAT borne tactile — offline service worker (scope: whole origin, registered only from /evenement).
-   Strategy: precache the kiosk page + all its media at install; cache-first for the kiosk page,
-   its media and immutable Next static chunks; everything else passes through to the network so the
-   main site is unaffected. Bump CACHE to force a refresh. */
-const CACHE = "etafat-borne-v1";
+   Strategy: precache the kiosk page + all its media at install. The kiosk page navigation is
+   network-first (always fresh when online — so website updates show immediately — and falls back
+   to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
+   stay cache-first. Everything else passes through to the network so the main site is unaffected.
+   Bump CACHE to force a full refresh + purge of the old cache. */
+const CACHE = "etafat-borne-v2";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -84,15 +86,28 @@ function cacheFirst(request, key) {
   });
 }
 
+// Network-first: always try the network (so an updated kiosk shows immediately when online),
+// refresh the cached shell on success, and fall back to the cached shell when offline —
+// which is how the borne runs day to day. Offline, fetch rejects at once, so the fallback is instant.
+function networkFirst(request, key) {
+  return fetch(request).then((res) => {
+    if (res && res.status === 200 && res.type !== "opaque") {
+      const clone = res.clone();
+      caches.open(CACHE).then((c) => c.put(key || request, clone));
+    }
+    return res;
+  }).catch(() => caches.match(key || request));
+}
+
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // never touch cross-origin
 
-  // Kiosk page navigations -> serve the cached shell (works offline).
+  // Kiosk page navigations -> network-first, cached shell as the offline fallback.
   if (req.mode === "navigate" && url.pathname.startsWith("/evenement")) {
-    event.respondWith(cacheFirst(req, "/evenement/"));
+    event.respondWith(networkFirst(req, "/evenement/"));
     return;
   }
   // Kiosk media + immutable Next static assets -> cache-first.
