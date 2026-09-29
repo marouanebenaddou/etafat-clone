@@ -12,6 +12,8 @@ import {
 } from "@/data/evenement";
 import evenementIcons from "@/data/evenement-icons.json";
 import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
+import { PresenceGlobe } from "@/components/PresenceGlobe";
+import { PRESENCE_COUNT, PRESENCE_PROJECT_COUNT, type PresenceCountry } from "@/data/presence";
 
 // Register the kiosk's icons offline so they render WITHOUT the Iconify API
 // (the borne must work with no internet connection).
@@ -33,7 +35,7 @@ function mediaTiles(p: EvenementProjet) {
 }
 
 type MediaKind = "images" | "videos" | "model" | "plans";
-type View = "intro" | "themes" | "projects" | "detail" | "apps";
+type View = "intro" | "themes" | "projects" | "detail" | "apps" | "globe";
 type Mode = "dark" | "light";
 
 const PALETTE: Record<Mode, React.CSSProperties> = {
@@ -105,8 +107,9 @@ export function KioskApp() {
 
       <AnimatePresence mode="wait">
         {view === "intro" && <IntroScreen key="intro" mode={mode} onStart={() => setView("themes")} />}
-        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} onApps={() => setView("apps")} />}
+        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} onApps={() => setView("apps")} onGlobe={() => setView("globe")} />}
         {view === "apps" && <AppsScreen key="apps" onBack={() => setView("themes")} />}
+        {view === "globe" && <GlobeScreen key="globe" onBack={() => setView("themes")} />}
         {view === "projects" && theme && (
           <ProjectsScreen key="projects" theme={theme} onBack={() => setView("themes")} onOpen={openProjet} />
         )}
@@ -260,36 +263,55 @@ const screenMotion = {
 };
 
 /* --------------------------- THEMES -------------------------------- */
-function ThemesScreen({ onBack, onOpen, onApps }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void }) {
+function ThemesScreen({ onBack, onOpen, onApps, onGlobe }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void; onGlobe: () => void }) {
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
       <TopBar onBack={onBack} crumb={{ sub: "Nos réalisations", label: "Choisissez une thématique" }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
-        {/* Main tile — field applications */}
-        <motion.button
-          type="button"
-          onClick={onApps}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          whileTap={{ scale: 0.98 }}
-          className={`group mx-auto mb-6 flex w-full max-w-6xl items-center gap-5 overflow-hidden rounded-2xl border border-transparent bg-gradient-to-r from-[#00669d] to-[#2ab5b4] p-6 md:p-7 text-left text-white ${CARD}`}
-        >
-          <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
-            <Icon icon="ph:map-trifold-duotone" width={38} height={38} />
-          </span>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Applications terrain</p>
-            <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
-              PROCASEF · PRESFOR · SRM — télécharger nos applications
-            </h2>
-            <p className="mt-1 hidden text-sm text-white/85 sm:block">Installez nos applications de terrain et scannez les zones de démonstration.</p>
-          </div>
-          <span className="hidden shrink-0 items-center gap-2 text-sm font-semibold sm:inline-flex">
-            Ouvrir
-            <Icon icon="ph:arrow-right-bold" width={18} height={18} className="transition-transform group-hover:translate-x-1" />
-          </span>
-        </motion.button>
+        {/* Main tiles — presence globe + field applications */}
+        <div className="mx-auto mb-6 grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2">
+          <motion.button
+            type="button"
+            onClick={onGlobe}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            whileTap={{ scale: 0.98 }}
+            className={`group flex items-center gap-5 overflow-hidden rounded-2xl border border-transparent bg-gradient-to-br from-[#0a3d62] to-[#00669d] p-6 md:p-7 text-left text-white ${CARD}`}
+          >
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+              <GlobeGlyph />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Notre présence</p>
+              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
+                Nos pays d&apos;intervention
+              </h2>
+              <p className="mt-1 text-sm text-white/85">{PRESENCE_COUNT} pays sur 4 continents — explorez le globe.</p>
+            </div>
+          </motion.button>
+
+          <motion.button
+            type="button"
+            onClick={onApps}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+            whileTap={{ scale: 0.98 }}
+            className={`group flex items-center gap-5 overflow-hidden rounded-2xl border border-transparent bg-gradient-to-br from-[#00669d] to-[#2ab5b4] p-6 md:p-7 text-left text-white ${CARD}`}
+          >
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+              <Icon icon="ph:map-trifold-duotone" width={38} height={38} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Applications terrain</p>
+              <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight" style={{ fontFamily: "var(--font-figtree)" }}>
+                PROCASEF · PRESFOR · SRM
+              </h2>
+              <p className="mt-1 text-sm text-white/85">Lancez nos applications de terrain sur la borne.</p>
+            </div>
+          </motion.button>
+        </div>
 
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {EVENEMENT_THEMES.map((t, i) => (
@@ -415,6 +437,83 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
             </motion.div>
           ))}
         </div>
+      </div>
+    </motion.section>
+  );
+}
+
+/* --------------------------- PRÉSENCE ------------------------------ */
+function GlobeGlyph() {
+  return (
+    <svg width={38} height={38} viewBox="0 0 24 24" fill="none" className="text-white">
+      <circle cx={12} cy={12} r={9} stroke="currentColor" strokeWidth={1.6} />
+      <ellipse cx={12} cy={12} rx={4} ry={9} stroke="currentColor" strokeWidth={1.6} />
+      <path d="M3 12h18M4.6 7.5h14.8M4.6 16.5h14.8" stroke="currentColor" strokeWidth={1.6} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GlobeScreen({ onBack }: { onBack: () => void }) {
+  const [sel, setSel] = useState<PresenceCountry | null>(null);
+  return (
+    <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
+      <TopBar onBack={onBack} crumb={{ sub: "Notre présence", label: "Nos pays d'intervention" }} />
+      <div className="relative flex-1 overflow-hidden">
+        <div className="pointer-events-none absolute left-6 top-3 z-10 md:left-10">
+          <p className="text-4xl font-semibold leading-none text-[var(--k-text)] md:text-5xl" style={{ fontFamily: "var(--font-figtree)" }}>
+            {PRESENCE_COUNT}
+            <span className="text-lg text-[var(--k-muted)] md:text-2xl"> pays</span>
+          </p>
+          <p className="mt-1 text-sm text-[var(--k-muted)]">4 continents · {PRESENCE_PROJECT_COUNT}+ projets référencés</p>
+        </div>
+
+        <PresenceGlobe className="absolute inset-0" onSelect={setSel} />
+
+        {!sel && (
+          <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-[var(--k-surface)]/80 px-4 py-2 text-xs text-[var(--k-muted)] backdrop-blur">
+            Touchez un pays en surbrillance pour voir les projets
+          </p>
+        )}
+
+        <AnimatePresence>
+          {sel && (
+            <motion.div
+              key={sel.iso}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 30 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className={`absolute bottom-4 left-1/2 z-20 w-[92%] max-w-md -translate-x-1/2 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-5 ${CARD}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-[var(--k-accent)]">{sel.region}</p>
+                  <h3 className="text-xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{sel.name}</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSel(null)}
+                  aria-label="Fermer"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[var(--k-border)] text-[var(--k-text)] transition-colors hover:bg-[var(--k-surface-2)]"
+                >
+                  <Icon icon="ph:x-bold" width={16} height={16} />
+                </button>
+              </div>
+              {sel.projects.length ? (
+                <ul className="mt-3 max-h-56 space-y-2 overflow-y-auto">
+                  {sel.projects.map((p, i) => (
+                    <li key={i} className="rounded-lg bg-[var(--k-chip)] px-3 py-2 text-sm leading-snug text-[var(--k-text)]">
+                      {p.title}
+                      {p.place && <span className="text-[var(--k-muted)]"> — {p.place}</span>}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 text-sm text-[var(--k-muted)]">Présence ETAFAT — projets en cours de référencement.</p>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </motion.section>
   );
