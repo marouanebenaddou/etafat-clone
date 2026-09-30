@@ -1,0 +1,16 @@
+{
+  "name": "ETAFAT · Présence VR",
+  "short_name": "ETAFAT VR",
+  "description": "Expérience immersive VR de la présence internationale d'ETAFAT — globe interactif, projets, animations.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "background_color": "#081726",
+  "theme_color": "#081726",
+  "categories": ["business", "education"],
+  "icons": [
+    { "src": "/etafat/evenement/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/etafat/evenement/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
