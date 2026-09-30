@@ -1,0 +1,46 @@
+// ETAFAT VR — fully offline Quest APK: the whole /xr experience is bundled in assets/www and served
+// by an on-device HTTP server on 127.0.0.1 (a secure context, so WebXR works), opened in the
+// Quest Browser — the only Quest engine with immersive WebXR. No network needed, ever.
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'ma.etafat.vroffline'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ma.etafat.vr.offline'
+        minSdk 29
+        targetSdk 32          // sideloaded on Quest; keeps foreground-service rules simple
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../../quest-twa/android.keystore')
+            storePassword 'etafatvr'
+            keyAlias 'android'
+            keyPassword 'etafatvr'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lint {
+        disable 'ExpiredTargetSdkVersion' // sideloaded, not a Play Store build
+    }
+
+    androidResources {
+        noCompress 'glb', 'bin', 'png', 'jpg', 'jpeg'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

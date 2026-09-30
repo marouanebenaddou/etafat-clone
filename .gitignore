@@ -65,3 +65,10 @@ quest-twa/.gradle/
 quest-twa/build/
 quest-twa/app/build/
 quest-twa/local.properties
+
+# offline Quest APK (quest-local): build dirs + staged web assets (regenerate with scripts/build-quest-local.mjs)
+quest-local/.gradle/
+quest-local/build/
+quest-local/app/build/
+quest-local/local.properties
+quest-local/app/src/main/assets/www/

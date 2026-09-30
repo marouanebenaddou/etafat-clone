@@ -1,0 +1,2 @@
+rootProject.name = "ETAFAT VR hors ligne"
+include ':app'
