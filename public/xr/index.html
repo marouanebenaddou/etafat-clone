@@ -25,6 +25,8 @@
     /* three.js VRButton styling override to match brand */
     #VRButton { background: rgba(42,181,180,.15) !important; border: 2px solid #2ab5b4 !important; color: #eaf4f8 !important; font-weight: 600 !important; border-radius: 999px !important; }
     #hint { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); color: rgba(234,244,248,.55); font-size: 13px; z-index: 15; pointer-events: none; }
+    #audio-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 16; background: rgba(42,181,180,.15); border: 1.5px solid #2ab5b4; color: #eaf4f8; font: 600 13px system-ui, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
+    #audio-toggle:hover { background: rgba(42,181,180,.28); }
   </style>
   <script type="importmap">
     { "imports": { "three": "./vendor/three.module.js" } }
@@ -37,6 +39,7 @@
     <p>Préparation de l'expérience immersive…</p>
   </div>
   <div id="hint">Glissez pour faire tourner le globe · cliquez un pays · « Enter VR » avec le casque</div>
+  <button id="audio-toggle" type="button">♪ Son</button>
   <script type="module">
     import "./app.js";
     // hide the loader once the first frame has plausibly rendered

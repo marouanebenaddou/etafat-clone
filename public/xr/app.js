@@ -136,14 +136,14 @@ let gallery = null, galleryKey = null;
 fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 
 function makeThemePanel(t) {
-  const W = 820, H = 1040, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  const W = 820, H = 1240, HERO = 342, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
   const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,"rgba(19,49,80,0.96)"); g.addColorStop(1,"rgba(10,30,48,0.98)");
   x.fillStyle = g; roundRect(x,0,0,W,H,30); x.fill();
   x.strokeStyle = t.accent + "cc"; x.lineWidth = 4; roundRect(x,6,6,W-12,H-12,26); x.stroke();
-  // accent bar
-  x.fillStyle = t.accent; roundRect(x,44,44,120,10,5); x.fill();
+  const TOP = HERO + 34;
+  x.fillStyle = t.accent; roundRect(x,44,TOP,120,10,5); x.fill(); // accent bar
   x.fillStyle = "#fff"; x.font = "700 44px system-ui, sans-serif";
-  let y = wrap(x, t.label, 44, 120, W-88, 52, 2);
+  let y = wrap(x, t.label, 44, TOP + 66, W-88, 52, 2);
   x.fillStyle = t.accent; x.font = "500 27px system-ui, sans-serif";
   y = wrap(x, t.tagline, 44, y + 6, W-88, 34, 2) + 10;
   x.strokeStyle = "rgba(142,230,228,0.25)"; x.lineWidth = 2; x.beginPath(); x.moveTo(44,y); x.lineTo(W-44,y); x.stroke(); y += 44;
@@ -151,9 +151,28 @@ function makeThemePanel(t) {
   for (const p of t.projects) {
     x.fillStyle = t.accent; x.fillText("▸", 44, y);
     x.fillStyle = "#e7f3f7"; y = wrap(x, p, 82, y, W-130, 33, 2) + 10;
-    if (y > H - 40) break;
+    if (y > H - 36) break;
   }
-  return panelMesh(c, 1.18, 1.5);
+  const mesh = panelMesh(c, 1.18, 1.18 * H / W);
+  // hero thumbnail — the theme's first photo across the top (loads async)
+  const src = t.photos && t.photos[0];
+  if (src) {
+    const img = new Image();
+    img.onload = () => {
+      x.save();
+      roundRect(x, 8, 8, W - 16, HERO, 22); x.clip();
+      const r = Math.max((W - 16) / img.width, HERO / img.height), dw = img.width * r, dh = img.height * r;
+      x.drawImage(img, 8 + ((W - 16) - dw) / 2, 8 + (HERO - dh) / 2, dw, dh);
+      const fade = x.createLinearGradient(0, HERO - 140, 0, HERO + 10);
+      fade.addColorStop(0, "rgba(19,49,80,0)"); fade.addColorStop(1, "rgba(19,49,80,1)");
+      x.fillStyle = fade; x.fillRect(0, HERO - 140, W, 152);
+      x.restore();
+      x.fillStyle = t.accent; x.fillRect(30, HERO + 12, W - 60, 3);
+      mesh.material.map.needsUpdate = true;
+    };
+    img.src = src;
+  }
+  return mesh;
 }
 function makeAppsPanel(a) {
   const W = 820, H = 620, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
@@ -317,6 +336,46 @@ addEventListener("pointerup", (e) => {
     else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openGallery(tiles[0].object.userData.section, tiles[0].object); }
   }
   dragging = false;
+});
+
+// ── soft ambient background music (procedural pad — fully offline) ──────────────
+let ambient = null;
+function startAmbient() {
+  if (ambient) { if (ambient.ctx.state === "suspended") ambient.ctx.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+  const ctx = new AC();
+  const master = ctx.createGain(); master.gain.value = 0.0001; master.connect(ctx.destination);
+  const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 620; lp.Q.value = 0.7; lp.connect(master);
+  const delay = ctx.createDelay(1.0); delay.delayTime.value = 0.5; const fb = ctx.createGain(); fb.gain.value = 0.32;
+  delay.connect(fb); fb.connect(delay); delay.connect(master); lp.connect(delay);
+  [110, 164.81, 220, 277.18, 329.63].forEach((f, i) => { // A2 E3 A3 C#4 E4 — soft airy chord
+    const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = f;
+    const o2 = ctx.createOscillator(); o2.type = "triangle"; o2.frequency.value = f * 1.004;
+    const g = ctx.createGain(); g.gain.value = 0.11 / (1 + i * 0.35);
+    o1.connect(g); o2.connect(g); g.connect(lp); o1.start(); o2.start();
+    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.04 + i * 0.017; const lg = ctx.createGain(); lg.gain.value = g.gain.value * 0.5;
+    lfo.connect(lg); lg.connect(g.gain); lfo.start();
+  });
+  const flfo = ctx.createOscillator(); flfo.frequency.value = 0.025; const fg = ctx.createGain(); fg.gain.value = 260;
+  flfo.connect(fg); fg.connect(lp.frequency); flfo.start();
+  master.gain.setValueAtTime(0.0001, ctx.currentTime);
+  master.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 5);
+  ambient = { ctx, master, muted: false };
+}
+function toggleAmbient() {
+  if (!ambient) { startAmbient(); return true; }
+  ambient.muted = !ambient.muted;
+  ambient.master.gain.cancelScheduledValues(ambient.ctx.currentTime);
+  ambient.master.gain.linearRampToValueAtTime(ambient.muted ? 0.0001 : 0.07, ambient.ctx.currentTime + 0.6);
+  return !ambient.muted;
+}
+renderer.domElement.addEventListener("pointerdown", startAmbient, { once: true });
+renderer.xr.addEventListener("sessionstart", startAmbient);
+const audioBtn = document.getElementById("audio-toggle");
+if (audioBtn) audioBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  if (!ambient) { startAmbient(); audioBtn.textContent = "♪ Son"; return; }
+  audioBtn.textContent = toggleAmbient() ? "♪ Son" : "♪ Muet";
 });
 
 // ── loop ────────────────────────────────────────────────────────────────────────
