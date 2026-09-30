@@ -14,6 +14,8 @@ import evenementIcons from "@/data/evenement-icons.json";
 import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
 import { PresenceGlobe } from "@/components/PresenceGlobe";
 import { PRESENCE_COUNT, PRESENCE_PROJECT_COUNT, type PresenceCountry } from "@/data/presence";
+import { PROCASEF, PAMOFOR } from "@/data/evenement-chiffres";
+import { ChiffresContent, ChartGlyph } from "./ChiffresSection";
 
 // Register the kiosk's icons offline so they render WITHOUT the Iconify API
 // (the borne must work with no internet connection).
@@ -23,6 +25,8 @@ addCollection(evenementIcons as Parameters<typeof addCollection>[0]);
 
 const projetsForTheme = (slug: string) =>
   EVENEMENT_PROJETS.filter((p) => p.theme === slug).sort((a, b) => a.n - b.n);
+
+const fmtFr = (n: number) => new Intl.NumberFormat("fr-FR").format(n).replace(/ /g, " ");
 
 function mediaTiles(p: EvenementProjet) {
   const m = p.media ?? {};
@@ -35,7 +39,7 @@ function mediaTiles(p: EvenementProjet) {
 }
 
 type MediaKind = "images" | "videos" | "model" | "plans";
-type View = "intro" | "themes" | "projects" | "detail" | "apps" | "globe";
+type View = "intro" | "themes" | "projects" | "detail" | "apps" | "globe" | "chiffres";
 type Mode = "dark" | "light";
 
 const PALETTE: Record<Mode, React.CSSProperties> = {
@@ -107,9 +111,10 @@ export function KioskApp() {
 
       <AnimatePresence mode="wait">
         {view === "intro" && <IntroScreen key="intro" mode={mode} onStart={() => setView("themes")} />}
-        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} onApps={() => setView("apps")} onGlobe={() => setView("globe")} />}
+        {view === "themes" && <ThemesScreen key="themes" onBack={() => setView("intro")} onOpen={openTheme} onApps={() => setView("apps")} onGlobe={() => setView("globe")} onChiffres={() => setView("chiffres")} />}
         {view === "apps" && <AppsScreen key="apps" onBack={() => setView("themes")} />}
         {view === "globe" && <GlobeScreen key="globe" onBack={() => setView("themes")} />}
+        {view === "chiffres" && <ChiffresScreen key="chiffres" onBack={() => setView("themes")} />}
         {view === "projects" && theme && (
           <ProjectsScreen key="projects" theme={theme} onBack={() => setView("themes")} onOpen={openProjet} />
         )}
@@ -263,7 +268,7 @@ const screenMotion = {
 };
 
 /* --------------------------- THEMES -------------------------------- */
-function ThemesScreen({ onBack, onOpen, onApps, onGlobe }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void; onGlobe: () => void }) {
+function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void; onGlobe: () => void; onChiffres: () => void }) {
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
       <TopBar onBack={onBack} crumb={{ sub: "Nos réalisations", label: "Choisissez une thématique" }} />
@@ -309,6 +314,40 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe }: { onBack: () => void;
                 PROCASEF · PRESFOR · SRM
               </h2>
               <p className="mt-1 text-sm text-white/85">Lancez nos applications de terrain sur la borne.</p>
+            </div>
+          </motion.button>
+
+          <motion.button
+            type="button"
+            onClick={onChiffres}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            whileTap={{ scale: 0.98 }}
+            className={`group relative flex flex-col gap-5 overflow-hidden rounded-2xl border border-transparent bg-gradient-to-br from-[#0a1e30] via-[#0a3d62] to-[#00669d] p-6 md:col-span-2 md:flex-row md:items-center md:p-7 text-left text-white ${CARD}`}
+          >
+            <span className="pointer-events-none absolute -right-16 -top-20 h-56 w-56 rounded-full bg-[#2ab5b4]/25 blur-3xl" />
+            <div className="relative flex min-w-0 flex-1 items-center gap-5">
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-xl bg-white/15 backdrop-blur">
+                <ChartGlyph />
+              </span>
+              <div className="min-w-0">
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8ee6e4]">Chiffres clés</p>
+                <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
+                  Nos programmes fonciers en chiffres
+                </h2>
+                <p className="mt-1 text-sm text-white/85">{PROCASEF.name} au Sénégal · {PAMOFOR.name} en Côte d&apos;Ivoire</p>
+              </div>
+            </div>
+            <div className="relative flex shrink-0 flex-wrap gap-3">
+              <span className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur">
+                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmtFr(PROCASEF.steps[0].value)}</span>
+                <span className="mt-1 block text-xs text-white/75">parcelles · Sénégal</span>
+              </span>
+              <span className="rounded-xl bg-[#2ab5b4]/25 px-4 py-3 ring-1 ring-[#8ee6e4]/40 backdrop-blur">
+                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmtFr(PAMOFOR.hero.value)} ha</span>
+                <span className="mt-1 block text-xs text-white/75">à certifier · Côte d&apos;Ivoire</span>
+              </span>
             </div>
           </motion.button>
         </div>
@@ -437,6 +476,18 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
             </motion.div>
           ))}
         </div>
+      </div>
+    </motion.section>
+  );
+}
+
+/* ---------------------------- CHIFFRES ----------------------------- */
+function ChiffresScreen({ onBack }: { onBack: () => void }) {
+  return (
+    <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
+      <TopBar onBack={onBack} crumb={{ sub: "Chiffres clés", label: "Nos programmes en chiffres" }} />
+      <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
+        <ChiffresContent />
       </div>
     </motion.section>
   );
