@@ -654,23 +654,40 @@ function buildChiffres(data) {
 }
 
 // ── country project panel (from globe selection) ────────────────────────────────
+// country banners (flag × landmark, built by scripts/build-xr-country-banners.mjs), cached per country
+const bannerCache = new Map();
+function countryBanner(iso) {
+  if (!bannerCache.has(iso)) bannerCache.set(iso, new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = `./banners/${iso}.jpg`; }));
+  return bannerCache.get(iso);
+}
 function makeCountryPanel(country) {
-  const projs = country.projects || [], shown = projs.slice(0, 7);
+  const projs = country.projects || [], shown = projs.slice(0, 7), BH = 333; // banner 1000×333 (3:1)
   const measure = measureCtx; measure.font = "400 28px system-ui, sans-serif";
   let hTxt = 0; for (const p of shown) hTxt += lines(measure, p.place ? `${p.title} — ${p.place}` : p.title, 1000 - 140, 2).length * 36 + 14;
-  const H = Math.round(210 + (shown.length ? hTxt : 110) + 50);
-  return canvasMesh(1000, H, (x, W, H2) => {
+  const H = Math.round(BH + 70 + (shown.length ? hTxt : 90) + (projs.length > shown.length ? 40 : 10));
+  const card = canvasMesh(1000, H, (x, W, H2, me) => {
     cardBg(x, W, H2, "#2ab5b4");
-    kicker(x, (country.region || "") + (projs.length ? `  ·  ${projs.length} projet${projs.length > 1 ? "s" : ""}` : ""), 48, 66, 21, "#8ee6e4");
-    x.fillStyle = "#fff"; x.font = "800 60px system-ui, sans-serif"; x.fillText(country.name, 48, 138);
-    x.fillStyle = "#2ab5b4"; roundRect(x, 48, 164, 110, 8, 4); x.fill();
-    let y = 228; x.font = "400 28px system-ui, sans-serif";
+    x.save(); roundRect(x, 4, 4, W - 8, H2 - 8, 27); x.clip();              // banner, clipped to the card's rounded top
+    const img = me.userData.banner;
+    if (img) x.drawImage(img, 4, 4, W - 8, BH);
+    else { const g = x.createLinearGradient(0, 0, W, 0); g.addColorStop(0, "#0d3350"); g.addColorStop(1, "#16486b"); x.fillStyle = g; x.fillRect(4, 4, W - 8, BH); }
+    const sh = x.createLinearGradient(0, BH * 0.12, 0, BH); sh.addColorStop(0, "rgba(8,23,38,0)"); sh.addColorStop(0.55, "rgba(8,23,38,0.45)"); sh.addColorStop(1, "rgba(8,23,38,0.72)");
+    x.fillStyle = sh; x.fillRect(4, 4, W * 0.72, BH);
+    x.restore();
+    x.fillStyle = "#2ab5b4"; x.fillRect(4, BH + 4, W - 8, 5);              // teal seam under the banner
+    x.save(); x.shadowColor = "rgba(0,0,0,0.65)"; x.shadowBlur = 14;       // name set on the banner, above its caption
+    kicker(x, (country.region || "") + (projs.length ? `  ·  ${projs.length} projet${projs.length > 1 ? "s" : ""}` : ""), 44, BH - 138, 21, "#bff6f4");
+    x.fillStyle = "#fff"; x.font = "800 62px system-ui, sans-serif"; x.fillText(lines(x, country.name, W * 0.66, 1)[0], 44, BH - 76);
+    x.restore();
+    let y = BH + 66; x.font = "400 28px system-ui, sans-serif";
     if (shown.length) for (const p of shown) {
       x.fillStyle = "#2ab5b4"; x.fillText("▸", 48, y);
       x.fillStyle = "#eaf4f8"; for (const l of lines(x, p.place ? `${p.title} — ${p.place}` : p.title, W - 140, 2)) { x.fillText(l, 86, y); y += 36; } y += 14;
     } else { x.fillStyle = "rgba(234,244,248,0.72)"; x.font = "400 30px system-ui, sans-serif"; for (const l of lines(x, "Présence ETAFAT — projets en cours de référencement.", W - 96, 2)) { x.fillText(l, 48, y); y += 40; } }
     if (projs.length > shown.length) { x.fillStyle = "#8ee6e4"; x.font = "600 24px system-ui, sans-serif"; x.fillText(`+ ${projs.length - shown.length} autres projets`, 48, H2 - 30); }
   }, 1);
+  countryBanner(country.iso).then((img) => { if (img) { card.userData.banner = img; card.userData.redraw(); } });
+  return card;
 }
 let cPull = null; const cClosing = [];   // current country pop-up + ones retracting
 let cCand = null, cDwell = 0;            // hover candidate (debounced)
@@ -679,7 +696,7 @@ const leadCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(), new THREE
 function pullCountry(hit) {
   if (cPull && cPull.country === hit.country) { cPull.idle = 0; return; }
   if (cPull) { cPull.closing = true; cClosing.push(cPull); }
-  const card = makeCountryPanel(hit.country); card.scale.setScalar(0.8); card.renderOrder = 30; card.material.depthTest = true;
+  const card = makeCountryPanel(hit.country); card.scale.setScalar(0.74); card.renderOrder = 30; card.material.depthTest = true;
   const g = new THREE.Group(); g.add(card); g.scale.setScalar(0.001); scene.add(g);
   const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }), LEAD_N); line.frustumCulled = false; scene.add(line);
   const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0x0b6f6e, transparent: true, side: THREE.DoubleSide, depthWrite: false })); // dark teal: reads on the pale lifted tiles
@@ -704,7 +721,7 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
     P.g.lookAt(USER.x, P.g.position.y, USER.z);
     P.g.scale.setScalar(Math.max(0.001, 0.06 + 0.94 * k));
     P.card.material.opacity = Math.min(1, P.t * 2);
-    _e.set(-side * 0.4, 0, 0).applyQuaternion(P.g.quaternion).multiplyScalar(P.g.scale.x).add(P.g.position); // inner edge of the card
+    _e.set(-side * 0.363, 0, 0).applyQuaternion(P.g.quaternion).multiplyScalar(P.g.scale.x).add(P.g.position); // inner edge of the card
     // leader: bows out from the surface so it never cuts through the globe
     leadCurve.v0.copy(_a); leadCurve.v1.copy(_a).sub(GLOBE_POS).setLength(GLOBE_R + 0.24 * GK).add(GLOBE_POS); leadCurve.v2.copy(_e);
     const shown = P.t * LEAD_N;                                   // beads run out with the card
