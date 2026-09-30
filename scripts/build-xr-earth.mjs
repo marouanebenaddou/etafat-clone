@@ -3,7 +3,7 @@
 // Offline + geographically accurate (d3-geo + world-atlas topojson).
 import { createCanvas } from "@napi-rs/canvas";
 import { geoEquirectangular, geoPath, geoGraticule10, geoCentroid } from "d3-geo";
-import { feature } from "topojson-client";
+import { feature, merge } from "topojson-client";
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
@@ -78,6 +78,13 @@ const ctx = canvas.getContext("2d");
 const projection = geoEquirectangular().fitSize([W, H], { type: "Sphere" });
 const path = geoPath(projection, ctx);
 
+// Morocco shown complete: merge Western Sahara (732) into Morocco (504) so the
+// highlighted country isn't cut off and the internal border dissolves.
+const WSAHARA = 732, MOR = 504;
+const morParts = world.objects.countries.geometries.filter((g) => Number(g.id) === MOR || Number(g.id) === WSAHARA);
+const moroccoMerged = { type: "Feature", id: MOR, geometry: merge(world, morParts) };
+const activeFeat = (f) => (Number(f.id) === MOR ? moroccoMerged : f);
+
 // ocean
 const g = ctx.createLinearGradient(0, 0, 0, H);
 g.addColorStop(0, NAVY_DEEP); g.addColorStop(0.5, OCEAN); g.addColorStop(1, NAVY_DEEP);
@@ -86,7 +93,7 @@ ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 ctx.beginPath(); path(geoGraticule10()); ctx.strokeStyle = GRAT; ctx.lineWidth = 1; ctx.stroke();
 // inactive land
 ctx.beginPath();
-for (const f of countries) if (!ISO.has(Number(f.id))) path(f);
+for (const f of countries) if (!ISO.has(Number(f.id)) && Number(f.id) !== WSAHARA) path(f);
 const lg = ctx.createLinearGradient(0, 0, 0, H);
 lg.addColorStop(0, LAND2); lg.addColorStop(1, LAND);
 ctx.fillStyle = lg; ctx.fill();
@@ -95,11 +102,11 @@ ctx.strokeStyle = "rgba(8,23,38,0.6)"; ctx.lineWidth = 1; ctx.stroke();
 ctx.save();
 ctx.shadowColor = ACTIVE_EDGE; ctx.shadowBlur = 26;
 ctx.beginPath();
-for (const f of countries) if (ISO.has(Number(f.id))) path(f);
+for (const f of countries) if (ISO.has(Number(f.id))) path(activeFeat(f));
 ctx.fillStyle = ACTIVE; ctx.fill();
 ctx.restore();
 ctx.beginPath();
-for (const f of countries) if (ISO.has(Number(f.id))) path(f);
+for (const f of countries) if (ISO.has(Number(f.id))) path(activeFeat(f));
 ctx.strokeStyle = ACTIVE_EDGE; ctx.lineWidth = 2; ctx.stroke();
 
 await mkdir(OUT, { recursive: true });
