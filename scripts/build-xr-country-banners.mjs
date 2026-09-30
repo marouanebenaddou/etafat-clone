@@ -1,8 +1,8 @@
-// Builds one banner per ETAFAT country for the VR globe pop-ups: the country's flag, waving, dissolving
+// Builds one banner per ETAFAT country (VR globe pop-ups + /evenement kiosk country card): the country's flag, waving, dissolving
 // diagonally into a photo of one of its landmarks. Sources (fetched at build time, kept offline after):
 //   flags     — flagcdn.com (public-domain flags from Wikimedia)
 //   landmarks — Wikimedia Commons, freely licensed files only (CC0 / PD / CC BY / CC BY-SA); author and
-//               licence are printed on each banner and listed in public/xr/banners/credits.json.
+//               licence are printed on each banner and listed in public/etafat/presence/banners/credits.json.
 // Usage: node scripts/build-xr-country-banners.mjs [iso …]   (no args = all)
 import { createCanvas, loadImage, GlobalFonts } from "@napi-rs/canvas";
 import { existsSync } from "node:fs";
@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const OUT = join(ROOT, "public/xr/banners");
+const OUT = join(ROOT, "public/etafat/presence/banners"); // shared by the VR globe and the /evenement kiosk
 const UA = { "User-Agent": "ETAFAT-VR-banner-builder/1.0 (https://etafat-new.vercel.app)" };
 const W = 1200, H = 400;
 // the canvas default font has no accented glyphs (é, ç, ï…): use Arial when available (macOS)
@@ -48,9 +48,12 @@ const C = {
   784: { cc: "ae", file: "Burj Khalifa from a ferry, Dubai.jpg", cap: "Burj Khalifa · Dubaï" },
   682: { cc: "sa", file: "27, Hegra (Mada'in Salih), Saudi Arabia.jpg", cap: "Hégra (Mada’in Salih) · AlUla" },
   170: { cc: "co", file: "Sunset-cartagena-tower-dewired.jpg", cap: "Remparts de Carthagène des Indes" },
+  204: { cc: "bj", file: "Ganvie, Lake Village, Lake Nokoué, Benin 07.jpg", cap: "Ganvié · Lac Nokoué" },
+  270: { cc: "gm", file: "Gambia banjul arch22.JPG", cap: "Arch 22 · Banjul" },
+  608: { cc: "ph", file: "Banaue Philippines Batad-Rice-Terraces-04.jpg", cap: "Rizières en terrasses de Batad · Ifugao" },
 };
 const FOCUS = { // where the landmark sits in its photo (0..1) and extra zoom, so it lands clear of the flag
-  250: { fy: 0.3 }, 784: { fx: 0.5, fy: 0.55, z: 1.35 }, 504: { fy: 0.45 }, 170: { fx: 0.62 }, 686: { fy: 0.55 },
+  250: { fy: 0.3 }, 270: { fy: 0.32 }, 784: { fx: 0.5, fy: 0.55, z: 1.35 }, 504: { fy: 0.45 }, 170: { fx: 0.62 }, 686: { fy: 0.55 },
 };
 
 const strip = (html) => String(html || "").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();

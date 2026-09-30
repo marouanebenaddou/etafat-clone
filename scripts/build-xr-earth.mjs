@@ -5,63 +5,14 @@ import { createCanvas } from "@napi-rs/canvas";
 import { geoEquirectangular, geoPath, geoCentroid } from "d3-geo";
 import { feature, merge } from "topojson-client";
 import { readFile, writeFile, mkdir, rm } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT = join(ROOT, "public/xr");
 
-// ── ETAFAT presence (mirrors src/data/presence.ts) ──────────────────────────
-const PRESENCE = [
-  { iso: 504, name: "Maroc", region: "Afrique", projects: [
-    { title: "Maquette numérique 3D de Rabat et de la vallée du Bouregreg", place: "Rabat" },
-    { title: "Maquette numérique 3D du tramway T2", place: "Casablanca" },
-    { title: "Bathymétrie et expertise 3D des ouvrages du port", place: "Tanger Med" },
-    { title: "Détection des réseaux souterrains", place: "Jorf Lasfar" },
-    { title: "Relevés 2D et 3D des monuments de la médina", place: "Fès" },
-    { title: "Maquette BIM de l'usine Sidi Ali", place: "Oulmès" },
-    { title: "REGIS — patrimoine foncier et immobilier de l'OCP" } ] },
-  { iso: 384, name: "Côte d'Ivoire", region: "Afrique", projects: [
-    { title: "PAGEF — renforcement du cadastrage", place: "Abidjan" },
-    { title: "Détection du pipeline PETROCI", place: "Pacobo–Yamoussoukro" },
-    { title: "PAGDS — suivi des chantiers pour l'AGEROUTE" },
-    { title: "PAGDS — cadastre de Daloa, Korhogo et Yamoussoukro" },
-    { title: "Maquette BIM de l'hôtel Harmattan", place: "Bouaké" },
-    { title: "PRESFOR — sécurisation foncière rurale", place: "Gontougo / Bafing" } ] },
-  { iso: 686, name: "Sénégal", region: "Afrique", projects: [
-    { title: "PROCASEF — cadastre et sécurisation foncière", place: "Dakar" },
-    { title: "SMART PAMOFOR — application de sécurisation foncière rurale" } ] },
-  { iso: 478, name: "Mauritanie", region: "Afrique", projects: [
-    { title: "Système d'information des opérations minières — MAADEN" } ] },
-  { iso: 324, name: "Guinée", region: "Afrique", projects: [
-    { title: "SIG de la DNGR — zones de production rizi-piscicoles" } ] },
-  { iso: 624, name: "Guinée-Bissau", region: "Afrique", projects: [
-    { title: "Levé LiDAR pour le barrage hydroélectrique de Saltinho" } ] },
-  { iso: 854, name: "Burkina Faso", region: "Afrique", projects: [
-    { title: "MNT LiDAR pour le suivi des inondations" } ] },
-  { iso: 178, name: "Congo", region: "Afrique", projects: [
-    { title: "Levés LiDAR de Brazzaville et Pointe-Noire" },
-    { title: "Levé LiDAR de la route Liranga–Ngangania" } ] },
-  { iso: 148, name: "Tchad", region: "Afrique", projects: [
-    { title: "PILIER — données aériennes et plans d'urbanisme", place: "N'Djaména" } ] },
-  { iso: 788, name: "Tunisie", region: "Afrique", projects: [] },
-  { iso: 466, name: "Mali", region: "Afrique", projects: [] },
-  { iso: 430, name: "Libéria", region: "Afrique", projects: [] },
-  { iso: 288, name: "Ghana", region: "Afrique", projects: [] },
-  { iso: 768, name: "Togo", region: "Afrique", projects: [] },
-  { iso: 566, name: "Nigéria", region: "Afrique", projects: [] },
-  { iso: 266, name: "Gabon", region: "Afrique", projects: [] },
-  { iso: 24, name: "Angola", region: "Afrique", projects: [] },
-  { iso: 180, name: "R.D. Congo", region: "Afrique", projects: [] },
-  { iso: 508, name: "Mozambique", region: "Afrique", projects: [] },
-  { iso: 108, name: "Burundi", region: "Afrique", projects: [] },
-  { iso: 250, name: "France", region: "Europe", projects: [] },
-  { iso: 300, name: "Grèce", region: "Europe", projects: [] },
-  { iso: 634, name: "Qatar", region: "Moyen-Orient", projects: [] },
-  { iso: 784, name: "Émirats arabes unis", region: "Moyen-Orient", projects: [] },
-  { iso: 682, name: "Arabie Saoudite", region: "Moyen-Orient", projects: [] },
-  { iso: 170, name: "Colombie", region: "Amérique latine", projects: [] },
-];
+// ── ETAFAT presence: single source shared with the website (Node strips the TS types) ──
+const { PRESENCE } = await import(pathToFileURL(join(ROOT, "src/data/presence.ts")).href);
 const ISO = new Set(PRESENCE.map((c) => c.iso));
 // nicer marker coords where a polygon centroid is misleading
 const COORD_OVERRIDE = { 250: [2.35, 46.6], 504: [-7.09, 31.8], 682: [45.0, 24.0], 170: [-73.5, 4.6] };

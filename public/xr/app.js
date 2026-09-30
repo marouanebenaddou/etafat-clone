@@ -654,10 +654,10 @@ function buildChiffres(data) {
 }
 
 // ── country project panel (from globe selection) ────────────────────────────────
-// country banners (flag × landmark, built by scripts/build-xr-country-banners.mjs), cached per country
+// country banners (flag × landmark, scripts/build-xr-country-banners.mjs — shared with the /evenement kiosk)
 const bannerCache = new Map();
 function countryBanner(iso) {
-  if (!bannerCache.has(iso)) bannerCache.set(iso, new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = `./banners/${iso}.jpg`; }));
+  if (!bannerCache.has(iso)) bannerCache.set(iso, new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => res(null); i.src = `/etafat/presence/banners/${iso}.jpg`; }));
   return bannerCache.get(iso);
 }
 function makeCountryPanel(country) {

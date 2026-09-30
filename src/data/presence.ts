@@ -7,7 +7,7 @@ export type PresenceProject = { title: string; place?: string };
 export type PresenceCountry = {
   iso: number;
   name: string;
-  region: "Afrique" | "Europe" | "Moyen-Orient" | "Amérique latine";
+  region: "Afrique" | "Europe" | "Moyen-Orient" | "Asie" | "Amérique latine";
   projects: PresenceProject[];
 };
 
@@ -82,6 +82,8 @@ export const PRESENCE: PresenceCountry[] = [
   { iso: 180, name: "République Démocratique du Congo", region: "Afrique", projects: [] },
   { iso: 508, name: "Mozambique", region: "Afrique", projects: [] },
   { iso: 108, name: "Burundi", region: "Afrique", projects: [] },
+  { iso: 204, name: "Bénin", region: "Afrique", projects: [] },
+  { iso: 270, name: "Gambie", region: "Afrique", projects: [] },
 
   // ───────────────────────── Europe ──────────────────────────
   { iso: 250, name: "France", region: "Europe", projects: [] },
@@ -91,6 +93,9 @@ export const PRESENCE: PresenceCountry[] = [
   { iso: 634, name: "Qatar", region: "Moyen-Orient", projects: [] },
   { iso: 784, name: "Émirats arabes unis", region: "Moyen-Orient", projects: [] },
   { iso: 682, name: "Arabie Saoudite", region: "Moyen-Orient", projects: [] },
+
+  // ─────────────────────────── Asie ──────────────────────────
+  { iso: 608, name: "Philippines", region: "Asie", projects: [] },
 
   // ────────────────────── Amérique latine ────────────────────
   { iso: 170, name: "Colombie", region: "Amérique latine", projects: [] },

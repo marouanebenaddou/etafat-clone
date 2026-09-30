@@ -24,7 +24,7 @@ export function PresenceSection() {
             Une expertise déployée sur 4 continents
           </h2>
           <p className="max-w-2xl leading-relaxed text-white/70">
-            De l&apos;Afrique à l&apos;Amérique latine, ETAFAT accompagne les territoires
+            De l&apos;Afrique à l&apos;Asie et à l&apos;Amérique latine, ETAFAT accompagne les territoires
             dans {PRESENCE_COUNT} pays. Explorez le globe — survolez ou cliquez un pays
             pour découvrir nos projets.
           </p>
@@ -80,7 +80,7 @@ export function PresenceSection() {
               <div>
                 <p className="text-5xl font-semibold leading-none text-white" style={{ fontFamily: "var(--font-figtree)" }}>{PRESENCE_COUNT}</p>
                 <p className="mt-2 text-lg text-white/80">pays d&apos;intervention</p>
-                <p className="mt-1 text-sm text-white/50">{PRESENCE_PROJECT_COUNT}+ projets référencés · Afrique, Europe, Moyen-Orient, Amérique latine</p>
+                <p className="mt-1 text-sm text-white/50">{PRESENCE_PROJECT_COUNT}+ projets référencés · Afrique, Europe, Moyen-Orient, Asie, Amérique latine</p>
                 <p className="mt-6 max-w-sm text-sm text-white/50">
                   Les pays en surbrillance sur le globe sont ceux où ETAFAT a réalisé des missions. Survolez-en un — ou cliquez — pour voir le détail.
                 </p>

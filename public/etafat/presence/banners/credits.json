@@ -53,6 +53,15 @@
   "license": "CC BY 2.0",
   "licenseUrl": "https://creativecommons.org/licenses/by/2.0"
  },
+ "204": {
+  "iso": 204,
+  "caption": "Ganvié · Lac Nokoué",
+  "flag": "https://flagcdn.com/bj.svg",
+  "photo": "https://commons.wikimedia.org/wiki/File:Ganvie,_Lake_Village,_Lake_Nokou%C3%A9,_Benin_07.jpg",
+  "artist": "Asabiyya",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
  "250": {
   "iso": 250,
   "caption": "Tour Eiffel · Paris",
@@ -70,6 +79,15 @@
   "artist": "Ngangorica",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "270": {
+  "iso": 270,
+  "caption": "Arch 22 · Banjul",
+  "flag": "https://flagcdn.com/gm.svg",
+  "photo": "https://commons.wikimedia.org/wiki/File:Gambia_banjul_arch22.JPG",
+  "artist": "Atamari",
+  "license": "CC BY-SA 3.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0"
  },
  "288": {
   "iso": 288,
@@ -158,6 +176,15 @@
   "flag": "https://flagcdn.com/ng.svg",
   "photo": "https://commons.wikimedia.org/wiki/File:Zuma_Rock_Road.jpg",
   "artist": "LeonardIbong",
+  "license": "CC BY-SA 4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
+ },
+ "608": {
+  "iso": 608,
+  "caption": "Rizières en terrasses de Batad · Ifugao",
+  "flag": "https://flagcdn.com/ph.svg",
+  "photo": "https://commons.wikimedia.org/wiki/File:Banaue_Philippines_Batad-Rice-Terraces-04.jpg",
+  "artist": "CEphoto, Uwe Aranas",
   "license": "CC BY-SA 4.0",
   "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0"
  },
