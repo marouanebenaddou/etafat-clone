@@ -6,8 +6,9 @@ import { mergeGeometries } from "./vendor/jsm/utils/BufferGeometryUtils.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
-const GLOBE_R = 0.55;
-const GLOBE_POS = new THREE.Vector3(0, 1.8, -1.75); // floats over the valley, which stays visible below
+const GLOBE_R = 0.8;
+const GLOBE_POS = new THREE.Vector3(0, 1.85, -2.3); // floats over the valley, which stays visible below
+const GK = GLOBE_R / 0.55;                          // scale for the globe's details (pins, tiles, arcs, leader)
 const USER = new THREE.Vector3(0, 1.6, 0);
 
 const scene = new THREE.Scene(); // sky, fog and lights come from world.js
@@ -67,7 +68,7 @@ function logoGradient(mat) {
 }
 const landMat = logoGradient(new THREE.MeshLambertMaterial({ emissive: 0x0a2a4a, emissiveIntensity: 0.35 }));
 const actMat = new THREE.MeshLambertMaterial({ emissive: TEAL, emissiveIntensity: 0.35 }); // ETAFAT countries: teal, standing a little proud
-const TILE_T = 0.007, dummy = new THREE.Object3D(), _v = new THREE.Vector3();
+const TILE_T = 0.007 * GK, dummy = new THREE.Object3D(), _v = new THREE.Vector3();
 function tileMatrix(lon, lat, lift, s = 1) {
   const n = lonLatToVec3(lon, lat, 1);
   dummy.position.copy(n).multiplyScalar(GLOBE_R + TILE_T / 2 + lift); dummy.lookAt(_v.copy(n).multiplyScalar(9));
@@ -109,15 +110,15 @@ function buildGlobe(d, t) {
   actMesh = new THREE.InstancedMesh(geo, actMat, act.length);
   const teal = new THREE.Color(TEAL);
   act.forEach((tl, i) => {
-    actMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0.004)); actMesh.setColorAt(i, teal);
+    actMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0.004 * GK)); actMesh.setColorAt(i, teal);
     if (!actTiles.has(tl.iso)) actTiles.set(tl.iso, []); actTiles.get(tl.iso).push({ i, lon: tl.lon, lat: tl.lat });
   });
   spin.add(actMesh);
 
   // pins: every ETAFAT country (small ones would otherwise be a single tile) + Casablanca HQ
   const pinGeo = mergeGeometries([
-    new THREE.CylinderGeometry(0.0016, 0.0016, 0.03, 5).translate(0, 0.015, 0),
-    new THREE.SphereGeometry(0.0065, 10, 8).translate(0, 0.033, 0),
+    new THREE.CylinderGeometry(0.0016 * GK, 0.0016 * GK, 0.03 * GK, 5).translate(0, 0.015 * GK, 0),
+    new THREE.SphereGeometry(0.0065 * GK, 10, 8).translate(0, 0.033 * GK, 0),
   ]).rotateX(Math.PI / 2); // along +z = the surface normal after lookAt
   const pins = new THREE.InstancedMesh(pinGeo, new THREE.MeshLambertMaterial({ emissive: 0x333333 }), d.countries.length + 1);
   const white = new THREE.Color(0xffffff), hq = new THREE.Color(0xf2c230);
@@ -130,8 +131,8 @@ function buildGlobe(d, t) {
   const a = lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R), tubes = [];
   d.countries.forEach((c, i) => {
     if (c.iso === 504) return;
-    const b = lonLatToVec3(c.lon, c.lat, GLOBE_R), mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.22 + a.distanceTo(b) * 0.3));
-    const g = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, 0.0021, 5, false);
+    const b = lonLatToVec3(c.lon, c.lat, GLOBE_R), mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.22 + a.distanceTo(b) / GLOBE_R * 0.165));
+    const g = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, 0.0021 * GK, 5, false);
     g.setAttribute("aI", new THREE.Float32BufferAttribute(new Array(g.attributes.position.count).fill(i), 1));
     tubes.push(g);
   });
@@ -143,7 +144,7 @@ const floatTiles = (() => {
   const N = 40, R = rng(7), key = new THREE.Vector3(0.66, 0.6, 0.45).normalize(), list = [];
   while (list.length < N) {
     const d = new THREE.Vector3(R() * 2 - 1, R() * 2 - 1, R() * 2 - 1).normalize();
-    if (d.dot(key) > 0.8) list.push({ d, off: 0.015 + Math.pow(R(), 1.6) * 0.16 * (d.dot(key) - 0.8) / 0.2, s: 0.9 + R() * 0.9, ph: R() * 6.28, sp: 0.4 + R() * 0.5 });
+    if (d.dot(key) > 0.8) list.push({ d, off: (0.015 + Math.pow(R(), 1.6) * 0.16 * (d.dot(key) - 0.8) / 0.2) * GK, s: 0.9 + R() * 0.9, ph: R() * 6.28, sp: 0.4 + R() * 0.5 });
   }
   const size = GLOBE_R * 2.25 * DEG * 0.8, m = new THREE.InstancedMesh(new THREE.BoxGeometry(size, size, TILE_T), landMat, N);
   globe.add(m); return { m, list };
@@ -168,7 +169,7 @@ function updateCountryLift(dt, t, hoverIso) {
     st.v += (st.target - st.v) * Math.min(1, dt * 9); if (Math.abs(st.v - st.target) < 0.002) st.v = st.target;
     countryLift.set(iso, st);
     _c.copy(baseCol).lerp(hiCol, st.v);
-    for (const tl of actTiles.get(iso)) { actMesh.setMatrixAt(tl.i, tileMatrix(tl.lon, tl.lat, 0.004 + 0.022 * st.v, 1 + 0.12 * st.v)); actMesh.setColorAt(tl.i, _c); }
+    for (const tl of actTiles.get(iso)) { actMesh.setMatrixAt(tl.i, tileMatrix(tl.lon, tl.lat, (0.004 + 0.022 * st.v) * GK, 1 + 0.12 * st.v)); actMesh.setColorAt(tl.i, _c); }
     actMesh.instanceMatrix.needsUpdate = true; actMesh.instanceColor.needsUpdate = true;
   }
   actMat.emissiveIntensity = 0.32 + 0.08 * Math.sin(t * 2);
@@ -673,7 +674,7 @@ function makeCountryPanel(country) {
 }
 let cPull = null; const cClosing = [];   // current country pop-up + ones retracting
 let cCand = null, cDwell = 0;            // hover candidate (debounced)
-const beadGeo = new THREE.SphereGeometry(0.0048, 8, 6), LEAD_N = 22; // dotted leader (a 1 px line vanishes in the headset)
+const beadGeo = new THREE.SphereGeometry(0.0048 * GK, 8, 6), LEAD_N = 22; // dotted leader (a 1 px line vanishes in the headset)
 const leadCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()), _lp = new THREE.Vector3();
 function pullCountry(hit) {
   if (cPull && cPull.country === hit.country) { cPull.idle = 0; return; }
@@ -681,8 +682,8 @@ function pullCountry(hit) {
   const card = makeCountryPanel(hit.country); card.scale.setScalar(0.8); card.renderOrder = 30; card.material.depthTest = true;
   const g = new THREE.Group(); g.add(card); g.scale.setScalar(0.001); scene.add(g);
   const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }), LEAD_N); line.frustumCulled = false; scene.add(line);
-  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018, 0.027, 28), new THREE.MeshBasicMaterial({ color: 0x0b6f6e, transparent: true, side: THREE.DoubleSide, depthWrite: false })); // dark teal: reads on the pale lifted tiles
-  ring.position.copy(hit.local).setLength(GLOBE_R + 0.036); // floats just above the lifted tiles ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0x0b6f6e, transparent: true, side: THREE.DoubleSide, depthWrite: false })); // dark teal: reads on the pale lifted tiles
+  ring.position.copy(hit.local).setLength(GLOBE_R + 0.036 * GK); ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring); // floats just above the lifted tiles
   cPull = { country: hit.country, local: hit.local.clone(), g, card, line, ring, t: 0, idle: 0, closing: false, cardH: card.geometry.parameters.height * 0.8 };
 }
 const _a = new THREE.Vector3(), _to = new THREE.Vector3(), _e = new THREE.Vector3();
@@ -695,9 +696,9 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
   for (const P of [cPull, ...cClosing]) {
     if (!P) continue;
     P.t = Math.min(1, Math.max(0, P.t + (P.closing ? -dt * 4 : dt * 2.4)));
-    _a.copy(P.local).setLength(GLOBE_R + 0.036); spin.localToWorld(_a); // the country's point (above its lifted tiles)
+    _a.copy(P.local).setLength(GLOBE_R + 0.036 * GK); spin.localToWorld(_a); // the country's point (above its lifted tiles)
     const side = _a.x >= GLOBE_POS.x ? 1 : -1;                    // pop out on the country's side…
-    _to.set(side * 0.62, 1.47, -1.08);                            // …but close to the viewer (~1.25 m, ~30° off-centre)
+    _to.set(side * 0.72, 1.47, -1.05);                            // …but close to the viewer (~1.27 m, ~34° off-centre)
     const k = P.closing ? easeOut(P.t) : easeBack(P.t);
     P.g.position.lerpVectors(_a, _to, P.closing ? easeOut(P.t) : easeOut(Math.min(1, P.t * 1.25)));
     P.g.lookAt(USER.x, P.g.position.y, USER.z);
@@ -705,7 +706,7 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
     P.card.material.opacity = Math.min(1, P.t * 2);
     _e.set(-side * 0.4, 0, 0).applyQuaternion(P.g.quaternion).multiplyScalar(P.g.scale.x).add(P.g.position); // inner edge of the card
     // leader: bows out from the surface so it never cuts through the globe
-    leadCurve.v0.copy(_a); leadCurve.v1.copy(_a).sub(GLOBE_POS).setLength(GLOBE_R + 0.24).add(GLOBE_POS); leadCurve.v2.copy(_e);
+    leadCurve.v0.copy(_a); leadCurve.v1.copy(_a).sub(GLOBE_POS).setLength(GLOBE_R + 0.24 * GK).add(GLOBE_POS); leadCurve.v2.copy(_e);
     const shown = P.t * LEAD_N;                                   // beads run out with the card
     for (let i = 0; i < LEAD_N; i++) {
       leadCurve.getPoint(i / (LEAD_N - 1), _lp); dummy.position.copy(_lp); dummy.rotation.set(0, 0, 0);
@@ -723,7 +724,7 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
   x.textAlign="center";
   x.fillStyle="#8ee6e4"; x.font="500 40px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 228);
   x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe · visez un pays · retournez-vous : chiffres clés", W/2, 278);
-  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.85, GLOBE_POS.z - 0.2); scene.add(m);
+  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.72, GLOBE_POS.z - 0.2); scene.add(m);
   // ETAFAT logo on a soft light chip (the logo's text needs a light backing)
   const img = new Image();
   img.onload = () => {
