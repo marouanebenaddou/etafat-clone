@@ -1,0 +1,96 @@
+{
+  "themes": [
+    {
+      "label": "Villes, territoires et patrimoine",
+      "tagline": "Modélisation urbaine, cartographie et valorisation du patrimoine",
+      "accent": "#2ab5b4",
+      "projects": [
+        "Maquette numérique 3D de Rabat et de la vallée du Bouregreg",
+        "Levés LiDAR de Brazzaville et Pointe-Noire",
+        "Numérisation 3D de l’église du Sacré-Cœur",
+        "PILIER — Données aériennes et plans d’urbanisme de N’Djaména",
+        "Relevés 2D et 3D des monuments de la médina de Fès",
+        "Système de veille des bâtiments menaçant ruine du Grand Casablanca",
+        "Prises de vues aériennes, orthophotos et restitution de Casablanca",
+        "Plan topographique de Sousse par LiDAR aéroporté",
+        "Inventaire et évaluation des façades historiques de Rabat",
+        "Cartographie aérienne de Béni Mellal, Azilal, Fquih Ben Salah, Khouribga",
+        "Prises de vues aériennes et plans photogrammétriques de Tétouan",
+        "Prises de vues aériennes et orthophotoplans d’El Jadida",
+        "Acquisition aérienne pour l’aménagement de la vallée du Bouregreg"
+      ]
+    },
+    {
+      "label": "Foncier, cadastre et systèmes d’information",
+      "tagline": "Sécurisation foncière, cadastre et systèmes d’information",
+      "accent": "#00a3c4",
+      "projects": [
+        "PAGEF — Renforcement du cadastrage à Abidjan",
+        "REGIS — Patrimoine foncier et immobilier de l’OCP",
+        "PAGDS — Cadastre de Daloa, Korhogo et Yamoussoukro",
+        "SMART PAMOFOR — Sécurisation foncière rurale (web & mobile)",
+        "SMART IFE — Application web et mobile pour un projet foncier",
+        "Système d’information du patrimoine de Barid Al-Maghrib",
+        "Inventaire des actifs imposables de Skhirate–Témara"
+      ]
+    },
+    {
+      "label": "Infrastructures, transports et réseaux",
+      "tagline": "Routes, réseaux enterrés et grands ouvrages",
+      "accent": "#4f83cc",
+      "projects": [
+        "Détection du pipeline PETROCI — Pacobo–Yamoussoukro",
+        "PAGDS — Suivi des chantiers pour l’AGEROUTE",
+        "Maquette numérique 3D du tramway T2 de Casablanca",
+        "Levé LiDAR de la route Liranga–Ngangania",
+        "Détection des réseaux souterrains de Jorf Lasfar",
+        "SIG pilote pour la RADEEJ",
+        "Relevé de la route nationale n°8 par scanner laser 3D mobile",
+        "Prestations géospatiales — autoroute Rabat–Casablanca",
+        "Détection des réseaux enterrés entre Tobène et Taïba",
+        "Réseaux enterrés de l’usine Oulmès"
+      ]
+    },
+    {
+      "label": "Eau, environnement et ouvrages maritimes",
+      "tagline": "Bathymétrie, hydrologie et ouvrages maritimes",
+      "accent": "#2ab5b4",
+      "projects": [
+        "Bathymétrie et expertise 3D des ouvrages de Tanger Med",
+        "MNT LiDAR pour le suivi des inondations au Burkina Faso",
+        "Levé LiDAR pour le barrage hydroélectrique de Saltinho",
+        "Contrôle du dragage par bathymétrie à Tanger Med"
+      ]
+    },
+    {
+      "label": "Bâtiment, industrie et mines",
+      "tagline": "Scan 3D, BIM et sites industriels et miniers",
+      "accent": "#6a8fb5",
+      "projects": [
+        "Maquette BIM de l’hôtel Harmattan à Bouaké",
+        "Système d’information des opérations minières de MAADEN",
+        "Évaluation volumétrique des actifs industriels de l’OCP"
+      ]
+    },
+    {
+      "label": "Agriculture et développement rural",
+      "tagline": "SIG agricole et développement des territoires ruraux",
+      "accent": "#3bbf8f",
+      "projects": [
+        "SIG de la DNGR — zones de production rizi-piscicoles (Guinée)",
+        "Solution web & mobile d’expertise agricole pour la MAMDA",
+        "SIG pour le Registre national agricole"
+      ]
+    }
+  ],
+  "apps": {
+    "label": "Applications terrain",
+    "tagline": "Nos applications de collecte déployées sur le terrain",
+    "accent": "#2ab5b4",
+    "items": [
+      { "name": "PROCASEF", "tagline": "Sécurisation foncière rurale — enquêtes, délimitation et levé des parcelles (Sénégal)." },
+      { "name": "PRESFOR", "tagline": "Renforcement de la sécurisation foncière rurale (Côte d’Ivoire)." },
+      { "name": "SRM", "tagline": "Suivi et relevé de terrain — projet SRM, Casablanca." }
+    ]
+  }
+}
