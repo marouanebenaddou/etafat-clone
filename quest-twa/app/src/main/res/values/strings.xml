@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ETAFAT VR</string>
+    <string name="launch_url">https://etafat-new.vercel.app/xr/index.html</string>
+    <string name="host">etafat-new.vercel.app</string>
+    <string name="asset_statements">[{ \"relation\": [\"delegate_permission/common.handle_all_urls\"], \"target\": { \"namespace\": \"web\", \"site\": \"https://etafat-new.vercel.app\" } }]</string>
+</resources>

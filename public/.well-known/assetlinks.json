@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "ma.etafat.vr",
+      "sha256_cert_fingerprints": [
+        "9A:41:43:41:46:B5:70:29:EC:84:6E:11:AD:5E:F0:C7:BE:80:2C:A9:B5:E9:31:FF:B9:C8:A4:85:37:91:5C:DE"
+      ]
+    }
+  }
+]
