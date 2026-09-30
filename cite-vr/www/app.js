@@ -73,6 +73,7 @@ const map = new THREE.Group(); stand.add(map);
 
 // ── data: landmarks + rampart outline (scripts/build-cite-pois.mjs) ─────────────────────────────────
 const DATA = await (await fetch("./pois.json")).json();
+const PANO = await fetch("./panos.json").then((r) => r.json()).catch(() => ({ panos: [] })); // 360° photos (scripts/build-cite-panos.mjs)
 
 // ── the model ───────────────────────────────────────────────────────────────────────────────────────
 const tiles = new TilesRenderer("./model/tileset.json");
@@ -256,17 +257,18 @@ function panelBg(x, W, H, accent = TEAL) {
 }
 
 // layer state
-const layers = { pins: true, walls: true, scan: true, contour: false, drone: true };
+const layers = { pins: true, panos: true, walls: true, scan: true, contour: false, drone: true };
 const tour = { on: false, t: 0 };
 let hoverPoi = null, hoverPanel = null;
 const LAYER_ROWS = [
   ["pins", "Points d’intérêt", "12 lieux de la cité"],
+  ["panos", "Photos 360°", `${PANO.panos.length} vues immersives · janvier 2022`],
   ["walls", "Remparts", "Enceinte bastionnée, 1541–1548"],
   ["scan", "Balayage LiDAR", "Onde de relevé sur la maquette"],
   ["contour", "Altimétrie", "Teinte hypsométrique · courbes 2 m"],
   ["drone", "Drone de relevé", "Acquisition photogrammétrique"],
 ];
-const menu = new Panel(560, 1080, 0.25, (x, P) => {
+const menu = new Panel(560, 1176, 0.25, (x, P) => {
   const W = P.w, H = P.h;
   panelBg(x, W, H);
   x.font = `700 26px ${FONT}`; spaced(x, "5px"); x.fillStyle = TEAL_L; x.fillText("CALQUES", 40, 72); spaced(x, "0px");
@@ -308,7 +310,7 @@ const menu = new Panel(560, 1080, 0.25, (x, P) => {
   x.fillText("Gâchette : choisir · maintenir + glisser : déplacer la vue", 40, H - 62);
   x.fillText("Joystick : tourner / zoomer · Grip : déplacer la maquette", 40, H - 34);
 });
-menu.mesh.position.set(-(DISC_R + 0.3), 0.3, 0.08); rig.add(menu.mesh);
+menu.mesh.position.set(-(DISC_R + 0.3), 0.32, 0.08); rig.add(menu.mesh);
 
 let sel = -1;
 const card = new Panel(1000, 600, 0.44, (x, P) => {
@@ -334,7 +336,8 @@ const card = new Panel(1000, 600, 0.44, (x, P) => {
   };
   nav(44, "prev", "‹  Précédent", () => { stopTour(); selectPOI((sel + pois.length - 1) % pois.length); });
   nav(W - 274, "next", "Suivant  ›", () => { stopTour(); selectPOI((sel + 1) % pois.length); });
-  x.fillStyle = "rgba(234,244,248,0.35)"; x.font = `400 19px ${FONT}`; x.textAlign = "center"; x.fillText("Position © OpenStreetMap", W / 2, H - 56); x.textAlign = "left";
+  if (p.pano) nav(W / 2 - 115, "pano", p.panoNear ? "◉  Vue 360°" : "◉  360° proche", () => { stopTour(); openPano(p.pano.i); });
+  x.fillStyle = "rgba(234,244,248,0.35)"; x.font = `400 18px ${FONT}`; x.textAlign = "right"; x.fillText("Position © OpenStreetMap", W - 44, 118); x.textAlign = "left";
 });
 card.mesh.position.set(DISC_R + 0.32, 0.36, 0.08); card.mesh.visible = false; rig.add(card.mesh);
 
@@ -540,6 +543,224 @@ function resetView() { stopTour(); sel = -1; card.mesh.visible = false; Object.a
 function startTour() { tour.on = true; tour.t = 0; selectPOI(sel >= 0 ? (sel + 1) % pois.length : 0, 3); menu.redraw(); }
 function stopTour() { if (!tour.on) return; tour.on = false; menu.redraw(); }
 
+// ── 360° photos: markers on the model, immersive view with walk-through arrows ──────────────────────
+// Insta360 shots of 19 Jan 2022 placed along the route (no GPS on the camera), north from the sun.
+const panos = PANO.panos.map((p, i) => ({ ...p, i, m: toMap(p.lat, p.lon, p.h ?? BASE_Y + 10) }));
+const panoRuns = []; // consecutive shots at one place → one cluster marker when zoomed out
+for (const p of panos) {
+  let r = panoRuns.at(-1);
+  if (!r || r.place !== p.place) panoRuns.push(r = { place: p.place, items: [], m: new THREE.Vector3() });
+  r.items.push(p); p.run = r;
+}
+for (const r of panoRuns) { for (const p of r.items) r.m.add(p.m); r.m.divideScalar(r.items.length); r.m.y = Math.max(...r.items.map((p) => p.m.y)); }
+for (const p of pois) { let best = null, bd = 32; for (const q of panos) { const d = Math.hypot(q.m.x - p.m.x, q.m.z - p.m.z); if (d < bd) { bd = d; best = q; } } p.pano = best; p.panoNear = bd < 15; }
+
+function badgeTex(count) {
+  const c = document.createElement("canvas"); c.width = c.height = 128; const x = c.getContext("2d");
+  x.beginPath(); x.arc(64, 64, 48, 0, Math.PI * 2); x.fillStyle = "rgba(8,23,38,0.9)"; x.fill(); x.lineWidth = 8; x.strokeStyle = TEAL_L; x.stroke();
+  x.fillStyle = "#fff"; x.font = `800 32px ${FONT}`; x.textAlign = "center"; x.fillText("360°", 64, 75);
+  if (count) { x.beginPath(); x.arc(101, 27, 24, 0, Math.PI * 2); x.fillStyle = TEAL; x.fill(); x.fillStyle = "#fff"; x.font = `800 25px ${FONT}`; x.fillText(String(count), 101, 36); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+const panoG = new THREE.Group(); stand.add(panoG);
+const panoHitGeo = new THREE.SphereGeometry(0.009, 8, 6), panoHitMat = new THREE.MeshBasicMaterial();
+function marker(tex, size, data) {
+  const g = new THREE.Group(), sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false }));
+  sp.scale.setScalar(size); sp.renderOrder = 12;
+  const hit = new THREE.Mesh(panoHitGeo, panoHitMat); hit.visible = false; hit.scale.setScalar(size / 0.012); Object.assign(hit.userData, data);
+  g.add(sp, hit); panoG.add(g); return { g, hit };
+}
+{ const one = badgeTex(0); for (const p of panos) Object.assign(p, marker(one, 0.015, { pano: p })); }
+for (const r of panoRuns) Object.assign(r, marker(badgeTex(r.items.length), 0.022, { run: r }));
+
+// hover preview
+const thumbs = new Map();
+function thumbImg(p) {
+  if (!thumbs.has(p.id)) { const im = new Image(); im.onload = () => { if (tipFor) tip.redraw(); if (pm.on) panoBar.redraw(); }; im.src = `./panos/thumbs/${p.id}.jpg`; thumbs.set(p.id, im); }
+  return thumbs.get(p.id);
+}
+let tipFor = null, hoverPanoItem = null;
+const tip = new Panel(520, 372, 0.17, (x) => {
+  if (!tipFor) return;
+  const p = tipFor.items ? tipFor.items[0] : tipFor, im = thumbImg(p);
+  rr(x, 2, 2, 516, 368, 22); x.fillStyle = "rgba(8,23,38,0.95)"; x.fill(); x.lineWidth = 3; x.strokeStyle = TEAL_L; x.stroke();
+  x.save(); rr(x, 12, 12, 496, 248, 14); x.clip();
+  if (im.complete && im.naturalWidth) x.drawImage(im, 12, 12, 496, 248); else { x.fillStyle = "#0d2740"; x.fillRect(12, 12, 496, 248); }
+  x.restore();
+  x.fillStyle = "#fff"; x.font = `700 30px ${FONT}`; x.fillText(p.place, 22, 302);
+  x.fillStyle = TEAL_L; x.font = `500 22px ${FONT}`;
+  x.fillText(tipFor.items ? `${tipFor.items.length} photos 360° · cliquer pour entrer` : `Photo 360° · ${p.time} · cliquer pour entrer`, 22, 342);
+}, { interactive: false });
+tip.mesh.visible = false; tip.mesh.renderOrder = 35; tip.mesh.material.depthTest = false; scene.add(tip.mesh);
+
+// immersive view
+const pm = { on: false, i: -1, token: 0, play: false, playT: 0, hudYaw: 0, follow: false, saved: null, look: { yaw: 0, pitch: 0 }, barT: 0, barGaze: 0 };
+const panoSphere = new THREE.Mesh(new THREE.SphereGeometry(9, 96, 48).scale(-1, 1, 1), new THREE.MeshBasicMaterial({ depthTest: false, depthWrite: false }));
+panoSphere.renderOrder = -10; panoSphere.frustumCulled = false; panoSphere.visible = false; scene.add(panoSphere);
+const fader = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 12), new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0, side: THREE.BackSide, depthTest: false, depthWrite: false }));
+fader.renderOrder = 1000; fader.frustumCulled = false; fader.visible = false; scene.add(fader);
+let fadeT = 0, fadeDir = 0, fadeFn = null;
+function blackout(fn) { fadeFn = fn; fadeDir = 1; }
+const texLoader = new THREE.TextureLoader(), bmpLoader = new THREE.ImageBitmapLoader().setOptions({ imageOrientation: "flipY" });
+const thumbTexes = new Map(), fullTexes = new Map();
+function thumbTex(p) {
+  if (!thumbTexes.has(p.id)) { const t = texLoader.load(`./panos/thumbs/${p.id}.jpg`); t.colorSpace = THREE.SRGBColorSpace; thumbTexes.set(p.id, t); }
+  return thumbTexes.get(p.id);
+}
+function fullTex(p) {
+  if (!fullTexes.has(p.id)) fullTexes.set(p.id, new Promise((res, rej) => bmpLoader.load(`./panos/${p.id}.jpg`, (bmp) => {
+    const t = new THREE.Texture(bmp); t.colorSpace = THREE.SRGBColorSpace; t.flipY = false; t.needsUpdate = true; res(t);
+  }, undefined, rej)));
+  return fullTexes.get(p.id);
+}
+function keepFull(ids) { // at most the current photo and its two neighbours stay on the GPU (4096×2048 each)
+  for (const [id, pr] of fullTexes) if (!ids.includes(id)) { fullTexes.delete(id); pr.then((t) => { t.dispose(); if (t.image && t.image.close) t.image.close(); }).catch(() => {}); }
+}
+async function showPanoTex(p) {
+  const token = ++pm.token;
+  panoSphere.material.map = thumbTex(p); panoSphere.material.needsUpdate = true;
+  try {
+    const t = await fullTex(p); if (token !== pm.token) return;
+    panoSphere.material.map = t; panoSphere.material.needsUpdate = true;
+  } catch (e) { console.warn("panorama", p.id, e); }
+  const near = [panos[p.i + 1], panos[p.i - 1]].filter(Boolean);
+  near.forEach(fullTex); keepFull([p.id, ...near.map((q) => q.id)]);
+}
+const gazeAz = () => { camera.getWorldDirection(_v); return Math.atan2(_v.x, -_v.z); }; // world azimuth, clockwise from −z
+function orientPano(p) {
+  // the photo's north goes where the table's north is (world azimuth −yaw); without a sun fix, face the photo's centre
+  panoSphere.rotation.y = p.north != null ? (p.north - 0.75) * 2 * Math.PI + view.yaw : -Math.PI / 2 - gazeAz();
+}
+function openPano(i) {
+  stopTour(); pm.play = pm.play && pm.on;
+  blackout(() => {
+    const p = panos[i], first = !pm.on;
+    pm.on = true; pm.i = i; pm.playT = 0;
+    if (first) {
+      rig.visible = false; env.visible = false; panoSphere.visible = true; panoHud.visible = true; arrowG.visible = true; hintEl.textContent = HINT_PANO; loadingEl.classList.add("hide");
+      camera.getWorldDirection(_v); pm.hudYaw = Math.atan2(-_v.x, -_v.z);
+      if (!renderer.xr.isPresenting) {
+        pm.saved = { pos: camera.position.clone(), quat: camera.quaternion.clone(), fov: camera.fov };
+        controls.enabled = false; pm.look.yaw = pm.hudYaw; pm.look.pitch = 0; camera.fov = 75; camera.updateProjectionMatrix();
+      }
+    }
+    orientPano(p); showPanoTex(p); buildArrows(p); panoBar.redraw();
+  });
+}
+function closePano(instant = false) {
+  const done = () => {
+    pm.on = false; pm.play = false; pm.token++;
+    panoSphere.visible = false; panoHud.visible = false; arrowG.visible = false;
+    rig.visible = true; env.visible = !arMode; hintEl.textContent = HINT_MODEL;
+    if (pm.saved) { camera.position.copy(pm.saved.pos); camera.quaternion.copy(pm.saved.quat); camera.fov = pm.saved.fov; camera.updateProjectionMatrix(); pm.saved = null; controls.enabled = true; }
+    keepFull([]);
+  };
+  if (instant) { done(); fadeT = 0; fadeDir = 0; fader.visible = false; } else blackout(done);
+}
+const hintEl = document.getElementById("hint"), HINT_MODEL = hintEl.textContent;
+const HINT_PANO = "Glissez pour regarder autour · molette : zoom · ← → : photo précédente / suivante · flèches au sol : avancer · Échap : retour à la maquette";
+const stepPano = (d) => { if (pm.on) openPano((pm.i + d + panos.length) % panos.length); };
+
+// control bar (follows the gaze lazily) with a mini-map of the ramparts and the shots
+const panoHud = new THREE.Group(); panoHud.visible = false; scene.add(panoHud);
+const MM = (() => { // mini-map frame: fit the rampart outline in a 228 px square, north up
+  const xs = wallPts.map((w) => w.x), zs = wallPts.map((w) => w.z), x0 = Math.min(...xs), x1 = Math.max(...xs), z0 = Math.min(...zs), z1 = Math.max(...zs);
+  const k = 196 / Math.max(x1 - x0, z1 - z0);
+  return (x, z) => [16 + 16 + (x - (x0 + x1) / 2) * k + 98, 16 + 16 + (z - (z0 + z1) / 2) * k + 98];
+})();
+const panoBar = new Panel(1280, 260, 0.64, (x, P) => {
+  const p = panos[pm.i]; if (!p) return;
+  const W = P.w, H = P.h;
+  panelBg(x, W, H);
+  rr(x, 16, 16, 228, 228, 18); x.fillStyle = "rgba(255,255,255,0.05)"; x.fill();
+  x.beginPath(); wallPts.forEach((w, k) => { const [a, b] = MM(w.x, w.z); k ? x.lineTo(a, b) : x.moveTo(a, b); }); x.closePath();
+  x.fillStyle = "rgba(42,181,180,0.14)"; x.fill(); x.lineWidth = 2.5; x.strokeStyle = TEAL_L; x.stroke();
+  for (const q of panos) { const [a, b] = MM(q.m.x, q.m.z); x.beginPath(); x.arc(a, b, 3, 0, Math.PI * 2); x.fillStyle = q.run === p.run ? TEAL_L : "rgba(234,244,248,0.35)"; x.fill(); }
+  const [cx, cy] = MM(p.m.x, p.m.z);
+  if (p.north != null) { // what the visitor is facing, on the map
+    const b = pm.barGaze + view.yaw;
+    x.beginPath(); x.moveTo(cx, cy); x.arc(cx, cy, 34, b - Math.PI / 2 - 0.45, b - Math.PI / 2 + 0.45); x.closePath();
+    const g = x.createRadialGradient(cx, cy, 0, cx, cy, 34); g.addColorStop(0, "rgba(245,185,66,0.8)"); g.addColorStop(1, "rgba(245,185,66,0)"); x.fillStyle = g; x.fill();
+  }
+  x.beginPath(); x.arc(cx, cy, 8, 0, Math.PI * 2); x.fillStyle = "#f5b942"; x.fill(); x.lineWidth = 3; x.strokeStyle = "#fff"; x.stroke();
+  x.fillStyle = TEAL_L; x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillText(`PHOTO 360° · 19 JANV. 2022 · ${p.time}`, 272, 62); spaced(x, "0px");
+  x.fillStyle = "#fff"; x.font = `700 46px ${FONT}`; x.fillText(p.place, 272, 124);
+  x.fillStyle = "rgba(234,244,248,0.55)"; x.font = `500 24px ${FONT}`; x.fillText(`${p.i + 1} / ${panos.length}${p.north == null ? "" : " · orientée au nord"}`, 272, 166);
+  x.fillStyle = "rgba(234,244,248,0.4)"; x.font = `400 19px ${FONT}`; x.fillText("Joystick : photo précédente / suivante · B : retour", 272, 214);
+  const round = (X, id, glyph, fn) => {
+    const hov = P.btn(X - 42, 88, 84, 84, id, fn);
+    x.beginPath(); x.arc(X, 130, 40, 0, Math.PI * 2); x.fillStyle = hov ? "rgba(42,181,180,0.45)" : "rgba(255,255,255,0.1)"; x.fill();
+    x.fillStyle = "#fff"; x.font = `700 40px ${FONT}`; x.textAlign = "center"; x.fillText(glyph, X, 144); x.textAlign = "left";
+  };
+  round(W - 470, "prev", "‹", () => stepPano(-1));
+  round(W - 376, "play", pm.play ? "❚❚" : "▶", () => { pm.play = !pm.play; pm.playT = 0; panoBar.redraw(); });
+  round(W - 282, "next", "›", () => stepPano(1));
+  const hov = P.btn(W - 222, 92, 198, 76, "exit", () => closePano());
+  rr(x, W - 222, 92, 198, 76, 38); x.fillStyle = hov ? TEAL : "rgba(42,181,180,0.25)"; x.fill(); x.lineWidth = 3; x.strokeStyle = TEAL; x.stroke();
+  x.fillStyle = "#fff"; x.font = `600 27px ${FONT}`; x.textAlign = "center"; x.fillText("Maquette", W - 123, 139); x.textAlign = "left";
+});
+panoBar.mesh.position.set(0, -0.42, -0.9); panoBar.mesh.rotation.x = -0.44; panoHud.add(panoBar.mesh);
+
+// walk-through arrows on the floor, towards the neighbouring shots
+const arrowG = new THREE.Group(); arrowG.visible = false; scene.add(arrowG);
+const chevGeo = (() => { const s = new THREE.Shape(); s.moveTo(0, 0.12); s.lineTo(0.1, -0.02); s.lineTo(0.05, -0.02); s.lineTo(0, 0.05); s.lineTo(-0.05, -0.02); s.lineTo(-0.1, -0.02); s.closePath(); return new THREE.ShapeGeometry(s).rotateX(-Math.PI / 2); })();
+const arrows = [];
+for (let k = 0; k < 4; k++) {
+  const g = new THREE.Group();
+  const chev = new THREE.Mesh(chevGeo, new THREE.MeshBasicMaterial({ color: 0x8ee6e4, transparent: true, opacity: 0.85, depthTest: false, depthWrite: false }));
+  chev.renderOrder = 20;
+  const c = document.createElement("canvas"); c.width = 512; c.height = 104;
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.077), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }));
+  label.renderOrder = 21; label.position.set(0, 0.07, 0.12); label.rotation.x = -0.8; chev.scale.setScalar(1.4); // +z faces the visitor; tilted up to be read from above
+  const hit = new THREE.Mesh(new THREE.CircleGeometry(0.2, 20).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ side: THREE.DoubleSide }));
+  hit.visible = false; hit.position.z = -0.05; // easy target around the chevron
+  g.add(chev, label, hit); arrowG.add(g);
+  arrows.push({ g, chev, label, hit, c, tex, target: null, az: 0 });
+  hit.userData.arrow = label.userData.arrow = arrows[k];
+}
+function buildArrows(p) {
+  const cand = [];
+  if (p.north != null) {
+    const add = (q, name) => {
+      if (!q || cand.some((c) => c.q === q)) return;
+      const dx = q.m.x - p.m.x, dz = q.m.z - p.m.z, dist = Math.hypot(dx, dz); if (dist < 1.5 || dist > 60) return;
+      const az = Math.atan2(dx, -dz);
+      if (cand.some((c) => Math.abs(((c.az - az + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) < 0.35)) return; // same direction as a closer one
+      cand.push({ q, az, dist, name });
+    };
+    add(panos[p.i + 1], "Suivante"); add(panos[p.i - 1], "Précédente");
+    panos.filter((q) => q !== p).sort((a, b) => a.m.distanceTo(p.m) - b.m.distanceTo(p.m)).slice(0, 6).forEach((q) => add(q, q.place));
+  }
+  arrows.forEach((a, k) => {
+    const c = cand[k]; a.target = c ? c.q : null; a.g.visible = !!c; if (!c) return;
+    a.az = c.az;
+    const x = a.c.getContext("2d"); x.clearRect(0, 0, 512, 104);
+    rr(x, 2, 2, 508, 100, 50); x.fillStyle = "rgba(8,23,38,0.85)"; x.fill(); x.lineWidth = 3; x.strokeStyle = TEAL_L; x.stroke();
+    x.fillStyle = "#fff"; x.font = `600 34px ${FONT}`; x.textAlign = "center";
+    const name = c.name.length > 20 ? c.name.slice(0, 19) + "…" : c.name;
+    x.fillText(`${name} · ${Math.round(c.dist)} m`, 256, 64); a.tex.needsUpdate = true;
+  });
+}
+function updatePano(dt) {
+  panoSphere.position.copy(camPos);
+  const gy = gazeAz(), hy = Math.atan2(-_v.x, -_v.z);
+  const d = ((hy - pm.hudYaw + 3 * Math.PI) % (2 * Math.PI)) - Math.PI;
+  if (Math.abs(d) > 0.9) pm.follow = true;
+  if (pm.follow) { pm.hudYaw += d * (1 - Math.exp(-dt * 4)); if (Math.abs(d) < 0.05) pm.follow = false; }
+  panoHud.position.copy(camPos); panoHud.rotation.y = pm.hudYaw;
+  arrowG.position.set(camPos.x, camPos.y - 1.45, camPos.z);
+  for (const a of arrows) if (a.g.visible) {
+    const azW = a.az - view.yaw; // model bearing → world bearing (the table may be turned)
+    a.g.position.set(Math.sin(azW) * 1.3, 0, -Math.cos(azW) * 1.3); a.g.rotation.y = -azW;
+    a.chev.material.opacity = a === hoverArrow ? 1 : 0.7 + 0.15 * Math.sin(T * 3);
+  }
+  pm.barT += dt;
+  if (panos[pm.i] && panos[pm.i].north != null && pm.barT > 0.15 && Math.abs(((gy - pm.barGaze + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) > 0.07) { pm.barGaze = gy; pm.barT = 0; panoBar.redraw(); }
+  if (pm.play) { pm.playT += dt; if (pm.playT > 9) { pm.playT = 0; stepPano(1); } }
+}
+let hoverArrow = null;
+
 // ── input: controllers (VR/AR) ──────────────────────────────────────────────────────────────────────
 const raycaster = new THREE.Raycaster();
 const _m4 = new THREE.Matrix4(), _v = new THREE.Vector3(), _w = new THREE.Vector3(), _plane = new THREE.Plane();
@@ -554,15 +775,26 @@ function aim(obj) {
 }
 function pick() {
   const objs = [];
-  for (const P of panels) if (P.interactive && P.mesh.visible) objs.push(P.mesh);
-  if (layers.pins) for (const p of pois) if (p.g.visible) objs.push(p.hit, p.label);
+  if (pm.on) { // inside a 360° photo: only its bar and floor arrows
+    objs.push(panoBar.mesh); for (const a of arrows) if (a.g.visible) objs.push(a.hit, a.label);
+  } else {
+    for (const P of panels) if (P.interactive && P.mesh.visible && P !== panoBar) objs.push(P.mesh);
+    if (layers.pins) for (const p of pois) if (p.g.visible) objs.push(p.hit, p.label);
+    if (layers.panos) { for (const p of panos) if (p.g.visible) objs.push(p.hit); for (const r of panoRuns) if (r.g.visible) objs.push(r.hit); }
+  }
   const h = raycaster.intersectObjects(objs, false)[0]; if (!h) return null;
   const u = h.object.userData;
   if (u.panel) return { point: h.point, panel: u.panel, region: u.panel.regionAt(h.uv) };
+  if (u.arrow) return { point: h.point, arrow: u.arrow };
+  if (u.pano) return { point: h.point, pano: u.pano };
+  if (u.run) return { point: h.point, run: u.run };
   return { point: h.point, poi: u.poi };
 }
 function activate(h) {
   if (h.panel) { if (h.region) h.region.fn(); return; }
+  if (h.arrow) { if (h.arrow.target) openPano(h.arrow.target.i); return; }
+  if (h.pano) { openPano(h.pano.i); return; }
+  if (h.run) { openPano(h.run.items[0].i); return; }
   if (h.poi) { stopTour(); selectPOI(h.poi.i); }
 }
 function discPoint(limit = true) { // current ray ∩ the plinth plane, in stand space
@@ -581,10 +813,11 @@ for (let i = 0; i < 2; i++) {
   ctrl.addEventListener("selectstart", () => {
     aim(ctrl); const h = pick();
     if (h) { activate(h); return; }
+    if (pm.on) return;
     const q = discPoint(); if (q) { pan = { ctrl, m0: mapAt(q) }; stopTour(); }
   });
   ctrl.addEventListener("selectend", () => { if (pan && pan.ctrl === ctrl) pan = null; });
-  ctrl.addEventListener("squeezestart", () => { grab = { ctrl, off: rig.position.clone().sub(_v.setFromMatrixPosition(ctrl.matrixWorld)) }; });
+  ctrl.addEventListener("squeezestart", () => { if (!pm.on) grab = { ctrl, off: rig.position.clone().sub(_v.setFromMatrixPosition(ctrl.matrixWorld)) }; });
   ctrl.addEventListener("squeezeend", () => { if (grab && grab.ctrl === ctrl) grab = null; });
   scene.add(ctrl); controllers.push(ctrl);
 }
@@ -595,13 +828,20 @@ function xrInput(dt) {
   for (const src of s.inputSources) {
     const gp = src.gamepad; if (!gp) continue;
     const ax = gp.axes[2] ?? 0, ay = gp.axes[3] ?? 0;
-    if (Math.abs(ax) > 0.2) turn += ax; if (Math.abs(ay) > 0.2) zoom += ay;
     const a = !!gp.buttons[4]?.pressed, b = !!gp.buttons[5]?.pressed, prev = btnPrev.get(src) || {};
-    if (a && !prev.a) { stopTour(); selectPOI(sel >= 0 ? (sel + 1) % pois.length : 0); }
-    if (b && !prev.b) resetView();
-    btnPrev.set(src, { a, b });
+    const flick = ax > 0.7 ? 1 : ax < -0.7 ? -1 : 0;
+    if (pm.on) { // in a 360° photo: flick the stick to walk on, A = next, B = back to the model
+      if (flick && flick !== prev.flick) stepPano(flick);
+      if (a && !prev.a) stepPano(1);
+      if (b && !prev.b) closePano();
+    } else {
+      if (Math.abs(ax) > 0.2) turn += ax; if (Math.abs(ay) > 0.2) zoom += ay;
+      if (a && !prev.a) { stopTour(); selectPOI(sel >= 0 ? (sel + 1) % pois.length : 0); }
+      if (b && !prev.b) resetView();
+    }
+    btnPrev.set(src, { a, b, flick });
   }
-  steer(turn, zoom, dt);
+  if (!pm.on) steer(turn, zoom, dt);
 }
 function steer(turn, zoom, dt) {
   if (!turn && !zoom) return;
@@ -615,6 +855,12 @@ const ndc = new THREE.Vector2(); let mouse = false, drag = null;
 const setNDC = (e) => ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
 const keys = new Set();
 addEventListener("keydown", (e) => {
+  if (pm.on) {
+    if (e.key === "ArrowLeft" || e.key === "ArrowRight") { if (!e.repeat) stepPano(e.key === "ArrowRight" ? 1 : -1); e.preventDefault(); }
+    if (e.key === "Escape") closePano();
+    if (e.key === " ") { pm.play = !pm.play; pm.playT = 0; panoBar.redraw(); e.preventDefault(); }
+    return;
+  }
   if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); }
   if (e.key === "n") { stopTour(); selectPOI(sel >= 0 ? (sel + 1) % pois.length : 0); }
   if (e.key === "r") resetView();
@@ -625,6 +871,7 @@ renderer.domElement.addEventListener("pointerdown", (e) => { // registered befor
   setNDC(e); raycaster.setFromCamera(ndc, camera);
   const h = pick();
   if (h) { drag = { type: "click", hit: h, x: e.clientX, y: e.clientY }; controls.enabled = false; return; }
+  if (pm.on) { drag = { type: "look", x: e.clientX, y: e.clientY }; return; }
   const q = discPoint();
   if (q) { drag = { type: "pan", m0: mapAt(q) }; controls.enabled = false; stopTour(); }
   else drag = { type: "orbit" };
@@ -632,14 +879,20 @@ renderer.domElement.addEventListener("pointerdown", (e) => { // registered befor
 renderer.domElement.addEventListener("pointermove", (e) => {
   setNDC(e); mouse = true;
   if (drag && drag.type === "pan") { raycaster.setFromCamera(ndc, camera); const q = discPoint(false); if (q) panTo(drag.m0, q); }
+  if (drag && drag.type === "look") { // drag the photo around
+    pm.look.yaw += (e.clientX - drag.x) * 0.0035; pm.look.pitch = THREE.MathUtils.clamp(pm.look.pitch + (e.clientY - drag.y) * 0.0035, -1.3, 1.3);
+    drag.x = e.clientX; drag.y = e.clientY;
+  }
 });
 renderer.domElement.addEventListener("pointerleave", () => { mouse = false; });
 addEventListener("pointerup", (e) => {
   if (drag && drag.type === "click" && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) < 6) activate(drag.hit);
-  drag = null; controls.enabled = true;
+  drag = null; controls.enabled = !pm.on;
 });
 renderer.domElement.addEventListener("wheel", (e) => {
-  e.preventDefault(); stopTour();
+  e.preventDefault();
+  if (pm.on) { camera.fov = THREE.MathUtils.clamp(camera.fov + e.deltaY * 0.04, 35, 95); camera.updateProjectionMatrix(); return; }
+  stopTour();
   goal.zoom = THREE.MathUtils.clamp(goal.zoom * Math.exp(-e.deltaY * 0.0015), ZOOM_MIN, ZOOM_MAX);
 }, { passive: false });
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -654,11 +907,12 @@ if (navigator.xr) {
   navigator.xr.isSessionSupported("immersive-vr").then((ok) => { btnVR.disabled = !ok; }).catch(() => {});
   navigator.xr.isSessionSupported("immersive-ar").then((ok) => { btnAR.disabled = !ok; }).catch(() => {});
 }
+let arMode = false;
 async function startXR(mode) {
   if (renderer.xr.isPresenting) { renderer.xr.getSession().end(); return; }
   try {
     const s = await navigator.xr.requestSession(mode, { optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking", "layers"] });
-    env.visible = mode === "immersive-vr";
+    arMode = mode === "immersive-ar"; env.visible = !arMode && !pm.on;
     renderer.setClearAlpha(mode === "immersive-ar" ? 0 : 1);
     await renderer.xr.setSession(s);
   } catch (err) { console.warn(err); }
@@ -671,7 +925,8 @@ renderer.xr.addEventListener("sessionstart", () => {
   xrCam = renderer.xr.getCamera(); tiles.deleteCamera(camera); tiles.setCamera(xrCam);
 });
 renderer.xr.addEventListener("sessionend", () => {
-  Scheduler.setXRSession(null);
+  Scheduler.setXRSession(null); arMode = false;
+  if (pm.on) closePano(true);
   if (xrCam) tiles.deleteCamera(xrCam); xrCam = null; tiles.setCamera(camera);
   env.visible = true; renderer.setClearAlpha(1); camera.position.copy(DESK_CAM); controls.update();
 });
@@ -715,7 +970,8 @@ function frame() {
 
   // input
   if (xr) xrInput(dt);
-  steer((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0), (keys.has("ArrowDown") ? 1 : 0) - (keys.has("ArrowUp") ? 1 : 0), dt);
+  if (!pm.on) steer((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0), (keys.has("ArrowDown") ? 1 : 0) - (keys.has("ArrowUp") ? 1 : 0), dt);
+  else if (!xr) camera.rotation.set(pm.look.pitch, pm.look.yaw, 0, "YXZ");
   if (grab) { rig.position.copy(_v.setFromMatrixPosition(grab.ctrl.matrixWorld)).add(grab.off); floorU.uC.value.set(rig.position.x, rig.position.z); }
   if (pan) { aim(pan.ctrl); const q = discPoint(false); if (q) panTo(pan.m0, q); }
   if (tour.on) { tour.t += dt; goal.yaw -= dt * 0.07; if (tour.t > 11) { tour.t = 0; selectPOI((sel + 1) % pois.length, 3); } }
@@ -761,6 +1017,22 @@ function frame() {
     const m = mapAt(drone.position); U.uDrone.value.set(m.x, m.z, r / K, 1);
   } else U.uDrone.value.w = 0;
 
+  // 360° markers: one per photo when zoomed in, one per place when zoomed out
+  const showPanos = layers.panos && !pm.on, fine = view.zoom >= 2.2;
+  const placeMarker = (g, m, show, hov) => {
+    const dx = m.x - view.cx, dz = m.z - view.cz;
+    g.visible = show && Math.hypot(dx, dz) < WIN * 0.96; if (!g.visible) return;
+    g.position.set(dx * K, Math.max(0, (m.y - BASE_Y) * K) + 0.009, dz * K); g.scale.setScalar(hov ? 1.4 : 1);
+  };
+  for (const p of panos) placeMarker(p.g, p.m, showPanos && fine, p === hoverPanoItem);
+  for (const r of panoRuns) placeMarker(r.g, r.m, showPanos && !fine, r === hoverPanoItem);
+  if (hoverPanoItem && hoverPanoItem.g.visible) {
+    if (tipFor !== hoverPanoItem) { tipFor = hoverPanoItem; tip.redraw(); }
+    hoverPanoItem.g.getWorldPosition(_a); tip.mesh.position.set(_a.x, _a.y + 0.075, _a.z);
+    tip.mesh.rotation.set(0, Math.atan2(camPos.x - _a.x, camPos.z - _a.z), 0); tip.mesh.visible = true;
+  } else { tip.mesh.visible = false; tipFor = null; }
+  if (pm.on) updatePano(dt);
+
   // panels face the visitor (yaw only)
   for (const P of [menu, card, title]) {
     P.mesh.getWorldPosition(_a);
@@ -772,7 +1044,7 @@ function frame() {
   U.uMapInv.value.copy(map.matrixWorld).invert();
 
   // leader from the card to the selected pin
-  beads.visible = card.mesh.visible && sel >= 0 && pois[sel].g.visible;
+  beads.visible = !pm.on && card.mesh.visible && sel >= 0 && pois[sel].g.visible;
   if (beads.visible) {
     card.mesh.localToWorld(_a.set(-card.mesh.geometry.parameters.width / 2, 0, 0));
     pois[sel].head.getWorldPosition(_b);
@@ -794,12 +1066,20 @@ function frame() {
   }
   setHover(hit);
   if (xr) { reticle.visible = !!hit; if (hit) reticle.position.copy(hit.point); }
-  else renderer.domElement.style.cursor = hit && (hit.poi || hit.region) ? "pointer" : drag && drag.type === "pan" ? "grabbing" : "";
+  else renderer.domElement.style.cursor = hit && (hit.poi || hit.region || hit.pano || hit.run || hit.arrow) ? "pointer" : drag && (drag.type === "pan" || drag.type === "look") ? "grabbing" : pm.on ? "grab" : "";
+
+  // fade through black between the model and the photos
+  if (fadeDir) {
+    fadeT = THREE.MathUtils.clamp(fadeT + fadeDir * dt * 5, 0, 1);
+    if (fadeT === 1 && fadeDir > 0) { const f = fadeFn; fadeFn = null; fadeDir = -1; if (f) f(); }
+    else if (fadeT === 0 && fadeDir < 0) fadeDir = 0;
+  }
+  fader.visible = fadeT > 0; fader.material.opacity = fadeT; fader.position.copy(camPos);
 
   // tiles
   if (xr && xrCam) { const vp = xrCam.cameras[0] && xrCam.cameras[0].viewport; if (vp && vp.z) tiles.setResolution(xrCam, vp.z, vp.w); }
-  else { tiles.setResolutionFromRenderer(camera, renderer); controls.update(); }
-  tiles.update();
+  else { tiles.setResolutionFromRenderer(camera, renderer); if (!pm.on) controls.update(); }
+  if (!pm.on) tiles.update(); // the model is hidden while inside a photo
 
   const pct = Math.round(tiles.loadProgress * 100);
   if (pct !== lastPct) {
@@ -815,6 +1095,8 @@ renderer.setAnimationLoop(frame);
 
 function setHover(h) {
   hoverPoi = h && h.poi ? h.poi : null;
+  hoverPanoItem = h ? h.pano || h.run || null : null;
+  hoverArrow = h && h.arrow ? h.arrow : null;
   const P = h && h.panel ? h.panel : null, id = P && h.region ? h.region.id : null;
   if (hoverPanel && hoverPanel !== P) hoverPanel.setHover(null);
   if (P) P.setHover(id);
@@ -822,8 +1104,49 @@ function setHover(h) {
 }
 
 if (DBG) window.CITE = {
-  THREE, Scheduler, tiles, view, goal, pois, wallPts, layers, map, stand, rig, camera, renderer, scene, U, controls, selectPOI, resetView, startTour, sampleHeight,
+  THREE, Scheduler, tiles, view, panos, panoRuns, openPano, closePano, pm, arrows, goal, pois, wallPts, layers, map, stand, rig, camera, renderer, scene, U, controls, selectPOI, resetView, startTour, sampleHeight,
   get K() { return K; }, get WIN() { return WIN; }, CX, CZ,
+  screenToMap(px, py) { // debug: page pixel → map metres (x east, z south) on the plinth plane
+    raycaster.setFromCamera(new THREE.Vector2((px / innerWidth) * 2 - 1, -(py / innerHeight) * 2 + 1), camera);
+    const q = discPoint(false); if (!q) return null; const m = mapAt(q); return { x: +m.x.toFixed(1), z: +m.z.toFixed(1) };
+  },
+  mapToScreen(x, z, y = BASE_Y) { const v = map.localToWorld(new THREE.Vector3(x, y, z)).project(camera); return { px: Math.round((v.x + 1) / 2 * innerWidth), py: Math.round((1 - v.y) / 2 * innerHeight) }; },
+  // debug: 360° render from a point in the model (north at the centre), to place photos that carry no GPS
+  async equirect(x, z, h = null, size = 768) {
+    renderer.setAnimationLoop(null);
+    Object.assign(goal, { cx: x, cz: z, zoom: 1, yaw: 0 }); Object.assign(view, goal); applyView();
+    for (const k of ["scan", "drone", "walls", "pins", "contour"]) layers[k] = false;
+    U.uScan.value = 0; U.uDrone.value.w = 0; wallsG.visible = false; pinsG.visible = false; drone.visible = cone.visible = false; U.uSel.value.w = 0;
+    [menu, card, title, scaleP].forEach((P) => (P.mesh.visible = false));
+    scene.updateMatrixWorld();
+    if (h == null) h = (sampleHeight(x, z) ?? BASE_Y + 10) + 1.6;
+    const rt = new THREE.WebGLCubeRenderTarget(size); const cube = new THREE.CubeCamera(0.0003, 80, rt);
+    cube.position.copy(map.localToWorld(new THREE.Vector3(x, h, z))); scene.add(cube); cube.updateMatrixWorld(true);
+    for (const c of cube.children) { tiles.setCamera(c); tiles.setResolution(c, size, size); }
+    for (let n = 0, quiet = 0; n < 300 && quiet < 8; n++) {
+      scene.updateMatrixWorld(); U.uMapInv.value.copy(map.matrixWorld).invert(); tiles.update();
+      quiet = tiles.loadProgress >= 1 ? quiet + 1 : 0; await new Promise((r) => setTimeout(r, 50));
+    }
+    U.uMapInv.value.copy(map.matrixWorld).invert(); U.uWin.value.set(view.cx, view.cz, WIN);
+    cube.update(renderer, scene);
+    for (const c of cube.children) tiles.deleteCamera(c); scene.remove(cube);
+    const q = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({
+      uniforms: { tCube: { value: rt.texture } }, depthTest: false,
+      vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }",
+      fragmentShader: "uniform samplerCube tCube; varying vec2 vUv; void main(){ float lon = (vUv.x - 0.5) * 6.2831853; float lat = (vUv.y - 0.5) * 3.1415927; vec3 d = vec3(sin(lon) * cos(lat), sin(lat), -cos(lon) * cos(lat)); gl_FragColor = textureCube(tCube, d); }",
+    }));
+    const qs = new THREE.Scene(); qs.add(q); renderer.setSize(1400, 700); renderer.render(qs, new THREE.OrthographicCamera());
+    return { x, z, h: +h.toFixed(1), loaded: tiles.loadProgress };
+  },
+  async bakePanos() { // heights of the 360° markers (roof or ground under each shot) → panos.json "h"
+    const settle = async () => { for (let n = 0, quiet = 0; n < 400 && quiet < 6; n++) { applyView(); scene.updateMatrixWorld(); tiles.update(); quiet = tiles.loadProgress >= 1 ? quiet + 1 : 0; await new Promise((r) => setTimeout(r, 60)); } };
+    const out = {};
+    for (const r of panoRuns) {
+      Object.assign(goal, { cx: r.m.x, cz: r.m.z, zoom: 4 }); Object.assign(view, goal); await settle();
+      for (const p of r.items) { const y = sampleHeight(p.m.x, p.m.z, 1.5); if (y != null) out[p.id] = +y.toFixed(1); }
+    }
+    resetView(); return out;
+  },
   async pump(ms = 2000) { const end = performance.now() + ms; while (performance.now() < end) { frame(); await new Promise((r) => setTimeout(r, 30)); } },
   // bake heights: zoom on each landmark (and around the ramparts), wait for the tiles, sample
   async bake() {

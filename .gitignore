@@ -75,6 +75,7 @@ quest-local/app/src/main/assets/www/
 
 # Cité VR viewer: the 418 MB drone model and the bundler workspace stay local
 cite-vr/www/model/
+cite-vr/www/panos/
 cite-vr/.build/node_modules/
 # offline Cité APK: build dirs + staged assets (regenerate with scripts/build-cite-apk.mjs)
 cite-vr/android/.gradle/

@@ -1,5 +1,5 @@
 // Stages the Cité portugaise VR viewer into the offline Quest APK (cite-vr/android/app/src/main/assets/www):
-// the viewer files + vendored libs, and the drone model (cite-vr/www/model, ~420 MB) as an APFS clone so
+// the viewer files + vendored libs, the drone model (cite-vr/www/model, ~420 MB) and the 360° photos as APFS clones so
 // staging costs no disk space. Also draws the launcher icon from the fortress outline in pois.json.
 // Then build:  cd cite-vr/android && ./gradlew assembleRelease
 import { readFile, mkdir, cp, rm, writeFile, readdir, stat } from "node:fs/promises";
@@ -17,9 +17,10 @@ const WWW = join(APP, "assets/www");
 if (!existsSync(join(SRC, "model/tileset.json"))) throw new Error("cite-vr/www/model is missing (unzip cite_portugaise.zip there)");
 await rm(WWW, { recursive: true, force: true });
 await mkdir(WWW, { recursive: true });
-for (const f of ["index.html", "app.js", "pois.json"]) await cp(join(SRC, f), join(WWW, f));
+for (const f of ["index.html", "app.js", "pois.json", "panos.json"]) await cp(join(SRC, f), join(WWW, f));
 await cp(join(SRC, "vendor"), join(WWW, "vendor"), { recursive: true });
 execFileSync("cp", ["-Rc", join(SRC, "model"), join(WWW, "model")]); // copy-on-write clone
+if (existsSync(join(SRC, "panos"))) execFileSync("cp", ["-Rc", join(SRC, "panos"), join(WWW, "panos")]); // 360° photos (scripts/build-cite-panos.mjs)
 
 async function du(dir) { let n = 0, b = 0; for (const e of await readdir(dir, { withFileTypes: true, recursive: true })) if (e.isFile()) { n++; b += (await stat(join(e.parentPath ?? e.path, e.name))).size; } return { n, b }; }
 const { n, b } = await du(WWW);
