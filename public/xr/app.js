@@ -719,6 +719,15 @@ if (audioBtn) audioBtn.addEventListener("click", (e) => {
   audioBtn.textContent = toggleAmbient() ? "♪ Son" : "♪ Muet";
 });
 
+// ── fresh deploys: the SW is cache-first, so a page opened just after a deploy runs the old
+// files while the new worker installs. When that worker takes over, reload once (after VR exit).
+if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    const go = () => location.reload();
+    if (renderer.xr.isPresenting) renderer.xr.addEventListener("sessionend", go, { once: true }); else go();
+  }, { once: true });
+}
+
 // ── loop ────────────────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();
 let elapsed = 0, hoveredHit = null;
