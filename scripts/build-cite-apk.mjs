@@ -18,7 +18,7 @@ if (!existsSync(join(SRC, "model/tileset.json"))) throw new Error("cite-vr/www/m
 await rm(WWW, { recursive: true, force: true });
 await mkdir(WWW, { recursive: true });
 for (const f of ["index.html", "app.js", "pois.json", "panos.json"]) await cp(join(SRC, f), join(WWW, f));
-await cp(join(SRC, "vendor"), join(WWW, "vendor"), { recursive: true });
+for (const d of ["vendor", "audio", "img"]) await cp(join(SRC, d), join(WWW, d), { recursive: true }); // libs, music + UI sounds, logo
 execFileSync("cp", ["-Rc", join(SRC, "model"), join(WWW, "model")]); // copy-on-write clone
 if (existsSync(join(SRC, "panos"))) execFileSync("cp", ["-Rc", join(SRC, "panos"), join(WWW, "panos")]); // 360° photos (scripts/build-cite-panos.mjs)
 

@@ -259,7 +259,45 @@ function panelBg(x, W, H, accent = TEAL) {
 // layer state
 const layers = { pins: true, panos: true, walls: true, scan: true, contour: false, drone: true };
 const tour = { on: false, t: 0 };
-let hoverPoi = null, hoverPanel = null;
+let hoverPoi = null, hoverPanel = null, arMode = false;
+
+// ── sound: background music (Magnific / Lyria, looped with a crossfade) + UI effects ────────────────
+// Everything starts on the first gesture (browsers keep audio locked until then).
+const audio = { ctx: null, on: { music: true, sfx: true }, buf: {}, music: null, sfxOut: null, lastHover: 0, hoverKey: null, alt: 0 };
+const MUSIC_VOL = 0.5, LOOP_FROM = 8, XFADE = 6; // later passes skip the soft intro; 6 s crossfade between passes
+function initAudio() {
+  if (audio.ctx) { if (audio.ctx.state === "suspended") audio.ctx.resume(); return; }
+  const Ctx = window.AudioContext || window.webkitAudioContext; if (!Ctx) return;
+  const ctx = audio.ctx = new Ctx();
+  audio.music = ctx.createGain(); audio.music.gain.value = 0; audio.music.connect(ctx.destination);
+  audio.sfxOut = ctx.createGain(); audio.sfxOut.gain.value = 0.9; audio.sfxOut.connect(ctx.destination);
+  const load = (n) => fetch(`./audio/${n}.mp3`).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((d) => (audio.buf[n] = d));
+  ["hover1", "hover2", "click", "select", "whoosh"].forEach((n) => load(n).catch(() => {}));
+  load("music").then(() => { musicPass(0); setSound("music", audio.on.music); }).catch(() => {});
+}
+function musicPass(offset) {
+  const ctx = audio.ctx, b = audio.buf.music, src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = b; src.connect(g); g.connect(audio.music);
+  const t = ctx.currentTime, dur = b.duration - offset;
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + (offset ? XFADE : 3));
+  g.gain.setValueAtTime(1, t + dur - XFADE); g.gain.linearRampToValueAtTime(0, t + dur);
+  src.start(t, offset);
+  setTimeout(() => musicPass(LOOP_FROM), (dur - XFADE) * 1000);
+}
+function setSound(k, on) {
+  audio.on[k] = on; menu.redraw();
+  if (k === "music" && audio.ctx) audio.music.gain.setTargetAtTime(on ? MUSIC_VOL : 0, audio.ctx.currentTime, 0.6);
+}
+function sfx(name, vol = 1) {
+  if (!audio.ctx || !audio.on.sfx || !audio.buf[name]) return;
+  const s = audio.ctx.createBufferSource(), g = audio.ctx.createGain();
+  s.buffer = audio.buf[name]; s.playbackRate.value = 0.96 + Math.random() * 0.08; g.gain.value = vol;
+  s.connect(g); g.connect(audio.sfxOut); s.start();
+}
+function haptic(ctrl, strength, ms) {
+  const src = ctrl && ctrl.userData.source, act = src && src.gamepad && src.gamepad.hapticActuators && src.gamepad.hapticActuators[0];
+  if (act && act.pulse) act.pulse(strength, ms).catch(() => {});
+}
 const LAYER_ROWS = [
   ["pins", "Points d’intérêt", "12 lieux de la cité"],
   ["panos", "Photos 360°", `${PANO.panos.length} vues immersives · janvier 2022`],
@@ -268,11 +306,15 @@ const LAYER_ROWS = [
   ["contour", "Altimétrie", "Teinte hypsométrique · courbes 2 m"],
   ["drone", "Drone de relevé", "Acquisition photogrammétrique"],
 ];
-const menu = new Panel(560, 1176, 0.25, (x, P) => {
+const logoImg = new Image(); logoImg.onload = () => menu.redraw(); logoImg.src = "./img/etafat-logo-dark.png";
+const xrSupport = { vr: false, ar: false };
+const menu = new Panel(560, 1440, 0.25, (x, P) => {
   const W = P.w, H = P.h;
   panelBg(x, W, H);
-  x.font = `700 26px ${FONT}`; spaced(x, "5px"); x.fillStyle = TEAL_L; x.fillText("CALQUES", 40, 72); spaced(x, "0px");
-  let y = 100;
+  if (logoImg.complete && logoImg.naturalWidth) { const h = 120, w = h * logoImg.naturalWidth / logoImg.naturalHeight; x.drawImage(logoImg, (W - w) / 2, 26, w, h); }
+  x.fillStyle = "rgba(142,230,228,0.25)"; x.fillRect(40, 168, W - 80, 2);
+  x.font = `700 26px ${FONT}`; spaced(x, "5px"); x.fillStyle = TEAL_L; x.fillText("CALQUES", 40, 210); spaced(x, "0px");
+  let y = 232;
   for (const [key, label, sub] of LAYER_ROWS) {
     const on = layers[key], hov = P.btn(22, y, W - 44, 88, key, () => { layers[key] = !layers[key]; P.redraw(); });
     if (hov) { rr(x, 22, y, W - 44, 88, 20); x.fillStyle = "rgba(42,181,180,0.16)"; x.fill(); }
@@ -299,7 +341,25 @@ const menu = new Panel(560, 1176, 0.25, (x, P) => {
   };
   bigBtn("tour", tour.on ? "■  Arrêter la visite" : "▶  Visite guidée", tour.on, () => (tour.on ? stopTour() : startTour()));
   bigBtn("reset", "⟲  Vue d’ensemble", false, () => resetView());
-  y += 14;
+  // expérience: VR ⇄ AR (also from inside the headset) + music / sound effects
+  x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText("EXPÉRIENCE", 40, y + 22); spaced(x, "0px"); y += 40;
+  const cur = renderer.xr.isPresenting ? (arMode ? "ar" : "vr") : null;
+  rr(x, 40, y, W - 80, 72, 36); x.lineWidth = 3; x.strokeStyle = TEAL; x.stroke();
+  for (const [k, mode, X] of [["vr", "immersive-vr", 40], ["ar", "immersive-ar", W / 2]]) {
+    const ok = xrSupport[k], on = cur === k, id = "mode-" + k;
+    const hov = ok && !on && P.btn(X, y, W / 2 - 40, 72, id, () => switchXR(mode));
+    if (on || hov) { x.save(); rr(x, 40, y, W - 80, 72, 36); x.clip(); x.fillStyle = on ? TEAL : "rgba(42,181,180,0.25)"; x.fillRect(X, y, W / 2 - 40, 72); x.restore(); }
+    const label = on ? (k === "vr" ? "Réalité virtuelle" : "Passthrough (AR)") : `${cur ? "Passer" : "Entrer"} en ${k.toUpperCase()}`;
+    x.fillStyle = ok ? "#fff" : "rgba(234,244,248,0.3)"; x.font = `600 25px ${FONT}`; x.textAlign = "center"; x.fillText(label, X + (W / 2 - 40) / 2, y + 45); x.textAlign = "left";
+  }
+  y += 88;
+  for (const [k, label, X] of [["music", "Musique", 40], ["sfx", "Effets sonores", W / 2 + 8]]) {
+    const on = audio.on[k], w = W / 2 - 48, hov = P.btn(X, y, w, 62, "snd-" + k, () => setSound(k, !audio.on[k]));
+    rr(x, X, y, w, 62, 31); x.fillStyle = hov ? "rgba(42,181,180,0.25)" : "rgba(255,255,255,0.07)"; x.fill();
+    x.beginPath(); x.arc(X + 32, y + 31, 10, 0, Math.PI * 2); x.fillStyle = on ? TEAL_L : "rgba(234,244,248,0.25)"; x.fill();
+    x.fillStyle = on ? "#fff" : "rgba(234,244,248,0.5)"; x.font = `600 24px ${FONT}`; x.fillText(label, X + 54, y + 40);
+  }
+  y += 92;
   x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText("LÉGENDE", 40, y); spaced(x, "0px"); y += 22;
   Object.values(CAT).forEach((c, i) => {
     const X = 40 + (i % 2) * 245, Y = y + Math.floor(i / 2) * 50 + 22;
@@ -310,7 +370,7 @@ const menu = new Panel(560, 1176, 0.25, (x, P) => {
   x.fillText("Gâchette : choisir · maintenir + glisser : déplacer la vue", 40, H - 62);
   x.fillText("Joystick : tourner / zoomer · Grip : déplacer la maquette", 40, H - 34);
 });
-menu.mesh.position.set(-(DISC_R + 0.3), 0.32, 0.08); rig.add(menu.mesh);
+menu.mesh.position.set(-(DISC_R + 0.3), 0.38, 0.08); rig.add(menu.mesh);
 
 let sel = -1;
 const card = new Panel(1000, 600, 0.44, (x, P) => {
@@ -632,7 +692,7 @@ function orientPano(p) {
   panoSphere.rotation.y = p.north != null ? (p.north - 0.75) * 2 * Math.PI + view.yaw : -Math.PI / 2 - gazeAz();
 }
 function openPano(i) {
-  stopTour(); pm.play = pm.play && pm.on;
+  stopTour(); pm.play = pm.play && pm.on; sfx("whoosh", pm.on ? 0.35 : 0.55);
   blackout(() => {
     const p = panos[i], first = !pm.on;
     pm.on = true; pm.i = i; pm.playT = 0;
@@ -655,7 +715,7 @@ function closePano(instant = false) {
     if (pm.saved) { camera.position.copy(pm.saved.pos); camera.quaternion.copy(pm.saved.quat); camera.fov = pm.saved.fov; camera.updateProjectionMatrix(); pm.saved = null; controls.enabled = true; }
     keepFull([]);
   };
-  if (instant) { done(); fadeT = 0; fadeDir = 0; fader.visible = false; } else blackout(done);
+  if (instant) { done(); fadeT = 0; fadeDir = 0; fader.visible = false; } else { sfx("whoosh", 0.45); blackout(done); }
 }
 const hintEl = document.getElementById("hint"), HINT_MODEL = hintEl.textContent;
 const HINT_PANO = "Glissez pour regarder autour · molette : zoom · ← → : photo précédente / suivante · flèches au sol : avancer · Échap : retour à la maquette";
@@ -790,12 +850,13 @@ function pick() {
   if (u.run) return { point: h.point, run: u.run };
   return { point: h.point, poi: u.poi };
 }
-function activate(h) {
-  if (h.panel) { if (h.region) h.region.fn(); return; }
+function activate(h, ctrl) {
+  if (h.panel) { if (h.region) { sfx("click", 0.8); haptic(ctrl, 0.45, 30); h.region.fn(); } return; }
+  haptic(ctrl, 0.5, 35);
   if (h.arrow) { if (h.arrow.target) openPano(h.arrow.target.i); return; }
   if (h.pano) { openPano(h.pano.i); return; }
   if (h.run) { openPano(h.run.items[0].i); return; }
-  if (h.poi) { stopTour(); selectPOI(h.poi.i); }
+  if (h.poi) { sfx("select", 0.55); stopTour(); selectPOI(h.poi.i); }
 }
 function discPoint(limit = true) { // current ray ∩ the plinth plane, in stand space
   stand.getWorldPosition(_w); _plane.set(_v.set(0, 1, 0), -_w.y);
@@ -810,9 +871,12 @@ for (let i = 0; i < 2; i++) {
   const ctrl = renderer.xr.getController(i);
   const ray = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 0, -1)]), new THREE.LineBasicMaterial({ color: 0x8ee6e4, transparent: true, opacity: 0.55 }));
   ray.scale.z = 3; ctrl.add(ray); ctrl.userData.ray = ray;
+  ctrl.addEventListener("connected", (e) => { ctrl.userData.source = e.data; });
+  ctrl.addEventListener("disconnected", () => { ctrl.userData.source = null; });
   ctrl.addEventListener("selectstart", () => {
+    initAudio();
     aim(ctrl); const h = pick();
-    if (h) { activate(h); return; }
+    if (h) { activate(h, ctrl); return; }
     if (pm.on) return;
     const q = discPoint(); if (q) { pan = { ctrl, m0: mapAt(q) }; stopTour(); }
   });
@@ -855,6 +919,7 @@ const ndc = new THREE.Vector2(); let mouse = false, drag = null;
 const setNDC = (e) => ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
 const keys = new Set();
 addEventListener("keydown", (e) => {
+  initAudio();
   if (pm.on) {
     if (e.key === "ArrowLeft" || e.key === "ArrowRight") { if (!e.repeat) stepPano(e.key === "ArrowRight" ? 1 : -1); e.preventDefault(); }
     if (e.key === "Escape") closePano();
@@ -868,7 +933,7 @@ addEventListener("keydown", (e) => {
 });
 addEventListener("keyup", (e) => keys.delete(e.key));
 renderer.domElement.addEventListener("pointerdown", (e) => { // registered before OrbitControls so it can veto the orbit
-  setNDC(e); raycaster.setFromCamera(ndc, camera);
+  initAudio(); setNDC(e); raycaster.setFromCamera(ndc, camera);
   const h = pick();
   if (h) { drag = { type: "click", hit: h, x: e.clientX, y: e.clientY }; controls.enabled = false; return; }
   if (pm.on) { drag = { type: "look", x: e.clientX, y: e.clientY }; return; }
@@ -904,10 +969,9 @@ controls.update();
 // ── XR sessions ─────────────────────────────────────────────────────────────────────────────────────
 const btnVR = document.getElementById("btn-vr"), btnAR = document.getElementById("btn-ar");
 if (navigator.xr) {
-  navigator.xr.isSessionSupported("immersive-vr").then((ok) => { btnVR.disabled = !ok; }).catch(() => {});
-  navigator.xr.isSessionSupported("immersive-ar").then((ok) => { btnAR.disabled = !ok; }).catch(() => {});
+  navigator.xr.isSessionSupported("immersive-vr").then((ok) => { btnVR.disabled = !ok; xrSupport.vr = ok; menu.redraw(); }).catch(() => {});
+  navigator.xr.isSessionSupported("immersive-ar").then((ok) => { btnAR.disabled = !ok; xrSupport.ar = ok; menu.redraw(); }).catch(() => {});
 }
-let arMode = false;
 async function startXR(mode) {
   if (renderer.xr.isPresenting) { renderer.xr.getSession().end(); return; }
   try {
@@ -915,20 +979,34 @@ async function startXR(mode) {
     arMode = mode === "immersive-ar"; env.visible = !arMode && !pm.on;
     renderer.setClearAlpha(mode === "immersive-ar" ? 0 : 1);
     await renderer.xr.setSession(s);
-  } catch (err) { console.warn(err); }
+  } catch (err) {
+    console.warn(err); // e.g. the browser wanted a fresh tap: point at the 2D button
+    hintEl.textContent = `Appuyez sur « Entrer en ${mode === "immersive-ar" ? "AR" : "VR"} » pour continuer`;
+  }
 }
-btnVR.addEventListener("click", () => startXR("immersive-vr"));
-btnAR.addEventListener("click", () => startXR("immersive-ar"));
+// switching mode means ending this session and requesting the other one straight away, still inside the
+// trigger press that asked for it (WebXR select events count as a user gesture)
+let switchTo = null;
+function switchXR(mode) {
+  const s = renderer.xr.getSession();
+  if (!s) { startXR(mode); return; }
+  switchTo = mode; s.end();
+}
+btnVR.addEventListener("click", () => { initAudio(); startXR("immersive-vr"); });
+btnAR.addEventListener("click", () => { initAudio(); startXR("immersive-ar"); });
 let xrCam = null;
 renderer.xr.addEventListener("sessionstart", () => {
   Scheduler.setXRSession(renderer.xr.getSession()); // window rAF is paused in immersive mode: tile queues must tick on the session
   xrCam = renderer.xr.getCamera(); tiles.deleteCamera(camera); tiles.setCamera(xrCam);
+  menu.redraw();
 });
 renderer.xr.addEventListener("sessionend", () => {
   Scheduler.setXRSession(null); arMode = false;
   if (pm.on) closePano(true);
   if (xrCam) tiles.deleteCamera(xrCam); xrCam = null; tiles.setCamera(camera);
   env.visible = true; renderer.setClearAlpha(1); camera.position.copy(DESK_CAM); controls.update();
+  menu.redraw();
+  if (switchTo) { const m = switchTo; switchTo = null; startXR(m); }
 });
 
 // ── heights of the pins and wall line: baked in pois.json, sampled from the tiles when missing ──────
@@ -1058,13 +1136,13 @@ function frame() {
   }
 
   // pointer hover (controller rays in XR, mouse on desktop)
-  let hit = null;
+  let hit = null, hitCtrl = null;
   const rays = xr ? controllers.filter((c) => c !== (pan && pan.ctrl)) : mouse && !drag ? [null] : [];
   for (const c of rays) {
     if (c) aim(c); else raycaster.setFromCamera(ndc, camera);
-    hit = pick(); if (hit) break;
+    hit = pick(); if (hit) { hitCtrl = c; break; }
   }
-  setHover(hit);
+  setHover(hit, hitCtrl);
   if (xr) { reticle.visible = !!hit; if (hit) reticle.position.copy(hit.point); }
   else renderer.domElement.style.cursor = hit && (hit.poi || hit.region || hit.pano || hit.run || hit.arrow) ? "pointer" : drag && (drag.type === "pan" || drag.type === "look") ? "grabbing" : pm.on ? "grab" : "";
 
@@ -1093,7 +1171,13 @@ function frame() {
 }
 renderer.setAnimationLoop(frame);
 
-function setHover(h) {
+function setHover(h, ctrl) {
+  const key = !h ? null : h.panel ? (h.region ? h.region.id + "@" + panels.indexOf(h.panel) : null)
+    : h.poi ? "poi" + h.poi.i : h.pano ? "pano" + h.pano.i : h.run ? "run" + panoRuns.indexOf(h.run) : h.arrow ? "arrow" + arrows.indexOf(h.arrow) : null;
+  if (key && key !== audio.hoverKey && performance.now() - audio.lastHover > 70) {
+    sfx(audio.alt++ % 2 ? "hover1" : "hover2", 0.32); haptic(ctrl, 0.12, 12); audio.lastHover = performance.now();
+  }
+  audio.hoverKey = key;
   hoverPoi = h && h.poi ? h.poi : null;
   hoverPanoItem = h ? h.pano || h.run || null : null;
   hoverArrow = h && h.arrow ? h.arrow : null;
@@ -1104,7 +1188,7 @@ function setHover(h) {
 }
 
 if (DBG) window.CITE = {
-  THREE, Scheduler, tiles, view, panos, panoRuns, openPano, closePano, pm, arrows, goal, pois, wallPts, layers, map, stand, rig, camera, renderer, scene, U, controls, selectPOI, resetView, startTour, sampleHeight,
+  THREE, Scheduler, tiles, view, panos, panoRuns, openPano, closePano, pm, arrows, audio, menu, goal, pois, wallPts, layers, map, stand, rig, camera, renderer, scene, U, controls, selectPOI, resetView, startTour, sampleHeight,
   get K() { return K; }, get WIN() { return WIN; }, CX, CZ,
   screenToMap(px, py) { // debug: page pixel → map metres (x east, z south) on the plinth plane
     raycaster.setFromCamera(new THREE.Vector2((px / innerWidth) * 2 - 1, -(py / innerHeight) * 2 + 1), camera);

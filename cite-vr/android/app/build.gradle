@@ -12,8 +12,8 @@ android {
         applicationId 'ma.etafat.cite.vr.offline'
         minSdk 29
         targetSdk 32          // sideloaded on Quest; keeps foreground-service rules simple
-        versionCode 2
-        versionName '1.1'
+        versionCode 3
+        versionName '1.2'
     }
 
     signingConfigs {
@@ -38,7 +38,7 @@ android {
     }
 
     androidResources {
-        noCompress 'glb', 'subtree', 'wasm', 'png', 'jpg', 'jpeg' // already compressed (Draco / KTX2): store as-is
+        noCompress 'glb', 'subtree', 'wasm', 'png', 'jpg', 'jpeg', 'mp3' // already compressed (Draco / KTX2): store as-is
     }
 
     compileOptions {

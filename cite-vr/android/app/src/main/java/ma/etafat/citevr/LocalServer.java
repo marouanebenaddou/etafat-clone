@@ -149,6 +149,7 @@ public class LocalServer extends Service {
         if (l.endsWith(".svg")) return "image/svg+xml";
         if (l.endsWith(".glb")) return "model/gltf-binary";
         if (l.endsWith(".wasm")) return "application/wasm";
+        if (l.endsWith(".mp3")) return "audio/mpeg";
         if (l.endsWith(".ktx2")) return "image/ktx2";
         if (l.endsWith(".mp4")) return "video/mp4";
         if (l.endsWith(".ico")) return "image/x-icon";
