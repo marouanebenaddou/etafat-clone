@@ -728,9 +728,9 @@ function buildCamp(scene, T, updaters) {
     const depth = Math.max(0.3, -T.heightAt(x, z) + 0.2); // posts reach the ground below
     const p = new THREE.Mesh(new THREE.BoxGeometry(0.14, depth, 0.14), wood); p.position.set(x, -depth / 2, z); deck.add(p);
   }
-  // slim steel-cable railing (frames the view without hiding the camp or the valley); open to the uphill south
+  // slim steel-cable railing on the sides only (frames the view; the front stays open for the globe and the valley)
   const steel = lambert({ color: 0x4a5058 });
-  for (const side of ["n", "e", "w"]) {
+  for (const side of ["e", "w"]) { // open to the front: the globe floats there
     for (const k of [-1, 1]) {
       const s = k * HALF, [x, z] = side === "n" ? [s, -HALF] : [side === "e" ? HALF : -HALF, s];
       const post = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 1.0, 6), steel); post.position.set(x, 0.5, z); deck.add(post);

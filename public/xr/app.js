@@ -7,7 +7,7 @@ import { mergeGeometries } from "./vendor/jsm/utils/BufferGeometryUtils.js";
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
 const GLOBE_R = 0.8;
-const GLOBE_POS = new THREE.Vector3(0, 1.85, -2.3); // floats over the valley, which stays visible below
+const GLOBE_POS = new THREE.Vector3(0, 1.5, -2.3); // just under eye level, over the valley
 const GK = GLOBE_R / 0.55;                          // scale for the globe's details (pins, tiles, arcs, leader)
 const USER = new THREE.Vector3(0, 1.6, 0);
 
@@ -39,6 +39,7 @@ const world = createWorld({ scene, renderer, camera });
 // and pulls its pop-up out toward the viewer.
 const globe = new THREE.Group(); globe.position.copy(GLOBE_POS); scene.add(globe);
 const spin = new THREE.Group(); globe.add(spin); // markers + arcs ride along
+{ const th = (17 + 180) * DEG; spin.rotation.y = -Math.atan2(-Math.cos(th), Math.sin(th)); } // open centred on Africa (17°E)
 const texLoader = new THREE.TextureLoader();
 const dummy = new THREE.Object3D(), _v = new THREE.Vector3();
 
@@ -92,7 +93,7 @@ function glowTexture(hex) {
 
 let DATA = null, ID = null;
 const countryByIso = new Map();
-const arcMat = new THREE.MeshBasicMaterial({ color: TEAL });
+const arcMat = new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0.42, depthWrite: false }); // subtle: the network, not the star
 const arcTime = { value: 0 };
 arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after another, then carry travelling light pulses
   sh.uniforms.uTime = arcTime;
@@ -101,11 +102,12 @@ arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after an
   sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nuniform float uTime; varying float vI; varying float vT;")
     .replace("#include <color_fragment>", `#include <color_fragment>
       if (vT > clamp((uTime - 0.8 - vI * 0.08) / 1.1, 0.0, 1.0)) discard;
-      float p = fract(uTime * 0.3 + vI * 0.137), glow = smoothstep(0.07, 0.0, abs(vT - p));
-      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0), glow);`);
+      float p = fract(uTime * 0.18 + vI * 0.137), glow = smoothstep(0.05, 0.0, abs(vT - p));
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.85, 1.0, 1.0), glow * 0.55);
+      diffuseColor.a *= smoothstep(0.0, 0.18, vT) * (1.0 - smoothstep(0.82, 1.0, vT)) * 0.85 + 0.15; // fade near both ends so Casablanca isn't a hot spot`);
 };
 
-fetch("./presence-xr.json").then((r) => r.json()).then((d) => { DATA = d; buildGlobe(d); });
+fetch("./presence-xr.json").then((r) => r.json()).then((d) => { DATA = d; buildGlobe(d); if (typeof titleCard !== "undefined") titleCard.userData.redraw(); });
 // id map pixels for the hover lookup (read raw: no colour conversion)
 fetch("./countries-id.png").then((r) => r.blob()).then((b) => createImageBitmap(b, { colorSpaceConversion: "none", premultiplyAlpha: "none" })).then((bm) => {
   const c = document.createElement("canvas"); c.width = bm.width; c.height = bm.height;
@@ -121,13 +123,13 @@ function buildGlobe(d) {
     return new THREE.Points(g, new THREE.PointsMaterial({ map: glowTexture(hex), size, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
   };
   spin.add(pts(d.countries.map((c) => [c.lon, c.lat]), TEAL_L, 0.06 * GK));
-  spin.add(pts([[d.hq.lon, d.hq.lat]], 0xffffff, 0.1 * GK));
+  spin.add(pts([[d.hq.lon, d.hq.lat]], TEAL_L, 0.07 * GK));
   // arcs from HQ (one merged mesh)
   const a = lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R), tubes = [];
   d.countries.forEach((c, i) => {
     if (c.iso === 504) return;
-    const b = lonLatToVec3(c.lon, c.lat, GLOBE_R), mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.22 + a.distanceTo(b) / GLOBE_R * 0.165));
-    const g = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, 0.0021 * GK, 5, false);
+    const b = lonLatToVec3(c.lon, c.lat, GLOBE_R), mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.12 + a.distanceTo(b) / GLOBE_R * 0.12));
+    const g = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, 0.0013 * GK, 4, false);
     g.setAttribute("aI", new THREE.Float32BufferAttribute(new Array(g.attributes.position.count).fill(i), 1));
     tubes.push(g);
   });
@@ -701,23 +703,27 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
   }
 }
 
-// title / logo / instructions
-(function titlePlane(){
-  const W=1024,H=320,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  x.textAlign="center";
-  x.fillStyle="#8ee6e4"; x.font="500 40px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 228);
-  x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe · visez un pays · retournez-vous : chiffres clés", W/2, 278);
-  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.72, GLOBE_POS.z - 0.2); scene.add(m);
-  // ETAFAT logo on a soft light chip (the logo's text needs a light backing)
-  const img = new Image();
-  img.onload = () => {
-    const cw=460, ch=168, cx=(W-cw)/2, cy=8;
-    x.fillStyle="rgba(255,255,255,0.95)"; roundRect(x, cx, cy, cw, ch, 24); x.fill();
-    const pad=24, aw=cw-2*pad, ah=ch-2*pad, r=Math.min(aw/img.width, ah/img.height), dw=img.width*r, dh=img.height*r;
-    x.drawImage(img, cx+(cw-dw)/2, cy+(ch-dh)/2, dw, dh);
-    m.material.map.needsUpdate = true;
+// title card just above the globe, facing the viewer (solid, so it reads against the bright sky)
+const titleCard = (() => {
+  const draw = (x, W, H, me) => {
+    cardBg(x, W, H, "#2ab5b4");
+    const cw = 250, ch = H - 44;                                           // logo on a light chip
+    x.fillStyle = "rgba(255,255,255,0.96)"; roundRect(x, 22, 22, cw, ch, 20); x.fill();
+    const img = me.userData.logo;
+    if (img) { const r = Math.min((cw - 36) / img.width, (ch - 30) / img.height); x.drawImage(img, 22 + (cw - img.width * r) / 2, 22 + (ch - img.height * r) / 2, img.width * r, img.height * r); }
+    const n = DATA ? DATA.countries.length : 29, tx = cw + 60;
+    kicker(x, "Notre présence dans le monde", tx, 62, 20, "#8ee6e4");
+    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.fillText(`${n} pays · 4 continents`, tx, 122);
+    x.fillStyle = "rgba(220,238,244,0.78)"; x.font = "400 23px system-ui, sans-serif";
+    x.fillText("Joystick : tourner le globe  ·  Pointez un pays pour ses projets", tx, 168);
   };
-  img.src = "/etafat/logo-footer.png";
+  const m = canvasMesh(1000, 200, draw, 1.5);
+  m.scale.setScalar(1.12);
+  m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.22, GLOBE_POS.z + 0.25);
+  m.lookAt(USER);
+  scene.add(m);
+  const img = new Image(); img.onload = () => { m.userData.logo = img; m.userData.redraw(); }; img.src = "/etafat/logo-footer.png";
+  return m;
 })();
 
 // ── controllers ────────────────────────────────────────────────────────────────
@@ -750,9 +756,6 @@ function onSelectStart(ctrl) {
   const tiles = raycaster.intersectObjects(tileTargets, false);
   if (tiles.length) { openThemePopup(tiles[0].object); return; }
   const ch = countryAtRay(); if (ch) pullCountry(ch);
-  // else: grab-to-spin if pointing at the globe
-  const gh = raycaster.intersectObject(sphere, false);
-  if (gh.length) { grabbing = ctrl; lastGrabA = null; }
 }
 function controllerAzimuth(ctrl) {
   const p = new THREE.Vector3().setFromMatrixPosition(ctrl.matrixWorld);
@@ -762,19 +765,21 @@ function controllerAzimuth(ctrl) {
 // desktop fallback: drag to spin, click to select
 // drag on the globe spins it; drag anywhere else looks around (so the wall behind is reachable)
 let mouseNDC = null;
+const keys = new Set(); // desktop stand-in for the joystick
+addEventListener("keydown", (e) => { if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } });
+addEventListener("keyup", (e) => keys.delete(e.key));
 renderer.domElement.addEventListener("pointerleave", () => { mouseNDC = null; });
 let dragging = false, dragMode = "globe", px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
 camera.rotation.order = "YXZ";
 renderer.domElement.addEventListener("pointerdown", (e) => {
   dragging = true; px = e.clientX; py = e.clientY; moved = 0;
   raycaster.setFromCamera(new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1), camera);
-  dragMode = raycaster.intersectObject(sphere, false).length ? "globe" : "look";
+  dragMode = "look"; // the globe turns with the joystick only (arrow keys on desktop)
 });
 renderer.domElement.addEventListener("pointermove", (e) => {
   mouseNDC = new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1); // hover is resolved per frame
   if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
-  if (dragMode === "globe") { manualSpin += dx * 0.005; tiltY = THREE.MathUtils.clamp(tiltY + dy * 0.004, -0.5, 0.5); }
-  else if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
+  if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
   px = e.clientX; py = e.clientY;
 });
 addEventListener("pointerup", (e) => {
@@ -860,9 +865,15 @@ renderer.setAnimationLoop(() => {
   let thumb = 0;
   if (renderer.xr.isPresenting) {
     const s = renderer.xr.getSession();
-    if (s) for (const src of s.inputSources) { const gp = src.gamepad; if (gp && gp.axes) { const ax = gp.axes[2] ?? gp.axes[0] ?? 0; if (Math.abs(ax) > 0.15) thumb += ax; } }
+    if (s) for (const src of s.inputSources) {
+      const gp = src.gamepad; if (!gp || !gp.axes) continue;
+      const ax = gp.axes[2] ?? gp.axes[0] ?? 0, ay = gp.axes[3] ?? gp.axes[1] ?? 0;
+      if (Math.abs(ax) > 0.15) thumb += ax;
+      if (Math.abs(ay) > 0.25) tiltY = THREE.MathUtils.clamp(tiltY - ay * dt * 0.9, -0.55, 0.55); // stick up → north comes to you
+    }
   }
-  if (grabbing) { const a = controllerAzimuth(grabbing); if (lastGrabA !== null) manualSpin += (a - lastGrabA); lastGrabA = a; }
+  if (keys.has("ArrowLeft")) thumb -= 1; if (keys.has("ArrowRight")) thumb += 1;
+  if (keys.has("ArrowUp")) tiltY = Math.min(0.55, tiltY + dt * 0.9); if (keys.has("ArrowDown")) tiltY = Math.max(-0.55, tiltY - dt * 0.9);
   spin.rotation.y += manualSpin + thumb * dt * 1.5; manualSpin *= 0.86;
   spin.rotation.x = THREE.MathUtils.clamp(spin.rotation.x + (tiltY - spin.rotation.x) * 0.1, -0.6, 0.6);
 
