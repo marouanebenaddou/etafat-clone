@@ -131,6 +131,8 @@ function panelMesh(canvas, w, h) {
 
 // theme / apps section tiles arranged around the viewer
 const sections = new THREE.Group(); scene.add(sections);
+const tileTargets = [];          // section panels the user can aim at to open photos
+let gallery = null, galleryKey = null;
 fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 
 function makeThemePanel(t) {
@@ -176,8 +178,50 @@ function placeAroundUser(mesh, azimuthDeg, y, radius) {
 }
 function buildSections(data) {
   const az = [-108, -73, -40, 40, 73, 108]; // 3 left, 3 right of the globe
-  data.themes.forEach((t, i) => { const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75); sections.add(m); });
-  const apps = makeAppsPanel(data.apps); placeAroundUser(apps, 0, 2.42, 2.1); sections.add(apps);
+  data.themes.forEach((t, i) => {
+    const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75);
+    m.userData.section = { label: t.label, photos: t.photos || [] }; tileTargets.push(m); sections.add(m);
+  });
+  const apps = makeAppsPanel(data.apps); placeAroundUser(apps, 0, 2.42, 2.1);
+  apps.userData.section = { label: data.apps.label, photos: data.apps.photos || [] }; tileTargets.push(apps); sections.add(apps);
+}
+
+// ── photo gallery: opening a tile floats its project photos in front of it ───────
+function makeGalleryHeader(label) {
+  const W = 768, H = 108, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  x.fillStyle = "rgba(8,23,38,0.9)"; roundRect(x, 0, 0, W, H, 20); x.fill();
+  x.strokeStyle = "#2ab5b4"; x.lineWidth = 4; roundRect(x, 4, 4, W-8, H-8, 17); x.stroke();
+  x.fillStyle = "#fff"; x.textAlign = "center"; x.font = "600 40px system-ui, sans-serif";
+  x.fillText(label.length > 34 ? label.slice(0, 33) + "…" : label, W/2, 70);
+  return panelMesh(c, 0.94, 0.94 * H / W);
+}
+function disposeGroup(g) { g.traverse((o) => { if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } if (o.geometry) o.geometry.dispose(); }); }
+function openGallery(section, panel) {
+  if (gallery) { scene.remove(gallery); disposeGroup(gallery); gallery = null; }
+  if (galleryKey === section.label) { galleryKey = null; return; } // toggle off
+  galleryKey = section.label;
+  const photos = (section.photos || []).slice(0, 6);
+  if (!photos.length) return;
+  const grp = new THREE.Group(); gallery = grp; grp.userData.t = 0; scene.add(grp);
+  const p = panel.position.clone();
+  const dir = USER.clone().sub(p); dir.y = 0; dir.normalize();               // toward the viewer
+  const center = p.clone().addScaledVector(dir, 0.62);
+  const up = new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(up, dir).normalize();
+  const pw = 0.44, ph = 0.30, gap = 0.045, rows = Math.ceil(photos.length / 3);
+  const header = makeGalleryHeader(section.label);
+  header.position.copy(center).addScaledVector(up, (rows * (ph + gap)) / 2 + 0.14);
+  header.lookAt(USER); header.userData.baseOp = 1; grp.add(header);
+  photos.forEach((src, i) => {
+    const row = Math.floor(i / 3), col = i % 3, inRow = Math.min(3, photos.length - row * 3);
+    const cx = (col - (inRow - 1) / 2) * (pw + gap), cy = ((rows - 1) / 2 - row) * (ph + gap);
+    const pos = center.clone().addScaledVector(right, cx).addScaledVector(up, cy);
+    const frame = new THREE.Mesh(new THREE.PlaneGeometry(pw + 0.03, ph + 0.03), new THREE.MeshBasicMaterial({ color: 0x2ab5b4 }));
+    frame.position.copy(pos); frame.lookAt(USER); frame.userData.baseOp = 0.9; grp.add(frame);
+    const tex = texLoader.load(src); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+    const photo = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshBasicMaterial({ map: tex }));
+    photo.position.copy(pos).addScaledVector(dir, 0.005); photo.lookAt(USER); photo.userData.baseOp = 1; grp.add(photo);
+  });
 }
 
 // ── country project panel (from globe selection) ────────────────────────────────
@@ -245,8 +289,10 @@ function intersectMarkers(originObj) {
   return raycaster.intersectObjects(hitTargets, false);
 }
 function onSelectStart(ctrl) {
-  const hits = intersectMarkers(ctrl);
+  const hits = intersectMarkers(ctrl);           // sets raycaster.ray for this controller
   if (hits.length) { showPanel(hits[0].object.userData.country); return; }
+  const tiles = raycaster.intersectObjects(tileTargets, false);
+  if (tiles.length) { openGallery(tiles[0].object.userData.section, tiles[0].object); return; }
   // else: grab-to-spin if pointing at the globe
   const gh = raycaster.intersectObject(sphere, false);
   if (gh.length) { grabbing = ctrl; lastGrabA = null; }
@@ -269,6 +315,7 @@ addEventListener("pointerup", (e) => {
     raycaster.setFromCamera(ndc, camera);
     const hits = raycaster.intersectObjects(hitTargets, false);
     if (hits.length) showPanel(hits[0].object.userData.country);
+    else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openGallery(tiles[0].object.userData.section, tiles[0].object); }
   }
   dragging = false;
 });
@@ -277,7 +324,7 @@ addEventListener("pointerup", (e) => {
 const clock = new THREE.Clock();
 let elapsed = 0, hoveredHit = null;
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-if (location.search.includes("debug")) window.XR = { showPanel, get data() { return DATA; }, camera, renderer, scene, sections };
+if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, get data() { return DATA; }, camera, renderer, scene, sections };
 
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
@@ -313,6 +360,8 @@ renderer.setAnimationLoop(() => {
   markers.children.forEach((m, i) => { if (m.isGroup && m.children[0]) { const b = m.children[0]; if (!hoveredHit || hoveredHit.userData.sprite !== b) b.material.opacity = 0.75 + Math.sin(elapsed*2 + i)*0.2; } });
 
   if (cPanel) { cPanel.userData.t = Math.min(1, cPanel.userData.t + dt * 2.6); cPanel.scale.setScalar(0.001 + easeOut(cPanel.userData.t) * 0.999); }
+
+  if (gallery) { gallery.userData.t = Math.min(1, gallery.userData.t + dt * 3); const o = easeOut(gallery.userData.t); gallery.traverse((m) => { if (m.material) { m.material.transparent = true; m.material.opacity = (m.userData.baseOp ?? 1) * o; } }); }
 
   renderer.render(scene, camera);
 });

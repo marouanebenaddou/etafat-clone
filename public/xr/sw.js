@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v4";
+const CACHE = "etafat-vr-v5";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -13,6 +13,46 @@ const PRECACHE = [
   "/etafat/logo-footer.png",
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
+  // project photos shown when a tile is opened (placeholders until real ones land)
+  "/etafat/evenement/pool/aerial-1.jpg",
+  "/etafat/evenement/pool/aerial-2.jpg",
+  "/etafat/evenement/pool/aerial-3.jpg",
+  "/etafat/evenement/pool/aerial-4.jpg",
+  "/etafat/evenement/pool/aerial-5.jpg",
+  "/etafat/evenement/pool/agri-1.jpg",
+  "/etafat/evenement/pool/agri-2.jpg",
+  "/etafat/evenement/pool/agri-3.jpg",
+  "/etafat/evenement/pool/building-1.jpg",
+  "/etafat/evenement/pool/building-2.jpg",
+  "/etafat/evenement/pool/building-3.jpg",
+  "/etafat/evenement/pool/cadastre-1.jpg",
+  "/etafat/evenement/pool/cadastre-2.jpg",
+  "/etafat/evenement/pool/cadastre-3.jpg",
+  "/etafat/evenement/pool/gis-1.jpg",
+  "/etafat/evenement/pool/gis-2.jpg",
+  "/etafat/evenement/pool/gis-3.jpg",
+  "/etafat/evenement/pool/gis-4.jpg",
+  "/etafat/evenement/pool/heritage-1.jpg",
+  "/etafat/evenement/pool/heritage-2.jpg",
+  "/etafat/evenement/pool/heritage-3.jpg",
+  "/etafat/evenement/pool/mining-1.jpg",
+  "/etafat/evenement/pool/mining-2.jpg",
+  "/etafat/evenement/pool/mining-3.jpg",
+  "/etafat/evenement/pool/networks-1.jpg",
+  "/etafat/evenement/pool/networks-2.jpg",
+  "/etafat/evenement/pool/networks-3.jpg",
+  "/etafat/evenement/pool/port-1.jpg",
+  "/etafat/evenement/pool/port-2.jpg",
+  "/etafat/evenement/pool/port-3.jpg",
+  "/etafat/evenement/pool/roads-1.jpg",
+  "/etafat/evenement/pool/roads-2.jpg",
+  "/etafat/evenement/pool/roads-3.jpg",
+  "/etafat/evenement/pool/terrain-1.jpg",
+  "/etafat/evenement/pool/terrain-2.jpg",
+  "/etafat/evenement/pool/terrain-3.jpg",
+  "/etafat/evenement/pool/terrain-4.jpg",
+  "/etafat/evenement/pool/urban-1.jpg",
+  "/etafat/evenement/pool/urban-2.jpg",
 ];
 
 self.addEventListener("install", (e) => {
