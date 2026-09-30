@@ -2,6 +2,7 @@
 import * as THREE from "three";
 import { VRButton } from "./vendor/VRButton.js";
 import { createWorld } from "./world.js";
+import { mergeGeometries } from "./vendor/jsm/utils/BufferGeometryUtils.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
@@ -32,72 +33,161 @@ addEventListener("resize", () => {
 
 const world = createWorld({ scene, renderer, camera });
 
-// ── globe ──────────────────────────────────────────────────────────────────────
+// ── globe: a mosaic of tiles, like the ETAFAT logo ──────────────────────────────
+// Pale core + land as square tiles in the logo's blue gradient; ETAFAT countries in teal. A few
+// tiles drift off the upper-right edge (the logo's signature). Pointing at a country lifts its
+// tiles and pulls its pop-up out toward the viewer.
 const globe = new THREE.Group(); globe.position.copy(GLOBE_POS); scene.add(globe);
-const spin = new THREE.Group(); globe.add(spin); // markers + arcs ride along
-
+const spin = new THREE.Group(); globe.add(spin); // tiles, pins + arcs ride along
 const texLoader = new THREE.TextureLoader();
-const earthTex = texLoader.load("./earth.png"); earthTex.colorSpace = THREE.SRGBColorSpace; earthTex.anisotropy = 8;
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 96, 96), new THREE.MeshBasicMaterial({ map: earthTex }));
+
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 72, 48),
+  new THREE.MeshLambertMaterial({ color: 0xe2ecf2, emissive: 0x2a3f4f, emissiveIntensity: 0.45 }));
 spin.add(sphere);
-
-const atmo = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 1.14, 64, 64), new THREE.ShaderMaterial({
-  transparent: true, blending: THREE.AdditiveBlending, side: THREE.BackSide, depthWrite: false,
-  uniforms: { uColor: { value: new THREE.Color(TEAL) } },
-  vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);}`,
-  fragmentShader: `varying vec3 vN; uniform vec3 uColor; void main(){ float i = pow(0.72 - dot(vN, vec3(0.0,0.0,1.0)), 3.0); gl_FragColor = vec4(uColor, clamp(i,0.0,1.0)*0.9);}`
-}));
-globe.add(atmo);
-
+{ // graticule every 30° (surveyor's grid)
+  const pts = [], R = GLOBE_R * 1.0015;
+  for (let lat = -60; lat <= 60; lat += 30) for (let lon = -180; lon < 180; lon += 4) pts.push(lonLatToVec3(lon, lat, R), lonLatToVec3(lon + 4, lat, R));
+  for (let lon = -180; lon < 180; lon += 30) for (let lat = -84; lat < 84; lat += 4) pts.push(lonLatToVec3(lon, lat, R), lonLatToVec3(lon, lat + 4, R));
+  spin.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x8fb0c2, transparent: true, opacity: 0.5 })));
+}
 function lonLatToVec3(lon, lat, r = GLOBE_R) {
   const phi = (90 - lat) * DEG, theta = (lon + 180) * DEG;
   return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(theta));
 }
-function glowTexture(hex) {
-  const s = 128, c = document.createElement("canvas"); c.width = c.height = s;
-  const x = c.getContext("2d"); const g = x.createRadialGradient(s/2,s/2,0,s/2,s/2,s/2);
-  const col = new THREE.Color(hex); const rgb = `${(col.r*255)|0},${(col.g*255)|0},${(col.b*255)|0}`;
-  g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.25, `rgba(${rgb},1)`);
-  g.addColorStop(0.6, `rgba(${rgb},0.35)`); g.addColorStop(1, `rgba(${rgb},0)`);
-  x.fillStyle = g; x.fillRect(0,0,s,s);
-  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+// logo gradient: deep blue (lower-left) → light cyan (upper-right), in globe space so it stays put while it spins
+function logoGradient(mat) {
+  mat.onBeforeCompile = (sh) => {
+    Object.assign(sh.uniforms, { uDeep: { value: new THREE.Color(0x0b3c78) }, uLight: { value: new THREE.Color(0x5aa6e2) }, uC: { value: GLOBE_POS } });
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vWP;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\n#ifdef USE_INSTANCING\n vWP = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;\n#else\n vWP = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#endif");
+    sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vWP; uniform vec3 uDeep, uLight, uC;")
+      .replace("#include <color_fragment>", "#include <color_fragment>\n{ float t = clamp(dot(normalize(vWP - uC), normalize(vec3(0.72, 0.62, 0.3))) * 0.62 + 0.5, 0.0, 1.0); diffuseColor.rgb *= mix(uDeep, uLight, t); }");
+  };
+  return mat;
 }
-const markerTex = glowTexture(TEAL_L);
-
-const markers = new THREE.Group(); spin.add(markers);
-const arcs = new THREE.Group(); spin.add(arcs);
-const hitTargets = []; const arcAnims = [];
-let DATA = null, hqVec = null;
-
-fetch("./presence-xr.json").then(r => r.json()).then(d => { DATA = d; buildGlobe(d); });
-
-function buildGlobe(d) {
-  hqVec = lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R);
-  addMarker(d.hq.lon, d.hq.lat, null, 0.13, 0xffffff);
-  d.countries.forEach((c, i) => {
-    addMarker(c.lon, c.lat, c, 0.085, TEAL_L);
-    if (c.iso !== 504) buildArc(hqVec, lonLatToVec3(c.lon, c.lat, GLOBE_R), i);
-  });
+const landMat = logoGradient(new THREE.MeshLambertMaterial({ emissive: 0x0a2a4a, emissiveIntensity: 0.35 }));
+const actMat = new THREE.MeshLambertMaterial({ emissive: TEAL, emissiveIntensity: 0.35 }); // ETAFAT countries: teal, standing a little proud
+const TILE_T = 0.007, dummy = new THREE.Object3D(), _v = new THREE.Vector3();
+function tileMatrix(lon, lat, lift, s = 1) {
+  const n = lonLatToVec3(lon, lat, 1);
+  dummy.position.copy(n).multiplyScalar(GLOBE_R + TILE_T / 2 + lift); dummy.lookAt(_v.copy(n).multiplyScalar(9));
+  dummy.scale.set(s, s, 1); dummy.updateMatrix(); return dummy.matrix;
 }
-function addMarker(lon, lat, country, size, hex) {
-  const v = lonLatToVec3(lon, lat, GLOBE_R);
-  const grp = new THREE.Group(); grp.position.copy(v);
-  const spr = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTex, color: hex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-  spr.scale.setScalar(size); grp.add(spr); markers.add(grp);
-  if (country) {
-    const hit = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshBasicMaterial({ visible: false }));
-    hit.position.copy(v); hit.userData = { country, sprite: spr, baseScale: size }; markers.add(hit); hitTargets.push(hit);
+
+let DATA = null, TILES = null, actMesh = null;
+const tileByCell = new Map(), countryByIso = new Map(), actTiles = new Map(); // iso → [{i, lon, lat}]
+const countryLift = new Map(); // iso → { v, target } (animated tile lift + highlight)
+const arcMat = new THREE.MeshBasicMaterial({ color: TEAL });
+const arcTime = { value: 0 };
+arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after another, then carry travelling light pulses
+  sh.uniforms.uTime = arcTime;
+  sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nattribute float aI; varying float vI; varying float vT;")
+    .replace("#include <begin_vertex>", "#include <begin_vertex>\nvI = aI; vT = uv.x;");
+  sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nuniform float uTime; varying float vI; varying float vT;")
+    .replace("#include <color_fragment>", `#include <color_fragment>
+      if (vT > clamp((uTime - 0.8 - vI * 0.08) / 1.1, 0.0, 1.0)) discard;
+      float p = fract(uTime * 0.3 + vI * 0.137), glow = smoothstep(0.07, 0.0, abs(vT - p));
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0), glow);`);
+};
+
+Promise.all([fetch("./presence-xr.json").then((r) => r.json()), fetch("./globe-tiles.json").then((r) => r.json())])
+  .then(([d, t]) => { DATA = d; TILES = t; buildGlobe(d, t); });
+
+function buildGlobe(d, t) {
+  d.countries.forEach((c) => countryByIso.set(c.iso, c));
+  const land = [], act = [], size = GLOBE_R * t.step * DEG * 0.8;
+  for (let i = 0; i < t.cells.length; i += 3) {
+    const r = t.cells[i], c = t.cells[i + 1], iso = t.iso[t.cells[i + 2]], n = t.rows[r];
+    const tile = { lat: -90 + (r + 0.5) * t.step, lon: -180 + (c + 0.5) * 360 / n, iso };
+    tileByCell.set(r * 1000 + c, iso);
+    (countryByIso.has(iso) ? act : land).push(tile);
   }
+  const geo = new THREE.BoxGeometry(size, size, TILE_T);
+  const landMesh = new THREE.InstancedMesh(geo, landMat, land.length);
+  land.forEach((tl, i) => landMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0)));
+  spin.add(landMesh);
+  actMesh = new THREE.InstancedMesh(geo, actMat, act.length);
+  const teal = new THREE.Color(TEAL);
+  act.forEach((tl, i) => {
+    actMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0.004)); actMesh.setColorAt(i, teal);
+    if (!actTiles.has(tl.iso)) actTiles.set(tl.iso, []); actTiles.get(tl.iso).push({ i, lon: tl.lon, lat: tl.lat });
+  });
+  spin.add(actMesh);
+
+  // pins: every ETAFAT country (small ones would otherwise be a single tile) + Casablanca HQ
+  const pinGeo = mergeGeometries([
+    new THREE.CylinderGeometry(0.0016, 0.0016, 0.03, 5).translate(0, 0.015, 0),
+    new THREE.SphereGeometry(0.0065, 10, 8).translate(0, 0.033, 0),
+  ]).rotateX(Math.PI / 2); // along +z = the surface normal after lookAt
+  const pins = new THREE.InstancedMesh(pinGeo, new THREE.MeshLambertMaterial({ emissive: 0x333333 }), d.countries.length + 1);
+  const white = new THREE.Color(0xffffff), hq = new THREE.Color(0xf2c230);
+  d.countries.forEach((c, i) => { dummy.position.copy(lonLatToVec3(c.lon, c.lat, GLOBE_R + TILE_T)); dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.scale.setScalar(1); dummy.updateMatrix(); pins.setMatrixAt(i, dummy.matrix); pins.setColorAt(i, white); });
+  dummy.position.copy(lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R + TILE_T)); dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.scale.setScalar(1.5); dummy.updateMatrix();
+  pins.setMatrixAt(d.countries.length, dummy.matrix); pins.setColorAt(d.countries.length, hq);
+  spin.add(pins);
+
+  // arcs from HQ (one merged mesh)
+  const a = lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R), tubes = [];
+  d.countries.forEach((c, i) => {
+    if (c.iso === 504) return;
+    const b = lonLatToVec3(c.lon, c.lat, GLOBE_R), mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.22 + a.distanceTo(b) * 0.3));
+    const g = new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, mid, b), 40, 0.0021, 5, false);
+    g.setAttribute("aI", new THREE.Float32BufferAttribute(new Array(g.attributes.position.count).fill(i), 1));
+    tubes.push(g);
+  });
+  spin.add(new THREE.Mesh(mergeGeometries(tubes), arcMat));
 }
-function buildArc(a, b, i) {
-  const mid = a.clone().add(b).multiplyScalar(0.5); mid.setLength(GLOBE_R * (1.28 + a.distanceTo(b) * 0.28));
-  const curve = new THREE.QuadraticBezierCurve3(a.clone(), mid, b.clone());
-  const N = 64, g = new THREE.BufferGeometry().setFromPoints(curve.getPoints(N));
-  const line = new THREE.Line(g, new THREE.LineBasicMaterial({ color: TEAL, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
-  line.geometry.setDrawRange(0, 0); arcs.add(line);
-  const pulse = new THREE.Sprite(new THREE.SpriteMaterial({ map: markerTex, color: TEAL_L, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
-  pulse.scale.setScalar(0.06); pulse.visible = false; arcs.add(pulse);
-  arcAnims.push({ line, total: N, count: 0, delay: 700 + i * 80, curve, pulse, t: 0 });
+
+// logo tiles drifting off the upper-right edge (globe space: they stay there while it spins)
+const floatTiles = (() => {
+  const N = 40, R = rng(7), key = new THREE.Vector3(0.66, 0.6, 0.45).normalize(), list = [];
+  while (list.length < N) {
+    const d = new THREE.Vector3(R() * 2 - 1, R() * 2 - 1, R() * 2 - 1).normalize();
+    if (d.dot(key) > 0.8) list.push({ d, off: 0.015 + Math.pow(R(), 1.6) * 0.16 * (d.dot(key) - 0.8) / 0.2, s: 0.9 + R() * 0.9, ph: R() * 6.28, sp: 0.4 + R() * 0.5 });
+  }
+  const size = GLOBE_R * 2.25 * DEG * 0.8, m = new THREE.InstancedMesh(new THREE.BoxGeometry(size, size, TILE_T), landMat, N);
+  globe.add(m); return { m, list };
+})();
+function rng(seed) { let x = seed >>> 0; return () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4294967296); }
+function updateFloatTiles(t) {
+  const { m, list } = floatTiles;
+  list.forEach((f, i) => {
+    dummy.position.copy(f.d).multiplyScalar(GLOBE_R + TILE_T + f.off * (1 + 0.35 * Math.sin(t * f.sp + f.ph)));
+    dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.rotateZ(0.3 * Math.sin(t * 0.3 + f.ph));
+    dummy.scale.set(f.s, f.s, 1); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix);
+  });
+  m.instanceMatrix.needsUpdate = true;
+}
+// hovered country: its tiles rise and brighten
+const hiCol = new THREE.Color(0xbdf6f3), baseCol = new THREE.Color(TEAL), _c = new THREE.Color();
+function updateCountryLift(dt, t, hoverIso) {
+  if (!actMesh) return;
+  for (const iso of actTiles.keys()) {
+    const st = countryLift.get(iso) || { v: 0 }; st.target = iso === hoverIso ? 1 : 0;
+    if (Math.abs(st.v - st.target) < 0.002 && st.v === st.target) { countryLift.set(iso, st); continue; }
+    st.v += (st.target - st.v) * Math.min(1, dt * 9); if (Math.abs(st.v - st.target) < 0.002) st.v = st.target;
+    countryLift.set(iso, st);
+    _c.copy(baseCol).lerp(hiCol, st.v);
+    for (const tl of actTiles.get(iso)) { actMesh.setMatrixAt(tl.i, tileMatrix(tl.lon, tl.lat, 0.004 + 0.022 * st.v, 1 + 0.12 * st.v)); actMesh.setColorAt(tl.i, _c); }
+    actMesh.instanceMatrix.needsUpdate = true; actMesh.instanceColor.needsUpdate = true;
+  }
+  actMat.emissiveIntensity = 0.32 + 0.08 * Math.sin(t * 2);
+}
+// ray (already aimed) → country under it: exact tile, else the nearest ETAFAT pin within ~4°
+const _p = new THREE.Vector3();
+function countryAtRay() {
+  if (!TILES) return null;
+  const h = raycaster.intersectObject(sphere, false); if (!h.length) return null;
+  _p.copy(h[0].point); spin.worldToLocal(_p); _p.normalize();
+  const lat = 90 - Math.acos(THREE.MathUtils.clamp(_p.y, -1, 1)) / DEG;
+  let lon = Math.atan2(_p.z, -_p.x) / DEG - 180; if (lon < -180) lon += 360;
+  const r = Math.min(TILES.rows.length - 1, Math.floor((lat + 90) / TILES.step)), n = TILES.rows[r];
+  let country = countryByIso.get(tileByCell.get(r * 1000 + Math.min(n - 1, Math.floor((lon + 180) / 360 * n))));
+  if (!country) {
+    let best = Math.cos(4 * DEG);
+    for (const c of DATA.countries) { const dp = lonLatToVec3(c.lon, c.lat, 1).dot(_p); if (dp > best) { best = dp; country = c; } }
+  }
+  return country ? { country, local: _p.clone().multiplyScalar(GLOBE_R + TILE_T) } : null;
 }
 
 // ── canvas panel helpers ────────────────────────────────────────────────────────
@@ -564,24 +654,67 @@ function buildChiffres(data) {
 
 // ── country project panel (from globe selection) ────────────────────────────────
 function makeCountryPanel(country) {
-  const W = 1024, H = 720, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,"rgba(10,30,48,0.97)"); g.addColorStop(1,"rgba(8,23,38,0.99)");
-  x.fillStyle = g; roundRect(x,0,0,W,H,28); x.fill();
-  x.strokeStyle = "rgba(42,181,180,0.75)"; x.lineWidth = 4; roundRect(x,6,6,W-12,H-12,24); x.stroke();
-  x.fillStyle = "#8ee6e4"; x.font = "600 32px system-ui, sans-serif"; x.fillText((country.region||"").toUpperCase(), 50, 78);
-  x.fillStyle = "#fff"; x.font = "700 62px system-ui, sans-serif"; x.fillText(country.name, 50, 152);
-  x.strokeStyle = "rgba(142,230,228,0.35)"; x.lineWidth = 2; x.beginPath(); x.moveTo(50,184); x.lineTo(W-50,184); x.stroke();
-  let y = 246; const projs = country.projects || [];
-  if (projs.length) { x.font = "400 30px system-ui, sans-serif"; for (const p of projs.slice(0,9)) { x.fillStyle="#2ab5b4"; x.fillText("▸",50,y); x.fillStyle="#eaf4f8"; const line=p.place?`${p.title} — ${p.place}`:p.title; y = wrap(x, line, 88, y, W-140, 38, 2) + 12; } }
-  else { x.fillStyle="rgba(234,244,248,0.7)"; x.font="400 32px system-ui, sans-serif"; wrap(x, "Présence ETAFAT — projets en cours de référencement.", 50, 270, W-100, 44, 3); }
-  return panelMesh(c, 1.0, 0.7);
+  const projs = country.projects || [], shown = projs.slice(0, 7);
+  const measure = measureCtx; measure.font = "400 28px system-ui, sans-serif";
+  let hTxt = 0; for (const p of shown) hTxt += lines(measure, p.place ? `${p.title} — ${p.place}` : p.title, 1000 - 140, 2).length * 36 + 14;
+  const H = Math.round(210 + (shown.length ? hTxt : 110) + 50);
+  return canvasMesh(1000, H, (x, W, H2) => {
+    cardBg(x, W, H2, "#2ab5b4");
+    kicker(x, (country.region || "") + (projs.length ? `  ·  ${projs.length} projet${projs.length > 1 ? "s" : ""}` : ""), 48, 66, 21, "#8ee6e4");
+    x.fillStyle = "#fff"; x.font = "800 60px system-ui, sans-serif"; x.fillText(country.name, 48, 138);
+    x.fillStyle = "#2ab5b4"; roundRect(x, 48, 164, 110, 8, 4); x.fill();
+    let y = 228; x.font = "400 28px system-ui, sans-serif";
+    if (shown.length) for (const p of shown) {
+      x.fillStyle = "#2ab5b4"; x.fillText("▸", 48, y);
+      x.fillStyle = "#eaf4f8"; for (const l of lines(x, p.place ? `${p.title} — ${p.place}` : p.title, W - 140, 2)) { x.fillText(l, 86, y); y += 36; } y += 14;
+    } else { x.fillStyle = "rgba(234,244,248,0.72)"; x.font = "400 30px system-ui, sans-serif"; for (const l of lines(x, "Présence ETAFAT — projets en cours de référencement.", W - 96, 2)) { x.fillText(l, 48, y); y += 40; } }
+    if (projs.length > shown.length) { x.fillStyle = "#8ee6e4"; x.font = "600 24px system-ui, sans-serif"; x.fillText(`+ ${projs.length - shown.length} autres projets`, 48, H2 - 30); }
+  }, 1);
 }
-let cPanel = null;
-function showPanel(country) {
-  if (cPanel) globe.remove(cPanel);
-  cPanel = makeCountryPanel(country);
-  cPanel.position.set(GLOBE_R + 0.72, 0.1, 0.15); cPanel.userData.t = 0; cPanel.scale.setScalar(0.001);
-  globe.add(cPanel);
+let cPull = null; const cClosing = [];   // current country pop-up + ones retracting
+let cCand = null, cDwell = 0;            // hover candidate (debounced)
+const beadGeo = new THREE.SphereGeometry(0.0048, 8, 6), LEAD_N = 22; // dotted leader (a 1 px line vanishes in the headset)
+const leadCurve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()), _lp = new THREE.Vector3();
+function pullCountry(hit) {
+  if (cPull && cPull.country === hit.country) { cPull.idle = 0; return; }
+  if (cPull) { cPull.closing = true; cClosing.push(cPull); }
+  const card = makeCountryPanel(hit.country); card.scale.setScalar(0.8); card.renderOrder = 30; card.material.depthTest = true;
+  const g = new THREE.Group(); g.add(card); g.scale.setScalar(0.001); scene.add(g);
+  const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }), LEAD_N); line.frustumCulled = false; scene.add(line);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018, 0.027, 28), new THREE.MeshBasicMaterial({ color: 0x0b6f6e, transparent: true, side: THREE.DoubleSide, depthWrite: false })); // dark teal: reads on the pale lifted tiles
+  ring.position.copy(hit.local).setLength(GLOBE_R + 0.036); // floats just above the lifted tiles ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring);
+  cPull = { country: hit.country, local: hit.local.clone(), g, card, line, ring, t: 0, idle: 0, closing: false, cardH: card.geometry.parameters.height * 0.8 };
+}
+const _a = new THREE.Vector3(), _to = new THREE.Vector3(), _e = new THREE.Vector3();
+function updateCountryPull(dt, hit, onPanel, elapsed) {
+  // hover: switch after a short dwell, keep while the pointer is on the country or its pop-up, retract after ~1.6 s away
+  const cand = hit ? hit.country : null;
+  if (cand && (!cPull || cPull.country !== cand)) { if (cCand === cand) cDwell += dt; else { cCand = cand; cDwell = 0; } if (cDwell > 0.16) { pullCountry(hit); cCand = null; } }
+  else { cCand = null; cDwell = 0; }
+  if (cPull) { if (cand === cPull.country || onPanel) cPull.idle = 0; else cPull.idle += dt; if (cPull.idle > 1.6) { cPull.closing = true; cClosing.push(cPull); cPull = null; } }
+  for (const P of [cPull, ...cClosing]) {
+    if (!P) continue;
+    P.t = Math.min(1, Math.max(0, P.t + (P.closing ? -dt * 4 : dt * 2.4)));
+    _a.copy(P.local).setLength(GLOBE_R + 0.036); spin.localToWorld(_a); // the country's point (above its lifted tiles)
+    const side = _a.x >= GLOBE_POS.x ? 1 : -1;                    // pop out on the country's side…
+    _to.set(side * 0.62, 1.47, -1.08);                            // …but close to the viewer (~1.25 m, ~30° off-centre)
+    const k = P.closing ? easeOut(P.t) : easeBack(P.t);
+    P.g.position.lerpVectors(_a, _to, P.closing ? easeOut(P.t) : easeOut(Math.min(1, P.t * 1.25)));
+    P.g.lookAt(USER.x, P.g.position.y, USER.z);
+    P.g.scale.setScalar(Math.max(0.001, 0.06 + 0.94 * k));
+    P.card.material.opacity = Math.min(1, P.t * 2);
+    _e.set(-side * 0.4, 0, 0).applyQuaternion(P.g.quaternion).multiplyScalar(P.g.scale.x).add(P.g.position); // inner edge of the card
+    // leader: bows out from the surface so it never cuts through the globe
+    leadCurve.v0.copy(_a); leadCurve.v1.copy(_a).sub(GLOBE_POS).setLength(GLOBE_R + 0.24).add(GLOBE_POS); leadCurve.v2.copy(_e);
+    const shown = P.t * LEAD_N;                                   // beads run out with the card
+    for (let i = 0; i < LEAD_N; i++) {
+      leadCurve.getPoint(i / (LEAD_N - 1), _lp); dummy.position.copy(_lp); dummy.rotation.set(0, 0, 0);
+      dummy.scale.setScalar(i < shown ? 0.75 + 0.5 * Math.max(0, Math.sin(elapsed * 6 - i * 0.55)) : 0.001); dummy.updateMatrix(); P.line.setMatrixAt(i, dummy.matrix);
+    }
+    P.line.instanceMatrix.needsUpdate = true; P.line.material.opacity = Math.min(1, P.t * 1.5);
+    P.ring.material.opacity = Math.min(1, P.t * 2) * (0.65 + 0.35 * Math.sin(elapsed * 5)); P.ring.scale.setScalar(1 + 0.25 * Math.sin(elapsed * 5));
+    if (P.closing && P.t === 0) { scene.remove(P.g); scene.remove(P.line); spin.remove(P.ring); disposeView(P.g); P.line.material.dispose(); P.ring.geometry.dispose(); P.ring.material.dispose(); cClosing.splice(cClosing.indexOf(P), 1); }
+  }
 }
 
 // title / logo / instructions
@@ -625,15 +758,14 @@ function aim(originObj) {
   raycaster.ray.origin.setFromMatrixPosition(originObj.matrixWorld);
   raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tmpM);
 }
-function intersectMarkers(originObj) { aim(originObj); return raycaster.intersectObjects(hitTargets, false); }
 function onSelectStart(ctrl) {
   aim(ctrl);
   const ui = raycaster.intersectObjects(uiTargets, false);
   if (ui.length) { ui[0].object.userData.onClick(); return; }
-  const hits = raycaster.intersectObjects(hitTargets, false);
-  if (hits.length) { showPanel(hits[0].object.userData.country); return; }
+  if (cPull && raycaster.intersectObject(cPull.card, false).length) return; // reading the country pop-up
   const tiles = raycaster.intersectObjects(tileTargets, false);
   if (tiles.length) { openThemePopup(tiles[0].object); return; }
+  const ch = countryAtRay(); if (ch) pullCountry(ch);
   // else: grab-to-spin if pointing at the globe
   const gh = raycaster.intersectObject(sphere, false);
   if (gh.length) { grabbing = ctrl; lastGrabA = null; }
@@ -645,6 +777,8 @@ function controllerAzimuth(ctrl) {
 
 // desktop fallback: drag to spin, click to select
 // drag on the globe spins it; drag anywhere else looks around (so the wall behind is reachable)
+let mouseNDC = null;
+renderer.domElement.addEventListener("pointerleave", () => { mouseNDC = null; });
 let dragging = false, dragMode = "globe", px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
 camera.rotation.order = "YXZ";
 renderer.domElement.addEventListener("pointerdown", (e) => {
@@ -653,13 +787,8 @@ renderer.domElement.addEventListener("pointerdown", (e) => {
   dragMode = raycaster.intersectObject(sphere, false).length ? "globe" : "look";
 });
 renderer.domElement.addEventListener("pointermove", (e) => {
-  if (!dragging) {
-    if (!renderer.xr.isPresenting) {
-      raycaster.setFromCamera(new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1), camera);
-      const h = uiTargets.length ? raycaster.intersectObjects(uiTargets, false) : []; setHover(h.length ? h[0].object : null);
-    }
-    return;
-  } const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
+  mouseNDC = new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1); // hover is resolved per frame
+  if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
   if (dragMode === "globe") { manualSpin += dx * 0.005; tiltY = THREE.MathUtils.clamp(tiltY + dy * 0.004, -0.5, 0.5); }
   else if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
   px = e.clientX; py = e.clientY;
@@ -671,8 +800,8 @@ addEventListener("pointerup", (e) => {
     const ui = raycaster.intersectObjects(uiTargets, false);
     if (ui.length) ui[0].object.userData.onClick();
     else {
-      const hits = raycaster.intersectObjects(hitTargets, false);
-      if (hits.length) showPanel(hits[0].object.userData.country);
+      const ch = countryAtRay();
+      if (ch) pullCountry(ch);
       else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openThemePopup(tiles[0].object); }
     }
   }
@@ -730,10 +859,10 @@ if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
 
 // ── loop ────────────────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();
-let elapsed = 0, hoveredHit = null;
+let elapsed = location.search.includes("nointro") ? 4 : 0; // debug: skip the entrance animation
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
-if (location.search.includes("debug")) window.XR = { showPanel, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
+if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
 
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
@@ -753,25 +882,26 @@ renderer.setAnimationLoop(() => {
   spin.rotation.y += manualSpin + thumb * dt * 1.5; manualSpin *= 0.86;
   spin.rotation.x = THREE.MathUtils.clamp(spin.rotation.x + (tiltY - spin.rotation.x) * 0.1, -0.6, 0.6);
 
-  for (const a of arcAnims) {
-    if (ms > a.delay && a.count < a.total) { a.count = Math.min(a.total, a.count + dt * 60); a.line.geometry.setDrawRange(0, Math.floor(a.count)); }
-    if (a.count >= a.total) { a.pulse.visible = true; a.t = (a.t + dt * 0.35) % 1; a.curve.getPoint(a.t, a.pulse.position); a.pulse.material.opacity = 0.6 * (1 - Math.abs(a.t - 0.5) * 1.2); }
+  arcTime.value = elapsed;
+  updateFloatTiles(elapsed);
+
+  // pointer: theme pop-up UI first, then the country pop-up, then the globe (VR: both controllers; desktop: mouse)
+  let uiHit = null, cHit = null, onPanel = false, rPoint = null;
+  const rays = renderer.xr.isPresenting ? controllers.filter((c) => c !== grabbing) : (mouseNDC && !(dragging && moved > 6) ? [null] : []);
+  for (const ctrl of rays) {
+    if (ctrl) aim(ctrl); else raycaster.setFromCamera(mouseNDC, camera);
+    const u = uiTargets.length ? raycaster.intersectObjects(uiTargets, false) : [];
+    if (u.length) { uiHit = u[0]; rPoint = u[0].point; break; }
+    const cp = cPull ? raycaster.intersectObject(cPull.card, false) : [];
+    if (cp.length) { onPanel = true; rPoint = cp[0].point; break; }
+    const ch = countryAtRay(); if (ch) { cHit = ch; rPoint = raycaster.intersectObject(sphere, false)[0]?.point; break; }
   }
+  setHover(uiHit ? uiHit.object : null);
+  if (renderer.xr.isPresenting) { reticle.visible = !!rPoint; if (rPoint) reticle.position.copy(rPoint); }
+  if (!renderer.xr.isPresenting) renderer.domElement.style.cursor = uiHit || cHit ? "pointer" : "";
+  updateCountryPull(dt, cHit, onPanel, elapsed);
+  updateCountryLift(dt, elapsed, cPull ? cPull.country.iso : (cHit ? cHit.country.iso : null));
 
-  let hit = null;
-  if (renderer.xr.isPresenting) {
-    let uiHit = null;
-    if (uiTargets.length) for (const ctrl of controllers) { aim(ctrl); const h = raycaster.intersectObjects(uiTargets, false); if (h.length) { uiHit = h[0]; break; } }
-    setHover(uiHit ? uiHit.object : null);
-    if (!uiHit) for (const ctrl of controllers) { if (grabbing === ctrl) continue; const h = intersectMarkers(ctrl); if (h.length) { hit = h[0]; break; } }
-    const r = uiHit || hit; reticle.visible = !!r; if (r) reticle.position.copy(r.point);
-  }
-  if (hoveredHit && hoveredHit !== (hit && hit.object)) hoveredHit.userData.sprite.scale.setScalar(hoveredHit.userData.baseScale);
-  if (hit) { hit.object.userData.sprite.scale.setScalar(hit.object.userData.baseScale * (1.5 + Math.sin(elapsed*6)*0.15)); hoveredHit = hit.object; } else hoveredHit = null;
-
-  markers.children.forEach((m, i) => { if (m.isGroup && m.children[0]) { const b = m.children[0]; if (!hoveredHit || hoveredHit.userData.sprite !== b) b.material.opacity = 0.75 + Math.sin(elapsed*2 + i)*0.2; } });
-
-  if (cPanel) { cPanel.userData.t = Math.min(1, cPanel.userData.t + dt * 2.6); cPanel.scale.setScalar(0.001 + easeOut(cPanel.userData.t) * 0.999); }
 
   animatePopup(dt);
 
