@@ -42,6 +42,11 @@ sections.apps.photos = [
 
 await writeFile(sectionsPath, JSON.stringify(sections, null, 2) + "\n");
 
+// "Chiffres clés" — same figures as the kiosk (single source: src/data/evenement-chiffres.json)
+const chiffres = await readFile(join(ROOT, "src/data/evenement-chiffres.json"), "utf8");
+await writeFile(join(ROOT, "public/xr/chiffres-xr.json"), JSON.stringify(JSON.parse(chiffres)) + "\n");
+console.log("✓ chiffres-xr.json");
+
 // distinct image list (for the service-worker precache)
 const all = new Set();
 sections.themes.forEach((t) => t.photos.forEach((p) => all.add(p)));

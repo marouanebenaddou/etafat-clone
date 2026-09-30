@@ -1,5 +1,8 @@
-// Key figures for the /evenement "Chiffres clés" section (borne + website).
+// Key figures for the "Chiffres clés" section (borne + website + VR).
+// Single source of truth: evenement-chiffres.json (the VR copies it to
+// public/xr/chiffres-xr.json via scripts/build-xr-sections.mjs).
 // Numbers are exact as supplied by ETAFAT; labels are condensed for the kiosk.
+import raw from "./evenement-chiffres.json";
 
 export type FunnelStep = { value: number; label: string; detail: string };
 export type Stat = { value: number; prefix?: string; suffix?: string; label: string; detail?: string };
@@ -12,51 +15,13 @@ export type Programme = {
   closing: string;
 };
 
-export const PROCASEF: Programme & {
+export const PROCASEF = raw.procasef as Programme & {
   steps: FunnelStep[];
   footprint: Stat[];
-} = {
-  key: "procasef",
-  country: "Sénégal",
-  name: "PROCASEF",
-  tagline: "Une opération foncière à grande échelle au service de la sécurisation des droits",
-  steps: [
-    { value: 475900, label: "Inventoriées, enquêtées et levées", detail: "Identification et documentation des occupations foncières" },
-    { value: 389100, label: "Cartographiées avec NICAD", detail: "Identification cadastrale et référencement des parcelles" },
-    { value: 366444, label: "Délibérées par les communes", detail: "Formalisation des droits au niveau communal" },
-    { value: 283300, label: "Approuvées par l’État", detail: "Sécurisation administrative des décisions foncières" },
-    { value: 283300, label: "Titres d’occupation délivrés", detail: "Aboutissement du processus de formalisation foncière" },
-  ],
-  footprint: [
-    { value: 320000, prefix: "≈ ", suffix: " ha", label: "couverts par les parcelles inventoriées" },
-    { value: 2300, prefix: "≈ ", label: "villages couverts" },
-    { value: 64, label: "communes", detail: "6 régions · 28 arrondissements" },
-    { value: 2, label: "grappes territoriales", detail: "Casamance Naturelle · Vallée du Fleuve Sénégal et Ferlo" },
-  ],
-  closing:
-    "Une chaîne opérationnelle intégrée, de l’inventaire foncier à la délivrance des titres d’occupation, déployée au plus près des territoires et des communautés.",
 };
 
-export const PAMOFOR: Programme & {
+export const PAMOFOR = raw.pamofor as Programme & {
   hero: Stat;
   stats: Stat[];
   territory: Stat[];
-} = {
-  key: "pamofor",
-  country: "Côte d’Ivoire",
-  name: "PAMOFOR · PAMOFOR EXT · PRESFOR",
-  tagline: "Une intervention foncière d’envergure au service des territoires ruraux",
-  hero: { value: 950000, suffix: " ha", label: "à certifier", detail: "Sécurisation des droits fonciers ruraux" },
-  stats: [
-    { value: 105600, label: "contrats fonciers", detail: "Formalisation des relations entre détenteurs de droits et exploitants" },
-    { value: 1020, label: "villages accompagnés", detail: "Ingénierie socio-foncière : information, sensibilisation, dialogue communautaire" },
-    { value: 400, label: "DTV", detail: "Délimitations de Territoires Villageois — limites clarifiées et sécurisées" },
-  ],
-  territory: [
-    { value: 6, label: "régions" },
-    { value: 23, label: "départements" },
-    { value: 40, label: "sous-préfectures" },
-  ],
-  closing:
-    "Une approche intégrée — ingénierie socio-foncière, certification, contractualisation et délimitation des territoires villageois — pour sécuriser durablement le foncier rural.",
 };

@@ -242,6 +242,167 @@ function openGallery(section, panel) {
   });
 }
 
+// ── "Chiffres clés" wall behind the viewer — animated infographics ───────────────
+// Same figures as the kiosk (chiffres-xr.json). Each panel re-animates (count-ups,
+// growing bars/ring/circles) every time the viewer turns to face it.
+const fmtFr = (n) => new Intl.NumberFormat("fr-FR").format(n).replace(/ /g, " ");
+const ease3 = (t, d0, dur) => { const q = Math.min(1, Math.max(0, (t - d0) / dur)); return 1 - Math.pow(1 - q, 3); };
+const chiffresPanels = [];
+fetch("./chiffres-xr.json").then((r) => r.json()).then(buildChiffres).catch(() => {});
+
+function spaced(x, s) { if ("letterSpacing" in x) x.letterSpacing = s; }
+function kicker(x, text, X, Y, size = 24, color = "#8ee6e4") {
+  x.fillStyle = color; x.font = `600 ${size}px system-ui, sans-serif`; spaced(x, "5px"); x.fillText(text.toUpperCase(), X, Y); spaced(x, "0px");
+}
+function infoBg(x, W, H) {
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(19,49,80,0.97)"); g.addColorStop(1, "rgba(10,30,48,0.98)");
+  x.fillStyle = g; roundRect(x, 0, 0, W, H, 34); x.fill();
+  const glow = x.createRadialGradient(W - 130, 100, 10, W - 130, 100, 380); glow.addColorStop(0, "rgba(42,181,180,0.28)"); glow.addColorStop(1, "rgba(42,181,180,0)");
+  x.save(); roundRect(x, 0, 0, W, H, 34); x.clip(); x.fillStyle = glow; x.fillRect(0, 0, W, H); x.restore();
+  x.strokeStyle = "rgba(42,181,180,0.8)"; x.lineWidth = 4; roundRect(x, 6, 6, W - 12, H - 12, 30); x.stroke();
+}
+const FUNNEL = [["#0a2a44", "#0a3d62"], ["#0a3d62", "#00669d"], ["#00669d", "#0a7fae"], ["#0a7fae", "#1a9bb3"], ["#2ab5b4", "#1f9e9d"]];
+
+function drawProcasef(x, W, H, d, t) {
+  x.clearRect(0, 0, W, H); infoBg(x, W, H);
+  const L = 56, CW = W - 2 * L, first = d.steps[0].value, last = d.steps[d.steps.length - 1].value;
+  kicker(x, d.country, L, 92);
+  x.fillStyle = "#fff"; x.font = "800 74px system-ui, sans-serif"; x.fillText(d.name, L, 172);
+  x.fillStyle = "rgba(255,255,255,0.75)"; x.font = "400 28px system-ui, sans-serif"; wrap(x, d.tagline, L, 220, CW, 36, 2);
+  // hero figures
+  const bw = (CW - 24) / 2;
+  [{ v: first, l: "parcelles inventoriées", teal: false }, { v: last, l: "titres d’occupation délivrés", teal: true }].forEach((b, i) => {
+    const bx = L + i * (bw + 24), by = 296;
+    x.fillStyle = b.teal ? "rgba(42,181,180,0.22)" : "rgba(255,255,255,0.08)"; roundRect(x, bx, by, bw, 120, 22); x.fill();
+    if (b.teal) { x.strokeStyle = "rgba(142,230,228,0.5)"; x.lineWidth = 2; roundRect(x, bx, by, bw, 120, 22); x.stroke(); }
+    x.fillStyle = "#fff"; x.font = "800 58px system-ui, sans-serif"; x.fillText(fmtFr(Math.round(b.v * ease3(t, 0.1 + i * 0.25, 1.6))), bx + 28, by + 68);
+    x.fillStyle = "rgba(255,255,255,0.78)"; x.font = "400 24px system-ui, sans-serif"; x.fillText(b.l, bx + 28, by + 102);
+  });
+  // funnel
+  kicker(x, "La chaîne foncière intégrée", L, 476, 22, "#2ab5b4");
+  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText("De l’inventaire au titre d’occupation", L, 522);
+  d.steps.forEach((s, i) => {
+    const y = 574 + i * 92, fin = i === d.steps.length - 1;
+    x.textAlign = "center"; x.fillStyle = fin ? "#8ee6e4" : "rgba(255,255,255,0.9)"; x.font = "600 24px system-ui, sans-serif";
+    x.fillText(`${fin ? "✓" : i + 1}  ·  ${s.label}`, W / 2, y);
+    const w = CW * (s.value / first) * ease3(t, 0.25 + i * 0.18, 1.3), bx = (W - w) / 2, by = y + 12, bh = 56;
+    if (w > 2) {
+      const g = x.createLinearGradient(bx, 0, bx + w, 0); g.addColorStop(0, FUNNEL[i][0]); g.addColorStop(1, FUNNEL[i][1]);
+      x.fillStyle = g; roundRect(x, bx, by, w, bh, 14); x.fill();
+      x.save(); roundRect(x, bx, by, w, bh, 14); x.clip();
+      x.fillStyle = "#fff"; x.font = "800 36px system-ui, sans-serif"; x.fillText(fmtFr(Math.round(s.value * ease3(t, 0.2 + i * 0.18, 1.3))), W / 2, by + 41);
+      x.restore();
+    }
+    x.textAlign = "start";
+  });
+  // conversion ring (derived: titles / inventoried)
+  const rate = last / first, rp = ease3(t, 1.2, 1.6), cx = L + 66, cy = 1098, R = 56;
+  x.lineWidth = 16; x.lineCap = "round";
+  x.strokeStyle = "rgba(255,255,255,0.12)"; x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.stroke();
+  if (rp > 0) {
+    const g = x.createLinearGradient(cx - R, cy - R, cx + R, cy + R); g.addColorStop(0, "#00669d"); g.addColorStop(1, "#2ab5b4");
+    x.strokeStyle = g; x.beginPath(); x.arc(cx, cy, R, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * rate * rp); x.stroke();
+  }
+  x.lineCap = "butt";
+  x.textAlign = "center"; x.fillStyle = "#fff"; x.font = "800 28px system-ui, sans-serif";
+  x.fillText((rate * 100 * rp).toFixed(1).replace(".", ",") + " %", cx, cy + 10); x.textAlign = "start";
+  x.fillStyle = "#fff"; x.font = "400 30px system-ui, sans-serif"; x.fillText("des parcelles inventoriées ont abouti", cx + R + 40, cy - 6);
+  x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText("à un titre d’occupation", cx + R + 40, cy + 32);
+  // territorial footprint
+  kicker(x, "Une empreinte territoriale majeure", L, 1212, 22, "#2ab5b4");
+  const cw = (CW - 20) / 2;
+  d.footprint.forEach((s, i) => {
+    const fx = L + (i % 2) * (cw + 20), fy = 1234 + Math.floor(i / 2) * 94;
+    x.fillStyle = "rgba(255,255,255,0.07)"; roundRect(x, fx, fy, cw, 84, 16); x.fill();
+    x.fillStyle = "#8ee6e4"; x.font = "800 36px system-ui, sans-serif";
+    x.fillText(`${s.prefix || ""}${fmtFr(Math.round(s.value * ease3(t, 0.5 + i * 0.15, 1.4)))}${s.suffix || ""}`, fx + 20, fy + 44);
+    x.fillStyle = "rgba(255,255,255,0.8)"; x.font = "400 20px system-ui, sans-serif"; x.fillText(s.label, fx + 20, fy + 72);
+  });
+  const details = d.footprint.filter((s) => s.detail).map((s) => s.detail).join("   ·   ");
+  x.fillStyle = "rgba(255,255,255,0.6)"; x.font = "400 21px system-ui, sans-serif"; wrap(x, details, L, 1452, CW, 28, 2);
+}
+
+function drawPamofor(x, W, H, d, t) {
+  x.clearRect(0, 0, W, H); infoBg(x, W, H);
+  const L = 56, CW = W - 2 * L;
+  kicker(x, d.country, L, 92);
+  x.fillStyle = "#fff"; x.font = "800 58px system-ui, sans-serif"; let y = wrap(x, d.name, L, 166, CW, 66, 2);
+  x.fillStyle = "rgba(255,255,255,0.75)"; x.font = "400 28px system-ui, sans-serif"; y = wrap(x, d.tagline, L, y + 8, CW, 36, 2);
+  // giant hero figure
+  x.font = "800 148px system-ui, sans-serif";
+  const htxt = fmtFr(Math.round(d.hero.value * ease3(t, 0.1, 2.0))) + (d.hero.suffix || "");
+  const hg = x.createLinearGradient(L, 0, L + x.measureText(htxt).width, 0); hg.addColorStop(0, "#ffffff"); hg.addColorStop(1, "#8ee6e4");
+  x.fillStyle = hg; x.fillText(htxt, L - 4, y + 128);
+  x.fillStyle = "#fff"; x.font = "700 38px system-ui, sans-serif"; x.fillText(d.hero.label, L, y + 184);
+  x.fillStyle = "rgba(255,255,255,0.7)"; x.font = "400 26px system-ui, sans-serif"; x.fillText(d.hero.detail || "", L, y + 222);
+  // stat cards
+  const sy = y + 262, cw = (CW - 40) / 3, ch = 222;
+  d.stats.forEach((s, i) => {
+    const cx0 = L + i * (cw + 20);
+    x.fillStyle = "rgba(255,255,255,0.07)"; roundRect(x, cx0, sy, cw, ch, 20); x.fill();
+    const bar = x.createLinearGradient(cx0, 0, cx0 + cw, 0); bar.addColorStop(0, "#00669d"); bar.addColorStop(1, "#2ab5b4");
+    x.save(); roundRect(x, cx0, sy, cw, ch, 20); x.clip(); x.fillStyle = bar; x.fillRect(cx0, sy, cw, 6); x.restore();
+    x.fillStyle = "#8ee6e4"; x.font = "800 52px system-ui, sans-serif"; x.fillText(fmtFr(Math.round(s.value * ease3(t, 0.4 + i * 0.15, 1.4))), cx0 + 22, sy + 74);
+    x.fillStyle = "#fff"; x.font = "700 26px system-ui, sans-serif"; x.fillText(s.label, cx0 + 22, sy + 112);
+    x.fillStyle = "rgba(255,255,255,0.65)"; x.font = "400 19px system-ui, sans-serif"; wrap(x, s.detail || "", cx0 + 22, sy + 146, cw - 40, 24, 3);
+  });
+  // territorial hierarchy: régions → départements → sous-préfectures
+  const ty = sy + ch + 62;
+  kicker(x, "Un déploiement territorial à grande échelle", L, ty, 22, "#2ab5b4");
+  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText("Une couverture structurée", L, ty + 46);
+  const radii = [58, 72, 88], centers = [W * 0.2, W * 0.5, W * 0.8], ccy = ty + 190;
+  const fills = [["#0a3d62", "#00669d"], ["#00669d", "#1a9bb3"], ["#1a9bb3", "#2ab5b4"]];
+  d.territory.forEach((s, i) => {
+    const cxx = centers[i], r = radii[i] * ease3(t, 0.3 + i * 0.2, 0.9);
+    if (r > 1) {
+      const g = x.createLinearGradient(cxx - r, ccy - r, cxx + r, ccy + r); g.addColorStop(0, fills[i][0]); g.addColorStop(1, fills[i][1]);
+      x.fillStyle = g; x.beginPath(); x.arc(cxx, ccy, r, 0, Math.PI * 2); x.fill();
+      x.textAlign = "center"; x.fillStyle = "#fff"; x.font = `800 ${Math.round(radii[i] * 0.62)}px system-ui, sans-serif`;
+      x.fillText(String(Math.round(s.value * ease3(t, 0.4 + i * 0.2, 1.0))), cxx, ccy + radii[i] * 0.22);
+    }
+    x.textAlign = "center"; x.fillStyle = "rgba(255,255,255,0.9)"; x.font = "600 26px system-ui, sans-serif"; x.fillText(s.label, cxx, ccy + radii[2] + 44);
+    x.textAlign = "start";
+    if (i < d.territory.length - 1) { // chevron between circles
+      const mx = (cxx + radii[i] + centers[i + 1] - radii[i + 1]) / 2;
+      x.strokeStyle = "#2ab5b4"; x.lineWidth = 5; x.lineCap = "round"; x.lineJoin = "round";
+      x.beginPath(); x.moveTo(mx - 8, ccy - 16); x.lineTo(mx + 8, ccy); x.lineTo(mx - 8, ccy + 16); x.stroke(); x.lineCap = "butt";
+    }
+  });
+  // closing statement
+  const qy = ccy + radii[2] + 100;
+  x.fillStyle = "#2ab5b4"; x.fillRect(L, qy - 30, 6, 108);
+  x.fillStyle = "rgba(255,255,255,0.85)"; x.font = "italic 400 25px system-ui, sans-serif"; wrap(x, d.closing, L + 28, qy, CW - 30, 34, 3);
+}
+
+function makeInfoPanel(draw, d, W, H, widthM) {
+  const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+  draw(x, W, H, d, 0);
+  const mesh = panelMesh(c, widthM, widthM * H / W);
+  return { mesh, redraw: (t) => { draw(x, W, H, d, t); mesh.material.map.needsUpdate = true; } };
+}
+
+function buildChiffres(data) {
+  const Y = 1.62, R = 2.6;
+  const header = (() => {
+    const W = 1024, H = 190, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
+    x.fillStyle = "rgba(8,23,38,0.85)"; roundRect(x, 0, 0, W, H, 26); x.fill();
+    x.strokeStyle = "rgba(42,181,180,0.8)"; x.lineWidth = 3; roundRect(x, 4, 4, W - 8, H - 8, 23); x.stroke();
+    x.textAlign = "center"; kicker(x, "Chiffres clés", W / 2 + 2, 66, 28); x.textAlign = "center";
+    x.fillStyle = "#fff"; x.font = "700 54px system-ui, sans-serif"; x.fillText("Nos programmes fonciers en chiffres", W / 2, 140);
+    return panelMesh(c, 1.7, 1.7 * H / W);
+  })();
+  placeAroundUser(header, 180, 2.96, R); sections.add(header);
+  [
+    { draw: drawProcasef, d: data.procasef, H: 1510, az: 158 },
+    { draw: drawPamofor, d: data.pamofor, H: 1410, az: -158 },
+  ].forEach((p) => {
+    const ip = makeInfoPanel(p.draw, p.d, 1000, p.H, 1.44);
+    placeAroundUser(ip.mesh, p.az, Y, R); sections.add(ip.mesh);
+    const dir = ip.mesh.position.clone().sub(USER); dir.y = 0; dir.normalize();
+    chiffresPanels.push({ ...ip, dir, armed: true, active: false, t0: 0, lastDraw: 0 });
+  });
+}
+
 // ── country project panel (from globe selection) ────────────────────────────────
 function makeCountryPanel(country) {
   const W = 1024, H = 720, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
@@ -269,7 +430,7 @@ function showPanel(country) {
   const W=1024,H=320,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   x.textAlign="center";
   x.fillStyle="#8ee6e4"; x.font="500 40px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 228);
-  x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe pour le tourner · visez un pays pour ses projets", W/2, 278);
+  x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe · visez un pays · retournez-vous : chiffres clés", W/2, 278);
   const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.85, GLOBE_POS.z - 0.2); scene.add(m);
   // ETAFAT logo on a soft light chip (the logo's text needs a light backing)
   const img = new Image();
@@ -321,11 +482,19 @@ function controllerAzimuth(ctrl) {
 }
 
 // desktop fallback: drag to spin, click to select
-let dragging = false, px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0;
-renderer.domElement.addEventListener("pointerdown", (e) => { dragging = true; px = e.clientX; py = e.clientY; moved = 0; });
+// drag on the globe spins it; drag anywhere else looks around (so the wall behind is reachable)
+let dragging = false, dragMode = "globe", px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
+camera.rotation.order = "YXZ";
+renderer.domElement.addEventListener("pointerdown", (e) => {
+  dragging = true; px = e.clientX; py = e.clientY; moved = 0;
+  raycaster.setFromCamera(new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1), camera);
+  dragMode = raycaster.intersectObject(sphere, false).length ? "globe" : "look";
+});
 renderer.domElement.addEventListener("pointermove", (e) => {
   if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
-  manualSpin += dx * 0.005; tiltY = THREE.MathUtils.clamp(tiltY + dy * 0.004, -0.5, 0.5); px = e.clientX; py = e.clientY;
+  if (dragMode === "globe") { manualSpin += dx * 0.005; tiltY = THREE.MathUtils.clamp(tiltY + dy * 0.004, -0.5, 0.5); }
+  else if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
+  px = e.clientX; py = e.clientY;
 });
 addEventListener("pointerup", (e) => {
   if (dragging && moved < 6 && !renderer.xr.isPresenting) {
@@ -382,7 +551,8 @@ if (audioBtn) audioBtn.addEventListener("click", (e) => {
 const clock = new THREE.Clock();
 let elapsed = 0, hoveredHit = null;
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, get data() { return DATA; }, camera, renderer, scene, sections };
+const camDir = new THREE.Vector3();
+if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, chiffresPanels, get data() { return DATA; }, camera, renderer, scene, sections };
 
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
@@ -420,6 +590,22 @@ renderer.setAnimationLoop(() => {
   if (cPanel) { cPanel.userData.t = Math.min(1, cPanel.userData.t + dt * 2.6); cPanel.scale.setScalar(0.001 + easeOut(cPanel.userData.t) * 0.999); }
 
   if (gallery) { gallery.userData.t = Math.min(1, gallery.userData.t + dt * 3); const o = easeOut(gallery.userData.t); gallery.traverse((m) => { if (m.material) { m.material.transparent = true; m.material.opacity = (m.userData.baseOp ?? 1) * o; } }); }
+
+  // chiffres wall: (re)play a panel's animation whenever the viewer turns to face it
+  if (chiffresPanels.length) {
+    const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
+    cam.getWorldDirection(camDir); camDir.y = 0; camDir.normalize();
+    const now = performance.now();
+    for (const cp of chiffresPanels) {
+      const dot = camDir.dot(cp.dir);
+      if (cp.armed && dot > 0.8) { cp.armed = false; cp.active = true; cp.t0 = elapsed; }
+      else if (!cp.armed && !cp.active && dot < -0.2) { cp.armed = true; cp.redraw(0); } // reset while out of view
+      if (cp.active && now - cp.lastDraw > 45) {
+        const t = elapsed - cp.t0; cp.redraw(t); cp.lastDraw = now;
+        if (t > 3.4) cp.active = false; // final frame drawn
+      }
+    }
+  }
 
   renderer.render(scene, camera);
 });
