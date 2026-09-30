@@ -202,13 +202,23 @@ function showPanel(country) {
   globe.add(cPanel);
 }
 
-// title / instructions
+// title / logo / instructions
 (function titlePlane(){
-  const W=1024,H=256,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
-  x.textAlign="center"; x.fillStyle="#fff"; x.font="700 74px system-ui, sans-serif"; x.fillText("ETAFAT", W/2, 90);
-  x.fillStyle="#8ee6e4"; x.font="500 38px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 150);
-  x.fillStyle="rgba(255,255,255,0.6)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe pour le tourner · visez un pays pour ses projets", W/2, 208);
-  const m = panelMesh(c, 1.3, 0.325); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 0.98, GLOBE_POS.z - 0.2); scene.add(m);
+  const W=1024,H=320,c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
+  x.textAlign="center";
+  x.fillStyle="#8ee6e4"; x.font="500 40px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 228);
+  x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe pour le tourner · visez un pays pour ses projets", W/2, 278);
+  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 1.02, GLOBE_POS.z - 0.2); scene.add(m);
+  // ETAFAT logo on a soft light chip (the logo's text needs a light backing)
+  const img = new Image();
+  img.onload = () => {
+    const cw=460, ch=168, cx=(W-cw)/2, cy=8;
+    x.fillStyle="rgba(255,255,255,0.95)"; roundRect(x, cx, cy, cw, ch, 24); x.fill();
+    const pad=24, aw=cw-2*pad, ah=ch-2*pad, r=Math.min(aw/img.width, ah/img.height), dw=img.width*r, dh=img.height*r;
+    x.drawImage(img, cx+(cw-dw)/2, cy+(ch-dh)/2, dw, dh);
+    m.material.map.needsUpdate = true;
+  };
+  img.src = "/etafat/logo-footer.png";
 })();
 
 // ── controllers ────────────────────────────────────────────────────────────────

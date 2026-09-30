@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v3";
+const CACHE = "etafat-vr-v4";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -10,6 +10,7 @@ const PRECACHE = [
   "./presence-xr.json",
   "./sections-xr.json",
   "./manifest.webmanifest",
+  "/etafat/logo-footer.png",
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
 ];
