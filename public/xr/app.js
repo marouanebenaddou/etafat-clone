@@ -182,7 +182,7 @@ function buildSections(data) {
     const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75);
     m.userData.section = { label: t.label, photos: t.photos || [] }; tileTargets.push(m); sections.add(m);
   });
-  const apps = makeAppsPanel(data.apps); placeAroundUser(apps, 0, 2.42, 2.1);
+  const apps = makeAppsPanel(data.apps); placeAroundUser(apps, 0, 2.9, 2.0); // raised clear of the globe
   apps.userData.section = { label: data.apps.label, photos: data.apps.photos || [] }; tileTargets.push(apps); sections.add(apps);
 }
 
@@ -252,7 +252,7 @@ function showPanel(country) {
   x.textAlign="center";
   x.fillStyle="#8ee6e4"; x.font="500 40px system-ui, sans-serif"; x.fillText("Notre présence dans le monde", W/2, 228);
   x.fillStyle="rgba(255,255,255,0.62)"; x.font="400 27px system-ui, sans-serif"; x.fillText("Saisissez le globe pour le tourner · visez un pays pour ses projets", W/2, 278);
-  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 1.02, GLOBE_POS.z - 0.2); scene.add(m);
+  const m = panelMesh(c, 1.42, 1.42*H/W); m.position.set(GLOBE_POS.x, GLOBE_POS.y + GLOBE_R + 1.42, GLOBE_POS.z - 0.2); scene.add(m);
   // ETAFAT logo on a soft light chip (the logo's text needs a light backing)
   const img = new Image();
   img.onload = () => {
