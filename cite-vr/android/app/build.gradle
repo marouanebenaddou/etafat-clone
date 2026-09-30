@@ -1,0 +1,48 @@
+// ETAFAT · Cité portugaise de Mazagan — fully offline Quest APK: the viewer and the whole drone model
+// (3D Tiles, ~420 MB) are bundled in assets/www and served by an on-device HTTP server on 127.0.0.1
+// (a secure context, so WebXR works), opened in the Quest Browser. No network needed, ever.
+// Stage the assets first:  node scripts/build-cite-apk.mjs   then  ./gradlew assembleRelease
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'ma.etafat.citevr'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'ma.etafat.cite.vr.offline'
+        minSdk 29
+        targetSdk 32          // sideloaded on Quest; keeps foreground-service rules simple
+        versionCode 1
+        versionName '1.0'
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('../../../quest-twa/android.keystore')
+            storePassword 'etafatvr'
+            keyAlias 'android'
+            keyPassword 'etafatvr'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+
+    lint {
+        disable 'ExpiredTargetSdkVersion' // sideloaded, not a Play Store build
+        checkReleaseBuilds false          // the 420 MB of assets make lint's vital pass slow and it adds nothing here
+    }
+
+    androidResources {
+        noCompress 'glb', 'subtree', 'wasm', 'png', 'jpg', 'jpeg' // already compressed (Draco / KTX2): store as-is
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
