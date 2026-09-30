@@ -34,50 +34,64 @@ addEventListener("resize", () => {
 
 const world = createWorld({ scene, renderer, camera });
 
-// ── globe: a mosaic of tiles, like the ETAFAT logo ──────────────────────────────
-// Pale core + land as square tiles in the logo's blue gradient; ETAFAT countries in teal. A few
-// tiles drift off the upper-right edge (the logo's signature). Pointing at a country lifts its
-// tiles and pulls its pop-up out toward the viewer.
+// ── globe: map with clear country borders (earth.png, ETAFAT palette) ────────────
+// ETAFAT countries in teal; pointing at one lights it up (fill glow + crisp outline from an id map)
+// and pulls its pop-up out toward the viewer.
 const globe = new THREE.Group(); globe.position.copy(GLOBE_POS); scene.add(globe);
-const spin = new THREE.Group(); globe.add(spin); // tiles, pins + arcs ride along
+const spin = new THREE.Group(); globe.add(spin); // markers + arcs ride along
 const texLoader = new THREE.TextureLoader();
+const dummy = new THREE.Object3D(), _v = new THREE.Vector3();
 
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 72, 48),
-  new THREE.MeshLambertMaterial({ color: 0xe2ecf2, emissive: 0x2a3f4f, emissiveIntensity: 0.45 }));
+const earthTex = texLoader.load("./earth.png"); earthTex.colorSpace = THREE.SRGBColorSpace; earthTex.anisotropy = 8;
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 96, 64), new THREE.MeshBasicMaterial({ map: earthTex }));
 spin.add(sphere);
-{ // graticule every 30° (surveyor's grid)
-  const pts = [], R = GLOBE_R * 1.0015;
-  for (let lat = -60; lat <= 60; lat += 30) for (let lon = -180; lon < 180; lon += 4) pts.push(lonLatToVec3(lon, lat, R), lonLatToVec3(lon + 4, lat, R));
-  for (let lon = -180; lon < 180; lon += 30) for (let lat = -84; lat < 84; lat += 4) pts.push(lonLatToVec3(lon, lat, R), lonLatToVec3(lon, lat + 4, R));
-  spin.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0x8fb0c2, transparent: true, opacity: 0.5 })));
-}
+const atmo = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 1.14, 64, 48), new THREE.ShaderMaterial({
+  transparent: true, blending: THREE.AdditiveBlending, side: THREE.BackSide, depthWrite: false,
+  uniforms: { uColor: { value: new THREE.Color(TEAL) } },
+  vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0);}`,
+  fragmentShader: `varying vec3 vN; uniform vec3 uColor; void main(){ float i = pow(0.72 - dot(vN, vec3(0.0,0.0,1.0)), 3.0); gl_FragColor = vec4(uColor, clamp(i,0.0,1.0)*0.9);}`
+}));
+globe.add(atmo);
+
+// hovered-country highlight: a shell reading the id map (index+1 in R, checksum G = 255−R, B = 128)
+const idTex = texLoader.load("./countries-id.png");
+idTex.colorSpace = THREE.NoColorSpace; idTex.magFilter = idTex.minFilter = THREE.NearestFilter; idTex.generateMipmaps = false;
+const hiMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false,
+  uniforms: { uId: { value: idTex }, uHover: { value: 0 }, uTime: { value: 0 }, uTexel: { value: new THREE.Vector2(1 / 2048, 1 / 1024) } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform sampler2D uId; uniform float uHover, uTime; uniform vec2 uTexel; varying vec2 vUv;
+    float idAt(vec2 uv){ vec3 c = texture2D(uId, uv).rgb * 255.0; return (abs(c.b - 128.0) < 1.5 && abs(c.r + c.g - 255.0) < 1.5) ? floor(c.r + 0.5) : 0.0; }
+    bool hov(vec2 uv){ return abs(idAt(uv) - uHover) < 0.5; }
+    void main(){
+      if (uHover < 0.5) discard;
+      bool inside = hov(vUv);
+      vec2 o = uTexel * 1.6;
+      float edge = (hov(vUv + vec2(o.x, 0.0)) != inside || hov(vUv - vec2(o.x, 0.0)) != inside || hov(vUv + vec2(0.0, o.y)) != inside || hov(vUv - vec2(0.0, o.y)) != inside) ? 1.0 : 0.0;
+      float pulse = 0.5 + 0.5 * sin(uTime * 4.0);
+      float a = max(inside ? 0.3 + 0.18 * pulse : 0.0, edge);
+      if (a < 0.01) discard;
+      gl_FragColor = vec4(mix(vec3(0.72, 0.97, 0.95), vec3(1.0), edge), a);
+    }`,
+});
+spin.add(new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 1.002, 128, 80), hiMat));
+
 function lonLatToVec3(lon, lat, r = GLOBE_R) {
   const phi = (90 - lat) * DEG, theta = (lon + 180) * DEG;
   return new THREE.Vector3(-r*Math.sin(phi)*Math.cos(theta), r*Math.cos(phi), r*Math.sin(phi)*Math.sin(theta));
 }
-// logo gradient: deep blue (lower-left) → light cyan (upper-right), in globe space so it stays put while it spins
-function logoGradient(mat) {
-  mat.onBeforeCompile = (sh) => {
-    Object.assign(sh.uniforms, { uDeep: { value: new THREE.Color(0x0b3c78) }, uLight: { value: new THREE.Color(0x5aa6e2) }, uC: { value: GLOBE_POS } });
-    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vWP;")
-      .replace("#include <project_vertex>", "#include <project_vertex>\n#ifdef USE_INSTANCING\n vWP = (modelMatrix * instanceMatrix * vec4(transformed, 1.0)).xyz;\n#else\n vWP = (modelMatrix * vec4(transformed, 1.0)).xyz;\n#endif");
-    sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vWP; uniform vec3 uDeep, uLight, uC;")
-      .replace("#include <color_fragment>", "#include <color_fragment>\n{ float t = clamp(dot(normalize(vWP - uC), normalize(vec3(0.72, 0.62, 0.3))) * 0.62 + 0.5, 0.0, 1.0); diffuseColor.rgb *= mix(uDeep, uLight, t); }");
-  };
-  return mat;
-}
-const landMat = logoGradient(new THREE.MeshLambertMaterial({ emissive: 0x0a2a4a, emissiveIntensity: 0.35 }));
-const actMat = new THREE.MeshLambertMaterial({ emissive: TEAL, emissiveIntensity: 0.35 }); // ETAFAT countries: teal, standing a little proud
-const TILE_T = 0.007 * GK, dummy = new THREE.Object3D(), _v = new THREE.Vector3();
-function tileMatrix(lon, lat, lift, s = 1) {
-  const n = lonLatToVec3(lon, lat, 1);
-  dummy.position.copy(n).multiplyScalar(GLOBE_R + TILE_T / 2 + lift); dummy.lookAt(_v.copy(n).multiplyScalar(9));
-  dummy.scale.set(s, s, 1); dummy.updateMatrix(); return dummy.matrix;
+function glowTexture(hex) {
+  const sz = 128, c = document.createElement("canvas"); c.width = c.height = sz;
+  const x = c.getContext("2d"); const g = x.createRadialGradient(sz/2,sz/2,0,sz/2,sz/2,sz/2);
+  const col = new THREE.Color(hex); const rgb = `${(col.r*255)|0},${(col.g*255)|0},${(col.b*255)|0}`;
+  g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.25, `rgba(${rgb},1)`);
+  g.addColorStop(0.6, `rgba(${rgb},0.35)`); g.addColorStop(1, `rgba(${rgb},0)`);
+  x.fillStyle = g; x.fillRect(0,0,sz,sz);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
 }
 
-let DATA = null, TILES = null, actMesh = null;
-const tileByCell = new Map(), countryByIso = new Map(), actTiles = new Map(); // iso → [{i, lon, lat}]
-const countryLift = new Map(); // iso → { v, target } (animated tile lift + highlight)
+let DATA = null, ID = null;
+const countryByIso = new Map();
 const arcMat = new THREE.MeshBasicMaterial({ color: TEAL });
 const arcTime = { value: 0 };
 arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after another, then carry travelling light pulses
@@ -91,42 +105,23 @@ arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after an
       diffuseColor.rgb = mix(diffuseColor.rgb, vec3(1.0), glow);`);
 };
 
-Promise.all([fetch("./presence-xr.json").then((r) => r.json()), fetch("./globe-tiles.json").then((r) => r.json())])
-  .then(([d, t]) => { DATA = d; TILES = t; buildGlobe(d, t); });
+fetch("./presence-xr.json").then((r) => r.json()).then((d) => { DATA = d; buildGlobe(d); });
+// id map pixels for the hover lookup (read raw: no colour conversion)
+fetch("./countries-id.png").then((r) => r.blob()).then((b) => createImageBitmap(b, { colorSpaceConversion: "none", premultiplyAlpha: "none" })).then((bm) => {
+  const c = document.createElement("canvas"); c.width = bm.width; c.height = bm.height;
+  const x = c.getContext("2d", { willReadFrequently: true }); x.drawImage(bm, 0, 0);
+  ID = { w: bm.width, h: bm.height, d: x.getImageData(0, 0, bm.width, bm.height).data };
+}).catch(() => {});
 
-function buildGlobe(d, t) {
+function buildGlobe(d) {
   d.countries.forEach((c) => countryByIso.set(c.iso, c));
-  const land = [], act = [], size = GLOBE_R * t.step * DEG * 0.8;
-  for (let i = 0; i < t.cells.length; i += 3) {
-    const r = t.cells[i], c = t.cells[i + 1], iso = t.iso[t.cells[i + 2]], n = t.rows[r];
-    const tile = { lat: -90 + (r + 0.5) * t.step, lon: -180 + (c + 0.5) * 360 / n, iso };
-    tileByCell.set(r * 1000 + c, iso);
-    (countryByIso.has(iso) ? act : land).push(tile);
-  }
-  const geo = new THREE.BoxGeometry(size, size, TILE_T);
-  const landMesh = new THREE.InstancedMesh(geo, landMat, land.length);
-  land.forEach((tl, i) => landMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0)));
-  spin.add(landMesh);
-  actMesh = new THREE.InstancedMesh(geo, actMat, act.length);
-  const teal = new THREE.Color(TEAL);
-  act.forEach((tl, i) => {
-    actMesh.setMatrixAt(i, tileMatrix(tl.lon, tl.lat, 0.004 * GK)); actMesh.setColorAt(i, teal);
-    if (!actTiles.has(tl.iso)) actTiles.set(tl.iso, []); actTiles.get(tl.iso).push({ i, lon: tl.lon, lat: tl.lat });
-  });
-  spin.add(actMesh);
-
-  // pins: every ETAFAT country (small ones would otherwise be a single tile) + Casablanca HQ
-  const pinGeo = mergeGeometries([
-    new THREE.CylinderGeometry(0.0016 * GK, 0.0016 * GK, 0.03 * GK, 5).translate(0, 0.015 * GK, 0),
-    new THREE.SphereGeometry(0.0065 * GK, 10, 8).translate(0, 0.033 * GK, 0),
-  ]).rotateX(Math.PI / 2); // along +z = the surface normal after lookAt
-  const pins = new THREE.InstancedMesh(pinGeo, new THREE.MeshLambertMaterial({ emissive: 0x333333 }), d.countries.length + 1);
-  const white = new THREE.Color(0xffffff), hq = new THREE.Color(0xf2c230);
-  d.countries.forEach((c, i) => { dummy.position.copy(lonLatToVec3(c.lon, c.lat, GLOBE_R + TILE_T)); dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.scale.setScalar(1); dummy.updateMatrix(); pins.setMatrixAt(i, dummy.matrix); pins.setColorAt(i, white); });
-  dummy.position.copy(lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R + TILE_T)); dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.scale.setScalar(1.5); dummy.updateMatrix();
-  pins.setMatrixAt(d.countries.length, dummy.matrix); pins.setColorAt(d.countries.length, hq);
-  spin.add(pins);
-
+  // glowing markers (one draw call each): ETAFAT countries + the Casablanca HQ
+  const pts = (list, hex, size) => {
+    const g = new THREE.BufferGeometry().setFromPoints(list.map(([lon, lat]) => lonLatToVec3(lon, lat, GLOBE_R * 1.012)));
+    return new THREE.Points(g, new THREE.PointsMaterial({ map: glowTexture(hex), size, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+  };
+  spin.add(pts(d.countries.map((c) => [c.lon, c.lat]), TEAL_L, 0.06 * GK));
+  spin.add(pts([[d.hq.lon, d.hq.lat]], 0xffffff, 0.1 * GK));
   // arcs from HQ (one merged mesh)
   const a = lonLatToVec3(d.hq.lon, d.hq.lat, GLOBE_R), tubes = [];
   d.countries.forEach((c, i) => {
@@ -138,57 +133,28 @@ function buildGlobe(d, t) {
   });
   spin.add(new THREE.Mesh(mergeGeometries(tubes), arcMat));
 }
-
-// logo tiles drifting off the upper-right edge (globe space: they stay there while it spins)
-const floatTiles = (() => {
-  const N = 40, R = rng(7), key = new THREE.Vector3(0.66, 0.6, 0.45).normalize(), list = [];
-  while (list.length < N) {
-    const d = new THREE.Vector3(R() * 2 - 1, R() * 2 - 1, R() * 2 - 1).normalize();
-    if (d.dot(key) > 0.8) list.push({ d, off: (0.015 + Math.pow(R(), 1.6) * 0.16 * (d.dot(key) - 0.8) / 0.2) * GK, s: 0.9 + R() * 0.9, ph: R() * 6.28, sp: 0.4 + R() * 0.5 });
-  }
-  const size = GLOBE_R * 2.25 * DEG * 0.8, m = new THREE.InstancedMesh(new THREE.BoxGeometry(size, size, TILE_T), landMat, N);
-  globe.add(m); return { m, list };
-})();
-function rng(seed) { let x = seed >>> 0; return () => ((x = (x * 1664525 + 1013904223) >>> 0) / 4294967296); }
-function updateFloatTiles(t) {
-  const { m, list } = floatTiles;
-  list.forEach((f, i) => {
-    dummy.position.copy(f.d).multiplyScalar(GLOBE_R + TILE_T + f.off * (1 + 0.35 * Math.sin(t * f.sp + f.ph)));
-    dummy.lookAt(_v.copy(dummy.position).multiplyScalar(9)); dummy.rotateZ(0.3 * Math.sin(t * 0.3 + f.ph));
-    dummy.scale.set(f.s, f.s, 1); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix);
-  });
-  m.instanceMatrix.needsUpdate = true;
+function updateCountryHighlight(t, hoverIso) {
+  const i = hoverIso != null && DATA ? DATA.countries.findIndex((c) => c.iso === hoverIso) : -1;
+  hiMat.uniforms.uHover.value = i + 1; hiMat.uniforms.uTime.value = t;
 }
-// hovered country: its tiles rise and brighten
-const hiCol = new THREE.Color(0xbdf6f3), baseCol = new THREE.Color(TEAL), _c = new THREE.Color();
-function updateCountryLift(dt, t, hoverIso) {
-  if (!actMesh) return;
-  for (const iso of actTiles.keys()) {
-    const st = countryLift.get(iso) || { v: 0 }; st.target = iso === hoverIso ? 1 : 0;
-    if (Math.abs(st.v - st.target) < 0.002 && st.v === st.target) { countryLift.set(iso, st); continue; }
-    st.v += (st.target - st.v) * Math.min(1, dt * 9); if (Math.abs(st.v - st.target) < 0.002) st.v = st.target;
-    countryLift.set(iso, st);
-    _c.copy(baseCol).lerp(hiCol, st.v);
-    for (const tl of actTiles.get(iso)) { actMesh.setMatrixAt(tl.i, tileMatrix(tl.lon, tl.lat, (0.004 + 0.022 * st.v) * GK, 1 + 0.12 * st.v)); actMesh.setColorAt(tl.i, _c); }
-    actMesh.instanceMatrix.needsUpdate = true; actMesh.instanceColor.needsUpdate = true;
-  }
-  actMat.emissiveIntensity = 0.32 + 0.08 * Math.sin(t * 2);
-}
-// ray (already aimed) → country under it: exact tile, else the nearest ETAFAT pin within ~4°
+// ray (already aimed) → ETAFAT country under it: exact from the id map, else the nearest marker within ~3°
 const _p = new THREE.Vector3();
 function countryAtRay() {
-  if (!TILES) return null;
+  if (!DATA) return null;
   const h = raycaster.intersectObject(sphere, false); if (!h.length) return null;
   _p.copy(h[0].point); spin.worldToLocal(_p); _p.normalize();
   const lat = 90 - Math.acos(THREE.MathUtils.clamp(_p.y, -1, 1)) / DEG;
   let lon = Math.atan2(_p.z, -_p.x) / DEG - 180; if (lon < -180) lon += 360;
-  const r = Math.min(TILES.rows.length - 1, Math.floor((lat + 90) / TILES.step)), n = TILES.rows[r];
-  let country = countryByIso.get(tileByCell.get(r * 1000 + Math.min(n - 1, Math.floor((lon + 180) / 360 * n))));
+  let country = null;
+  if (ID) {
+    const x = Math.min(ID.w - 1, Math.floor((lon + 180) / 360 * ID.w)), y = Math.min(ID.h - 1, Math.floor((90 - lat) / 180 * ID.h)), k = (y * ID.w + x) * 4, dd = ID.d;
+    if (dd[k + 2] === 128 && dd[k] + dd[k + 1] === 255 && dd[k] > 0) country = DATA.countries[dd[k] - 1] || null;
+  }
   if (!country) {
-    let best = Math.cos(4 * DEG);
+    let best = Math.cos(3 * DEG);
     for (const c of DATA.countries) { const dp = lonLatToVec3(c.lon, c.lat, 1).dot(_p); if (dp > best) { best = dp; country = c; } }
   }
-  return country ? { country, local: _p.clone().multiplyScalar(GLOBE_R + TILE_T) } : null;
+  return country ? { country, local: _p.clone().multiplyScalar(GLOBE_R) } : null;
 }
 
 // ── canvas panel helpers ────────────────────────────────────────────────────────
@@ -699,8 +665,8 @@ function pullCountry(hit) {
   const card = makeCountryPanel(hit.country); card.scale.setScalar(0.74); card.renderOrder = 30; card.material.depthTest = true;
   const g = new THREE.Group(); g.add(card); g.scale.setScalar(0.001); scene.add(g);
   const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }), LEAD_N); line.frustumCulled = false; scene.add(line);
-  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0x0b6f6e, transparent: true, side: THREE.DoubleSide, depthWrite: false })); // dark teal: reads on the pale lifted tiles
-  ring.position.copy(hit.local).setLength(GLOBE_R + 0.036 * GK); ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring); // floats just above the lifted tiles
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+  ring.position.copy(hit.local).setLength(GLOBE_R * 1.006); ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring);
   cPull = { country: hit.country, local: hit.local.clone(), g, card, line, ring, t: 0, idle: 0, closing: false, cardH: card.geometry.parameters.height * 0.8 };
 }
 const _a = new THREE.Vector3(), _to = new THREE.Vector3(), _e = new THREE.Vector3();
@@ -713,7 +679,7 @@ function updateCountryPull(dt, hit, onPanel, elapsed) {
   for (const P of [cPull, ...cClosing]) {
     if (!P) continue;
     P.t = Math.min(1, Math.max(0, P.t + (P.closing ? -dt * 4 : dt * 2.4)));
-    _a.copy(P.local).setLength(GLOBE_R + 0.036 * GK); spin.localToWorld(_a); // the country's point (above its lifted tiles)
+    _a.copy(P.local).setLength(GLOBE_R * 1.006); spin.localToWorld(_a); // the country's point on the globe
     const side = _a.x >= GLOBE_POS.x ? 1 : -1;                    // pop out on the country's side…
     _to.set(side * 0.72, 1.47, -1.05);                            // …but close to the viewer (~1.27 m, ~34° off-centre)
     const k = P.closing ? easeOut(P.t) : easeBack(P.t);
@@ -901,7 +867,6 @@ renderer.setAnimationLoop(() => {
   spin.rotation.x = THREE.MathUtils.clamp(spin.rotation.x + (tiltY - spin.rotation.x) * 0.1, -0.6, 0.6);
 
   arcTime.value = elapsed;
-  updateFloatTiles(elapsed);
 
   // pointer: theme pop-up UI first, then the country pop-up, then the globe (VR: both controllers; desktop: mouse)
   let uiHit = null, cHit = null, onPanel = false, rPoint = null;
@@ -918,7 +883,7 @@ renderer.setAnimationLoop(() => {
   if (renderer.xr.isPresenting) { reticle.visible = !!rPoint; if (rPoint) reticle.position.copy(rPoint); }
   if (!renderer.xr.isPresenting) renderer.domElement.style.cursor = uiHit || cHit ? "pointer" : "";
   updateCountryPull(dt, cHit, onPanel, elapsed);
-  updateCountryLift(dt, elapsed, cPull ? cPull.country.iso : (cHit ? cHit.country.iso : null));
+  updateCountryHighlight(elapsed, cPull ? cPull.country.iso : (cHit ? cHit.country.iso : null));
 
 
   animatePopup(dt);

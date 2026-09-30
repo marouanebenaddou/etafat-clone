@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v17";
+const CACHE = "etafat-vr-v18";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -15,7 +15,8 @@ const PRECACHE = [
   "./terrain/dem.json",
   "./models/worker.glb",
   "./models/woman.glb",
-  "./globe-tiles.json",
+  "./earth.png",
+  "./countries-id.png",
   // country banners (flag × landmark) shown in the globe pop-ups
   ...[504, 384, 686, 478, 324, 624, 854, 178, 148, 788, 466, 430, 288, 768, 566, 266, 24, 180, 508, 108, 204, 270, 250, 300, 634, 784, 682, 608, 170].map((iso) => `/etafat/presence/banners/${iso}.jpg`),
   "./presence-xr.json",
