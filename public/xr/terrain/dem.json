@@ -1,0 +1,14 @@
+{
+  "size": 615,
+  "mpp": 32.545,
+  "center": 307,
+  "viewElevation": 2111,
+  "min": 1310,
+  "max": 3755,
+  "lookout": {
+    "lat": 31.62561,
+    "lon": -6.47678
+  },
+  "place": "Vallée des Aït Bouguemez (« Vallée Heureuse »), Haut Atlas, Maroc",
+  "attribution": "Relief : AWS Terrain Tiles (Mapzen) — données SRTM, NASA/USGS"
+}

@@ -27,6 +27,7 @@
     #hint { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); color: rgba(234,244,248,.55); font-size: 13px; z-index: 15; pointer-events: none; }
     #audio-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 16; background: rgba(42,181,180,.15); border: 1.5px solid #2ab5b4; color: #eaf4f8; font: 600 13px system-ui, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
     #audio-toggle:hover { background: rgba(42,181,180,.28); }
+    #credits { position: fixed; left: 16px; bottom: 18px; max-width: calc(100vw - 140px); color: rgba(234,244,248,.42); font-size: 11px; line-height: 1.4; z-index: 15; pointer-events: none; }
   </style>
   <script type="importmap">
     { "imports": { "three": "./vendor/three.module.js" } }
@@ -40,6 +41,7 @@
   </div>
   <div id="hint">Glissez le globe pour le tourner · glissez ailleurs pour regarder autour (chiffres clés derrière vous) · « Enter VR » avec le casque</div>
   <button id="audio-toggle" type="button">♪ Son</button>
+  <div id="credits">Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages : Quaternius (CC0)</div>
   <script type="module">
     import "./app.js";
     // hide the loader once the first frame has plausibly rendered

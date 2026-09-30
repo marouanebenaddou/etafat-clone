@@ -1,18 +1,17 @@
 // ETAFAT — Immersive presence experience (WebXR, Quest 3). Offline, self-contained.
 import * as THREE from "three";
 import { VRButton } from "./vendor/VRButton.js";
+import { createWorld } from "./world.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
-const GLOBE_R = 0.72;
-const GLOBE_POS = new THREE.Vector3(0, 1.45, -1.7); // close to the viewer
+const GLOBE_R = 0.55;
+const GLOBE_POS = new THREE.Vector3(0, 1.8, -1.75); // floats over the valley, which stays visible below
 const USER = new THREE.Vector3(0, 1.6, 0);
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(NAVY);
-scene.fog = new THREE.FogExp2(NAVY, 0.025);
+const scene = new THREE.Scene(); // sky, fog and lights come from world.js
 
-const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.05, 200);
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 30000);
 camera.position.copy(USER);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -20,7 +19,7 @@ renderer.setPixelRatio(Math.min(2, devicePixelRatio));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+renderer.toneMappingExposure = 1.0;
 renderer.xr.enabled = true;
 renderer.xr.setReferenceSpaceType("local-floor");
 document.body.appendChild(renderer.domElement);
@@ -31,27 +30,7 @@ addEventListener("resize", () => {
   renderer.setSize(innerWidth, innerHeight);
 });
 
-scene.add(new THREE.HemisphereLight(0x9fd8ff, 0x0a1e30, 1.1));
-const key = new THREE.DirectionalLight(0xffffff, 0.5); key.position.set(2, 4, 1); scene.add(key);
-
-// ── starfield ────────────────────────────────────────────────────────────────
-const stars = (() => {
-  const N = 2600, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
-  const cols = [new THREE.Color(TEAL_L), new THREE.Color(0xffffff), new THREE.Color(BLUE)];
-  for (let i = 0; i < N; i++) {
-    const r = 14 + Math.random() * 45, t = Math.random() * Math.PI * 2, p = Math.acos(2 * Math.random() - 1);
-    pos[i*3] = r*Math.sin(p)*Math.cos(t); pos[i*3+1] = r*Math.cos(p)*0.6+4; pos[i*3+2] = r*Math.sin(p)*Math.sin(t);
-    const c = cols[Math.floor(Math.random()*3)]; col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
-  g.setAttribute("color", new THREE.BufferAttribute(col, 3));
-  const pts = new THREE.Points(g, new THREE.PointsMaterial({ size: 0.13, vertexColors: true, transparent: true, opacity: 0.9, depthWrite: false, blending: THREE.AdditiveBlending }));
-  scene.add(pts); return pts;
-})();
-
-const grid = new THREE.GridHelper(40, 60, TEAL, 0x123047);
-grid.material.transparent = true; grid.material.opacity = 0.12; scene.add(grid);
+const world = createWorld({ scene, renderer, camera });
 
 // ── globe ──────────────────────────────────────────────────────────────────────
 const globe = new THREE.Group(); globe.position.copy(GLOBE_POS); scene.add(globe);
@@ -196,7 +175,7 @@ function placeAroundUser(mesh, azimuthDeg, y, radius) {
   return mesh;
 }
 function buildSections(data) {
-  const az = [-108, -73, -40, 40, 73, 108]; // 3 left, 3 right of the globe
+  const az = [-128, -98, -68, 68, 98, 128]; // 3 left, 3 right — the front stays open onto the valley
   data.themes.forEach((t, i) => {
     const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75);
     m.userData.section = { label: t.label, photos: t.photos || [] }; tileTargets.push(m); sections.add(m);
@@ -393,8 +372,8 @@ function buildChiffres(data) {
   })();
   placeAroundUser(header, 180, 2.96, R); sections.add(header);
   [
-    { draw: drawProcasef, d: data.procasef, H: 1510, az: 158 },
-    { draw: drawPamofor, d: data.pamofor, H: 1410, az: -158 },
+    { draw: drawProcasef, d: data.procasef, H: 1510, az: 160 },
+    { draw: drawPamofor, d: data.pamofor, H: 1410, az: -160 },
   ].forEach((p) => {
     const ip = makeInfoPanel(p.draw, p.d, 1000, p.H, 1.44);
     placeAroundUser(ip.mesh, p.az, Y, R); sections.add(ip.mesh);
@@ -552,14 +531,14 @@ const clock = new THREE.Clock();
 let elapsed = 0, hoveredHit = null;
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
-if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, chiffresPanels, get data() { return DATA; }, camera, renderer, scene, sections };
+if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
 
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
 
   const intro = Math.min(1, elapsed / 2.0), ei = easeOut(intro);
   globe.scale.setScalar(ei);
-  stars.material.opacity = 0.9 * intro; stars.rotation.y += dt * 0.005;
+  world.update(dt, elapsed);
   sections.children.forEach((m) => { m.position.y = m.userData.floatBase + Math.sin(elapsed*0.6 + m.userData.phase) * 0.015; m.material.opacity = intro; m.material.transparent = true; });
 
   // spin: NO auto-rotation — only user commands

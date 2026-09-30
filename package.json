@@ -27,6 +27,8 @@
     "world-atlas": "^2.0.2"
   },
   "devDependencies": {
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
     "@iconify-json/ph": "^1.2.2",
     "@napi-rs/canvas": "^1.0.9",
     "@tailwindcss/postcss": "^4",
