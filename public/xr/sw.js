@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v11";
+const CACHE = "etafat-vr-v12";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -23,7 +23,7 @@ const PRECACHE = [
   "/etafat/logo-footer.png",
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
-  // project photos shown when a tile is opened (placeholders until real ones land)
+  // project photos shown in the theme pop-ups (placeholders until real ones land)
   "/etafat/evenement/pool/aerial-1.jpg",
   "/etafat/evenement/pool/aerial-2.jpg",
   "/etafat/evenement/pool/aerial-3.jpg",
@@ -51,18 +51,21 @@ const PRECACHE = [
   "/etafat/evenement/pool/networks-1.jpg",
   "/etafat/evenement/pool/networks-2.jpg",
   "/etafat/evenement/pool/networks-3.jpg",
+  "/etafat/evenement/pool/networks-4.jpg",
   "/etafat/evenement/pool/port-1.jpg",
   "/etafat/evenement/pool/port-2.jpg",
   "/etafat/evenement/pool/port-3.jpg",
   "/etafat/evenement/pool/roads-1.jpg",
   "/etafat/evenement/pool/roads-2.jpg",
   "/etafat/evenement/pool/roads-3.jpg",
+  "/etafat/evenement/pool/roads-4.jpg",
   "/etafat/evenement/pool/terrain-1.jpg",
   "/etafat/evenement/pool/terrain-2.jpg",
   "/etafat/evenement/pool/terrain-3.jpg",
   "/etafat/evenement/pool/terrain-4.jpg",
   "/etafat/evenement/pool/urban-1.jpg",
   "/etafat/evenement/pool/urban-2.jpg",
+  "/etafat/evenement/pool/urban-3.jpg",
 ];
 
 self.addEventListener("install", (e) => {

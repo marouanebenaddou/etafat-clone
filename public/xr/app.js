@@ -110,8 +110,7 @@ function panelMesh(canvas, w, h) {
 
 // theme / apps section tiles arranged around the viewer
 const sections = new THREE.Group(); scene.add(sections);
-const tileTargets = [];          // section panels the user can aim at to open photos
-let gallery = null, galleryKey = null;
+const tileTargets = [];          // theme panels the user can aim at to open their projects
 fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 
 function makeThemePanel(t) {
@@ -178,47 +177,228 @@ function buildSections(data) {
   const az = [-128, -98, -68, 68, 98, 128]; // 3 left, 3 right — the front stays open onto the valley
   data.themes.forEach((t, i) => {
     const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75);
-    m.userData.section = { label: t.label, photos: t.photos || [] }; tileTargets.push(m); sections.add(m);
+    m.userData.theme = t; tileTargets.push(m); sections.add(m);
   });
   // "Applications terrain" tile intentionally omitted in VR (not needed here)
 }
 
-// ── photo gallery: opening a tile floats its project photos in front of it ───────
-function makeGalleryHeader(label) {
-  const W = 768, H = 108, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  x.fillStyle = "rgba(8,23,38,0.9)"; roundRect(x, 0, 0, W, H, 20); x.fill();
-  x.strokeStyle = "#2ab5b4"; x.lineWidth = 4; roundRect(x, 4, 4, W-8, H-8, 17); x.stroke();
-  x.fillStyle = "#fff"; x.textAlign = "center"; x.font = "600 40px system-ui, sans-serif";
-  x.fillText(label.length > 34 ? label.slice(0, 33) + "…" : label, W/2, 70);
-  return panelMesh(c, 0.94, 0.94 * H / W);
+// ── theme pop-up: tile → animated project list → project details & photos ─────────
+// One group springs out of the tile toward the viewer. Each element has its own entrance
+// (delay / slide / scale); rows, thumbnails and buttons react to the pointer (hover lift).
+const PX = 0.98 / 1000;                          // pop-up canvas px → metres (cards are 1000 px wide)
+const uiTargets = [];                            // interactive pop-up meshes (onClick in userData)
+let popup = null, uiHover = null;
+const easeBack = (t) => 1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2);
+const texCache = new Map();
+function photoTex(src) {
+  if (!texCache.has(src)) texCache.set(src, new Promise((res) => texLoader.load(src, (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; res(t); }, undefined, () => res(null))));
+  return texCache.get(src);
 }
-function disposeGroup(g) { g.traverse((o) => { if (o.material) { if (o.material.map) o.material.map.dispose(); o.material.dispose(); } if (o.geometry) o.geometry.dispose(); }); }
-function openGallery(section, panel) {
-  if (gallery) { scene.remove(gallery); disposeGroup(gallery); gallery = null; }
-  if (galleryKey === section.label) { galleryKey = null; return; } // toggle off
-  galleryKey = section.label;
-  const photos = (section.photos || []).slice(0, 6);
-  if (!photos.length) return;
-  const grp = new THREE.Group(); gallery = grp; grp.userData.t = 0; scene.add(grp);
-  const p = panel.position.clone();
-  const dir = USER.clone().sub(p); dir.y = 0; dir.normalize();               // toward the viewer
-  const center = p.clone().addScaledVector(dir, 0.62);
-  const up = new THREE.Vector3(0, 1, 0);
-  const right = new THREE.Vector3().crossVectors(up, dir).normalize();
-  const pw = 0.44, ph = 0.30, gap = 0.045, rows = Math.ceil(photos.length / 3);
-  const header = makeGalleryHeader(section.label);
-  header.position.copy(center).addScaledVector(up, (rows * (ph + gap)) / 2 + 0.14);
-  header.lookAt(USER); header.userData.baseOp = 1; grp.add(header);
-  photos.forEach((src, i) => {
-    const row = Math.floor(i / 3), col = i % 3, inRow = Math.min(3, photos.length - row * 3);
-    const cx = (col - (inRow - 1) / 2) * (pw + gap), cy = ((rows - 1) / 2 - row) * (ph + gap);
-    const pos = center.clone().addScaledVector(right, cx).addScaledVector(up, cy);
-    const frame = new THREE.Mesh(new THREE.PlaneGeometry(pw + 0.03, ph + 0.03), new THREE.MeshBasicMaterial({ color: 0x2ab5b4 }));
-    frame.position.copy(pos); frame.lookAt(USER); frame.userData.baseOp = 0.9; grp.add(frame);
-    const tex = texLoader.load(src); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
-    const photo = new THREE.Mesh(new THREE.PlaneGeometry(pw, ph), new THREE.MeshBasicMaterial({ map: tex }));
-    photo.position.copy(pos).addScaledVector(dir, 0.005); photo.lookAt(USER); photo.userData.baseOp = 1; grp.add(photo);
+function coverUV(geo, planeAspect, imgAspect) { // crop-to-fill, like CSS object-fit: cover
+  let u0 = 0, u1 = 1, v0 = 0, v1 = 1;
+  if (imgAspect > planeAspect) { u0 = (1 - planeAspect / imgAspect) / 2; u1 = 1 - u0; } else { v0 = (1 - imgAspect / planeAspect) / 2; v1 = 1 - v0; }
+  const uv = geo.attributes.uv; uv.setXY(0, u0, v1); uv.setXY(1, u1, v1); uv.setXY(2, u0, v0); uv.setXY(3, u1, v0); uv.needsUpdate = true;
+}
+function photoMesh(wPx, hPx, src) {
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ color: 0x12304a, transparent: true }));
+  m.userData.setSrc = (s2) => {
+    m.userData.src = s2;
+    photoTex(s2).then((t) => {
+      if (!t || m.userData.src !== s2) return;
+      coverUV(m.geometry, wPx / hPx, t.image.width / t.image.height);
+      m.material.map = t; m.material.color.set(0xffffff); m.material.needsUpdate = true;
+    });
+  };
+  if (src) m.userData.setSrc(src);
+  return m;
+}
+function canvasMesh(wPx, hPx, draw, S = 1.5) {
+  const c = document.createElement("canvas"); c.width = Math.round(wPx * S); c.height = Math.round(hPx * S);
+  const x = c.getContext("2d"), tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  m.userData.ownTex = tex;
+  m.userData.redraw = () => { x.setTransform(S, 0, 0, S, 0, 0); x.clearRect(0, 0, wPx, hPx); draw(x, wPx, hPx, m); tex.needsUpdate = true; };
+  m.userData.redraw();
+  return m;
+}
+function lines(x, text, maxW, max) { // word-wrap into at most `max` lines (ellipsis on overflow)
+  const out = []; let line = "";
+  for (const w of String(text).split(" ")) {
+    const t = line ? line + " " + w : w;
+    if (x.measureText(t).width > maxW && line) { out.push(line); line = w; if (out.length === max) break; } else line = t;
+  }
+  if (out.length < max) out.push(line); else { let l = out[max - 1]; while (x.measureText(l + "…").width > maxW && l.includes(" ")) l = l.slice(0, l.lastIndexOf(" ")); out[max - 1] = l + "…"; }
+  return out;
+}
+function cardBg(x, W, H, accent) {
+  const g = x.createLinearGradient(0, 0, 0, H); g.addColorStop(0, "rgba(19,49,80,0.97)"); g.addColorStop(1, "rgba(8,24,40,0.98)");
+  x.fillStyle = g; roundRect(x, 0, 0, W, H, 30); x.fill();
+  const glow = x.createRadialGradient(W - 120, 60, 10, W - 120, 60, 420); glow.addColorStop(0, "rgba(42,181,180,0.22)"); glow.addColorStop(1, "rgba(42,181,180,0)");
+  x.save(); roundRect(x, 0, 0, W, H, 30); x.clip(); x.fillStyle = glow; x.fillRect(0, 0, W, H); x.restore();
+  x.strokeStyle = accent + "cc"; x.lineWidth = 4; roundRect(x, 4, 4, W - 8, H - 8, 27); x.stroke();
+}
+function pill(label, wPx, hPx, onClick) {
+  const m = canvasMesh(wPx, hPx, (x, W, H, me) => {
+    const hov = me.userData.hover;
+    x.fillStyle = hov ? "#2ab5b4" : "rgba(42,181,180,0.14)"; roundRect(x, 1, 1, W - 2, H - 2, H / 2 - 1); x.fill();
+    x.strokeStyle = hov ? "#8ee6e4" : "rgba(142,230,228,0.65)"; x.lineWidth = 2; roundRect(x, 1, 1, W - 2, H - 2, H / 2 - 1); x.stroke();
+    x.fillStyle = "#fff"; x.font = `600 ${Math.round(H * 0.4)}px system-ui, sans-serif`; x.textAlign = "center"; x.fillText(label, W / 2, H / 2 + H * 0.14); x.textAlign = "start";
+  }, 2);
+  m.userData.onClick = onClick; return m;
+}
+// position a mesh by its card-pixel box (origin = card centre; +z toward the viewer) + entrance animation
+function place(m, xPx, yPx, wPx, hPx, z, cardH, a = {}) {
+  m.position.set((xPx + wPx / 2 - 500) * PX, (cardH / 2 - yPx - hPx / 2) * PX, z);
+  m.renderOrder = 10 + Math.round(z * 1000); // explicit layer order: depth-sorting by centre fails on a tall card seen from above
+  m.userData.a = { d: 0, dur: 0.34, dx: 0, dy: 0, dz: 0, s0: 1, op: 1, ...a, base: m.position.clone() };
+  return m;
+}
+function setHover(m) {
+  if (uiHover === m) return;
+  if (uiHover) { uiHover.userData.hover = false; if (uiHover.userData.redraw) uiHover.userData.redraw(); }
+  uiHover = m;
+  if (m) { m.userData.hover = true; if (m.userData.redraw) m.userData.redraw(); }
+  renderer.domElement.style.cursor = m ? "pointer" : "";
+}
+function disposeView(v) { v.traverse((o) => { if (o.userData.ownTex) o.userData.ownTex.dispose(); if (o.material) o.material.dispose(); if (o.geometry) o.geometry.dispose(); }); } // photo textures stay cached
+function setView(build) { // fade the current view out, build the next one in
+  for (const v of popup.group.children) { v.userData.leaving = true; v.userData.t = 0; }
+  uiTargets.length = 0; setHover(null);
+  const v = new THREE.Group(); v.userData.t = 0; build(v); v.children[0].userData.isCard = true; popup.group.add(v);
+}
+function openThemePopup(tile) {
+  const theme = tile.userData.theme; if (!theme) return;
+  if (popup && popup.theme === theme && !popup.closing) { closePopup(); return; }
+  if (popup) destroyPopup();
+  const az = Math.atan2(tile.position.x - USER.x, -(tile.position.z - USER.z)), Y = 1.42, R = 1.9;
+  const to = new THREE.Vector3(USER.x + R * Math.sin(az), Y, USER.z - R * Math.cos(az));
+  const g = new THREE.Group(); g.position.copy(to); g.lookAt(USER.x, Y, USER.z); g.scale.setScalar(0.001);
+  popup = { group: g, theme, from: tile.position.clone(), to, t: 0, closing: false };
+  scene.add(g); showList();
+}
+function closePopup() { if (!popup) return; popup.closing = true; uiTargets.length = 0; setHover(null); }
+function destroyPopup() { if (!popup) return; popup.group.children.forEach(disposeView); scene.remove(popup.group); popup = null; uiTargets.length = 0; setHover(null); }
+function closeButton(v, cardH) {
+  const b = canvasMesh(64, 64, (x, W, H, me) => {
+    x.fillStyle = me.userData.hover ? "#2ab5b4" : "rgba(255,255,255,0.1)"; x.beginPath(); x.arc(W / 2, H / 2, W / 2 - 2, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = "#fff"; x.lineWidth = 4; x.lineCap = "round"; x.beginPath(); x.moveTo(22, 22); x.lineTo(42, 42); x.moveTo(42, 22); x.lineTo(22, 42); x.stroke();
+  }, 2);
+  b.userData.onClick = closePopup; uiTargets.push(b);
+  v.add(place(b, 910, 24, 64, 64, 0.008, cardH, { d: 0.15, s0: 0.5 }));
+}
+
+function showList() {
+  const th = popup.theme, items = th.items || [], n = items.length, ROW = 80, GAP = 8, TOP = 172, H = TOP + n * (ROW + GAP) + 58;
+  setView((v) => {
+    v.add(place(canvasMesh(1000, H, (x, W, H2) => {
+      cardBg(x, W, H2, th.accent);
+      kicker(x, `${n} projet${n > 1 ? "s" : ""}`, 44, 62, 21, th.accent);
+      x.fillStyle = "#fff"; x.font = "700 40px system-ui, sans-serif"; x.fillText(lines(x, th.label, W - 190, 1)[0], 44, 112);
+      x.fillStyle = "rgba(220,238,244,0.68)"; x.font = "400 23px system-ui, sans-serif"; x.fillText(lines(x, th.tagline, W - 190, 1)[0], 44, 146);
+      x.fillStyle = "rgba(220,238,244,0.5)"; x.font = "400 21px system-ui, sans-serif"; x.textAlign = "center";
+      x.fillText("Pointez un projet pour voir ses détails et ses photos", W / 2, H2 - 22); x.textAlign = "start";
+    }, 1), 0, 0, 1000, H, 0, H, { dur: 0.22 }));
+    closeButton(v, H);
+    items.forEach((p, i) => {
+      const row = canvasMesh(920, ROW, (x, W, RH, me) => {
+        const hov = me.userData.hover;
+        x.fillStyle = hov ? "rgba(42,181,180,0.3)" : "rgba(255,255,255,0.06)"; roundRect(x, 0, 0, W, RH, 16); x.fill();
+        if (hov) { x.strokeStyle = "rgba(142,230,228,0.95)"; x.lineWidth = 2; roundRect(x, 1, 1, W - 2, RH - 2, 15); x.stroke(); }
+        x.fillStyle = th.accent; roundRect(x, 0, 14, 6, RH - 28, 3); x.fill();
+        x.fillStyle = hov ? "#fff" : th.accent; x.font = "800 24px system-ui, sans-serif"; x.fillText(String(i + 1).padStart(2, "0"), 22, RH / 2 + 8);
+        const tx = 70, ty = 8, tw = 112, tH = RH - 16;
+        x.save(); roundRect(x, tx, ty, tw, tH, 10); x.clip();
+        const img = me.userData.img;
+        if (img) { const r = Math.max(tw / img.width, tH / img.height); x.drawImage(img, tx + (tw - img.width * r) / 2, ty + (tH - img.height * r) / 2, img.width * r, img.height * r); }
+        else { x.fillStyle = "#12304a"; x.fillRect(tx, ty, tw, tH); }
+        x.restore();
+        x.fillStyle = "#fff"; x.font = "600 25px system-ui, sans-serif";
+        const L = lines(x, p.short || p.title, W - 270, 2);
+        L.forEach((l, k) => x.fillText(l, 200, RH / 2 + 9 + (k - (L.length - 1) / 2) * 31));
+        x.fillStyle = hov ? "#fff" : th.accent; x.font = "700 42px system-ui, sans-serif"; x.fillText("›", W - 42, RH / 2 + 14);
+      });
+      if (p.images && p.images[0]) photoTex(p.images[0]).then((t) => { if (t && row.parent) { row.userData.img = t.image; row.userData.redraw(); } });
+      row.userData.onClick = () => showDetail(i); uiTargets.push(row);
+      v.add(place(row, 40, TOP + i * (ROW + GAP), 920, ROW, 0.006, H, { d: 0.1 + i * 0.045, dur: 0.36, dx: -0.07, s0: 0.97 }));
+    });
   });
+}
+
+const measureCtx = document.createElement("canvas").getContext("2d");
+function detailText(x, th, p, W, y) { // draws (or, on measureCtx, just measures) the text block; returns its end
+  kicker(x, th.label.length > 44 ? th.label.slice(0, 43) + "…" : th.label, 44, y, 19, th.accent); y += 50;
+  x.fillStyle = "#fff"; x.font = "700 37px system-ui, sans-serif";
+  for (const l of lines(x, p.title, W - 88, 3)) { x.fillText(l, 44, y); y += 45; }
+  y += 4; x.font = "600 21px system-ui, sans-serif"; let cx = 44;
+  for (const st of p.subThemes || []) {
+    const w = x.measureText(st).width + 34; if (cx + w > W - 44) { cx = 44; y += 50; }
+    x.fillStyle = "rgba(42,181,180,0.16)"; roundRect(x, cx, y - 26, w, 38, 19); x.fill();
+    x.strokeStyle = "rgba(142,230,228,0.55)"; x.lineWidth = 1.5; roundRect(x, cx, y - 26, w, 38, 19); x.stroke();
+    x.fillStyle = "#c4f4f2"; x.fillText(st, cx + 17, y); cx += w + 10;
+  }
+  y += 64; x.fillStyle = "rgba(231,243,247,0.94)"; x.font = "400 29px system-ui, sans-serif";
+  for (const l of lines(x, p.description, W - 88, 6)) { x.fillText(l, 44, y); y += 40; }
+  return y;
+}
+function showDetail(i) {
+  const th = popup.theme, items = th.items, n = items.length, p = items[i];
+  const imgs = p.images && p.images.length ? p.images : (th.photos || []).slice(0, 1);
+  const TXT = imgs.length > 1 ? 790 : 640, H = Math.round(detailText(measureCtx, th, p, 1000, TXT) + 120);
+  setView((v) => {
+    v.add(place(canvasMesh(1000, H, (x, W, H2) => {
+      cardBg(x, W, H2, th.accent);
+      detailText(x, th, p, W, TXT);
+      x.fillStyle = "rgba(220,238,244,0.6)"; x.font = "600 22px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(`${i + 1} / ${n}`, W / 2, H2 - 44); x.textAlign = "start";
+    }, 1), 0, 0, 1000, H, 0, H, { dur: 0.22 }));
+    const back = pill("‹  Projets", 220, 60, showList); uiTargets.push(back);
+    v.add(place(back, 34, 26, 220, 60, 0.008, H, { d: 0.12, dx: 0.05 }));
+    closeButton(v, H);
+    const hero = photoMesh(920, 480, imgs[0]);
+    v.add(place(hero, 40, 104, 920, 480, 0.006, H, { d: 0.05, dur: 0.42, s0: 0.9, dz: -0.05 }));
+    if (imgs.length > 1) {
+      const TW = 214, GAP = 16, tot = imgs.length * TW + (imgs.length - 1) * GAP, x0 = 40 + (920 - tot) / 2, frames = [];
+      imgs.forEach((src, k) => {
+        const fr = new THREE.Mesh(new THREE.PlaneGeometry((TW + 12) * PX, 142 * PX), new THREE.MeshBasicMaterial({ color: 0x8ee6e4, transparent: true }));
+        v.add(place(fr, x0 + k * (TW + GAP) - 6, 598, TW + 12, 142, 0.004, H, { d: 0.22 + k * 0.06, op: k === 0 ? 1 : 0 })); frames.push(fr);
+        const th2 = photoMesh(TW, 130, src);
+        th2.userData.onClick = () => { hero.userData.setSrc(src); frames.forEach((f, j) => { f.userData.a.op = j === k ? 1 : 0; }); };
+        uiTargets.push(th2);
+        v.add(place(th2, x0 + k * (TW + GAP), 604, TW, 130, 0.007, H, { d: 0.2 + k * 0.06, dy: -0.04, s0: 0.9 }));
+      });
+    }
+    const prev = pill("‹  Précédent", 250, 60, () => showDetail((i - 1 + n) % n)), next = pill("Suivant  ›", 250, 60, () => showDetail((i + 1) % n));
+    uiTargets.push(prev, next);
+    v.add(place(prev, 40, H - 96, 250, 60, 0.008, H, { d: 0.3, dy: -0.03 }));
+    v.add(place(next, 710, H - 96, 250, 60, 0.008, H, { d: 0.34, dy: -0.03 }));
+  });
+}
+function animatePopup(dt) {
+  if (!popup) return;
+  const P = popup, g = P.group;
+  P.t = Math.min(1, Math.max(0, P.t + (P.closing ? -dt * 4.5 : dt * 2.4)));
+  if (P.closing && P.t === 0) { destroyPopup(); return; }
+  const k = P.closing ? easeOut(P.t) : easeBack(P.t), gOp = Math.min(1, P.t * 1.8);
+  g.scale.setScalar(Math.max(0.001, 0.2 + 0.8 * k));
+  g.position.lerpVectors(P.from, P.to, easeOut(P.t));
+  // view switch: the outgoing content fades at once, but its card stays opaque underneath until the
+  // incoming card is fully in — so nothing behind the pop-up ever shows through mid-transition
+  const cur = g.children[g.children.length - 1], ca = cur && cur.children[0].userData.a;
+  const curCardIn = ca ? (cur.userData.t - ca.d) / ca.dur >= 1 : true;
+  for (const v of [...g.children]) {
+    v.userData.t += dt;
+    const leaving = v.userData.leaving;
+    if (leaving && curCardIn) v.userData.fade = (v.userData.fade || 0) + dt;
+    const contentOp = leaving ? Math.max(0, 1 - v.userData.t / 0.16) : 1, cardOp = leaving ? Math.max(0, 1 - (v.userData.fade || 0) / 0.15) : 1;
+    if (leaving && contentOp === 0 && cardOp === 0) { disposeView(v); g.remove(v); continue; }
+    for (const m of v.children) {
+      const a = m.userData.a; if (!a) continue;
+      const e = leaving ? 1 : easeOut(Math.min(1, Math.max(0, (v.userData.t - a.d) / a.dur))), hov = m.userData.hover;
+      m.position.set(a.base.x + a.dx * (1 - e), a.base.y + a.dy * (1 - e), a.base.z + a.dz * (1 - e) + (hov ? 0.014 : 0));
+      m.scale.setScalar((a.s0 + (1 - a.s0) * e) * (hov ? 1.035 : 1));
+      if (leaving && m.userData.isCard) m.renderOrder = 9;
+      m.material.opacity = a.op * e * (leaving ? (m.userData.isCard ? cardOp : contentOp) : 1) * gOp;
+    }
+  }
 }
 
 // ── "Chiffres clés" wall behind the viewer — animated infographics ───────────────
@@ -440,17 +620,20 @@ for (let i = 0; i < 2; i++) {
   ctrl.addEventListener("selectend", () => { if (grabbing === ctrl) { grabbing = null; lastGrabA = null; } });
   scene.add(ctrl); controllers.push(ctrl);
 }
-function intersectMarkers(originObj) {
+function aim(originObj) {
   tmpM.identity().extractRotation(originObj.matrixWorld);
   raycaster.ray.origin.setFromMatrixPosition(originObj.matrixWorld);
   raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tmpM);
-  return raycaster.intersectObjects(hitTargets, false);
 }
+function intersectMarkers(originObj) { aim(originObj); return raycaster.intersectObjects(hitTargets, false); }
 function onSelectStart(ctrl) {
-  const hits = intersectMarkers(ctrl);           // sets raycaster.ray for this controller
+  aim(ctrl);
+  const ui = raycaster.intersectObjects(uiTargets, false);
+  if (ui.length) { ui[0].object.userData.onClick(); return; }
+  const hits = raycaster.intersectObjects(hitTargets, false);
   if (hits.length) { showPanel(hits[0].object.userData.country); return; }
   const tiles = raycaster.intersectObjects(tileTargets, false);
-  if (tiles.length) { openGallery(tiles[0].object.userData.section, tiles[0].object); return; }
+  if (tiles.length) { openThemePopup(tiles[0].object); return; }
   // else: grab-to-spin if pointing at the globe
   const gh = raycaster.intersectObject(sphere, false);
   if (gh.length) { grabbing = ctrl; lastGrabA = null; }
@@ -470,7 +653,13 @@ renderer.domElement.addEventListener("pointerdown", (e) => {
   dragMode = raycaster.intersectObject(sphere, false).length ? "globe" : "look";
 });
 renderer.domElement.addEventListener("pointermove", (e) => {
-  if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
+  if (!dragging) {
+    if (!renderer.xr.isPresenting) {
+      raycaster.setFromCamera(new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1), camera);
+      const h = uiTargets.length ? raycaster.intersectObjects(uiTargets, false) : []; setHover(h.length ? h[0].object : null);
+    }
+    return;
+  } const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
   if (dragMode === "globe") { manualSpin += dx * 0.005; tiltY = THREE.MathUtils.clamp(tiltY + dy * 0.004, -0.5, 0.5); }
   else if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
   px = e.clientX; py = e.clientY;
@@ -479,9 +668,13 @@ addEventListener("pointerup", (e) => {
   if (dragging && moved < 6 && !renderer.xr.isPresenting) {
     const ndc = new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
     raycaster.setFromCamera(ndc, camera);
-    const hits = raycaster.intersectObjects(hitTargets, false);
-    if (hits.length) showPanel(hits[0].object.userData.country);
-    else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openGallery(tiles[0].object.userData.section, tiles[0].object); }
+    const ui = raycaster.intersectObjects(uiTargets, false);
+    if (ui.length) ui[0].object.userData.onClick();
+    else {
+      const hits = raycaster.intersectObjects(hitTargets, false);
+      if (hits.length) showPanel(hits[0].object.userData.country);
+      else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openThemePopup(tiles[0].object); }
+    }
   }
   dragging = false;
 });
@@ -531,7 +724,7 @@ const clock = new THREE.Clock();
 let elapsed = 0, hoveredHit = null;
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
-if (location.search.includes("debug")) window.XR = { showPanel, openGallery, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
+if (location.search.includes("debug")) window.XR = { showPanel, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
 
 renderer.setAnimationLoop(() => {
   const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
@@ -558,8 +751,11 @@ renderer.setAnimationLoop(() => {
 
   let hit = null;
   if (renderer.xr.isPresenting) {
-    for (const ctrl of controllers) { if (grabbing === ctrl) continue; const h = intersectMarkers(ctrl); if (h.length) { hit = h[0]; break; } }
-    reticle.visible = !!hit; if (hit) reticle.position.copy(hit.point);
+    let uiHit = null;
+    if (uiTargets.length) for (const ctrl of controllers) { aim(ctrl); const h = raycaster.intersectObjects(uiTargets, false); if (h.length) { uiHit = h[0]; break; } }
+    setHover(uiHit ? uiHit.object : null);
+    if (!uiHit) for (const ctrl of controllers) { if (grabbing === ctrl) continue; const h = intersectMarkers(ctrl); if (h.length) { hit = h[0]; break; } }
+    const r = uiHit || hit; reticle.visible = !!r; if (r) reticle.position.copy(r.point);
   }
   if (hoveredHit && hoveredHit !== (hit && hit.object)) hoveredHit.userData.sprite.scale.setScalar(hoveredHit.userData.baseScale);
   if (hit) { hit.object.userData.sprite.scale.setScalar(hit.object.userData.baseScale * (1.5 + Math.sin(elapsed*6)*0.15)); hoveredHit = hit.object; } else hoveredHit = null;
@@ -568,7 +764,7 @@ renderer.setAnimationLoop(() => {
 
   if (cPanel) { cPanel.userData.t = Math.min(1, cPanel.userData.t + dt * 2.6); cPanel.scale.setScalar(0.001 + easeOut(cPanel.userData.t) * 0.999); }
 
-  if (gallery) { gallery.userData.t = Math.min(1, gallery.userData.t + dt * 3); const o = easeOut(gallery.userData.t); gallery.traverse((m) => { if (m.material) { m.material.transparent = true; m.material.opacity = (m.userData.baseOp ?? 1) * o; } }); }
+  animatePopup(dt);
 
   // chiffres wall: (re)play a panel's animation whenever the viewer turns to face it
   if (chiffresPanels.length) {

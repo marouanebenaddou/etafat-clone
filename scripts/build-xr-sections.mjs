@@ -1,38 +1,28 @@
-// Attach each theme's project photos (from the kiosk data) to the VR sections file,
-// so selecting a tile in VR opens that theme's pictures. Same source as the kiosk,
-// so real project photos (once wired into evenement.ts) flow through automatically.
+// Builds the VR sections file from the kiosk data (src/data/evenement.ts, imported directly —
+// Node strips the TS types): per theme, the project list with each project's description,
+// sub-themes and photos (only files that exist), plus the theme's photo pool. Selecting a
+// tile in VR opens that list; selecting a project opens its details and pictures.
 import { readFile, writeFile } from "node:fs/promises";
-import { fileURLToPath } from "node:url";
+import { existsSync } from "node:fs";
+import { fileURLToPath, pathToFileURL } from "node:url";
 import { dirname, join } from "node:path";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
-const ts = await readFile(join(ROOT, "src/data/evenement.ts"), "utf8");
-
-// group distinct images per theme (project photo + its media.images)
-const re = /theme:\s*"([^"]+)"[\s\S]*?photo:\s*"([^"]+)"(?:\s*,\s*media:\s*\{\s*images:\s*\[([^\]]*)\])?/g;
-const byTheme = {};
-let m;
-while ((m = re.exec(ts))) {
-  const [, theme, photo, imgs = ""] = m;
-  const set = (byTheme[theme] = byTheme[theme] || new Set());
-  set.add(photo);
-  for (const q of imgs.match(/"([^"]+)"/g) || []) set.add(q.replace(/"/g, ""));
-}
-
-const slugOrder = [
-  "villes-territoires-patrimoine",
-  "foncier-cadastre-si",
-  "infrastructures-transports-reseaux",
-  "eau-environnement-maritime",
-  "batiment-industrie-mines",
-  "agriculture-rural",
-];
+const { EVENEMENT_PROJETS, EVENEMENT_THEMES } = await import(pathToFileURL(join(ROOT, "src/data/evenement.ts")).href);
+const exists = (src) => existsSync(join(ROOT, "public", src));
+const slugOrder = EVENEMENT_THEMES.map((t) => t.slug);
 
 const sectionsPath = join(ROOT, "public/xr/sections-xr.json");
 const sections = JSON.parse(await readFile(sectionsPath, "utf8"));
 sections.themes.forEach((t, i) => {
-  const slug = slugOrder[i];
-  t.photos = [...(byTheme[slug] || [])].slice(0, 8);
+  const projets = EVENEMENT_PROJETS.filter((p) => p.theme === slugOrder[i]);
+  // t.projects keeps the tiles' hand-shortened titles (same projects, same order); the pop-up's
+  // detail view shows the full title
+  t.items = projets.map((p, k) => ({
+    title: p.title, short: t.projects?.[k] || p.title, description: p.description, subThemes: p.subThemes,
+    images: [...new Set([p.photo, ...(p.media?.images || [])])].filter(exists).slice(0, 4),
+  }));
+  t.photos = [...new Set(t.items.flatMap((p) => p.images))].slice(0, 8);
 });
 sections.apps.photos = [
   "/etafat/evenement/pool/cadastre-1.jpg",

@@ -28,6 +28,216 @@
         "/etafat/evenement/pool/heritage-2.jpg",
         "/etafat/evenement/pool/heritage-3.jpg",
         "/etafat/evenement/pool/aerial-5.jpg"
+      ],
+      "items": [
+        {
+          "title": "Maquette numérique 3D de Rabat et de la vallée du Bouregreg",
+          "short": "Maquette numérique 3D de Rabat et de la vallée du Bouregreg",
+          "description": "Jumeau numérique 3D de Rabat et de la vallée du Bouregreg, diffusé via un géoportail et des visites virtuelles au service de la planification urbaine.",
+          "subThemes": [
+            "Modélisation urbaine 3D",
+            "Planification urbaine",
+            "Géoportail",
+            "Visites virtuelles"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-1.jpg",
+            "/etafat/evenement/pool/aerial-2.jpg",
+            "/etafat/evenement/pool/aerial-3.jpg"
+          ]
+        },
+        {
+          "title": "Levés LiDAR de Brazzaville et Pointe-Noire",
+          "short": "Levés LiDAR de Brazzaville et Pointe-Noire",
+          "description": "Cartographie urbaine à grande échelle de Brazzaville et Pointe-Noire par LiDAR aéroporté, modèles numériques de terrain et orthophotographie.",
+          "subThemes": [
+            "Cartographie urbaine à grande échelle",
+            "LiDAR aéroporté",
+            "Modèles numériques de terrain",
+            "Orthophotographie"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-2.jpg",
+            "/etafat/evenement/pool/aerial-3.jpg",
+            "/etafat/evenement/pool/aerial-4.jpg"
+          ]
+        },
+        {
+          "title": "Numérisation 3D de l’église du Sacré-Cœur",
+          "short": "Numérisation 3D de l’église du Sacré-Cœur",
+          "description": "Numérisation par scanner laser 3D de l’église du Sacré-Cœur pour le diagnostic géométrique et la documentation de sa réhabilitation.",
+          "subThemes": [
+            "Patrimoine architectural",
+            "Scanner laser 3D",
+            "Diagnostic géométrique",
+            "Documentation pour la réhabilitation"
+          ],
+          "images": [
+            "/etafat/evenement/pool/heritage-1.jpg",
+            "/etafat/evenement/pool/heritage-2.jpg",
+            "/etafat/evenement/pool/heritage-3.jpg"
+          ]
+        },
+        {
+          "title": "PILIER — Données aériennes et plans d’urbanisme de N’Djaména",
+          "short": "PILIER — Données aériennes et plans d’urbanisme de N’Djaména",
+          "description": "Acquisition aérienne LiDAR et photogrammétrique et plans d’urbanisme de N’Djaména, avec référentiel géographique.",
+          "subThemes": [
+            "Planification urbaine",
+            "Acquisition aérienne",
+            "LiDAR et photogrammétrie",
+            "Référentiel géographique"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-3.jpg",
+            "/etafat/evenement/pool/aerial-4.jpg",
+            "/etafat/evenement/pool/aerial-5.jpg"
+          ]
+        },
+        {
+          "title": "Relevés 2D et 3D des monuments de la médina de Fès",
+          "short": "Relevés 2D et 3D des monuments de la médina de Fès",
+          "description": "Relevés 2D et 3D et inventaire architectural des monuments de la médina de Fès en vue de leur réhabilitation.",
+          "subThemes": [
+            "Patrimoine urbain",
+            "Inventaire architectural",
+            "Relevés de façades",
+            "Modélisation 3D et réhabilitation"
+          ],
+          "images": [
+            "/etafat/evenement/pool/heritage-2.jpg",
+            "/etafat/evenement/pool/heritage-3.jpg",
+            "/etafat/evenement/pool/heritage-1.jpg"
+          ]
+        },
+        {
+          "title": "Système de veille des bâtiments menaçant ruine du Grand Casablanca",
+          "short": "Système de veille des bâtiments menaçant ruine du Grand Casablanca",
+          "description": "Système de veille des bâtiments menaçant ruine du Grand Casablanca : inventaire géographique, indicateurs et suivi des interventions.",
+          "subThemes": [
+            "Risques liés au bâti",
+            "Inventaire géographique",
+            "Indicateurs et alertes",
+            "Suivi des interventions"
+          ],
+          "images": [
+            "/etafat/evenement/pool/building-2.jpg",
+            "/etafat/evenement/pool/building-3.jpg",
+            "/etafat/evenement/pool/building-1.jpg"
+          ]
+        },
+        {
+          "title": "Prises de vues aériennes, orthophotos et restitution numérique de Casablanca",
+          "short": "Prises de vues aériennes, orthophotos et restitution de Casablanca",
+          "description": "Prises de vues aériennes, orthophotos et restitution numérique de Casablanca pour un référentiel topographique urbain.",
+          "subThemes": [
+            "Photogrammétrie aérienne",
+            "Orthophotographie",
+            "Cartographie urbaine",
+            "Référentiel topographique"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-4.jpg",
+            "/etafat/evenement/pool/aerial-5.jpg",
+            "/etafat/evenement/pool/aerial-1.jpg"
+          ]
+        },
+        {
+          "title": "Plan topographique de Sousse par LiDAR aéroporté et orthophotographies",
+          "short": "Plan topographique de Sousse par LiDAR aéroporté",
+          "description": "Plan topographique de Sousse par LiDAR aéroporté et orthophotographies.",
+          "subThemes": [
+            "LiDAR aéroporté",
+            "Photogrammétrie",
+            "Cartographie urbaine",
+            "Modélisation du terrain"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-5.jpg",
+            "/etafat/evenement/pool/aerial-1.jpg",
+            "/etafat/evenement/pool/aerial-2.jpg"
+          ]
+        },
+        {
+          "title": "Inventaire et évaluation des façades historiques de Rabat — Lagza, Laälou, Sidi Fateh, Waqqassa et Mellah",
+          "short": "Inventaire et évaluation des façades historiques de Rabat",
+          "description": "Inventaire et relevé par scanner 3D des façades historiques de Rabat pour documenter leur restauration.",
+          "subThemes": [
+            "Patrimoine architectural",
+            "Scanner 3D",
+            "Relevés de façades",
+            "Documentation pour la restauration"
+          ],
+          "images": [
+            "/etafat/evenement/pool/heritage-3.jpg",
+            "/etafat/evenement/pool/heritage-1.jpg",
+            "/etafat/evenement/pool/heritage-2.jpg"
+          ]
+        },
+        {
+          "title": "Cartographie aérienne des localités de Béni Mellal, Azilal, Fquih Ben Salah et Khouribga",
+          "short": "Cartographie aérienne de Béni Mellal, Azilal, Fquih Ben Salah, Khouribga",
+          "description": "Cartographie aérienne de Béni Mellal, Azilal, Fquih Ben Salah et Khouribga : orthophotographie et modèles numériques de terrain.",
+          "subThemes": [
+            "Photogrammétrie aérienne",
+            "Orthophotographie",
+            "Restitution cartographique",
+            "Modèles numériques de terrain"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-1.jpg",
+            "/etafat/evenement/pool/aerial-2.jpg",
+            "/etafat/evenement/pool/aerial-3.jpg"
+          ]
+        },
+        {
+          "title": "Prises de vues aériennes et plans photogrammétriques de la province de Tétouan",
+          "short": "Prises de vues aériennes et plans photogrammétriques de Tétouan",
+          "description": "Prises de vues aériennes et plans photogrammétriques de la province de Tétouan, restitués au 1/2 000.",
+          "subThemes": [
+            "Acquisition aérienne",
+            "Cartographie territoriale",
+            "Orthophotoplans",
+            "Restitution au 1/2 000"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-2.jpg",
+            "/etafat/evenement/pool/aerial-3.jpg",
+            "/etafat/evenement/pool/aerial-4.jpg"
+          ]
+        },
+        {
+          "title": "Prises de vues aériennes et orthophotoplans de la province d’El Jadida",
+          "short": "Prises de vues aériennes et orthophotoplans d’El Jadida",
+          "description": "Prises de vues aériennes et orthophotoplans de la province d’El Jadida, avec modèles d’élévation et de surface.",
+          "subThemes": [
+            "Photogrammétrie",
+            "Orthophotographie",
+            "Modèles d’élévation et de surface",
+            "Cartographie urbaine"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-3.jpg",
+            "/etafat/evenement/pool/aerial-4.jpg",
+            "/etafat/evenement/pool/aerial-5.jpg"
+          ]
+        },
+        {
+          "title": "Acquisition aérienne et restitution pour l’aménagement de la vallée du Bouregreg",
+          "short": "Acquisition aérienne pour l’aménagement de la vallée du Bouregreg",
+          "description": "Acquisition aérienne haute résolution et restitution pour l’aménagement de la vallée du Bouregreg.",
+          "subThemes": [
+            "Aménagement territorial",
+            "Acquisition aérienne",
+            "Orthophotographie haute résolution",
+            "Modélisation du terrain"
+          ],
+          "images": [
+            "/etafat/evenement/pool/aerial-4.jpg",
+            "/etafat/evenement/pool/aerial-5.jpg",
+            "/etafat/evenement/pool/aerial-1.jpg"
+          ]
+        }
       ]
     },
     {
@@ -51,6 +261,120 @@
         "/etafat/evenement/pool/gis-2.jpg",
         "/etafat/evenement/pool/gis-3.jpg",
         "/etafat/evenement/pool/gis-4.jpg"
+      ],
+      "items": [
+        {
+          "title": "PAGEF — Renforcement du cadastrage à Abidjan",
+          "short": "PAGEF — Renforcement du cadastrage à Abidjan",
+          "description": "Renforcement du cadastre fiscal d’Abidjan : inventaire immobilier, cartographie cadastrale et acquisition aérienne et LiDAR.",
+          "subThemes": [
+            "Cadastre fiscal",
+            "Inventaire immobilier",
+            "Cartographie cadastrale",
+            "Acquisition aérienne et LiDAR"
+          ],
+          "images": [
+            "/etafat/evenement/pool/cadastre-1.jpg",
+            "/etafat/evenement/pool/cadastre-2.jpg",
+            "/etafat/evenement/pool/cadastre-3.jpg"
+          ]
+        },
+        {
+          "title": "REGIS — Gestion du patrimoine foncier et immobilier de l’OCP",
+          "short": "REGIS — Patrimoine foncier et immobilier de l’OCP",
+          "description": "Plateforme SIG web et mobile pour gérer le patrimoine foncier et immobilier de l’OCP et digitaliser ses procédures.",
+          "subThemes": [
+            "Gestion du patrimoine foncier",
+            "SIG web et mobile",
+            "Digitalisation des procédures",
+            "Gestion documentaire"
+          ],
+          "images": [
+            "/etafat/evenement/pool/gis-1.jpg",
+            "/etafat/evenement/pool/gis-2.jpg",
+            "/etafat/evenement/pool/gis-3.jpg"
+          ]
+        },
+        {
+          "title": "PAGDS — Cadastre de Daloa, Korhogo et Yamoussoukro",
+          "short": "PAGDS — Cadastre de Daloa, Korhogo et Yamoussoukro",
+          "description": "Cadastre urbain de Daloa, Korhogo et Yamoussoukro : enquêtes foncières, modélisation 3D du bâti et mise en ligne du cadastre.",
+          "subThemes": [
+            "Cadastre urbain",
+            "Enquêtes foncières",
+            "Modélisation 3D du bâti",
+            "Mise en ligne du cadastre"
+          ],
+          "images": [
+            "/etafat/evenement/pool/cadastre-2.jpg",
+            "/etafat/evenement/pool/cadastre-3.jpg",
+            "/etafat/evenement/pool/cadastre-1.jpg"
+          ]
+        },
+        {
+          "title": "SMART PAMOFOR — Application web et mobile pour la sécurisation foncière rurale",
+          "short": "SMART PAMOFOR — Sécurisation foncière rurale (web & mobile)",
+          "description": "Application web et mobile de sécurisation foncière rurale, avec collecte hors connexion, centralisation des données et géoportail.",
+          "subThemes": [
+            "Système d’information foncier",
+            "Collecte mobile hors connexion",
+            "Centralisation des données",
+            "Géoportail"
+          ],
+          "images": [
+            "/etafat/evenement/pool/gis-2.jpg",
+            "/etafat/evenement/pool/gis-3.jpg",
+            "/etafat/evenement/pool/gis-4.jpg"
+          ]
+        },
+        {
+          "title": "SMART IFE — Application web et mobile pour un projet foncier",
+          "short": "SMART IFE — Application web et mobile pour un projet foncier",
+          "description": "Application web et mobile d’immatriculation foncière : collecte mobile, gestion des données parcellaires et SIG.",
+          "subThemes": [
+            "Immatriculation foncière",
+            "Collecte mobile",
+            "Gestion des données parcellaires",
+            "SIG"
+          ],
+          "images": [
+            "/etafat/evenement/pool/gis-3.jpg",
+            "/etafat/evenement/pool/gis-4.jpg",
+            "/etafat/evenement/pool/gis-1.jpg"
+          ]
+        },
+        {
+          "title": "Système d’information du patrimoine immobilier de Barid Al-Maghrib",
+          "short": "Système d’information du patrimoine de Barid Al-Maghrib",
+          "description": "Système d’information du patrimoine immobilier de Barid Al-Maghrib : référentiel, gestion locative et digitalisation des procédures.",
+          "subThemes": [
+            "Gestion immobilière",
+            "Référentiel patrimonial",
+            "Gestion locative",
+            "Digitalisation des procédures"
+          ],
+          "images": [
+            "/etafat/evenement/pool/gis-4.jpg",
+            "/etafat/evenement/pool/gis-1.jpg",
+            "/etafat/evenement/pool/gis-2.jpg"
+          ]
+        },
+        {
+          "title": "Inventaire et gestion des actifs imposables de Skhirate–Témara",
+          "short": "Inventaire des actifs imposables de Skhirate–Témara",
+          "description": "Inventaire des actifs imposables de Skhirate–Témara : occupation du domaine public, enseignes et calcul des redevances.",
+          "subThemes": [
+            "Fiscalité locale",
+            "Occupation du domaine public",
+            "Inventaire des enseignes et panneaux",
+            "Calcul des redevances"
+          ],
+          "images": [
+            "/etafat/evenement/pool/gis-1.jpg",
+            "/etafat/evenement/pool/gis-2.jpg",
+            "/etafat/evenement/pool/gis-3.jpg"
+          ]
+        }
       ]
     },
     {
@@ -78,6 +402,168 @@
         "/etafat/evenement/pool/roads-3.jpg",
         "/etafat/evenement/pool/urban-1.jpg",
         "/etafat/evenement/pool/urban-2.jpg"
+      ],
+      "items": [
+        {
+          "title": "Détection du pipeline PETROCI — Pacobo–Yamoussoukro",
+          "short": "Détection du pipeline PETROCI — Pacobo–Yamoussoukro",
+          "description": "Détection et géoréférencement du pipeline PETROCI entre Pacobo et Yamoussoukro, avec cartographie des réseaux enterrés.",
+          "subThemes": [
+            "Pipelines",
+            "Détection des réseaux enterrés",
+            "Géoréférencement",
+            "Cartographie des réseaux"
+          ],
+          "images": [
+            "/etafat/evenement/pool/networks-1.jpg",
+            "/etafat/evenement/pool/networks-2.jpg",
+            "/etafat/evenement/pool/networks-3.jpg"
+          ]
+        },
+        {
+          "title": "PAGDS — Suivi des chantiers pour l’AGEROUTE",
+          "short": "PAGDS — Suivi des chantiers pour l’AGEROUTE",
+          "description": "Suivi des chantiers routiers de l’AGEROUTE par photogrammétrie drone, avec comparaison multi-dates et formation des équipes.",
+          "subThemes": [
+            "Suivi de chantiers routiers",
+            "Photogrammétrie par drone",
+            "Comparaison entre dates",
+            "Formation"
+          ],
+          "images": [
+            "/etafat/evenement/pool/roads-1.jpg",
+            "/etafat/evenement/pool/roads-2.jpg",
+            "/etafat/evenement/pool/roads-3.jpg"
+          ]
+        },
+        {
+          "title": "Maquette numérique 3D du tramway T2 de Casablanca",
+          "short": "Maquette numérique 3D du tramway T2 de Casablanca",
+          "description": "Maquette 3D interactive du tramway T2 de Casablanca pour visualiser le chantier sur interface tactile.",
+          "subThemes": [
+            "Transport urbain",
+            "Maquette 3D interactive",
+            "Visualisation du chantier",
+            "Interface tactile"
+          ],
+          "images": [
+            "/etafat/evenement/pool/urban-1.jpg",
+            "/etafat/evenement/pool/urban-2.jpg",
+            "/etafat/evenement/pool/urban-3.jpg"
+          ]
+        },
+        {
+          "title": "Levé LiDAR de la route Liranga–Ngangania",
+          "short": "Levé LiDAR de la route Liranga–Ngangania",
+          "description": "Étude du corridor routier Liranga–Ngangania par LiDAR aéroporté et modèles numériques de terrain.",
+          "subThemes": [
+            "Études routières",
+            "Cartographie de corridor",
+            "LiDAR aéroporté",
+            "Modèles numériques de terrain"
+          ],
+          "images": [
+            "/etafat/evenement/pool/roads-2.jpg",
+            "/etafat/evenement/pool/roads-3.jpg",
+            "/etafat/evenement/pool/roads-4.jpg"
+          ]
+        },
+        {
+          "title": "Détection des réseaux souterrains de Jorf Lasfar",
+          "short": "Détection des réseaux souterrains de Jorf Lasfar",
+          "description": "Détection géoradar et électromagnétique des réseaux industriels enterrés de Jorf Lasfar, avec plans géoréférencés.",
+          "subThemes": [
+            "Réseaux industriels enterrés",
+            "Géoradar et détection électromagnétique",
+            "Géoréférencement",
+            "Plans des réseaux"
+          ],
+          "images": [
+            "/etafat/evenement/pool/networks-2.jpg",
+            "/etafat/evenement/pool/networks-3.jpg",
+            "/etafat/evenement/pool/networks-4.jpg"
+          ]
+        },
+        {
+          "title": "Mise en place d’un SIG pilote pour la RADEEJ",
+          "short": "SIG pilote pour la RADEEJ",
+          "description": "SIG pilote de la RADEEJ structurant les données d’eau potable, d’assainissement et de réseaux électriques MT/BT.",
+          "subThemes": [
+            "Eau potable",
+            "Assainissement",
+            "Réseaux électriques MT/BT",
+            "Structuration des données SIG"
+          ],
+          "images": [
+            "/etafat/evenement/pool/networks-4.jpg",
+            "/etafat/evenement/pool/networks-1.jpg",
+            "/etafat/evenement/pool/networks-2.jpg"
+          ]
+        },
+        {
+          "title": "Relevé de la route nationale n°8 par scanner laser 3D mobile",
+          "short": "Relevé de la route nationale n°8 par scanner laser 3D mobile",
+          "description": "Relevé de la route nationale n°8 par scanner laser 3D mobile : inventaire routier, nuages de points et imagerie panoramique 360°.",
+          "subThemes": [
+            "Mobile Mapping",
+            "Inventaire routier",
+            "Nuages de points 3D",
+            "Imagerie panoramique à 360°"
+          ],
+          "images": [
+            "/etafat/evenement/pool/roads-4.jpg",
+            "/etafat/evenement/pool/roads-1.jpg",
+            "/etafat/evenement/pool/roads-2.jpg"
+          ]
+        },
+        {
+          "title": "Prestations géospatiales pour l’avant-projet de l’autoroute Rabat–Casablanca et de la section Mohammedia Ouest–Aïn Harrouda",
+          "short": "Prestations géospatiales — autoroute Rabat–Casablanca",
+          "description": "Prestations géospatiales pour l’avant-projet de l’autoroute Rabat–Casablanca : imagerie satellitaire, MNT et plans parcellaires.",
+          "subThemes": [
+            "Études autoroutières",
+            "Imagerie satellitaire",
+            "Modèles numériques de terrain",
+            "Plans parcellaires"
+          ],
+          "images": [
+            "/etafat/evenement/pool/roads-3.jpg",
+            "/etafat/evenement/pool/roads-4.jpg",
+            "/etafat/evenement/pool/roads-1.jpg"
+          ]
+        },
+        {
+          "title": "Détection des réseaux enterrés entre Tobène et Taïba",
+          "short": "Détection des réseaux enterrés entre Tobène et Taïba",
+          "description": "Détection géoradar et électromagnétique et cartographie des réseaux enterrés entre Tobène et Taïba.",
+          "subThemes": [
+            "Géoradar",
+            "Détection électromagnétique",
+            "Géoréférencement",
+            "Cartographie des réseaux"
+          ],
+          "images": [
+            "/etafat/evenement/pool/networks-3.jpg",
+            "/etafat/evenement/pool/networks-4.jpg",
+            "/etafat/evenement/pool/networks-1.jpg"
+          ]
+        },
+        {
+          "title": "Topographie et détection des réseaux enterrés de l’usine Oulmès",
+          "short": "Réseaux enterrés de l’usine Oulmès",
+          "description": "Topographie et détection non intrusive des réseaux enterrés de l’usine Oulmès, avec plans géoréférencés.",
+          "subThemes": [
+            "Réseaux industriels",
+            "Détection non intrusive",
+            "Levés topographiques",
+            "Plans géoréférencés"
+          ],
+          "images": [
+            "/etafat/evenement/pool/networks-1.jpg",
+            "/etafat/evenement/pool/networks-2.jpg",
+            "/etafat/evenement/pool/networks-3.jpg"
+          ]
+        }
       ]
     },
     {
@@ -98,6 +584,70 @@
         "/etafat/evenement/pool/terrain-2.jpg",
         "/etafat/evenement/pool/terrain-3.jpg",
         "/etafat/evenement/pool/terrain-4.jpg"
+      ],
+      "items": [
+        {
+          "title": "Bathymétrie et expertise 3D des ouvrages de Tanger Med",
+          "short": "Bathymétrie et expertise 3D des ouvrages de Tanger Med",
+          "description": "Bathymétrie portuaire et expertise 3D des ouvrages du port de Tanger Med.",
+          "subThemes": [
+            "Bathymétrie portuaire",
+            "Expertise des ouvrages",
+            "Relevés 3D"
+          ],
+          "images": [
+            "/etafat/evenement/pool/port-1.jpg",
+            "/etafat/evenement/pool/port-2.jpg",
+            "/etafat/evenement/pool/port-3.jpg"
+          ]
+        },
+        {
+          "title": "MNT LiDAR pour le suivi des inondations au Burkina Faso",
+          "short": "MNT LiDAR pour le suivi des inondations au Burkina Faso",
+          "description": "Modèles numériques de terrain LiDAR pour le suivi des risques d’inondation et des ouvrages hydrauliques au Burkina Faso.",
+          "subThemes": [
+            "Risques d’inondation",
+            "Topographie des cours d’eau",
+            "Modèles numériques de terrain",
+            "Relevés des ouvrages hydrauliques"
+          ],
+          "images": [
+            "/etafat/evenement/pool/terrain-1.jpg",
+            "/etafat/evenement/pool/terrain-2.jpg",
+            "/etafat/evenement/pool/terrain-3.jpg"
+          ]
+        },
+        {
+          "title": "Levé LiDAR pour le barrage hydroélectrique de Saltinho",
+          "short": "Levé LiDAR pour le barrage hydroélectrique de Saltinho",
+          "description": "Levé LiDAR aéroporté et réseau géodésique pour le barrage hydroélectrique de Saltinho.",
+          "subThemes": [
+            "Hydroélectricité",
+            "Topographie de site",
+            "LiDAR aéroporté",
+            "Réseau géodésique"
+          ],
+          "images": [
+            "/etafat/evenement/pool/terrain-2.jpg",
+            "/etafat/evenement/pool/terrain-3.jpg",
+            "/etafat/evenement/pool/terrain-4.jpg"
+          ]
+        },
+        {
+          "title": "Contrôle du dragage par bathymétrie à Tanger Med",
+          "short": "Contrôle du dragage par bathymétrie à Tanger Med",
+          "description": "Contrôle des travaux de dragage du port de Tanger Med par bathymétrie multifaisceaux.",
+          "subThemes": [
+            "Dragage portuaire",
+            "Bathymétrie multifaisceaux",
+            "Contrôle des travaux maritimes"
+          ],
+          "images": [
+            "/etafat/evenement/pool/port-2.jpg",
+            "/etafat/evenement/pool/port-3.jpg",
+            "/etafat/evenement/pool/port-1.jpg"
+          ]
+        }
       ]
     },
     {
@@ -116,6 +666,56 @@
         "/etafat/evenement/pool/mining-1.jpg",
         "/etafat/evenement/pool/mining-2.jpg",
         "/etafat/evenement/pool/mining-3.jpg"
+      ],
+      "items": [
+        {
+          "title": "Maquette BIM de l’hôtel Harmattan à Bouaké",
+          "short": "Maquette BIM de l’hôtel Harmattan à Bouaké",
+          "description": "Relevé par scanner mobile et maquette BIM de l’hôtel Harmattan à Bouaké, avec plans, surfaces et visites virtuelles.",
+          "subThemes": [
+            "Relevé de l’existant par scanner mobile",
+            "Modélisation BIM",
+            "Plans et surfaces",
+            "Visites virtuelles"
+          ],
+          "images": [
+            "/etafat/evenement/pool/building-1.jpg",
+            "/etafat/evenement/pool/building-2.jpg",
+            "/etafat/evenement/pool/building-3.jpg"
+          ]
+        },
+        {
+          "title": "Système d’information des opérations minières de MAADEN",
+          "short": "Système d’information des opérations minières de MAADEN",
+          "description": "Système d’information géographique des opérations minières de MAADEN : autorisations, espaces d’exploitation et reporting terrain.",
+          "subThemes": [
+            "SIG minier",
+            "Gestion des autorisations",
+            "Gestion des espaces d’exploitation",
+            "Reporting terrain"
+          ],
+          "images": [
+            "/etafat/evenement/pool/mining-1.jpg",
+            "/etafat/evenement/pool/mining-2.jpg",
+            "/etafat/evenement/pool/mining-3.jpg"
+          ]
+        },
+        {
+          "title": "Évaluation volumétrique des actifs industriels de l’OCP",
+          "short": "Évaluation volumétrique des actifs industriels de l’OCP",
+          "description": "Évaluation volumétrique des stocks industriels de l’OCP par scanner laser 3D pour la gestion des capacités de stockage.",
+          "subThemes": [
+            "Inventaire des stocks",
+            "Scanner laser 3D",
+            "Calcul de volumes",
+            "Gestion des capacités de stockage"
+          ],
+          "images": [
+            "/etafat/evenement/pool/mining-2.jpg",
+            "/etafat/evenement/pool/mining-3.jpg",
+            "/etafat/evenement/pool/mining-1.jpg"
+          ]
+        }
       ]
     },
     {
@@ -131,6 +731,56 @@
         "/etafat/evenement/pool/agri-1.jpg",
         "/etafat/evenement/pool/agri-2.jpg",
         "/etafat/evenement/pool/agri-3.jpg"
+      ],
+      "items": [
+        {
+          "title": "SIG de la DNGR pour les zones de production rizi-piscicoles en Guinée",
+          "short": "SIG de la DNGR — zones de production rizi-piscicoles (Guinée)",
+          "description": "SIG institutionnel de la DNGR pour désenclaver les zones de production rizi-piscicoles en Guinée.",
+          "subThemes": [
+            "SIG institutionnel",
+            "Cartographie des infrastructures routières",
+            "Désenclavement rural",
+            "Formation"
+          ],
+          "images": [
+            "/etafat/evenement/pool/agri-1.jpg",
+            "/etafat/evenement/pool/agri-2.jpg",
+            "/etafat/evenement/pool/agri-3.jpg"
+          ]
+        },
+        {
+          "title": "Solution web et mobile d’expertise agricole et multirisque climatique pour la MAMDA",
+          "short": "Solution web & mobile d’expertise agricole pour la MAMDA",
+          "description": "Solution web et mobile d’expertise agricole et multirisque climatique pour la MAMDA, avec collecte géolocalisée et tableaux de bord.",
+          "subThemes": [
+            "Assurance agricole",
+            "Expertise terrain",
+            "Collecte géolocalisée",
+            "Tableaux de bord"
+          ],
+          "images": [
+            "/etafat/evenement/pool/agri-2.jpg",
+            "/etafat/evenement/pool/agri-3.jpg",
+            "/etafat/evenement/pool/agri-1.jpg"
+          ]
+        },
+        {
+          "title": "SIG pour le Registre national agricole",
+          "short": "SIG pour le Registre national agricole",
+          "description": "SIG du Registre national agricole : recensement, cartographie parcellaire et collecte mobile.",
+          "subThemes": [
+            "Recensement agricole",
+            "Cartographie parcellaire",
+            "Collecte mobile",
+            "Plateforme de gestion"
+          ],
+          "images": [
+            "/etafat/evenement/pool/agri-3.jpg",
+            "/etafat/evenement/pool/agri-1.jpg",
+            "/etafat/evenement/pool/agri-2.jpg"
+          ]
+        }
       ]
     }
   ],

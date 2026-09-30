@@ -54,6 +54,11 @@ function bake(root, { keep = [], smooth = false } = {}) {
   return root;
 }
 const polar = (azDeg, d) => [d * Math.sin(azDeg * DEG), -d * Math.cos(azDeg * DEG)];
+// Futuristic city on the flat valley floor ~3.2 km north-east (line-of-sight checked on the DEM),
+// framed in the gap between the globe (±18°) and the right-hand tiles (from 56°).
+const CITY = { az: 39, d: 3200, r: 720 };
+const [CITY_X, CITY_Z] = polar(CITY.az, CITY.d);
+const cityDist = (x, z) => Math.hypot(x - CITY_X, z - CITY_Z);
 
 /* ------------------------------- world ------------------------------- */
 export function createWorld({ scene, renderer, camera }) {
@@ -65,6 +70,7 @@ export function createWorld({ scene, renderer, camera }) {
     api.heightAt = T.heightAt;
     buildVegetation(scene, T);
     buildVillages(scene, T);
+    buildCity(scene, T, updaters);
     buildRoadAndCar(scene, T, updaters);
     buildDrones(scene, T, updaters);
     buildBirds(scene, updaters);
@@ -172,8 +178,10 @@ async function buildTerrain(scene) {
     if (e > 2650) c = mix(c, HIGH, clamp01((e - 2650) / 350));
     if (e > 3300) c = mix(c, PALE, clamp01((e - 3300) / 300));
     if (slope > 0.55) c = mix(c, ROCK, clamp01((slope - 0.55) / 0.35));
-    const field = clamp01((1880 - e) / 25) * clamp01((0.17 - slope) / 0.05);
+    const dc = cityDist((i - C) * M, (j - C) * M), city = clamp01((CITY.r + 110 - dc) / 120);
+    const field = clamp01((1880 - e) / 25) * clamp01((0.17 - slope) / 0.05) * (1 - city);
     if (field > 0) c = mix(c, FIELD, field);
+    if (city > 0) c = mix(c, Math.floor(dc / 105) % 2 ? [192, 194, 188] : [98, 138, 82], city); // ring boulevards & parks
     const shade = 0.9 + 0.2 * n2, k = (j * S + i) * 4;
     col[k] = Math.min(255, c[0] * shade); col[k + 1] = Math.min(255, c[1] * shade); col[k + 2] = Math.min(255, c[2] * shade); col[k + 3] = Math.round(field * 255);
     const nl = Math.hypot(gx, 1, gz);
@@ -287,15 +295,16 @@ function buildVegetation(scene, T) {
   }, R);
   instanced(scene, juniper, juniperSpots, T, R, { sMin: 0.7, sMax: 1.6, tint: [0.27, 0.05], cast: false, stretch: 0.3 });
   const isFloor = (x, z) => T.elevAt(x, z) < 1872 && T.slopeAt(x, z) < 0.14;
-  const walnutSpots = scatter(900, 24000, 350, 5600, (x, z) => z < -150 && isFloor(x, z) && vnoise(x * 0.0035 + 3, z * 0.0035) > 0.44, R);
+  const walnutSpots = scatter(900, 24000, 350, 5600, (x, z) => z < -150 && isFloor(x, z) && cityDist(x, z) > CITY.r + 70 && vnoise(x * 0.0035 + 3, z * 0.0035) > 0.44, R);
   instanced(scene, walnut, walnutSpots, T, R, { sMin: 0.8, sMax: 1.3, tint: [0.28, 0.06] });
-  const poplarSpots = scatter(420, 24000, 350, 5600, (x, z) => z < -150 && isFloor(x, z) && vnoise(x * 0.0042 - 9, z * 0.0042 + 4) > 0.55, R);
+  const poplarSpots = scatter(420, 24000, 350, 5600, (x, z) => z < -150 && isFloor(x, z) && cityDist(x, z) > CITY.r + 70 && vnoise(x * 0.0042 - 9, z * 0.0042 + 4) > 0.55, R);
   instanced(scene, poplar, poplarSpots, T, R, { sMin: 0.85, sMax: 1.25, tint: [0.23, 0.05] });
   // rocks around the camp
   const rock = solid(new THREE.DodecahedronGeometry(1, 0), 0xffffff);
   // keep the camp, the crew's route and the 4×4 track clear of clutter
   const CLEAR = [[...polar(-36, 7.5), 2.8], [...polar(32, 9), 2.4], [...polar(50, 5.5), 1.8], [...polar(14, 24), 2.2],
-    [...polar(-30, 15), 1.8], [...polar(-12, 21), 1.8], [...polar(8, 18), 1.8], [...polar(24, 23), 1.8], [...polar(-47, 11), 1.2]];
+    [...polar(-30, 15), 1.8], [...polar(-12, 21), 1.8], [...polar(8, 18), 1.8], [...polar(24, 23), 1.8], [...polar(-47, 11), 1.2],
+    [...polar(22, 6.8), 1.3], [...polar(-22, 12), 1.6], [...polar(-26, 11), 1.1]];
   const clear = (x, z) => {
     const r = Math.hypot(x, z), az = Math.atan2(x, -z) / DEG;
     if (r < 3.8 || (r > 29 && r < 37.5 && az > -58 && az < 56)) return false;
@@ -319,7 +328,7 @@ function buildVillages(scene, T) {
   for (let k = 0; k < 6000 && centres.length < 7; k++) {
     const [x, z] = polar(R() * 150 - 75, 700 + R() * 3800);
     const e = T.elevAt(x, z), s = T.slopeAt(x, z);
-    if (e > 1845 && e < 1940 && s > 0.03 && s < 0.22 && centres.every((c) => Math.hypot(c[0] - x, c[1] - z) > 700)) centres.push([x, z]);
+    if (e > 1845 && e < 1940 && s > 0.03 && s < 0.22 && cityDist(x, z) > CITY.r + 300 && centres.every((c) => Math.hypot(c[0] - x, c[1] - z) > 700)) centres.push([x, z]);
   }
   const house = solid(new THREE.BoxGeometry(1, 1, 1).translate(0, 0.5, 0), 0xffffff);
   const spots = [];
@@ -339,6 +348,126 @@ function buildVillages(scene, T) {
     im.setColorAt(i, c.set(palette[i % palette.length]));
   });
   scene.add(im);
+}
+
+/* ---------------------------- futuristic city ---------------------------- */
+// "Ville intelligente" skyline: twisted glass towers around a 700 m spire, a maglev ring, air taxis
+// and a periodic LiDAR sweep (ETAFAT's digital-twin theme). Static parts bake into two meshes.
+function banded(g, cA, cB, band, H) { // per-triangle colours: glass floors in bands, lighter toward the sky
+  g = g.index ? g.toNonIndexed() : g; if (g.attributes.uv) g.deleteAttribute("uv");
+  const p = g.attributes.position, n = p.count, a = new Float32Array(n * 3), A = new THREE.Color(cA), B = new THREE.Color(cB), c = new THREE.Color();
+  for (let t = 0; t < n; t += 3) {
+    const yc = (p.getY(t) + p.getY(t + 1) + p.getY(t + 2)) / 3;
+    c.copy(Math.floor(yc / band) % 2 ? A : B).multiplyScalar(0.8 + 0.32 * clamp01(yc / H));
+    for (let k = 0; k < 3; k++) c.toArray(a, (t + k) * 3);
+  }
+  g.setAttribute("color", new THREE.BufferAttribute(a, 3)); return g;
+}
+function twist(g, turns, H) {
+  const p = g.attributes.position;
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), a = turns * y / H; p.setXYZ(i, x * Math.cos(a) - z * Math.sin(a), y, x * Math.sin(a) + z * Math.cos(a)); }
+  g.computeVertexNormals(); return g;
+}
+function buildCity(scene, T, updaters) {
+  const R = rng(2050), body = [], glow = [], tops = [], spots = [];
+  const GLOW = 0x5ff5f0;
+  const ground = (x, z, rad) => { let m = T.heightAt(x, z); for (let a = 0; a < 6; a++) m = Math.min(m, T.heightAt(x + rad * Math.cos(a * 1.047), z + rad * Math.sin(a * 1.047))); return m - 4; };
+  const place = (g, x, y, z, ry = 0) => g.rotateY(ry).translate(x, y, z);
+  const free = (x, z, rad) => spots.every(([sx, sz, sr]) => Math.hypot(x - sx, z - sz) > rad + sr + 14);
+  const GLASS = [[0x1d4360, 0x31597a], [0x4683aa, 0x66a1c6], [0x8cbfd8, 0xafd5e8], [0xdfe8ec, 0xf4f7f8], [0xcdb996, 0xe2d2b2], [0x2a8a90, 0x46abb0]];
+
+  // central spire (≈700 m) with a sky ring and a glowing crown
+  const cy = ground(CITY_X, CITY_Z, 60); spots.push([CITY_X, CITY_Z, 70]);
+  body.push(place(twist(banded(new THREE.CylinderGeometry(24, 66, 560, 8, 28).translate(0, 280, 0), 0xe6eef1, 0xb9cdd8, 20, 560), 0.9, 560), CITY_X, cy, CITY_Z));
+  body.push(place(solid(new THREE.ConeGeometry(13, 230, 6).translate(0, 665, 0), 0xf2f5f6), CITY_X, cy, CITY_Z));
+  body.push(place(solid(new THREE.TorusGeometry(105, 7, 5, 40).rotateX(Math.PI / 2).translate(0, 360, 0), 0xf0f3f4), CITY_X, cy, CITY_Z));
+  glow.push(place(solid(new THREE.CylinderGeometry(27, 29, 10, 16, 1, true).translate(0, 545, 0), GLOW), CITY_X, cy, CITY_Z));
+  glow.push(place(solid(new THREE.TorusGeometry(105, 2.6, 4, 40).rotateX(Math.PI / 2).translate(0, 369, 0), GLOW), CITY_X, cy, CITY_Z));
+  tops.push([CITY_X, cy + 782, CITY_Z]);
+
+  // district towers, taller toward the centre
+  for (let k = 0; k < 5000 && spots.length < 100; k++) {
+    const a = R() * Math.PI * 2, r = 105 + Math.pow(R(), 0.85) * (CITY.r - 140);
+    const x = CITY_X + r * Math.cos(a), z = CITY_Z + r * Math.sin(a), t = r / CITY.r;
+    const H = (40 + 520 * Math.pow(1 - t, 1.75)) * (0.55 + 0.45 * R()), w = 24 + R() * 30, rad = w * 0.72;
+    if (!free(x, z, rad)) continue;
+    spots.push([x, z, rad]);
+    const y0 = ground(x, z, rad), ry = R() * Math.PI, pal = H > 240 ? GLASS[[1, 3, 5, 0][Math.floor(R() * 4)]] : GLASS[Math.floor(R() * GLASS.length)];
+    const segs = Math.max(2, Math.round(H / 18)), roll = R();
+    if (H > 60 && roll < 0.14 && r > 380) { // glass dome (eco-biome / arena)
+      const dr = 30 + R() * 34;
+      body.push(place(banded(new THREE.SphereGeometry(dr, 14, 6, 0, Math.PI * 2, 0, Math.PI / 2), 0x86cfcb, 0xa6e0dc, 9, dr), x, y0 + 3, z));
+      continue;
+    }
+    let g;
+    if (H > 140 && roll < 0.45) g = twist(banded(new THREE.BoxGeometry(w, H, w, 1, segs, 1).translate(0, H / 2, 0), pal[0], pal[1], 18, H), (R() < 0.5 ? -1 : 1) * (0.5 + R() * 0.8), H);
+    else if (roll < 0.72) g = banded(new THREE.CylinderGeometry(rad * (0.45 + R() * 0.3), rad, H, R() < 0.5 ? 6 : 10, segs).translate(0, H / 2, 0), pal[0], pal[1], 18, H);
+    else {
+      g = banded(new THREE.BoxGeometry(w, H * 0.68, w * (0.7 + R() * 0.5), 1, Math.max(1, Math.round(segs * 0.68)), 1).translate(0, H * 0.34, 0), pal[0], pal[1], 18, H);
+      body.push(place(banded(new THREE.BoxGeometry(w * 0.66, H * 0.32, w * 0.5, 1, Math.max(1, Math.round(segs * 0.32)), 1).translate(0, H * 0.84, 0), pal[0], pal[1], 18, H), x, y0, z, ry));
+    }
+    body.push(place(g, x, y0, z, ry));
+    if (H > 150) { // podium in warm stone + glowing crown (+ needle on the tallest)
+      body.push(place(solid(new THREE.BoxGeometry(w * 1.9, 20, w * 1.9).translate(0, 10, 0), 0xd8c6a2), x, y0, z, ry));
+      glow.push(place(solid(new THREE.CylinderGeometry(rad * 0.62, rad * 0.62, 6, 10, 1, true).translate(0, H - 14, 0), GLOW), x, y0, z, ry));
+      if (H > 260) { body.push(place(solid(new THREE.ConeGeometry(3.5, 70, 5).translate(0, H + 35, 0), 0xf2f5f6), x, y0, z)); tops.push([x, y0 + H + 70, z]); }
+    } else if (R() < 0.35) glow.push(place(solid(new THREE.BoxGeometry(w * 1.04, 3, w * 1.04).translate(0, H * (0.4 + R() * 0.4), 0), GLOW), x, y0, z, ry));
+  }
+
+  // gateway arch on the edge facing the viewer
+  const toV = Math.atan2(-CITY_X, -CITY_Z), [ax, az] = [CITY_X + Math.sin(toV) * (CITY.r - 10), CITY_Z + Math.cos(toV) * (CITY.r - 10)], ay = ground(ax, az, 40);
+  body.push(place(solid(new THREE.TorusGeometry(170, 7, 6, 48, Math.PI), 0xf0f3f4), ax, ay, az, toV));
+  glow.push(place(solid(new THREE.TorusGeometry(162, 1.8, 4, 48, Math.PI), GLOW), ax, ay, az, toV));
+
+  // maglev ring on pylons
+  const ring = [], RR = CITY.r + 40;
+  for (let i = 0; i < 64; i++) { const a = i / 64 * Math.PI * 2, x = CITY_X + RR * Math.cos(a), z = CITY_Z + RR * Math.sin(a); ring.push(new THREE.Vector3(x, T.heightAt(x, z) + 30, z)); }
+  const track = new THREE.CatmullRomCurve3(ring, true);
+  body.push(solid(new THREE.TubeGeometry(track, 160, 3.2, 5, true), 0xe8edef));
+  ring.forEach((p, i) => { if (i % 4 === 0) body.push(solid(new THREE.BoxGeometry(5, 34, 5).translate(p.x, p.y - 17, p.z), 0xd6dde0)); });
+
+  const cityMesh = new THREE.Mesh(mergeGeometries(body), BAKED); cityMesh.name = "city"; scene.add(cityMesh);
+  const glowMesh = new THREE.Mesh(mergeGeometries(glow), new THREE.MeshBasicMaterial({ vertexColors: true })); scene.add(glowMesh);
+
+  // maglev pods
+  const podGeo = mergeGeometries([solid(new THREE.BoxGeometry(5.5, 5, 56), 0xf7f9fa), solid(new THREE.BoxGeometry(5.7, 1.2, 50).translate(0, 0.6, 0), 0x2ab5b4)]);
+  const pods = new THREE.InstancedMesh(podGeo, BAKED, 3); pods.frustumCulled = false; scene.add(pods);
+  // air taxis + aviation beacons (screen-size points, one draw call each)
+  const NT = 34, taxis = [], tp = new Float32Array(NT * 3), tc = new Float32Array(NT * 3), cc = new THREE.Color();
+  for (let i = 0; i < NT; i++) { taxis.push({ r: 120 + R() * 560, h: cy + 110 + R() * 380, w: (R() < 0.5 ? -1 : 1) * (0.05 + R() * 0.07), ph: R() * 7, e: 0.55 + R() * 0.45, bob: R() * 40 }); cc.set(R() < 0.6 ? 0xffffff : GLOW).toArray(tc, i * 3); }
+  const tg = new THREE.BufferGeometry(); tg.setAttribute("position", new THREE.BufferAttribute(tp, 3).setUsage(THREE.DynamicDrawUsage)); tg.setAttribute("color", new THREE.BufferAttribute(tc, 3));
+  const taxiPts = new THREE.Points(tg, new THREE.PointsMaterial({ size: 4, sizeAttenuation: false, vertexColors: true })); taxiPts.frustumCulled = false; scene.add(taxiPts);
+  const bg = new THREE.BufferGeometry(); bg.setAttribute("position", new THREE.Float32BufferAttribute(tops.flat(), 3));
+  const beacons = new THREE.Points(bg, new THREE.PointsMaterial({ color: 0xff3b30, size: 5, sizeAttenuation: false, fog: false })); scene.add(beacons);
+  // LiDAR sweep: a glowing ring + faint grid disc rising through the skyline (the city being scanned)
+  const add = { transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, side: THREE.DoubleSide };
+  const sweep = new THREE.Mesh(new THREE.CylinderGeometry(CITY.r + 20, CITY.r + 20, 14, 72, 1, true), new THREE.MeshBasicMaterial({ color: GLOW, opacity: 0, ...add }));
+  const gc = document.createElement("canvas"); gc.width = gc.height = 256; const gx = gc.getContext("2d");
+  gx.strokeStyle = "rgba(95,245,240,0.9)"; gx.lineWidth = 2; for (let i = 0; i <= 256; i += 32) { gx.beginPath(); gx.moveTo(i, 0); gx.lineTo(i, 256); gx.moveTo(0, i); gx.lineTo(256, i); gx.stroke(); }
+  const gtex = new THREE.CanvasTexture(gc); gtex.wrapS = gtex.wrapT = THREE.RepeatWrapping; gtex.repeat.set(10, 10); gtex.colorSpace = THREE.SRGBColorSpace;
+  const grid = new THREE.Mesh(new THREE.CircleGeometry(CITY.r + 20, 72).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: gtex, opacity: 0, ...add }));
+  sweep.add(grid); sweep.position.set(CITY_X, cy, CITY_Z); scene.add(sweep);
+  const halo = new THREE.Mesh(new THREE.TorusGeometry(135, 2.4, 4, 56), new THREE.MeshBasicMaterial({ color: GLOW, transparent: true, opacity: 0.75, fog: false }));
+  halo.position.set(CITY_X, cy + 470, CITY_Z); scene.add(halo);
+
+  const m4 = new THREE.Matrix4(), q = new THREE.Quaternion(), fwd = new THREE.Vector3(0, 0, 1), tan = new THREE.Vector3(), pp = new THREE.Vector3(), one = new THREE.Vector3(1, 1, 1);
+  updaters.push((dt, t) => {
+    for (let i = 0; i < 3; i++) { // pods at ~90 m/s around the ring
+      const u = ((t * 90 / track.getLength() + i / 3) % 1 + 1) % 1;
+      track.getPointAt(u, pp); track.getTangentAt(u, tan); pp.y += 5;
+      pods.setMatrixAt(i, m4.compose(pp, q.setFromUnitVectors(fwd, tan), one));
+    }
+    pods.instanceMatrix.needsUpdate = true;
+    for (let i = 0; i < NT; i++) {
+      const o = taxis[i], a = t * o.w + o.ph;
+      tp[i * 3] = CITY_X + o.r * Math.cos(a); tp[i * 3 + 1] = o.h + Math.sin(t * 0.4 + o.ph) * o.bob; tp[i * 3 + 2] = CITY_Z + o.r * o.e * Math.sin(a);
+    }
+    tg.attributes.position.needsUpdate = true;
+    beacons.visible = (t % 1.6) < 0.55;
+    const cyc = t % 11, u = clamp01(cyc / 7), vis = cyc < 7 ? Math.sin(Math.PI * u) : 0;
+    sweep.position.y = cy + 8 + u * 760; sweep.material.opacity = 0.85 * vis; grid.material.opacity = 0.32 * vis;
+    halo.rotation.set(Math.PI / 2 + 0.2 * Math.sin(t * 0.3), 0, t * 0.1); halo.rotateY(0.15 * Math.cos(t * 0.3));
+  });
 }
 
 /* ---------------------------- road & 4×4 ---------------------------- */
@@ -665,6 +794,20 @@ function buildCamp(scene, T, updaters) {
     bake(put(stake, x + 0.6, z));
   }
 
+  // GNSS base station on a tripod (reference receiver for the rover), with radio whip and receiver box
+  const [gbx, gbz] = polar(-22, 12), gnss = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const a = i / 3 * Math.PI * 2, leg = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 1.52, 5), wood);
+    leg.position.set(Math.cos(a) * 0.24, 0.72, Math.sin(a) * 0.24); leg.rotation.set(Math.sin(a) * 0.32, 0, -Math.cos(a) * 0.32); gnss.add(leg);
+  }
+  const tribrach = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 0.1, 10), dark); tribrach.position.y = 1.5; gnss.add(tribrach);
+  const antB = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.13, 0.08, 16), lambert({ color: 0xf2f2f2 })); antB.position.y = 1.6; gnss.add(antB);
+  const rx = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.12, 0.16), yellow); rx.position.set(0.18, 0.95, 0.08); gnss.add(rx);
+  const whip = new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.01, 0.7, 4), dark); whip.position.set(0.24, 1.36, 0.08); gnss.add(whip);
+  const ecase = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.35), orange); ecase.position.set(-0.55, 0.15, 0.35); ecase.rotation.y = 0.4; gnss.add(ecase);
+  bake(put(gnss, gbx, gbz));
+  camp.base = { x: gbx, z: gbz };
+
   // ETAFAT feather flag
   const [fx, fz] = polar(-47, 11);
   const flag = new THREE.Group();
@@ -741,6 +884,9 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters) {
   };
   const crew = [];
   const T0 = camp.table;
+  // a mixed crew, as on ETAFAT's projects across Africa: skin/hair palettes for Black colleagues
+  const blackM = (skin) => ({ Skin: skin, Eyebrows: 0x17120e, Moustache: 0x1b1511 });
+  const blackF = (skin) => ({ Skin: skin, Hair_Blond: 0x1e1713, Hair_Brown: 0x15100d });
 
   // plan-table team
   const [ax, az] = [T0.x + Math.sin(T0.rot) * -0.95, T0.z + Math.cos(T0.rot) * -0.95];
@@ -760,7 +906,7 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters) {
   // total-station surveyor (white hat = engineer) + prism holder
   const st = camp.station;
   const [ux, uz] = [st.x - 0.1, st.z + 0.55];
-  const u = spawn(W, { x: ux, z: uz, face: faceTo(ux, uz, st.prism.x, st.prism.z), recolor: { Worker_Yellow: 0xf4f4f4 } });
+  const u = spawn(W, { x: ux, z: uz, face: faceTo(ux, uz, st.prism.x, st.prism.z), recolor: { Worker_Yellow: 0xf4f4f4, ...blackM(0x5e3b27) } });
   crew.push({ c: u, tick(dt) { u.t += dt; if (u.t > 8) u.t = 0; u.play(u.t < 2.6 ? "Interact" : "Idle_Neutral"); } });
   const [hx, hz] = [st.prism.x + 0.45, st.prism.z + 0.2];
   const h = spawn(W, { x: hx, z: hz, face: faceTo(hx, hz, st.x, st.z), recolor: { Worker_Vest: 0xd6ff3a } });
@@ -770,7 +916,7 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters) {
 
   // GNSS rover: walks the stakes, measures at each
   const route = camp.route;
-  const g = spawn(W, { x: route[0][0], z: route[0][1], face: 0, recolor: { Worker_Vest: 0xff9f1c } });
+  const g = spawn(W, { x: route[0][0], z: route[0][1], face: 0, recolor: { Worker_Vest: 0xff9f1c, ...blackM(0x7a4c32) } });
   // rover pole: held in the right hand but kept plumb with its foot on the ground (as surveyors do),
   // so it follows the hand in world space instead of inheriting the wrist's swing.
   const rover = new THREE.Group();
@@ -808,6 +954,29 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters) {
     let d = Math.atan2(dx, dz) - p.obj.rotation.y; d = Math.atan2(Math.sin(d), Math.cos(d)); p.obj.rotation.y += d * Math.min(1, dt * 2);
     if (wl) { wl.getWorldPosition(va); ctrl.position.set(va.x + Math.sin(p.obj.rotation.y) * 0.06, va.y - 0.04, va.z + Math.cos(p.obj.rotation.y) * 0.06); ctrl.rotation.set(0, p.obj.rotation.y, 0); ctrl.rotateX(1.0); }
   } });
+
+
+  // drone data operator: checks the live point cloud on a rugged tablet beside the pilot
+  const [ox, oz] = polar(22, 6.8);
+  const o = spawn(F, { x: ox, z: oz, face: faceTo(ox, oz, ...polar(34, 20)), height: 1.7, recolor: { ...blackF(0x6a412b), White: 0x2ab5b4 } });
+  attach(o, "Head", hardHat(0xf4f4f4), [0, 0.2, 0.01]);
+  const tablet = new THREE.Group();
+  tablet.add(new THREE.Mesh(new THREE.BoxGeometry(0.26, 0.018, 0.18), lambert({ color: 0x2b3038 })));
+  const screen = new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.14).rotateX(-Math.PI / 2).translate(0, 0.011, 0), new THREE.MeshBasicMaterial({ color: 0x3fd8d4 }));
+  scene.add(bake(tablet)); tablet.add(screen);
+  const owl = o.obj.getObjectByName("WristL"), ov = new THREE.Vector3();
+  o.play("Idle_Neutral");
+  crew.push({ c: o, tick(dt, t) {
+    o.t += dt; if (o.t > 9) o.t = 0; o.play(o.t < 2.4 ? "Interact" : "Idle_Neutral");
+    if (owl) { owl.getWorldPosition(ov); const f = o.obj.rotation.y; tablet.position.set(ov.x + Math.sin(f) * 0.12, ov.y + 0.02, ov.z + Math.cos(f) * 0.12); tablet.rotation.set(0, f, 0); tablet.rotateX(-0.55); }
+    screen.material.color.setHSL(0.49, 0.65, 0.5 + 0.08 * Math.sin(t * 2.3));
+  } });
+
+  // GNSS base-station technician
+  const bs = camp.base, [nx, nz] = polar(-26, 11);
+  const n = spawn(W, { x: nx, z: nz, face: faceTo(nx, nz, bs.x, bs.z), recolor: blackM(0x4f3222) });
+  n.play("Idle"); n.t = 3;
+  crew.push({ c: n, tick(dt) { n.t += dt; if (n.t > 10) n.t = 0; n.play(n.t < 3.2 ? "Interact" : "Idle"); } });
 
   const fwd = new THREE.Vector3(), to = new THREE.Vector3(), eye = new THREE.Vector3();
   function looking(pos, deg) {
