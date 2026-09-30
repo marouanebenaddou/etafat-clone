@@ -8,6 +8,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
+import { XRHandModelFactory } from "three/addons/webxr/XRHandModelFactory.js";
 import { TilesRenderer, ImplicitTilingPlugin, GLTFExtensionsPlugin, TilesFadePlugin, Scheduler } from "./vendor/3d-tiles-renderer.js";
 
 const DEG = Math.PI / 180;
@@ -308,7 +309,7 @@ const LAYER_ROWS = [
 ];
 const logoImg = new Image(); logoImg.onload = () => menu.redraw(); logoImg.src = "./img/etafat-logo-dark.png";
 const xrSupport = { vr: false, ar: false };
-const menu = new Panel(560, 1440, 0.25, (x, P) => {
+const menu = new Panel(560, 1470, 0.25, (x, P) => {
   const W = P.w, H = P.h;
   panelBg(x, W, H);
   if (logoImg.complete && logoImg.naturalWidth) { const h = 120, w = h * logoImg.naturalWidth / logoImg.naturalHeight; x.drawImage(logoImg, (W - w) / 2, 26, w, h); }
@@ -367,7 +368,8 @@ const menu = new Panel(560, 1440, 0.25, (x, P) => {
     x.fillStyle = "rgba(234,244,248,0.85)"; x.font = `500 24px ${FONT}`; x.fillText(c.label, X + 34, Y + 8);
   });
   x.fillStyle = "rgba(234,244,248,0.45)"; x.font = `400 19px ${FONT}`;
-  x.fillText("Gâchette : choisir · maintenir + glisser : déplacer la vue", 40, H - 62);
+  x.fillText("Gâchette / pincer : choisir · maintenir + glisser : déplacer", 40, H - 90);
+  x.fillText("Deux mains sur la maquette : zoomer et tourner", 40, H - 62);
   x.fillText("Joystick : tourner / zoomer · Grip : déplacer la maquette", 40, H - 34);
 });
 menu.mesh.position.set(-(DISC_R + 0.3), 0.38, 0.08); rig.add(menu.mesh);
@@ -878,13 +880,88 @@ for (let i = 0; i < 2; i++) {
     aim(ctrl); const h = pick();
     if (h) { activate(h, ctrl); return; }
     if (pm.on) return;
-    const q = discPoint(); if (q) { pan = { ctrl, m0: mapAt(q) }; stopTour(); }
+    const q = discPoint(); if (!q) return;
+    stopTour();
+    if (pan && pan.ctrl !== ctrl) { duo = startDuo(pan.ctrl, ctrl); pan = null; } // both hands on the table
+    else pan = { ctrl, m0: mapAt(q) };
   });
-  ctrl.addEventListener("selectend", () => { if (pan && pan.ctrl === ctrl) pan = null; });
+  ctrl.addEventListener("selectend", () => {
+    if (duo && (duo.a === ctrl || duo.b === ctrl)) { // keep panning with the hand still pinching
+      const other = duo.a === ctrl ? duo.b : duo.a; duo = null;
+      aim(other); const q = discPoint(false); if (q) pan = { ctrl: other, m0: mapAt(q) };
+    } else if (pan && pan.ctrl === ctrl) pan = null;
+  });
   ctrl.addEventListener("squeezestart", () => { if (!pm.on) grab = { ctrl, off: rig.position.clone().sub(_v.setFromMatrixPosition(ctrl.matrixWorld)) }; });
   ctrl.addEventListener("squeezeend", () => { if (grab && grab.ctrl === ctrl) grab = null; });
   scene.add(ctrl); controllers.push(ctrl);
 }
+// two pointers on the table (both hands pinching, or both triggers): spread = zoom, twist = turn, the
+// map point between them stays put
+let duo = null;
+function planeHit(ctrl, out) { aim(ctrl); stand.getWorldPosition(_w); _plane.set(_v.set(0, 1, 0), -_w.y); return raycaster.ray.intersectPlane(_plane, out); }
+function startDuo(a, b) {
+  const pa = planeHit(a, new THREE.Vector3()), pb = planeHit(b, new THREE.Vector3()); if (!pa || !pb) return null;
+  const mid = pa.clone().add(pb).multiplyScalar(0.5);
+  return { a, b, d0: Math.max(0.02, Math.hypot(pb.x - pa.x, pb.z - pa.z)), ang0: Math.atan2(pb.z - pa.z, pb.x - pa.x),
+    zoom0: view.zoom, yaw0: view.yaw, m0: mapAt(stand.worldToLocal(mid)) };
+}
+const _pa = new THREE.Vector3(), _pb = new THREE.Vector3();
+function updateDuo() {
+  if (!planeHit(duo.a, _pa) || !planeHit(duo.b, _pb)) return;
+  const d = Math.max(0.02, Math.hypot(_pb.x - _pa.x, _pb.z - _pa.z)), ang = Math.atan2(_pb.z - _pa.z, _pb.x - _pa.x);
+  goal.zoom = THREE.MathUtils.clamp(duo.zoom0 * d / duo.d0, ZOOM_MIN, ZOOM_MAX);
+  goal.yaw = duo.yaw0 - (ang - duo.ang0);
+  applyView(); stand.updateMatrixWorld();
+  panTo(duo.m0, stand.worldToLocal(_pa.add(_pb).multiplyScalar(0.5)));
+}
+
+// ── tracked hands: translucent hands with a glowing outline (the Quest draws nothing by itself in WebXR) ──
+function handMaterials() {
+  const depth = new THREE.MeshBasicMaterial({ colorWrite: false }); // depth pre-pass: hides the hull inside the silhouette
+  const hull = new THREE.MeshBasicMaterial({ color: 0x8ee6e4, side: THREE.BackSide }); // inflated back faces = outline
+  hull.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace("#include <skinning_vertex>", "#include <skinning_vertex>\n  transformed += normalize(objectNormal) * 0.0017;"); };
+  hull.customProgramCacheKey = () => "hand-hull";
+  const fill = new THREE.MeshBasicMaterial({ transparent: true, depthWrite: false, depthFunc: THREE.LessEqualDepth });
+  fill.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying vec3 vRimN; varying vec3 vRimV;")
+      .replace("#include <project_vertex>", "#include <project_vertex>\n  vRimN = normalize(transformedNormal); vRimV = -mvPosition.xyz;");
+    sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying vec3 vRimN; varying vec3 vRimV;")
+      .replace("#include <opaque_fragment>", "float rim = 1.0 - abs(dot(normalize(vRimN), normalize(vRimV)));\n  gl_FragColor = vec4(mix(vec3(0.04, 0.16, 0.24), vec3(0.56, 0.9, 0.89), pow(rim, 2.0)), 0.16 + pow(rim, 3.0) * 0.6);");
+  };
+  fill.customProgramCacheKey = () => "hand-fill";
+  return { depth, hull, fill };
+}
+function outlineHand(object) {
+  const mesh = object.getObjectByProperty("type", "SkinnedMesh"); if (!mesh) return;
+  const m = handMaterials();
+  mesh.material = m.fill; mesh.renderOrder = 52; mesh.castShadow = mesh.receiveShadow = false;
+  for (const [mat, order] of [[m.depth, 50], [m.hull, 51]]) {
+    const copy = new THREE.SkinnedMesh(mesh.geometry, mat);
+    copy.position.copy(mesh.position); copy.quaternion.copy(mesh.quaternion); copy.scale.copy(mesh.scale);
+    copy.bind(mesh.skeleton, mesh.bindMatrix); copy.renderOrder = order; copy.frustumCulled = false;
+    mesh.parent.add(copy);
+  }
+}
+const handFactory = new XRHandModelFactory(null, outlineHand).setPath("./vendor/hands/");
+const hands = [], TIPS = ["thumb-tip", "index-finger-tip", "middle-finger-tip", "ring-finger-tip", "pinky-finger-tip"];
+for (let i = 0; i < 2; i++) {
+  const hand = renderer.xr.getHand(i);
+  hand.add(handFactory.createHandModel(hand, "mesh")); scene.add(hand); hands.push(hand);
+}
+function updateHands() { // fingertip glows (index brightens when pinching); lighter pointer rays for hands
+  for (const hand of hands) {
+    const j = hand.joints; if (!j || !j["index-finger-tip"]) continue;
+    if (!hand.userData.tips) hand.userData.tips = TIPS.map((name) => {
+      const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0x8ee6e4, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+      sp.renderOrder = 53; sp.scale.setScalar(name === "index-finger-tip" ? 0.016 : 0.011); j[name].add(sp); return sp;
+    });
+    const pinch = j["thumb-tip"].position.distanceTo(j["index-finger-tip"].position);
+    const k = THREE.MathUtils.clamp((0.05 - pinch) / 0.035, 0, 1);
+    hand.userData.tips[1].scale.setScalar(0.016 + k * 0.014); hand.userData.tips[0].scale.setScalar(0.011 + k * 0.008);
+  }
+  for (const c of controllers) { const src = c.userData.source; c.userData.ray.material.opacity = src && src.hand ? 0.3 : 0.55; }
+}
+
 const btnPrev = new Map();
 function xrInput(dt) {
   let turn = 0, zoom = 0;
@@ -1051,7 +1128,9 @@ function frame() {
   if (!pm.on) steer((keys.has("ArrowRight") ? 1 : 0) - (keys.has("ArrowLeft") ? 1 : 0), (keys.has("ArrowDown") ? 1 : 0) - (keys.has("ArrowUp") ? 1 : 0), dt);
   else if (!xr) camera.rotation.set(pm.look.pitch, pm.look.yaw, 0, "YXZ");
   if (grab) { rig.position.copy(_v.setFromMatrixPosition(grab.ctrl.matrixWorld)).add(grab.off); floorU.uC.value.set(rig.position.x, rig.position.z); }
-  if (pan) { aim(pan.ctrl); const q = discPoint(false); if (q) panTo(pan.m0, q); }
+  if (duo) updateDuo();
+  else if (pan) { aim(pan.ctrl); const q = discPoint(false); if (q) panTo(pan.m0, q); }
+  if (xr) updateHands();
   if (tour.on) { tour.t += dt; goal.yaw -= dt * 0.07; if (tour.t > 11) { tour.t = 0; selectPOI((sel + 1) % pois.length, 3); } }
 
   applyView(dt);
@@ -1137,7 +1216,7 @@ function frame() {
 
   // pointer hover (controller rays in XR, mouse on desktop)
   let hit = null, hitCtrl = null;
-  const rays = xr ? controllers.filter((c) => c !== (pan && pan.ctrl)) : mouse && !drag ? [null] : [];
+  const rays = xr ? controllers.filter((c) => c !== (pan && pan.ctrl) && !(duo && (c === duo.a || c === duo.b))) : mouse && !drag ? [null] : [];
   for (const c of rays) {
     if (c) aim(c); else raycaster.setFromCamera(ndc, camera);
     hit = pick(); if (hit) { hitCtrl = c; break; }
@@ -1230,6 +1309,13 @@ if (DBG) window.CITE = {
       for (const p of r.items) { const y = sampleHeight(p.m.x, p.m.z, 1.5); if (y != null) out[p.id] = +y.toFixed(1); }
     }
     resetView(); return out;
+  },
+  async previewHand() { // debug: the outlined hand in front of the desktop camera (no hand tracking in a browser)
+    const { GLTFLoader } = await import("three/addons/loaders/GLTFLoader.js");
+    const obj = (await new GLTFLoader().loadAsync("./vendor/hands/right.glb")).scene.children[0];
+    outlineHand(obj); const holder = new THREE.Group(); holder.add(obj); scene.add(holder);
+    camera.getWorldDirection(_v); holder.position.copy(camera.position).addScaledVector(_v, 0.35); holder.position.y -= 0.05;
+    holder.lookAt(camera.position); holder.rotateX(-Math.PI / 2); return holder;
   },
   async pump(ms = 2000) { const end = performance.now() + ms; while (performance.now() < end) { frame(); await new Promise((r) => setTimeout(r, 30)); } },
   // bake heights: zoom on each landmark (and around the ramparts), wait for the tiles, sample
