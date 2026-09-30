@@ -33,7 +33,7 @@
     {
       "label": "Foncier, cadastre et systèmes d’information",
       "tagline": "Sécurisation foncière, cadastre et systèmes d’information",
-      "accent": "#00a3c4",
+      "accent": "#2ab5b4",
       "projects": [
         "PAGEF — Renforcement du cadastrage à Abidjan",
         "REGIS — Patrimoine foncier et immobilier de l’OCP",
@@ -56,7 +56,7 @@
     {
       "label": "Infrastructures, transports et réseaux",
       "tagline": "Routes, réseaux enterrés et grands ouvrages",
-      "accent": "#4f83cc",
+      "accent": "#00669d",
       "projects": [
         "Détection du pipeline PETROCI — Pacobo–Yamoussoukro",
         "PAGDS — Suivi des chantiers pour l’AGEROUTE",
@@ -103,7 +103,7 @@
     {
       "label": "Bâtiment, industrie et mines",
       "tagline": "Scan 3D, BIM et sites industriels et miniers",
-      "accent": "#6a8fb5",
+      "accent": "#00669d",
       "projects": [
         "Maquette BIM de l’hôtel Harmattan à Bouaké",
         "Système d’information des opérations minières de MAADEN",
@@ -121,7 +121,7 @@
     {
       "label": "Agriculture et développement rural",
       "tagline": "SIG agricole et développement des territoires ruraux",
-      "accent": "#3bbf8f",
+      "accent": "#2ab5b4",
       "projects": [
         "SIG de la DNGR — zones de production rizi-piscicoles (Guinée)",
         "Solution web & mobile d’expertise agricole pour la MAMDA",

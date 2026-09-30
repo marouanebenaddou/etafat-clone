@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { VRButton } from "./vendor/VRButton.js";
 
 const DEG = Math.PI / 180;
-const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x081726, BLUE = 0x00669d;
+const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
 const GLOBE_R = 0.72;
 const GLOBE_POS = new THREE.Vector3(0, 1.45, -1.7); // close to the viewer
 const USER = new THREE.Vector3(0, 1.6, 0);
@@ -137,7 +137,7 @@ fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 
 function makeThemePanel(t) {
   const W = 820, H = 1040, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,"rgba(13,39,64,0.96)"); g.addColorStop(1,"rgba(8,23,38,0.98)");
+  const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,"rgba(19,49,80,0.96)"); g.addColorStop(1,"rgba(10,30,48,0.98)");
   x.fillStyle = g; roundRect(x,0,0,W,H,30); x.fill();
   x.strokeStyle = t.accent + "cc"; x.lineWidth = 4; roundRect(x,6,6,W-12,H-12,26); x.stroke();
   // accent bar

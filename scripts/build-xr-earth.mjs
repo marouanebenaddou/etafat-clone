@@ -67,7 +67,8 @@ const ISO = new Set(PRESENCE.map((c) => c.iso));
 const COORD_OVERRIDE = { 250: [2.35, 46.6], 504: [-7.09, 31.8], 682: [45.0, 24.0], 170: [-73.5, 4.6] };
 
 const W = 4096, H = 2048;
-const NAVY_DEEP = "#081726", OCEAN = "#0d2740", LAND = "#24506f", LAND2 = "#2b5c7e",
+// ETAFAT palette (matches the website's dark presence globe)
+const NAVY_DEEP = "#0a1e30", OCEAN = "#103150", LAND = "#1e3d58", LAND2 = "#24506f",
       ACTIVE = "#2ab5b4", ACTIVE_EDGE = "#8ee6e4", GRAT = "rgba(255,255,255,0.05)";
 
 const world = JSON.parse(await readFile(join(ROOT, "src/data/world-110m.json"), "utf8"));
