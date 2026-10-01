@@ -106,12 +106,8 @@ export default function FilialesPage() {
                       alt={f.title}
                       fill
                       sizes="(min-width:768px) 33vw, 100vw"
-                      className="object-cover"
+                      className="object-cover object-left"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#00669d]/40 via-transparent to-transparent" />
-                    <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
-                      <Icon icon="ph:map-pin-duotone" width={24} height={24} className="text-white" />
-                    </div>
                   </div>
                   <div className="p-7 flex-1 flex flex-col">
                     <h3 className="text-navy text-xl font-semibold mb-1">{f.title}</h3>

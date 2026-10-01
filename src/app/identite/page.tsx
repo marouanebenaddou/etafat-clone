@@ -301,7 +301,7 @@ export default function IdentitePage() {
                       alt={f.title}
                       fill
                       sizes="(min-width:768px) 33vw, 100vw"
-                      className="object-cover"
+                      className="object-cover object-left"
                     />
                   </div>
                   <div className="p-7 flex-1 flex flex-col">

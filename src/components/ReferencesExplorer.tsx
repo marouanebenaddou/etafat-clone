@@ -332,7 +332,10 @@ const CLEAN_PHOTOS = new Set([
   "foncier-1", "foncier-2", "foncier-3", "foncier-4",
   "energie-mines-2", "batiment-patrimoine-3", "batiment-patrimoine-4", "agriculture-eau-4",
 ]);
-const hasCleanPhoto = (image: string) => CLEAN_PHOTOS.has(image.split("/").pop()!.replace(/\.jpg$/, ""));
+// …except where the photo carries the ETAFAT logo in that corner (PROCASEF, PETROCI's vest)
+const LOGO_IN_CORNER = new Set(["foncier-2", "energie-mines-2"]);
+const photoName = (image: string) => image.split("/").pop()!.replace(/\.jpg$/, "");
+const hasCleanPhoto = (image: string) => CLEAN_PHOTOS.has(photoName(image)) && !LOGO_IN_CORNER.has(photoName(image));
 for (const d of DOMAINS) {
   d.projects.forEach((p, i) => {
     p.image = `/etafat/references/${d.domainSlug}-${i + 1}.jpg`;
