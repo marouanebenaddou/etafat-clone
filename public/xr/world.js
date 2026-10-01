@@ -8,6 +8,7 @@ import { GLTFLoader } from "./vendor/jsm/loaders/GLTFLoader.js";
 import * as SkeletonUtils from "./vendor/jsm/utils/SkeletonUtils.js";
 import { mergeGeometries, mergeVertices } from "./vendor/jsm/utils/BufferGeometryUtils.js";
 import { Sky } from "./vendor/jsm/objects/Sky.js";
+import { I18N, L as tr, loc } from "./i18n.js";
 
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4;
 const DEG = Math.PI / 180;
@@ -988,14 +989,26 @@ function buildCamp(scene, T, updaters, M) {
 /* ------------------------------ observatory deck ------------------------------ */
 export const DECK_R = 3.0;
 export const ZONES = [ // world azimuths (° clockwise from north = straight ahead at start)
-  { key: "presence", label: "PRÉSENCE", dock: "Présence dans le monde", az: 0 },
-  { key: "expertises", label: "EXPERTISES", dock: "Nos expertises", az: 88 },
-  { key: "cite", label: "CITÉ PORTUGAISE", dock: "Cité portugaise · maquette 3D", az: 132 },
-  { key: "cinema", label: "CINÉMA", dock: "Cinéma ETAFAT", az: -90 },
-  { key: "chiffres", label: "CHIFFRES CLÉS", dock: "Chiffres clés", az: 180 },
+  { key: "presence", label: "PRÉSENCE", dock: "Présence dans le monde", az: 0, en: { label: "PRESENCE", dock: "Our presence worldwide" } },
+  { key: "expertises", label: "EXPERTISES", dock: "Nos expertises", az: 88, en: { label: "EXPERTISE", dock: "Our expertise" } },
+  { key: "cite", label: "CITÉ PORTUGAISE", dock: "Cité portugaise · maquette 3D", az: 132, en: { label: "PORTUGUESE CITY", dock: "Portuguese City · 3D model" } },
+  { key: "cinema", label: "CINÉMA", dock: "Cinéma ETAFAT", az: -90, en: { label: "CINEMA", dock: "ETAFAT cinema" } },
+  { key: "chiffres", label: "CHIFFRES CLÉS", dock: "Chiffres clés", az: 180, en: { label: "KEY FIGURES", dock: "Key figures" } },
 ];
-function deckTexture() {
-  const N = 2048, c = document.createElement("canvas"); c.width = c.height = N; const x = c.getContext("2d"), R = rng(31), C = N / 2, px = N / (2 * DECK_R);
+function deckTexture() { // redrawn (same seed → same boards) when the language changes: the signposts are words
+  const N = 2048, c = document.createElement("canvas"); c.width = c.height = N; const x = c.getContext("2d");
+  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const img = new Image(); let logo = false;
+  const draw = () => { drawDeck(x, N); if (logo) drawLogo(); tex.needsUpdate = true; };
+  const drawLogo = () => { const px = N / (2 * DECK_R), w = 0.62 * px, h = w * img.height / img.width; x.drawImage(img, N / 2 - w / 2, N / 2 - h / 2 - 0.02 * px, w, h); };
+  img.onload = () => { logo = true; drawLogo(); tex.needsUpdate = true; }; // logo in the centre medallion
+  img.src = "./img/etafat-logo-dark.png";
+  draw(); I18N.on(draw);
+  return tex;
+}
+function drawDeck(x, N) {
+  const R = rng(31), C = N / 2, px = N / (2 * DECK_R);
+  x.setTransform(1, 0, 0, 1, 0, 0); x.textAlign = "start"; x.textBaseline = "alphabetic";
   // warm composite decking: parallel boards with grooves and grain
   for (let i = 0; i < 40; i++) {
     const y0 = i * N / 40, tone = 0.86 + R() * 0.2;
@@ -1012,7 +1025,8 @@ function deckTexture() {
   for (let a = 0; a < 360; a += 5) { const L = a % 45 === 0 ? 0.13 : 0.06, s = Math.sin(a * DEG), k = -Math.cos(a * DEG); x.strokeStyle = a % 45 === 0 ? "#8ee6e4" : "rgba(142,230,228,0.55)"; x.lineWidth = a % 45 === 0 ? 5 : 2.5; x.beginPath(); x.moveTo(s * 0.93 * px, k * 0.93 * px); x.lineTo(s * (0.93 - L) * px, k * (0.93 - L) * px); x.stroke(); }
   x.fillStyle = "#2ab5b4"; x.beginPath(); x.moveTo(0, -0.93 * px); x.lineTo(0.05 * px, -0.8 * px); x.lineTo(-0.05 * px, -0.8 * px); x.closePath(); x.fill();
   x.textAlign = "center"; x.textBaseline = "middle";
-  for (const z of ZONES) { // signposts: label + arrow pointing to each zone, readable from the centre
+  for (const z0 of ZONES) { // signposts: label + arrow pointing to each zone, readable from the centre
+    const z = loc(z0);
     x.save(); x.rotate(z.az * DEG); x.translate(0, -1.32 * px);
     x.fillStyle = "rgba(10,30,48,0.85)";
     x.font = `700 ${Math.round(0.085 * px)}px system-ui, sans-serif`; const tw = x.measureText(z.label).width;
@@ -1024,12 +1038,6 @@ function deckTexture() {
   x.fillStyle = "rgba(10,30,48,0.9)"; x.beginPath(); x.arc(0, 0, 0.42 * px, 0, Math.PI * 2); x.fill();
   x.strokeStyle = "#2ab5b4"; x.lineWidth = 6; x.stroke();
   x.setTransform(1, 0, 0, 1, 0, 0);
-  const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
-  const img = new Image(); img.onload = () => { // logo in the centre medallion
-    const w = 0.62 * px, h = w * img.height / img.width; x.drawImage(img, C - w / 2, C - h / 2 - 0.02 * px, w, h); tex.needsUpdate = true;
-  };
-  img.src = "./img/etafat-logo-dark.png";
-  return tex;
 }
 function buildDeck(scene, T, updaters) {
   const g = new THREE.Group();
@@ -1251,12 +1259,18 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
   // welcome card while the scene assembles (left of the globe, inside the first view)
   const welcome = (() => {
     const c = document.createElement("canvas"); c.width = 900; c.height = 300; const x = c.getContext("2d");
-    x.beginPath(); x.roundRect(6, 6, 888, 288, 40); x.fillStyle = "rgba(10,30,48,0.92)"; x.fill(); x.lineWidth = 4; x.strokeStyle = "#2ab5b4"; x.stroke();
-    x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText("BIENVENUE CHEZ ETAFAT", 46, 70);
-    x.fillStyle = "#fff"; x.font = "600 36px system-ui, sans-serif"; x.fillText("Baissez les yeux : le menu vous guide", 46, 128);
-    x.fillStyle = "rgba(234,244,248,0.85)"; x.font = "400 29px system-ui, sans-serif";
-    x.fillText("vers le globe, nos expertises, la Cité portugaise", 46, 186); x.fillText("en 3D, le cinéma et les chiffres clés.", 46, 228);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    const draw = () => {
+      x.clearRect(0, 0, 900, 300);
+      x.beginPath(); x.roundRect(6, 6, 888, 288, 40); x.fillStyle = "rgba(10,30,48,0.92)"; x.fill(); x.lineWidth = 4; x.strokeStyle = "#2ab5b4"; x.stroke();
+      x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText(tr("BIENVENUE CHEZ ETAFAT", "WELCOME TO ETAFAT"), 46, 70);
+      x.fillStyle = "#fff"; x.font = "600 36px system-ui, sans-serif"; x.fillText(tr("Baissez les yeux : le menu vous guide", "Look down: the menu shows the way"), 46, 128);
+      x.fillStyle = "rgba(234,244,248,0.85)"; x.font = "400 29px system-ui, sans-serif";
+      x.fillText(tr("vers le globe, nos expertises, la Cité portugaise", "to the globe, our expertise, the Portuguese City"), 46, 186);
+      x.fillText(tr("en 3D, le cinéma et les chiffres clés.", "in 3D, the cinema and the key figures."), 46, 228);
+      t.needsUpdate = true;
+    };
+    draw(); I18N.on(draw);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.4), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }));
     const [wx, wz] = polar(-34, 2.9); m.position.set(wx, 1.95, wz); m.lookAt(0, 1.6, 0);
     m.renderOrder = 40; m.visible = false; scene.add(m); return m;

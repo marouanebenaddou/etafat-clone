@@ -14,8 +14,8 @@ import evenementIcons from "@/data/evenement-icons.json";
 import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
 import { PresenceGlobe } from "@/components/PresenceGlobe";
 import { PRESENCE_COUNT, PRESENCE_PROJECT_COUNT, type PresenceCountry } from "@/data/presence";
-import { PROCASEF, PAMOFOR } from "@/data/evenement-chiffres";
 import { ChiffresContent, ChartGlyph } from "./ChiffresSection";
+import { LangProvider, LangToggle, useI18n } from "./i18n";
 
 // Register the kiosk's icons offline so they render WITHOUT the Iconify API
 // (the borne must work with no internet connection).
@@ -26,15 +26,13 @@ addCollection(evenementIcons as Parameters<typeof addCollection>[0]);
 const projetsForTheme = (slug: string) =>
   EVENEMENT_PROJETS.filter((p) => p.theme === slug).sort((a, b) => a.n - b.n);
 
-const fmtFr = (n: number) => new Intl.NumberFormat("fr-FR").format(n).replace(/ /g, " ");
-
-function mediaTiles(p: EvenementProjet) {
+function mediaTiles(p: EvenementProjet, labels: Record<MediaKind, string>) {
   const m = p.media ?? {};
   const tiles: { key: MediaKind; label: string; icon: string; count: number }[] = [];
-  if (m.images?.length) tiles.push({ key: "images", label: "Photos", icon: "ph:images-duotone", count: m.images.length });
-  if (m.videos?.length) tiles.push({ key: "videos", label: "Vidéos", icon: "ph:play-circle-duotone", count: m.videos.length });
-  if (m.model) tiles.push({ key: "model", label: "Maquette 3D", icon: "ph:cube-duotone", count: 1 });
-  if (m.plans?.length) tiles.push({ key: "plans", label: "Plans", icon: "ph:blueprint-duotone", count: m.plans.length });
+  if (m.images?.length) tiles.push({ key: "images", label: labels.images, icon: "ph:images-duotone", count: m.images.length });
+  if (m.videos?.length) tiles.push({ key: "videos", label: labels.videos, icon: "ph:play-circle-duotone", count: m.videos.length });
+  if (m.model) tiles.push({ key: "model", label: labels.model, icon: "ph:cube-duotone", count: 1 });
+  if (m.plans?.length) tiles.push({ key: "plans", label: labels.plans, icon: "ph:blueprint-duotone", count: m.plans.length });
   return tiles;
 }
 
@@ -91,6 +89,14 @@ function ModelViewer({ src }: { src: string }) {
 /* ------------------------------ main ------------------------------- */
 
 export function KioskApp() {
+  return (
+    <LangProvider>
+      <Kiosk />
+    </LangProvider>
+  );
+}
+
+function Kiosk() {
   const [view, setView] = useState<View>("intro");
   const [theme, setTheme] = useState<EvenementTheme | null>(null);
   const [projet, setProjet] = useState<EvenementProjet | null>(null);
@@ -108,6 +114,8 @@ export function KioskApp() {
       className="relative flex h-[100dvh] w-full flex-col overflow-hidden text-[var(--k-text)] select-none"
     >
       <BackgroundFX mode={mode} />
+      {/* FR | EN — on every screen (the media overlay, z-60, covers it) */}
+      <LangToggle className="absolute right-6 top-6 z-30 md:right-10 md:top-8" />
 
       <AnimatePresence mode="wait">
         {view === "intro" && <IntroScreen key="intro" mode={mode} onStart={() => setView("themes")} />}
@@ -186,6 +194,7 @@ function LogoMark({ className = "", dark }: { className?: string; dark: boolean 
 
 /* ---------------------------- INTRO -------------------------------- */
 function IntroScreen({ onStart, mode }: { onStart: () => void; mode: Mode }) {
+  const { t } = useI18n();
   return (
     <motion.button
       type="button"
@@ -211,14 +220,14 @@ function IntroScreen({ onStart, mode }: { onStart: () => void; mode: Mode }) {
         className="max-w-3xl"
       >
         <p className="text-[var(--k-accent)] text-sm md:text-base font-semibold uppercase tracking-[0.35em]">
-          Projets phares
+          {t.kicker}
         </p>
         <h1 className="mt-4 text-4xl md:text-6xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>
-          Révélons le potentiel
-          <br />de vos territoires
+          {t.introTitle[0]}
+          <br />{t.introTitle[1]}
         </h1>
         <p className="mt-6 text-[var(--k-muted)] text-lg md:text-xl leading-relaxed">
-          Une sélection de nos réalisations géospatiales à travers l&apos;Afrique et le monde, par thématique.
+          {t.introText}
         </p>
       </motion.div>
 
@@ -230,7 +239,7 @@ function IntroScreen({ onStart, mode }: { onStart: () => void; mode: Mode }) {
         >
           <Icon icon="ph:hand-tap-duotone" width={30} height={30} />
         </motion.span>
-        <span className="text-[var(--k-muted)] text-sm uppercase tracking-widest">Toucher pour commencer</span>
+        <span className="text-[var(--k-muted)] text-sm uppercase tracking-widest">{t.tapToStart}</span>
       </motion.div>
     </motion.button>
   );
@@ -238,13 +247,14 @@ function IntroScreen({ onStart, mode }: { onStart: () => void; mode: Mode }) {
 
 /* ---------------------------- TOP BAR ------------------------------ */
 function TopBar({ onBack, crumb }: { onBack: () => void; crumb: { label: string; sub?: string } }) {
+  const { t } = useI18n();
   return (
-    <div className="relative z-10 flex shrink-0 items-center gap-4 px-6 md:px-10 pt-6 md:pt-8 pr-20">
+    <div className="relative z-10 flex shrink-0 items-center gap-4 px-6 md:px-10 pt-6 md:pt-8 pr-40 md:pr-48">
       <button
         type="button"
         onClick={onBack}
         className={`flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full border border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] transition-colors hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
-        aria-label="Retour"
+        aria-label={t.back}
       >
         <Icon icon="ph:arrow-left-bold" width={22} height={22} />
       </button>
@@ -269,9 +279,11 @@ const screenMotion = {
 
 /* --------------------------- THEMES -------------------------------- */
 function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack: () => void; onOpen: (t: EvenementTheme) => void; onApps: () => void; onGlobe: () => void; onChiffres: () => void }) {
+  const { t: tr, fmt, theme: L, chiffres } = useI18n();
+  const { procasef: PROCASEF, pamofor: PAMOFOR } = chiffres;
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Nos réalisations", label: "Choisissez une thématique" }} />
+      <TopBar onBack={onBack} crumb={{ sub: tr.themesSub, label: tr.themesLabel }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         {/* Main tiles — presence globe + field applications */}
         <div className="mx-auto mb-6 grid max-w-6xl grid-cols-1 gap-5 md:grid-cols-2">
@@ -288,11 +300,11 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
               <GlobeGlyph />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Notre présence</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">{tr.presenceKicker}</p>
               <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
-                Nos pays d&apos;intervention
+                {tr.presenceTitle}
               </h2>
-              <p className="mt-1 text-sm text-white/85">{PRESENCE_COUNT} pays sur 4 continents — explorez le globe.</p>
+              <p className="mt-1 text-sm text-white/85">{tr.presenceLine(PRESENCE_COUNT)}</p>
             </div>
           </motion.button>
 
@@ -309,11 +321,11 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
               <Icon icon="ph:map-trifold-duotone" width={38} height={38} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">Applications terrain</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/80">{tr.appsKicker}</p>
               <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
                 PROCASEF · PRESFOR · SRM
               </h2>
-              <p className="mt-1 text-sm text-white/85">Lancez nos applications de terrain sur la borne.</p>
+              <p className="mt-1 text-sm text-white/85">{tr.appsLine}</p>
             </div>
           </motion.button>
 
@@ -332,28 +344,28 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
                 <ChartGlyph />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8ee6e4]">Chiffres clés</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.25em] text-[#8ee6e4]">{tr.chiffresKicker}</p>
                 <h2 className="mt-1 text-xl md:text-2xl font-semibold leading-tight text-white" style={{ fontFamily: "var(--font-figtree)" }}>
-                  Nos programmes fonciers en chiffres
+                  {tr.chiffresTitle}
                 </h2>
-                <p className="mt-1 text-sm text-white/85">{PROCASEF.name} au Sénégal · {PAMOFOR.name} en Côte d&apos;Ivoire</p>
+                <p className="mt-1 text-sm text-white/85">{tr.chiffresLine(PROCASEF.name, PAMOFOR.name)}</p>
               </div>
             </div>
             <div className="relative flex shrink-0 flex-wrap gap-3">
               <span className="rounded-xl bg-white/10 px-4 py-3 backdrop-blur">
-                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmtFr(PROCASEF.steps[0].value)}</span>
-                <span className="mt-1 block text-xs text-white/75">parcelles · Sénégal</span>
+                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmt(PROCASEF.steps[0].value)}</span>
+                <span className="mt-1 block text-xs text-white/75">{tr.parcelsSenegal}</span>
               </span>
               <span className="rounded-xl bg-[#2ab5b4]/25 px-4 py-3 ring-1 ring-[#8ee6e4]/40 backdrop-blur">
-                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmtFr(PAMOFOR.hero.value)} ha</span>
-                <span className="mt-1 block text-xs text-white/75">à certifier · Côte d&apos;Ivoire</span>
+                <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmt(PAMOFOR.hero.value)} ha</span>
+                <span className="mt-1 block text-xs text-white/75">{tr.toCertifyCI}</span>
               </span>
             </div>
           </motion.button>
         </div>
 
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {EVENEMENT_THEMES.map((t, i) => (
+          {EVENEMENT_THEMES.map(L).map((t, i) => (
               <motion.button
                 key={t.slug}
                 type="button"
@@ -375,7 +387,7 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
                   <p className="mt-2 text-sm text-[var(--k-muted)] leading-relaxed">{t.tagline}</p>
                 </div>
                 <span className="mt-auto inline-flex items-center gap-2 text-sm font-semibold text-[var(--k-accent)]">
-                  Explorer
+                  {tr.explore}
                   <Icon icon="ph:arrow-right-bold" width={16} height={16} className="transition-transform group-hover:translate-x-1" />
                 </span>
               </motion.button>
@@ -408,6 +420,7 @@ function useBorne(): BorneBridge | null {
 }
 
 function AppsScreen({ onBack }: { onBack: () => void }) {
+  const { t, app: L } = useI18n();
   const borne = useBorne();
   const [status, setStatus] = useState<Record<string, "ok" | "missing" | "preview">>({});
 
@@ -429,14 +442,14 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
 
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Applications terrain", label: "Nos applications" }} />
+      <TopBar onBack={onBack} crumb={{ sub: t.appsKicker, label: t.appsLabel }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-6">
         <div className="mx-auto max-w-5xl space-y-5">
           <p className="rounded-xl border border-[var(--k-border)] bg-[var(--k-surface)] p-4 text-sm text-[var(--k-muted)]">
-            Touchez une application pour la lancer directement sur la borne.
+            {t.appsHint}
           </p>
 
-          {BORNE_APPS.map((app: BorneApp, i) => (
+          {BORNE_APPS.map(L).map((app: BorneApp, i) => (
             <motion.div
               key={app.key}
               initial={{ opacity: 0, y: 20 }}
@@ -453,7 +466,7 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     <div>
                       <h2 className="text-2xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{app.name}</h2>
                       {status[app.key] === "missing" && (
-                        <p className="text-xs font-medium text-[#b7791f]">Non installée sur la borne</p>
+                        <p className="text-xs font-medium text-[#b7791f]">{t.notInstalled}</p>
                       )}
                     </div>
                   </div>
@@ -466,10 +479,10 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--k-accent)] px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform active:scale-95"
                   >
                     <Icon icon="ph:play-fill" width={18} height={18} />
-                    Lancer l&apos;application
+                    {t.launch}
                   </button>
                   {status[app.key] === "preview" && (
-                    <p className="mt-2 text-xs text-[var(--k-muted)]">Disponible sur la borne</p>
+                    <p className="mt-2 text-xs text-[var(--k-muted)]">{t.availableOnBorne}</p>
                   )}
                 </div>
               </div>
@@ -483,9 +496,10 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
 
 /* ---------------------------- CHIFFRES ----------------------------- */
 function ChiffresScreen({ onBack }: { onBack: () => void }) {
+  const { t } = useI18n();
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Chiffres clés", label: "Nos programmes en chiffres" }} />
+      <TopBar onBack={onBack} crumb={{ sub: t.chiffresKicker, label: t.chiffresLabel }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         <ChiffresContent />
       </div>
@@ -505,24 +519,26 @@ function GlobeGlyph() {
 }
 
 function GlobeScreen({ onBack }: { onBack: () => void }) {
-  const [sel, setSel] = useState<PresenceCountry | null>(null);
+  const { t, country: L } = useI18n();
+  const [picked, setSel] = useState<PresenceCountry | null>(null);
+  const sel = picked ? L(picked) : null;
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Notre présence", label: "Nos pays d'intervention" }} />
+      <TopBar onBack={onBack} crumb={{ sub: t.presenceKicker, label: t.presenceTitle }} />
       <div className="relative flex-1 overflow-hidden">
         <div className="pointer-events-none absolute left-6 top-3 z-10 md:left-10">
           <p className="text-4xl font-semibold leading-none text-[var(--k-text)] md:text-5xl" style={{ fontFamily: "var(--font-figtree)" }}>
             {PRESENCE_COUNT}
-            <span className="text-lg text-[var(--k-muted)] md:text-2xl"> pays</span>
+            <span className="text-lg text-[var(--k-muted)] md:text-2xl"> {t.countries}</span>
           </p>
-          <p className="mt-1 text-sm text-[var(--k-muted)]">4 continents · {PRESENCE_PROJECT_COUNT}+ projets référencés</p>
+          <p className="mt-1 text-sm text-[var(--k-muted)]">{t.globeStat(PRESENCE_PROJECT_COUNT)}</p>
         </div>
 
-        <PresenceGlobe className="absolute inset-0" onSelect={setSel} />
+        <PresenceGlobe className="absolute inset-0" onSelect={setSel} label={(c) => L(c).name} />
 
         {!sel && (
           <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-[var(--k-surface)]/80 px-4 py-2 text-xs text-[var(--k-muted)] backdrop-blur">
-            Touchez un pays en surbrillance pour voir les projets
+            {t.touchCountry}
           </p>
         )}
 
@@ -540,7 +556,7 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
               <div className="relative aspect-[3/1] w-full bg-[#0d3350]">
                 <Image
                   src={`/etafat/presence/banners/${sel.iso}.jpg`}
-                  alt={`${sel.name} — drapeau et paysage emblématique`}
+                  alt={t.bannerAlt(sel.name)}
                   fill
                   unoptimized
                   sizes="448px"
@@ -550,7 +566,7 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
                 <div className="absolute bottom-3 left-4 max-w-[58%]">
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-[#bff6f4] [text-shadow:0_1px_4px_rgba(0,0,0,0.7)]">
                     {sel.region}
-                    {sel.projects.length ? ` · ${sel.projects.length} projet${sel.projects.length > 1 ? "s" : ""}` : ""}
+                    {sel.projects.length ? ` · ${t.projectsN(sel.projects.length)}` : ""}
                   </p>
                   <h3
                     className="line-clamp-2 text-2xl font-semibold leading-tight text-white [text-shadow:0_2px_8px_rgba(0,0,0,0.65)]"
@@ -562,7 +578,7 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
                 <button
                   type="button"
                   onClick={() => setSel(null)}
-                  aria-label="Fermer"
+                  aria-label={t.close}
                   className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/35 text-white backdrop-blur transition-colors hover:bg-black/55"
                 >
                   <Icon icon="ph:x-bold" width={16} height={16} />
@@ -580,7 +596,7 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
                   ))}
                 </ul>
               ) : (
-                <p className="text-sm text-[var(--k-muted)]">Présence ETAFAT — projets en cours de référencement.</p>
+                <p className="text-sm text-[var(--k-muted)]">{t.presenceOnly}</p>
               )}
               </div>
             </motion.div>
@@ -592,11 +608,13 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
 }
 
 /* --------------------------- PROJECTS ------------------------------ */
-function ProjectsScreen({ theme, onBack, onOpen }: { theme: EvenementTheme; onBack: () => void; onOpen: (p: EvenementProjet) => void }) {
+function ProjectsScreen({ theme: th, onBack, onOpen }: { theme: EvenementTheme; onBack: () => void; onOpen: (p: EvenementProjet) => void }) {
+  const { t, theme: LT, projet: LP } = useI18n();
+  const theme = LT(th);
   const projets = useMemo(() => projetsForTheme(theme.slug), [theme.slug]);
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Thématique", label: theme.label }} />
+      <TopBar onBack={onBack} crumb={{ sub: t.themeSub, label: theme.label }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         <div className="mx-auto grid max-w-7xl grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {projets.map((p, i) => (
@@ -621,10 +639,10 @@ function ProjectsScreen({ theme, onBack, onOpen }: { theme: EvenementTheme; onBa
               </div>
               <div className="flex flex-1 flex-col p-5">
                 <h3 className="text-base font-semibold leading-snug text-[var(--k-text)] line-clamp-3" style={{ fontFamily: "var(--font-figtree)" }}>
-                  {p.title}
+                  {LP(p).title}
                 </h3>
                 <span className="mt-auto pt-4 inline-flex items-center gap-2 text-sm font-semibold text-[var(--k-accent)]">
-                  Découvrir
+                  {t.discover}
                   <Icon icon="ph:arrow-right-bold" width={15} height={15} className="transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
@@ -645,7 +663,8 @@ function ThemePlaceholder({ icon }: { icon: string }) {
 }
 
 function MediaBadges({ p }: { p: EvenementProjet }) {
-  const tiles = mediaTiles(p);
+  const { t } = useI18n();
+  const tiles = mediaTiles(p, t.media);
   if (!tiles.length) return null;
   return (
     <div className="absolute bottom-3 right-3 flex gap-1.5">
@@ -659,13 +678,15 @@ function MediaBadges({ p }: { p: EvenementProjet }) {
 }
 
 /* ---------------------------- DETAIL ------------------------------- */
-function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; theme?: EvenementTheme; onBack: () => void }) {
+function DetailScreen({ projet: pr, theme: th, onBack }: { projet: EvenementProjet; theme?: EvenementTheme; onBack: () => void }) {
+  const { t, theme: LT, projet: LP } = useI18n();
+  const projet = LP(pr), theme = th && LT(th);
   const [viewer, setViewer] = useState<MediaKind | null>(null);
-  const tiles = mediaTiles(projet);
+  const tiles = mediaTiles(projet, t.media);
 
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
-      <TopBar onBack={onBack} crumb={{ sub: "Projet phare", label: theme?.label ?? "Projet" }} />
+      <TopBar onBack={onBack} crumb={{ sub: t.detailSub, label: theme?.label ?? t.project }} />
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8">
         <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-2 lg:items-start">
           <motion.div
@@ -702,27 +723,27 @@ function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; them
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4, duration: 0.5 }} className="mt-8">
               {tiles.length > 0 ? (
                 <>
-                  <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--k-muted)]">Contenus à explorer</p>
+                  <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[var(--k-muted)]">{t.contents}</p>
                   <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                    {tiles.map((t) => (
+                    {tiles.map((tile) => (
                       <button
-                        key={t.key}
+                        key={tile.key}
                         type="button"
-                        onClick={() => setViewer(t.key)}
+                        onClick={() => setViewer(tile.key)}
                         className={`group flex flex-col items-center gap-3 rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)] p-5 text-center transition hover:-translate-y-1 hover:border-[var(--k-accent)] hover:bg-[var(--k-surface-2)] active:scale-95 ${CARD}`}
                       >
                         <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--k-accent)] to-[#00669d] text-white transition-transform group-hover:scale-110">
-                          <Icon icon={t.icon} width={30} height={30} />
+                          <Icon icon={tile.icon} width={30} height={30} />
                         </span>
-                        <span className="text-sm font-semibold text-[var(--k-text)]">{t.label}</span>
-                        <span className="text-xs text-[var(--k-muted)]">{t.count} élément{t.count > 1 ? "s" : ""}</span>
+                        <span className="text-sm font-semibold text-[var(--k-text)]">{tile.label}</span>
+                        <span className="text-xs text-[var(--k-muted)]">{t.itemsN(tile.count)}</span>
                       </button>
                     ))}
                   </div>
                 </>
               ) : (
                 <div className="rounded-2xl border border-dashed border-[var(--k-border)] bg-[var(--k-surface)] p-6 text-center text-sm text-[var(--k-muted)]">
-                  Contenus multimédias (photos, vidéos, maquette 3D, plans) bientôt disponibles pour ce projet.
+                  {t.mediaSoon}
                 </div>
               )}
             </motion.div>
@@ -739,6 +760,7 @@ function DetailScreen({ projet, theme, onBack }: { projet: EvenementProjet; them
 
 /* ------------------------- MEDIA OVERLAY --------------------------- */
 function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind: MediaKind; onClose: () => void }) {
+  const { t } = useI18n();
   const m = projet.media ?? {};
   const items: string[] =
     kind === "images" ? m.images ?? [] : kind === "videos" ? m.videos ?? [] : kind === "plans" ? m.plans ?? [] : m.model ? [m.model] : [];
@@ -757,7 +779,7 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [many, items.length]);
 
-  const label = kind === "images" ? "Photos" : kind === "videos" ? "Vidéos" : kind === "plans" ? "Plans" : "Maquette 3D";
+  const label = t.media[kind];
 
   return (
     <motion.div className="fixed inset-0 z-[60] flex flex-col bg-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
@@ -766,7 +788,7 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
           <p className="text-[#2ab5b4] text-xs font-semibold uppercase tracking-[0.25em]">{label}</p>
           <p className="truncate text-white/80 text-sm md:text-base">{projet.title}</p>
         </div>
-        <button type="button" onClick={onClose} className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-colors hover:bg-white/15 active:scale-95" aria-label="Fermer">
+        <button type="button" onClick={onClose} className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-colors hover:bg-white/15 active:scale-95" aria-label={t.close}>
           <Icon icon="ph:x-bold" width={22} height={22} />
         </button>
       </div>
@@ -810,11 +832,12 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
 }
 
 function NavArrow({ side, onClick }: { side: "left" | "right"; onClick: () => void }) {
+  const { t } = useI18n();
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={side === "left" ? "Précédent" : "Suivant"}
+      aria-label={side === "left" ? t.prev : t.next}
       className={`absolute top-1/2 z-10 flex h-14 w-14 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 bg-black/40 text-white transition-colors hover:bg-black/70 active:scale-95 ${side === "left" ? "left-3 md:left-6" : "right-3 md:right-6"}`}
     >
       <Icon icon={side === "left" ? "ph:caret-left-bold" : "ph:caret-right-bold"} width={24} height={24} />

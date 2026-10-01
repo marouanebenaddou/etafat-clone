@@ -1,14 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { PROCASEF, PAMOFOR, type FunnelStep, type Stat } from "@/data/evenement-chiffres";
+import type { FunnelStep, Stat } from "@/data/evenement-chiffres";
+import { useI18n } from "./i18n";
 
 const CARD = "shadow-[0_8px_28px_rgba(8,20,36,0.10)]";
 const FIG: React.CSSProperties = { fontFamily: "var(--font-figtree)" };
 const EASE = "cubic-bezier(.22,1,.36,1)";
-
-// French grouping ("475 900"); use a regular no-break space, which every font has.
-const fmt = (n: number) => new Intl.NumberFormat("fr-FR").format(n).replace(/ /g, " ");
 
 const reduceMotion = () =>
   typeof window !== "undefined" && !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -42,6 +40,7 @@ function useEntered(delay = 60) {
 
 function CountUp({ value, delay = 0, duration, prefix = "", suffix = "" }: { value: number; delay?: number; duration?: number; prefix?: string; suffix?: string }) {
   const v = useCountUp(value, duration, delay);
+  const { fmt } = useI18n(); // "475 900" / "475,900"
   return <span className="tabular-nums">{prefix}{fmt(v)}{suffix}</span>;
 }
 
@@ -141,6 +140,7 @@ function FunnelRow({ step, i, pct, on, final }: { step: FunnelStep; i: number; p
 function ConversionRing({ rate, on }: { rate: number; on: boolean }) {
   const R = 52, C = 2 * Math.PI * R;
   const tenths = useCountUp(Math.round(rate * 1000), 1600, 1100);
+  const { t, pct } = useI18n();
   return (
     <div className="mt-7 flex items-center gap-5 rounded-2xl bg-[var(--k-chip)] p-5 md:gap-7 md:p-6">
       <div className="relative h-28 w-28 shrink-0 md:h-36 md:w-36">
@@ -159,11 +159,11 @@ function ConversionRing({ rate, on }: { rate: number; on: boolean }) {
           />
         </svg>
         <span className="absolute inset-0 flex items-center justify-center text-xl font-bold text-[var(--k-text)] md:text-2xl" style={FIG}>
-          {(tenths / 10).toFixed(1).replace(".", ",")}&nbsp;%
+          {pct(tenths / 10)}
         </span>
       </div>
       <p className="text-base leading-snug text-[var(--k-text)] md:text-xl">
-        des parcelles inventoriées ont <strong className="text-[#1f9e9d]">abouti à un titre d’occupation</strong>
+        {t.ringLead} <strong className="text-[#1f9e9d]">{t.ringStrong}</strong>
       </p>
     </div>
   );
@@ -188,6 +188,7 @@ function Fade({ children }: { children: React.ReactNode }) {
 }
 
 function ProcasefView() {
+  const { t, chiffres: { procasef: PROCASEF } } = useI18n();
   const on = useEntered();
   const steps = PROCASEF.steps;
   const max = steps[0].value;
@@ -198,17 +199,17 @@ function ProcasefView() {
         <div className="mt-7 grid grid-cols-1 gap-3 sm:grid-cols-2 md:gap-5">
           <div className="rounded-2xl bg-white/10 p-4 backdrop-blur md:p-5">
             <p className="text-3xl font-extrabold leading-none text-white md:text-5xl" style={FIG}><CountUp value={max} /></p>
-            <p className="mt-2 text-sm text-white/80 md:text-base">parcelles inventoriées</p>
+            <p className="mt-2 text-sm text-white/80 md:text-base">{t.parcelsInventoried}</p>
           </div>
           <div className="rounded-2xl bg-[#2ab5b4]/25 p-4 ring-1 ring-[#8ee6e4]/40 backdrop-blur md:p-5">
             <p className="text-3xl font-extrabold leading-none text-white md:text-5xl" style={FIG}><CountUp value={steps[steps.length - 1].value} delay={250} /></p>
-            <p className="mt-2 text-sm text-white/85 md:text-base">titres d’occupation délivrés</p>
+            <p className="mt-2 text-sm text-white/85 md:text-base">{t.titlesIssued}</p>
           </div>
         </div>
       </Hero>
 
       <section className={`rounded-3xl border border-[var(--k-border)] bg-[var(--k-surface)] p-6 md:p-9 ${CARD}`}>
-        <SectionTitle kicker="La chaîne foncière intégrée" title="De l’inventaire au titre d’occupation" />
+        <SectionTitle kicker={t.chainKicker} title={t.chainTitle} />
         <div className="space-y-4 md:space-y-5">
           {steps.map((s, i) => (
             <FunnelRow key={i} step={s} i={i} pct={(s.value / max) * 100} on={on} final={i === steps.length - 1} />
@@ -218,7 +219,7 @@ function ProcasefView() {
       </section>
 
       <section>
-        <SectionTitle kicker="Une empreinte territoriale majeure" title="Au plus près des territoires" />
+        <SectionTitle kicker={t.footprintKicker} title={t.footprintTitle} />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-5">
           {PROCASEF.footprint.map((s, i) => <StatCard key={i} stat={s} delay={200 + i * 150} />)}
         </div>
@@ -230,6 +231,7 @@ function ProcasefView() {
 }
 
 function PamoforView() {
+  const { t, chiffres: { pamofor: PAMOFOR } } = useI18n();
   const on = useEntered();
   const sizes = [
     "h-14 w-14 sm:h-24 sm:w-24 md:h-32 md:w-32",
@@ -254,7 +256,7 @@ function PamoforView() {
       </div>
 
       <section className={`rounded-3xl border border-[var(--k-border)] bg-[var(--k-surface)] p-6 md:p-9 ${CARD}`}>
-        <SectionTitle kicker="Un déploiement territorial à grande échelle" title="Une couverture structurée" />
+        <SectionTitle kicker={t.deployKicker} title={t.deployTitle} />
         <div className="grid grid-cols-3 items-end gap-2 sm:flex sm:justify-center sm:gap-4 md:gap-6">
           {PAMOFOR.territory.map((t, i) => (
             <React.Fragment key={t.label}>
@@ -271,7 +273,7 @@ function PamoforView() {
             </React.Fragment>
           ))}
         </div>
-        <p className="mt-5 text-center text-sm text-[var(--k-muted)] md:text-base">Au plus près des communautés rurales</p>
+        <p className="mt-5 text-center text-sm text-[var(--k-muted)] md:text-base">{t.communities}</p>
       </section>
 
       <Closing text={PAMOFOR.closing} />
@@ -280,12 +282,12 @@ function PamoforView() {
 }
 
 /* ------------------------------ section ------------------------------ */
-const PROGRAMMES = [
-  { key: "procasef" as const, country: PROCASEF.country, name: PROCASEF.name },
-  { key: "pamofor" as const, country: PAMOFOR.country, name: "PAMOFOR · PRESFOR" },
-];
-
 export function ChiffresContent() {
+  const { chiffres: { procasef: PROCASEF, pamofor: PAMOFOR } } = useI18n();
+  const PROGRAMMES = [
+    { key: "procasef" as const, country: PROCASEF.country, name: PROCASEF.name },
+    { key: "pamofor" as const, country: PAMOFOR.country, name: "PAMOFOR · PRESFOR" },
+  ];
   const [prog, setProg] = useState<"procasef" | "pamofor">("procasef");
   return (
     <div className="mx-auto w-full max-w-5xl">

@@ -1,9 +1,10 @@
 // ETAFAT VR — navigation dock (visionOS-style, inspired by 21st.dev floating docks): a glass pill floating
 // below the visitor’s gaze. Zone buttons turn you to the globe, the expertise gallery, the cinema or the key
 // figures, or open the 3D maquette of the Cité portugaise; then ambiance (sunset → day → night), music and
-// VR ⇄ AR (passthrough). Icons swell on hover with a label above; a dot marks the zone you are facing. It
+// VR ⇄ AR (passthrough), FR ⇄ EN. Icons swell on hover with a label above; a dot marks the zone you are facing. It
 // follows your heading lazily, so it is always one glance down.
 import * as THREE from "three";
+import { L, loc } from "./i18n.js";
 
 const PX = 0.00058; // canvas px → metres
 function rr(x, X, Y, W, H, r) { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
@@ -31,20 +32,24 @@ const ICONS = {
   music(x) { x.beginPath(); x.moveTo(40, 72); x.lineTo(40, 26); x.lineTo(74, 18); x.lineTo(74, 64); x.stroke(); x.beginPath(); x.ellipse(32, 72, 9, 7, -0.4, 0, 7); x.fill(); x.beginPath(); x.ellipse(66, 64, 9, 7, -0.4, 0, 7); x.fill(); },
   ar(x) { rr(x, 14, 22, 72, 56, 14); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("AR", 50, 61); x.restore(); },
   vr(x) { rr(x, 14, 22, 72, 56, 14); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("VR", 50, 61); x.restore(); },
+  en(x) { x.beginPath(); x.arc(50, 50, 34, 0, 7); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("EN", 50, 61); x.restore(); },
+  fr(x) { x.beginPath(); x.arc(50, 50, 34, 0, 7); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("FR", 50, 61); x.restore(); },
   mute(x) { ICONS.music(x); x.strokeStyle = "#ff8a7a"; x.lineWidth = 7; x.beginPath(); x.moveTo(20, 20); x.lineTo(82, 82); x.stroke(); },
 };
 const AMB_NEXT = { golden: "day", day: "night", night: "golden" };
-const AMB_LABEL = { golden: "Coucher de soleil", day: "Plein jour", night: "Nuit étoilée" };
+const AMB_LABEL = () => ({ golden: L("Coucher de soleil", "Sunset"), day: L("Plein jour", "Daylight"), night: L("Nuit étoilée", "Starry night") });
 
-export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone, onAmbiance, onMusic, getMusic, getXR, onXR }) {
+export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone, onAmbiance, onMusic, getMusic, getXR, onXR, getLang, onLang }) {
   const group = new THREE.Group(); group.visible = false; scene.add(group);
   const items = [
-    ...zones.map((z) => ({ key: z.key, label: z.dock, kind: "zone", icon: z.key, az: z.az })),
+    ...zones.map((z) => ({ key: z.key, label: () => loc(z).dock, kind: "zone", icon: z.key, az: z.az })),
     { kind: "sep" },
-    { key: "ambiance", kind: "tool", label: () => `Ambiance : ${AMB_LABEL[getAmbiance()]}`, icon: () => getAmbiance() },
-    { key: "music", kind: "tool", label: () => (getMusic() ? "Couper la musique" : "Activer la musique"), icon: () => (getMusic() ? "music" : "mute") },
+    { key: "ambiance", kind: "tool", label: () => `${L("Ambiance : ", "Ambiance: ")}${AMB_LABEL()[getAmbiance()]}`, icon: () => getAmbiance() },
+    { key: "music", kind: "tool", label: () => (getMusic() ? L("Couper la musique", "Mute the music") : L("Activer la musique", "Turn the music on")), icon: () => (getMusic() ? "music" : "mute") },
     // réalité virtuelle ⇄ passthrough: the icon shows the mode a click switches to
     { key: "xr", kind: "tool", label: () => getXR().label, icon: () => getXR().icon },
+    // français ⇄ english: the icon shows the language a click switches to
+    ...(getLang ? [{ key: "lang", kind: "tool", label: () => getLang().label, icon: () => getLang().icon }] : []),
   ];
   const B = 112, GAP = 14, SEP = 30, W = items.reduce((s, it) => s + (it.kind === "sep" ? SEP : B + GAP), 0) + 36, H = 150;
   const bg = canvasPlane(W, H, (x, w, h) => {
@@ -78,6 +83,7 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
       else if (it.key === "ambiance") onAmbiance(AMB_NEXT[getAmbiance()]);
       else if (it.key === "music") onMusic(!getMusic());
       else if (it.key === "xr") onXR();
+      else if (it.key === "lang") onLang();
       for (const t of targets) t.userData.redraw();
       tip.userData.redraw();
     };
@@ -100,6 +106,7 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
   let yaw = null, show = 0, following = false;
   const api = {
     group, targets,
+    refresh() { tipText = ""; for (const t of targets) t.userData.redraw(); tip.userData.redraw(); }, // language switch
     visible: false,
     shift(rad) { if (yaw !== null) yaw += rad; }, // the visitor was turned (dock / snap-turn): keep the dock in front
     update(dt, t) {

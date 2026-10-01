@@ -6,6 +6,7 @@ import { createFX } from "./fx.js";
 import { createDock } from "./nav.js";
 import { createCinema } from "./cinema.js";
 import { createCite } from "./cite.js";
+import { I18N, L as tr, loc, num, pct, plural } from "./i18n.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
@@ -37,15 +38,23 @@ document.body.appendChild(renderer.domElement);
 // ends and the other one is requested straight away, still inside the trigger press that asked for it
 // (WebXR select events count as a user gesture).
 const xrBar = document.createElement("div"); xrBar.id = "xr-buttons"; document.body.appendChild(xrBar);
-const vrBtn = document.createElement("button"); vrBtn.textContent = "Entrer dans l’expérience VR"; vrBtn.disabled = true;
-const arBtn = document.createElement("button"); arBtn.textContent = "Entrer en AR"; arBtn.hidden = true;
+const vrBtn = document.createElement("button"); vrBtn.disabled = true;
+const arBtn = document.createElement("button"); arBtn.hidden = true;
 xrBar.append(vrBtn, arBtn);
-const xrSupport = { vr: false, ar: false };
+const xrSupport = { vr: false, ar: false, checked: false, api: !!navigator.xr };
+function syncXrButtons() {
+  if (renderer.xr.isPresenting) { vrBtn.textContent = arBtn.textContent = tr("Quitter l’expérience", "Exit the experience"); return; }
+  vrBtn.textContent = !xrSupport.api ? tr("Mode bureau · WebXR indisponible", "Desktop mode · WebXR unavailable")
+    : xrSupport.checked && !xrSupport.vr ? tr("Mode bureau · casque VR non détecté", "Desktop mode · no VR headset detected")
+    : tr("Entrer dans l’expérience VR", "Enter the VR experience");
+  arBtn.textContent = tr("Entrer en AR", "Enter AR");
+}
+syncXrButtons();
 let arMode = false, switchTo = null, switching = false;
 if (navigator.xr) {
-  navigator.xr.isSessionSupported("immersive-vr").then((ok) => { xrSupport.vr = ok; vrBtn.disabled = !ok; if (!ok) vrBtn.textContent = "Mode bureau · casque VR non détecté"; }).catch(() => {});
+  navigator.xr.isSessionSupported("immersive-vr").then((ok) => { xrSupport.vr = ok; xrSupport.checked = true; vrBtn.disabled = !ok; syncXrButtons(); }).catch(() => {});
   navigator.xr.isSessionSupported("immersive-ar").then((ok) => { xrSupport.ar = ok; arBtn.hidden = !ok; }).catch(() => {});
-} else vrBtn.textContent = "Mode bureau · WebXR indisponible";
+}
 async function startXR(mode) {
   try {
     fx.unlock();
@@ -68,9 +77,9 @@ function switchXR(k) { // "vr" | "ar"
 const xrState = () => ({ mode: renderer.xr.isPresenting ? (arMode ? "ar" : "vr") : null, vr: xrSupport.vr, ar: xrSupport.ar });
 vrBtn.addEventListener("click", () => { if (renderer.xr.isPresenting) renderer.xr.getSession().end(); else startXR("immersive-vr"); });
 arBtn.addEventListener("click", () => { if (renderer.xr.isPresenting) renderer.xr.getSession().end(); else startXR("immersive-ar"); });
-renderer.xr.addEventListener("sessionstart", () => { vrBtn.textContent = arBtn.textContent = "Quitter l’expérience"; arBtn.hidden = vrBtn.hidden = false; });
+renderer.xr.addEventListener("sessionstart", () => { syncXrButtons(); arBtn.hidden = vrBtn.hidden = false; });
 renderer.xr.addEventListener("sessionend", () => {
-  vrBtn.textContent = "Entrer dans l’expérience VR"; arBtn.textContent = "Entrer en AR"; arBtn.hidden = !xrSupport.ar;
+  syncXrButtons(); arBtn.hidden = !xrSupport.ar;
   if (switchTo) { const m = switchTo; switchTo = null; startXR(m); return; }
   setAR(false);
 });
@@ -254,7 +263,7 @@ fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 function makeThemePanel(t) { // gallery card: hero photo, title, tagline, project count — reacts to the pointer
   const W = 900, H = 920, HERO = 468, n = (t.items || t.projects || []).length;
   const m = canvasMesh(W, H, (x, W2, H2, me) => {
-    const hov = me.userData.hover, img = me.userData.img;
+    const hov = me.userData.hover, img = me.userData.img, T = loc(t);
     cardBg(x, W2, H2, hov ? "#8ee6e4" : t.accent);
     x.save(); roundRect(x, 8, 8, W2 - 16, HERO, 24); x.clip();
     if (img) { const r = Math.max((W2 - 16) / img.width, HERO / img.height), dw = img.width * r, dh = img.height * r; x.drawImage(img, 8 + (W2 - 16 - dw) / 2, 8 + (HERO - dh) / 2, dw, dh); }
@@ -264,16 +273,16 @@ function makeThemePanel(t) { // gallery card: hero photo, title, tagline, projec
     x.restore();
     x.fillStyle = "rgba(8,23,38,0.78)"; roundRect(x, 30, 30, 196, 46, 23); x.fill();          // project count chip on the photo
     x.fillStyle = t.accent; x.beginPath(); x.arc(56, 53, 8, 0, 7); x.fill();
-    x.fillStyle = "#fff"; x.font = "700 22px system-ui, sans-serif"; x.fillText(`${n} projet${n > 1 ? "s" : ""}`, 74, 61);
+    x.fillStyle = "#fff"; x.font = "700 22px system-ui, sans-serif"; x.fillText(plural(n, "projet", "projets", "project", "projects"), 74, 61);
     x.fillStyle = t.accent; roundRect(x, 44, HERO + 22, 110, 8, 4); x.fill();
     x.fillStyle = "#fff"; x.font = "700 46px system-ui, sans-serif";
-    let y = HERO + 86; for (const l of lines(x, t.label, W2 - 88, 2)) { x.fillText(l, 44, y); y += 54; }
+    let y = HERO + 86; for (const l of lines(x, T.label, W2 - 88, 2)) { x.fillText(l, 44, y); y += 54; }
     x.fillStyle = "rgba(220,238,244,0.78)"; x.font = "400 27px system-ui, sans-serif";
-    for (const l of lines(x, t.tagline, W2 - 88, 2)) { x.fillText(l, 44, y + 4); y += 35; }
+    for (const l of lines(x, T.tagline, W2 - 88, 2)) { x.fillText(l, 44, y + 4); y += 35; }
     const by = H2 - 92;                                                                          // call to action
     x.fillStyle = hov ? "#2ab5b4" : "rgba(42,181,180,0.14)"; roundRect(x, 44, by, W2 - 88, 58, 29); x.fill();
     x.strokeStyle = hov ? "#8ee6e4" : "rgba(142,230,228,0.55)"; x.lineWidth = 2; roundRect(x, 44, by, W2 - 88, 58, 29); x.stroke();
-    x.fillStyle = "#fff"; x.font = "600 26px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("Explorer les projets  ›", W2 / 2, by + 38); x.textAlign = "start";
+    x.fillStyle = "#fff"; x.font = "600 26px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(tr("Explorer les projets  ›", "Explore the projects  ›"), W2 / 2, by + 38); x.textAlign = "start";
   }, 1.4);
   const src = t.photos && t.photos[0];
   if (src) { const img = new Image(); img.onload = () => { m.userData.img = img; m.userData.redraw(); }; img.src = src; }
@@ -312,8 +321,8 @@ function buildSections(data) {
     m.userData.theme = t; m.userData.delay = 1.3 + i * 0.12; tileTargets.push(m); sections.add(m);
   });
   const head = canvasMesh(1400, 150, (x, W, H) => {
-    x.textAlign = "center"; kicker(x, "Nos expertises", W / 2 + 3, 50, 26); x.textAlign = "center";
-    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.save(); x.shadowColor = "rgba(0,0,0,0.6)"; x.shadowBlur = 18; x.fillText("Six métiers, des projets sur quatre continents", W / 2, 116); x.restore(); x.textAlign = "start";
+    x.textAlign = "center"; kicker(x, tr("Nos expertises", "Our expertise"), W / 2 + 3, 50, 26); x.textAlign = "center";
+    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.save(); x.shadowColor = "rgba(0,0,0,0.6)"; x.shadowBlur = 18; x.fillText(tr("Six métiers, des projets sur quatre continents", "Six fields of expertise, projects on four continents"), W / 2, 116); x.restore(); x.textAlign = "start";
   }, 1.4);
   placeAroundUser(head, GALLERY_AZ, 2.86, 2.74); head.userData.delay = 1.1; sections.add(head);
   citeTile = makeCiteTile(); placeAroundUser(citeTile, CITE_AZ, (rows[0] + rows[1]) / 2, 2.72);
@@ -332,16 +341,16 @@ function makeCiteTile() { // portrait card spanning both gallery rows: drone ren
     x.fillStyle = fade; x.fillRect(0, HERO - 260, W2, 270);
     x.restore();
     const chip = (X, Y, text, col) => { x.font = "700 22px system-ui, sans-serif"; spaced(x, "3px"); const w = x.measureText(text).width + 64; x.fillStyle = "rgba(8,23,38,0.8)"; roundRect(x, X, Y, w, 50, 25); x.fill(); x.fillStyle = col; x.beginPath(); x.arc(X + 26, Y + 25, 8, 0, 7); x.fill(); x.fillStyle = "#fff"; x.fillText(text, X + 44, Y + 33); spaced(x, "0px"); return w; };
-    chip(30, 30, "EXPÉRIENCE IMMERSIVE", "#8ee6e4");
-    chip(30, 92, "PATRIMOINE MONDIAL UNESCO", GOLD);
+    chip(30, 30, tr("EXPÉRIENCE IMMERSIVE", "IMMERSIVE EXPERIENCE"), "#8ee6e4");
+    chip(30, 92, tr("PATRIMOINE MONDIAL UNESCO", "UNESCO WORLD HERITAGE"), GOLD);
     let y = HERO + 40;
     x.fillStyle = GOLD; roundRect(x, 48, y, 110, 8, 4); x.fill(); y += 58;
-    kicker(x, "Jumeau numérique 3D par drone", 48, y, 24, "#8ee6e4"); y += 76;
-    x.fillStyle = "#fff"; x.font = "800 64px system-ui, sans-serif"; x.fillText("Cité portugaise", 48, y); y += 70; x.fillText("d’El Jadida", 48, y); y += 56;
+    kicker(x, tr("Jumeau numérique 3D par drone", "3D digital twin by drone"), 48, y, 24, "#8ee6e4"); y += 76;
+    x.fillStyle = "#fff"; x.font = "800 64px system-ui, sans-serif"; x.fillText(tr("Cité portugaise", "Portuguese City"), 48, y); y += 70; x.fillText(tr("d’El Jadida", "of El Jadida"), 48, y); y += 56;
     x.fillStyle = "rgba(220,238,244,0.8)"; x.font = "400 29px system-ui, sans-serif";
-    for (const l of lines(x, "Entrez dans la maquette de l’ancienne Mazagan : remparts, bastions, citerne et 90 photos 360°, à portée de main.", W2 - 96, 3)) { x.fillText(l, 48, y); y += 40; }
+    for (const l of lines(x, tr("Entrez dans la maquette de l’ancienne Mazagan : remparts, bastions, citerne et 90 photos 360°, à portée de main.", "Step into the model of old Mazagan: ramparts, bastions, cistern and 90 360° photos, within arm’s reach."), W2 - 96, 3)) { x.fillText(l, 48, y); y += 40; }
     y += 30;
-    const stats = [["12", "lieux"], ["90", "photos 360°"], ["6", "calques"]], sw = (W2 - 96 - 32) / 3;
+    const stats = [["12", tr("lieux", "places")], ["90", tr("photos 360°", "360° photos")], ["6", tr("calques", "layers")]], sw = (W2 - 96 - 32) / 3;
     stats.forEach(([n, l], i) => {
       const sx = 48 + i * (sw + 16);
       x.fillStyle = "rgba(255,255,255,0.07)"; roundRect(x, sx, y, sw, 116, 18); x.fill();
@@ -352,7 +361,7 @@ function makeCiteTile() { // portrait card spanning both gallery rows: drone ren
     x.fillStyle = !ok ? "rgba(255,255,255,0.08)" : hov ? "#2ab5b4" : "rgba(42,181,180,0.2)"; roundRect(x, 48, by, W2 - 96, 76, 38); x.fill();
     x.strokeStyle = !ok ? "rgba(234,244,248,0.25)" : hov ? "#8ee6e4" : "rgba(142,230,228,0.7)"; x.lineWidth = 2.5; roundRect(x, 48, by, W2 - 96, 76, 38); x.stroke();
     x.fillStyle = ok ? "#fff" : "rgba(234,244,248,0.65)"; x.font = `600 ${ok ? 31 : 25}px system-ui, sans-serif`; x.textAlign = "center";
-    x.fillText(ok ? "Entrer dans la maquette  ›" : "Disponible dans l’application Quest", W2 / 2, by + 49); x.textAlign = "start";
+    x.fillText(ok ? tr("Entrer dans la maquette  ›", "Enter the model  ›") : tr("Disponible dans l’application Quest", "Available in the Quest app"), W2 / 2, by + 49); x.textAlign = "start";
   }, 1.2);
   const img = new Image(); img.onload = () => { m.userData.img = img; m.userData.redraw(); }; img.src = "./cite/hero.jpg";
   // a soft gold halo behind the featured tile, breathing slowly
@@ -475,15 +484,16 @@ function closeButton(v, cardH) {
 }
 
 function showList() {
-  const th = popup.theme, items = th.items || [], n = items.length, ROW = 80, GAP = 8, TOP = 172, H = TOP + n * (ROW + GAP) + 58;
+  popup.view = -1; // (re-shown on a language switch)
+  const th = loc(popup.theme), items = th.items || [], n = items.length, ROW = 80, GAP = 8, TOP = 172, H = TOP + n * (ROW + GAP) + 58;
   setView((v) => {
     v.add(place(canvasMesh(1000, H, (x, W, H2) => {
       cardBg(x, W, H2, th.accent);
-      kicker(x, `${n} projet${n > 1 ? "s" : ""}`, 44, 62, 21, th.accent);
+      kicker(x, plural(n, "projet", "projets", "project", "projects"), 44, 62, 21, th.accent);
       x.fillStyle = "#fff"; x.font = "700 40px system-ui, sans-serif"; x.fillText(lines(x, th.label, W - 190, 1)[0], 44, 112);
       x.fillStyle = "rgba(220,238,244,0.68)"; x.font = "400 23px system-ui, sans-serif"; x.fillText(lines(x, th.tagline, W - 190, 1)[0], 44, 146);
       x.fillStyle = "rgba(220,238,244,0.5)"; x.font = "400 21px system-ui, sans-serif"; x.textAlign = "center";
-      x.fillText("Pointez un projet pour voir ses détails et ses photos", W / 2, H2 - 22); x.textAlign = "start";
+      x.fillText(tr("Pointez un projet pour voir ses détails et ses photos", "Point at a project to see its details and photos"), W / 2, H2 - 22); x.textAlign = "start";
     }, 1), 0, 0, 1000, H, 0, H, { dur: 0.22 }));
     closeButton(v, H);
     items.forEach((p, i) => {
@@ -500,7 +510,7 @@ function showList() {
         else { x.fillStyle = "#12304a"; x.fillRect(tx, ty, tw, tH); }
         x.restore();
         x.fillStyle = "#fff"; x.font = "600 25px system-ui, sans-serif";
-        const L = lines(x, p.short || p.title, W - 270, 2);
+        const P = loc(p), L = lines(x, P.short || P.title, W - 270, 2);
         L.forEach((l, k) => x.fillText(l, 200, RH / 2 + 9 + (k - (L.length - 1) / 2) * 31));
         x.fillStyle = hov ? "#fff" : th.accent; x.font = "700 42px system-ui, sans-serif"; x.fillText("›", W - 42, RH / 2 + 14);
       });
@@ -513,6 +523,7 @@ function showList() {
 
 const measureCtx = document.createElement("canvas").getContext("2d");
 function detailText(x, th, p, W, y) { // draws (or, on measureCtx, just measures) the text block; returns its end
+  th = loc(th); p = loc(p);
   kicker(x, th.label.length > 44 ? th.label.slice(0, 43) + "…" : th.label, 44, y, 19, th.accent); y += 50;
   x.fillStyle = "#fff"; x.font = "700 37px system-ui, sans-serif";
   for (const l of lines(x, p.title, W - 88, 3)) { x.fillText(l, 44, y); y += 45; }
@@ -528,6 +539,7 @@ function detailText(x, th, p, W, y) { // draws (or, on measureCtx, just measures
   return y;
 }
 function showDetail(i) {
+  popup.view = i;
   const th = popup.theme, items = th.items, n = items.length, p = items[i];
   const imgs = p.images && p.images.length ? p.images : (th.photos || []).slice(0, 1);
   const TXT = imgs.length > 1 ? 790 : 640, H = Math.round(detailText(measureCtx, th, p, 1000, TXT) + 120);
@@ -537,7 +549,7 @@ function showDetail(i) {
       detailText(x, th, p, W, TXT);
       x.fillStyle = "rgba(220,238,244,0.6)"; x.font = "600 22px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(`${i + 1} / ${n}`, W / 2, H2 - 44); x.textAlign = "start";
     }, 1), 0, 0, 1000, H, 0, H, { dur: 0.22 }));
-    const back = pill("‹  Projets", 220, 60, showList); uiTargets.push(back);
+    const back = pill(tr("‹  Projets", "‹  Projects"), 220, 60, showList); uiTargets.push(back);
     v.add(place(back, 34, 26, 220, 60, 0.008, H, { d: 0.12, dx: 0.05 }));
     closeButton(v, H);
     const hero = photoMesh(920, 480, imgs[0]);
@@ -553,7 +565,7 @@ function showDetail(i) {
         v.add(place(th2, x0 + k * (TW + GAP), 604, TW, 130, 0.007, H, { d: 0.2 + k * 0.06, dy: -0.04, s0: 0.9 }));
       });
     }
-    const prev = pill("‹  Précédent", 250, 60, () => showDetail((i - 1 + n) % n)), next = pill("Suivant  ›", 250, 60, () => showDetail((i + 1) % n));
+    const prev = pill(tr("‹  Précédent", "‹  Previous"), 250, 60, () => showDetail((i - 1 + n) % n)), next = pill(tr("Suivant  ›", "Next  ›"), 250, 60, () => showDetail((i + 1) % n));
     uiTargets.push(prev, next);
     v.add(place(prev, 40, H - 96, 250, 60, 0.008, H, { d: 0.3, dy: -0.03 }));
     v.add(place(next, 710, H - 96, 250, 60, 0.008, H, { d: 0.34, dy: -0.03 }));
@@ -591,7 +603,7 @@ function animatePopup(dt) {
 // ── "Chiffres clés" wall behind the viewer — animated infographics ───────────────
 // Same figures as the kiosk (chiffres-xr.json). Each panel re-animates (count-ups,
 // growing bars/ring/circles) every time the viewer turns to face it.
-const fmtFr = (n) => new Intl.NumberFormat("fr-FR").format(n).replace(/ /g, " ");
+const fmtFr = (n) => num(n); // 475 900 / 475,900
 const ease3 = (t, d0, dur) => { const q = Math.min(1, Math.max(0, (t - d0) / dur)); return 1 - Math.pow(1 - q, 3); };
 const chiffresPanels = [];
 fetch("./chiffres-xr.json").then((r) => r.json()).then(buildChiffres).catch(() => {});
@@ -617,7 +629,7 @@ function drawProcasef(x, W, H, d, t) {
   x.fillStyle = "rgba(255,255,255,0.75)"; x.font = "400 28px system-ui, sans-serif"; wrap(x, d.tagline, L, 220, CW, 36, 2);
   // hero figures
   const bw = (CW - 24) / 2;
-  [{ v: first, l: "parcelles inventoriées", teal: false }, { v: last, l: "titres d’occupation délivrés", teal: true }].forEach((b, i) => {
+  [{ v: first, l: tr("parcelles inventoriées", "parcels inventoried"), teal: false }, { v: last, l: tr("titres d’occupation délivrés", "occupancy titles issued"), teal: true }].forEach((b, i) => {
     const bx = L + i * (bw + 24), by = 296;
     x.fillStyle = b.teal ? "rgba(42,181,180,0.22)" : "rgba(255,255,255,0.08)"; roundRect(x, bx, by, bw, 120, 22); x.fill();
     if (b.teal) { x.strokeStyle = "rgba(142,230,228,0.5)"; x.lineWidth = 2; roundRect(x, bx, by, bw, 120, 22); x.stroke(); }
@@ -625,8 +637,8 @@ function drawProcasef(x, W, H, d, t) {
     x.fillStyle = "rgba(255,255,255,0.78)"; x.font = "400 24px system-ui, sans-serif"; x.fillText(b.l, bx + 28, by + 102);
   });
   // funnel
-  kicker(x, "La chaîne foncière intégrée", L, 476, 22, "#2ab5b4");
-  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText("De l’inventaire au titre d’occupation", L, 522);
+  kicker(x, tr("La chaîne foncière intégrée", "The integrated land chain"), L, 476, 22, "#2ab5b4");
+  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText(tr("De l’inventaire au titre d’occupation", "From inventory to occupancy title"), L, 522);
   d.steps.forEach((s, i) => {
     const y = 574 + i * 92, fin = i === d.steps.length - 1;
     x.textAlign = "center"; x.fillStyle = fin ? "#8ee6e4" : "rgba(255,255,255,0.9)"; x.font = "600 24px system-ui, sans-serif";
@@ -651,11 +663,11 @@ function drawProcasef(x, W, H, d, t) {
   }
   x.lineCap = "butt";
   x.textAlign = "center"; x.fillStyle = "#fff"; x.font = "800 28px system-ui, sans-serif";
-  x.fillText((rate * 100 * rp).toFixed(1).replace(".", ",") + " %", cx, cy + 10); x.textAlign = "start";
-  x.fillStyle = "#fff"; x.font = "400 30px system-ui, sans-serif"; x.fillText("des parcelles inventoriées ont abouti", cx + R + 40, cy - 6);
-  x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText("à un titre d’occupation", cx + R + 40, cy + 32);
+  x.fillText(pct(rate * 100 * rp), cx, cy + 10); x.textAlign = "start";
+  x.fillStyle = "#fff"; x.font = "400 30px system-ui, sans-serif"; x.fillText(tr("des parcelles inventoriées ont abouti", "of the inventoried parcels have led"), cx + R + 40, cy - 6);
+  x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText(tr("à un titre d’occupation", "to an occupancy title"), cx + R + 40, cy + 32);
   // territorial footprint
-  kicker(x, "Une empreinte territoriale majeure", L, 1212, 22, "#2ab5b4");
+  kicker(x, tr("Une empreinte territoriale majeure", "A major territorial footprint"), L, 1212, 22, "#2ab5b4");
   const cw = (CW - 20) / 2;
   d.footprint.forEach((s, i) => {
     const fx = L + (i % 2) * (cw + 20), fy = 1234 + Math.floor(i / 2) * 94;
@@ -694,8 +706,8 @@ function drawPamofor(x, W, H, d, t) {
   });
   // territorial hierarchy: régions → départements → sous-préfectures
   const ty = sy + ch + 62;
-  kicker(x, "Un déploiement territorial à grande échelle", L, ty, 22, "#2ab5b4");
-  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText("Une couverture structurée", L, ty + 46);
+  kicker(x, tr("Un déploiement territorial à grande échelle", "Large-scale territorial deployment"), L, ty, 22, "#2ab5b4");
+  x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText(tr("Une couverture structurée", "Structured coverage"), L, ty + 46);
   const radii = [58, 72, 88], centers = [W * 0.2, W * 0.5, W * 0.8], ccy = ty + 190;
   const fills = [["#0a3d62", "#00669d"], ["#00669d", "#1a9bb3"], ["#1a9bb3", "#2ab5b4"]];
   d.territory.forEach((s, i) => {
@@ -720,31 +732,37 @@ function drawPamofor(x, W, H, d, t) {
   x.fillStyle = "rgba(255,255,255,0.85)"; x.font = "italic 400 25px system-ui, sans-serif"; wrap(x, d.closing, L + 28, qy, CW - 30, 34, 3);
 }
 
-function makeInfoPanel(draw, d, W, H, widthM) {
+function makeInfoPanel(draw, getD, W, H, widthM) { // getD(): the figures in the current language
   const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  draw(x, W, H, d, 99); // at rest the panel shows the real figures; facing it replays the count-up
+  draw(x, W, H, getD(), 99); // at rest the panel shows the real figures; facing it replays the count-up
   const mesh = panelMesh(c, widthM, widthM * H / W), tex = mesh.material.map;
   const mips = (on) => { if (tex.generateMipmaps === on) return; tex.generateMipmaps = on; tex.minFilter = on ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; tex.dispose(); };
   // animation frames skip the mip chain (a full rebuild per frame is what made the count-ups crawl on the Quest)
-  return { mesh, redraw: (t, last = false) => { draw(x, W, H, d, t); mips(last); tex.needsUpdate = true; } };
+  return { mesh, redraw: (t, last = false) => { draw(x, W, H, getD(), t); mips(last); tex.needsUpdate = true; } };
 }
 
 function buildChiffres(data) {
   const Y = 1.62, R = 2.6;
   const header = (() => {
     const W = 1024, H = 190, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-    x.fillStyle = "rgba(8,23,38,0.85)"; roundRect(x, 0, 0, W, H, 26); x.fill();
-    x.strokeStyle = "rgba(42,181,180,0.8)"; x.lineWidth = 3; roundRect(x, 4, 4, W - 8, H - 8, 23); x.stroke();
-    x.textAlign = "center"; kicker(x, "Chiffres clés", W / 2 + 2, 66, 28); x.textAlign = "center";
-    x.fillStyle = "#fff"; x.font = "700 54px system-ui, sans-serif"; x.fillText("Nos programmes fonciers en chiffres", W / 2, 140);
-    return panelMesh(c, 1.7, 1.7 * H / W);
+    const mesh = panelMesh(c, 1.7, 1.7 * H / W);
+    mesh.userData.redraw = () => {
+      x.clearRect(0, 0, W, H);
+      x.fillStyle = "rgba(8,23,38,0.85)"; roundRect(x, 0, 0, W, H, 26); x.fill();
+      x.strokeStyle = "rgba(42,181,180,0.8)"; x.lineWidth = 3; roundRect(x, 4, 4, W - 8, H - 8, 23); x.stroke();
+      x.textAlign = "center"; kicker(x, tr("Chiffres clés", "Key figures"), W / 2 + 2, 66, 28); x.textAlign = "center";
+      x.fillStyle = "#fff"; x.font = "700 54px system-ui, sans-serif"; x.fillText(tr("Nos programmes fonciers en chiffres", "Our land programmes in figures"), W / 2, 140); x.textAlign = "start";
+      mesh.material.map.needsUpdate = true;
+    };
+    mesh.userData.redraw();
+    return mesh;
   })();
   placeAroundUser(header, 180, 2.96, R); sections.add(header);
   [
-    { draw: drawProcasef, d: data.procasef, H: 1510, az: 160 },
-    { draw: drawPamofor, d: data.pamofor, H: 1410, az: -160 },
+    { draw: drawProcasef, key: "procasef", H: 1510, az: 160 },
+    { draw: drawPamofor, key: "pamofor", H: 1410, az: -160 },
   ].forEach((p) => {
-    const ip = makeInfoPanel(p.draw, p.d, 1000, p.H, 1.44);
+    const ip = makeInfoPanel(p.draw, () => (I18N.lang === "en" && data.en ? data.en : data)[p.key], 1000, p.H, 1.44);
     placeAroundUser(ip.mesh, p.az, Y, R); sections.add(ip.mesh);
     const dir = ip.mesh.position.clone().sub(USER); dir.y = 0; dir.normalize();
     chiffresPanels.push({ ...ip, dir, armed: true, active: false, t0: 0, lastDraw: 0 });
@@ -759,6 +777,7 @@ function countryBanner(iso) {
   return bannerCache.get(iso);
 }
 function makeCountryPanel(country) {
+  country = loc(country);
   const projs = country.projects || [], shown = projs.slice(0, 7), BH = 333; // banner 1000×333 (3:1)
   const measure = measureCtx; measure.font = "400 28px system-ui, sans-serif";
   let hTxt = 0; for (const p of shown) hTxt += lines(measure, p.place ? `${p.title} — ${p.place}` : p.title, 1000 - 140, 2).length * 36 + 14;
@@ -774,15 +793,15 @@ function makeCountryPanel(country) {
     x.restore();
     x.fillStyle = "#2ab5b4"; x.fillRect(4, BH + 4, W - 8, 5);              // teal seam under the banner
     x.save(); x.shadowColor = "rgba(0,0,0,0.65)"; x.shadowBlur = 14;       // name set on the banner, above its caption
-    kicker(x, (country.region || "") + (projs.length ? `  ·  ${projs.length} projet${projs.length > 1 ? "s" : ""}` : ""), 44, BH - 138, 21, "#bff6f4");
+    kicker(x, (country.region || "") + (projs.length ? `  ·  ${plural(projs.length, "projet", "projets", "project", "projects")}` : ""), 44, BH - 138, 21, "#bff6f4");
     x.fillStyle = "#fff"; x.font = "800 62px system-ui, sans-serif"; x.fillText(lines(x, country.name, W * 0.66, 1)[0], 44, BH - 76);
     x.restore();
     let y = BH + 66; x.font = "400 28px system-ui, sans-serif";
     if (shown.length) for (const p of shown) {
       x.fillStyle = "#2ab5b4"; x.fillText("▸", 48, y);
       x.fillStyle = "#eaf4f8"; for (const l of lines(x, p.place ? `${p.title} — ${p.place}` : p.title, W - 140, 2)) { x.fillText(l, 86, y); y += 36; } y += 14;
-    } else { x.fillStyle = "rgba(234,244,248,0.72)"; x.font = "400 30px system-ui, sans-serif"; for (const l of lines(x, "Présence ETAFAT — projets en cours de référencement.", W - 96, 2)) { x.fillText(l, 48, y); y += 40; } }
-    if (projs.length > shown.length) { x.fillStyle = "#8ee6e4"; x.font = "600 24px system-ui, sans-serif"; x.fillText(`+ ${projs.length - shown.length} autres projets`, 48, H2 - 30); }
+    } else { x.fillStyle = "rgba(234,244,248,0.72)"; x.font = "400 30px system-ui, sans-serif"; for (const l of lines(x, tr("Présence ETAFAT — projets en cours de référencement.", "ETAFAT presence — projects being documented."), W - 96, 2)) { x.fillText(l, 48, y); y += 40; } }
+    if (projs.length > shown.length) { x.fillStyle = "#8ee6e4"; x.font = "600 24px system-ui, sans-serif"; x.fillText(tr(`+ ${projs.length - shown.length} autres projets`, `+ ${projs.length - shown.length} more projects`), 48, H2 - 30); }
   }, 1);
   countryBanner(country.iso).then((img) => { if (img) { card.userData.banner = img; card.userData.redraw(); } });
   return card;
@@ -842,10 +861,10 @@ const titleCard = (() => {
     const img = me.userData.logo;
     if (img) { const r = Math.min((cw - 36) / img.width, (ch - 30) / img.height); x.drawImage(img, 22 + (cw - img.width * r) / 2, 22 + (ch - img.height * r) / 2, img.width * r, img.height * r); }
     const n = DATA ? DATA.countries.length : 29, tx = cw + 60;
-    kicker(x, "Notre présence dans le monde", tx, 62, 20, "#8ee6e4");
-    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.fillText(`${n} pays · 4 continents`, tx, 122);
+    kicker(x, tr("Notre présence dans le monde", "Our presence worldwide"), tx, 62, 20, "#8ee6e4");
+    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.fillText(tr(`${n} pays · 4 continents`, `${n} countries · 4 continents`), tx, 122);
     x.fillStyle = "rgba(220,238,244,0.78)"; x.font = "400 23px system-ui, sans-serif";
-    x.fillText("Joystick : tourner le globe  ·  Pointez un pays pour ses projets", tx, 168);
+    x.fillText(tr("Joystick : tourner le globe  ·  Pointez un pays pour ses projets", "Joystick: turn the globe  ·  Point at a country for its projects"), tx, 168);
   };
   const m = canvasMesh(1000, 200, draw, 1.5);
   m.scale.setScalar(1.12);
@@ -918,10 +937,13 @@ const dock = createDock({
   onZone: (key) => (key === "cite" ? openCite(null) : turnTo(ZONES.find((z) => z.key === key).az)),
   getXR: () => {
     const st = xrState();
-    if (st.mode === "ar") return { icon: "vr", label: "Revenir en réalité virtuelle" };
-    if (!st.ar) return { icon: "ar", label: "AR indisponible sur cet appareil" };
-    return { icon: "ar", label: st.mode ? "Passer en AR (passthrough)" : "Entrer en AR (passthrough)" };
+    if (st.mode === "ar") return { icon: "vr", label: tr("Revenir en réalité virtuelle", "Back to virtual reality") };
+    if (!st.ar) return { icon: "ar", label: tr("AR indisponible sur cet appareil", "AR not available on this device") };
+    return { icon: "ar", label: st.mode ? tr("Passer en AR (passthrough)", "Switch to AR (passthrough)") : tr("Entrer en AR (passthrough)", "Enter AR (passthrough)") };
   },
+  // FR ⇄ EN: the icon shows the language a click switches to
+  getLang: () => (I18N.lang === "en" ? { icon: "fr", label: "Passer en français" } : { icon: "en", label: "Switch to English" }),
+  onLang: () => I18N.toggle(),
   onXR: () => { const st = xrState(); if (st.ar) switchXR(st.mode === "ar" ? "vr" : "ar"); },
   onAmbiance: (k) => fx.blackout(() => world.setAmbiance(k), 5),
   onMusic: (v) => { fx.setMusic(v); syncAudioBtn(); },
@@ -965,9 +987,30 @@ addEventListener("pointerup", (e) => {
 
 // music button (2D page)
 const audioBtn = document.getElementById("audio-toggle");
-function syncAudioBtn() { if (audioBtn) audioBtn.textContent = fx.on.music ? "♪ Musique" : "♪ Muet"; }
+function syncAudioBtn() { if (audioBtn) audioBtn.textContent = fx.on.music ? tr("♪ Musique", "♪ Music") : tr("♪ Muet", "♪ Muted"); }
 if (audioBtn) audioBtn.addEventListener("click", (e) => { e.stopPropagation(); fx.unlock(); fx.setMusic(!fx.on.music); syncAudioBtn(); dock.targets.forEach((t) => t.userData.redraw()); });
 syncAudioBtn();
+
+// ── language (FR ⇄ EN): the 2D page switch, the dock button and ?lang=; every panel redraws in place ──
+const langBtns = [...document.querySelectorAll("#lang-toggle button")];
+langBtns.forEach((b) => b.addEventListener("click", (e) => { e.stopPropagation(); fx.unlock(); I18N.set(b.dataset.lang); }));
+function syncPage() {
+  const en = I18N.lang === "en";
+  document.title = en ? "ETAFAT · VR experience" : "ETAFAT · Expérience VR";
+  for (const el of document.querySelectorAll("[data-en]")) if (!(el.id === "hint" && cite.active)) el.textContent = el.dataset[I18N.lang];
+  langBtns.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lang === I18N.lang)));
+  syncXrButtons(); syncAudioBtn();
+}
+I18N.on(() => {
+  syncPage();
+  sections.traverse((o) => { if (o.userData.redraw) o.userData.redraw(); }); // gallery tiles, headers, Cité tile
+  for (const p of chiffresPanels) if (!p.active) p.redraw(99, true); // (a running count-up redraws itself)
+  titleCard.userData.redraw();
+  if (popup && !popup.closing) { if (popup.view >= 0) showDetail(popup.view); else showList(); }
+  if (cPull) { cPull.closing = true; cClosing.push(cPull); cPull = null; } // the next country pointed at opens in the new language
+  dock.refresh();
+});
+syncPage();
 renderer.xr.addEventListener("sessionstart", () => { // replay the entrance in the headset (not on a VR ⇄ AR switch)
   fx.unlock(); if (!switching) elapsed = 0; switching = false; fx.reveal(0.7); rig.position.set(0, 0, 0); rig.rotation.set(0, 0, 0);
 });
@@ -989,7 +1032,7 @@ const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
 const stickPrev = new Map();
 let hoverKey = null;
-if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections, rig, fx, dock, get cinema() { return cinema; }, turnTo, get elapsed() { return elapsed; }, set elapsed(v) { elapsed = v; }, cite, citeTile: () => citeTile, openCite, switchXR, setAR,
+if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections, rig, fx, dock, get cinema() { return cinema; }, turnTo, get elapsed() { return elapsed; }, set elapsed(v) { elapsed = v; }, cite, citeTile: () => citeTile, openCite, switchXR, setAR, I18N,
   async pump(ms = 1000) { const end = performance.now() + ms; while (performance.now() < end) { loop(); await new Promise((r) => setTimeout(r, 16)); } } };
 
 renderer.setAnimationLoop(loop);

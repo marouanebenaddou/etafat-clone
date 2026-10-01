@@ -1,9 +1,10 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v24";
+const CACHE = "etafat-vr-v25";
 const PRECACHE = [
   "./index.html",
   "./app.js",
+  "./i18n.js",
   "./vendor/three.module.js",
   "./fx.js",
   "./nav.js",
@@ -47,6 +48,7 @@ const PRECACHE = [
   // cinema: posters (the films themselves stream from the server, they are not cached by the worker)
   "./videos/manifeste.jpg",
   "./videos/institutionnel.jpg",
+  "./videos/reel.jpg",
   "./earth.png",
   "./countries-id.png",
   // country banners (flag × landmark) shown in the globe pop-ups

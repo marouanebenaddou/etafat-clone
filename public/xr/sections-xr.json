@@ -44,7 +44,18 @@
             "/etafat/evenement/pool/aerial-1.jpg",
             "/etafat/evenement/pool/aerial-2.jpg",
             "/etafat/evenement/pool/aerial-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "3D digital model of Rabat and the Bouregreg Valley",
+            "short": "3D digital model of Rabat and the Bouregreg Valley",
+            "description": "3D digital twin of Rabat and the Bouregreg Valley, shared through a geoportal and virtual tours to support urban planning.",
+            "subThemes": [
+              "3D urban modelling",
+              "Urban planning",
+              "Geoportal",
+              "Virtual tours"
+            ]
+          }
         },
         {
           "title": "Levés LiDAR de Brazzaville et Pointe-Noire",
@@ -60,7 +71,18 @@
             "/etafat/evenement/pool/aerial-2.jpg",
             "/etafat/evenement/pool/aerial-3.jpg",
             "/etafat/evenement/pool/aerial-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "LiDAR surveys of Brazzaville and Pointe-Noire",
+            "short": "LiDAR surveys of Brazzaville and Pointe-Noire",
+            "description": "Large-scale urban mapping of Brazzaville and Pointe-Noire with airborne LiDAR, digital terrain models and orthophotography.",
+            "subThemes": [
+              "Large-scale urban mapping",
+              "Airborne LiDAR",
+              "Digital terrain models",
+              "Orthophotography"
+            ]
+          }
         },
         {
           "title": "Numérisation 3D de l’église du Sacré-Cœur",
@@ -76,7 +98,18 @@
             "/etafat/evenement/pool/heritage-1.jpg",
             "/etafat/evenement/pool/heritage-2.jpg",
             "/etafat/evenement/pool/heritage-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "3D digitisation of the Sacré-Cœur church",
+            "short": "3D digitisation of the Sacré-Cœur church",
+            "description": "3D laser-scan digitisation of the Sacré-Cœur church for its geometric diagnosis and the documentation of its rehabilitation.",
+            "subThemes": [
+              "Architectural heritage",
+              "3D laser scanning",
+              "Geometric diagnosis",
+              "Documentation for rehabilitation"
+            ]
+          }
         },
         {
           "title": "PILIER — Données aériennes et plans d’urbanisme de N’Djaména",
@@ -92,7 +125,18 @@
             "/etafat/evenement/pool/aerial-3.jpg",
             "/etafat/evenement/pool/aerial-4.jpg",
             "/etafat/evenement/pool/aerial-5.jpg"
-          ]
+          ],
+          "en": {
+            "title": "PILIER — Aerial data and urban plans for N’Djamena",
+            "short": "PILIER — Aerial data and urban plans for N’Djamena",
+            "description": "Airborne LiDAR and photogrammetric acquisition and urban plans for N’Djamena, with a geographic reference dataset.",
+            "subThemes": [
+              "Urban planning",
+              "Aerial acquisition",
+              "LiDAR and photogrammetry",
+              "Geographic reference data"
+            ]
+          }
         },
         {
           "title": "Relevés 2D et 3D des monuments de la médina de Fès",
@@ -108,7 +152,18 @@
             "/etafat/evenement/pool/heritage-2.jpg",
             "/etafat/evenement/pool/heritage-3.jpg",
             "/etafat/evenement/pool/heritage-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "2D and 3D surveys of the monuments of the Fez medina",
+            "short": "2D and 3D surveys of the monuments of the Fez medina",
+            "description": "2D and 3D surveys and architectural inventory of the monuments of the Fez medina, ahead of their rehabilitation.",
+            "subThemes": [
+              "Urban heritage",
+              "Architectural inventory",
+              "Façade surveys",
+              "3D modelling and rehabilitation"
+            ]
+          }
         },
         {
           "title": "Système de veille des bâtiments menaçant ruine du Grand Casablanca",
@@ -124,7 +179,18 @@
             "/etafat/evenement/pool/building-2.jpg",
             "/etafat/evenement/pool/building-3.jpg",
             "/etafat/evenement/pool/building-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Monitoring system for buildings at risk of collapse in Greater Casablanca",
+            "short": "Monitoring buildings at risk of collapse in Greater Casablanca",
+            "description": "Monitoring system for buildings at risk of collapse in Greater Casablanca: geographic inventory, indicators and tracking of interventions.",
+            "subThemes": [
+              "Building-related risks",
+              "Geographic inventory",
+              "Indicators and alerts",
+              "Intervention tracking"
+            ]
+          }
         },
         {
           "title": "Prises de vues aériennes, orthophotos et restitution numérique de Casablanca",
@@ -140,7 +206,18 @@
             "/etafat/evenement/pool/aerial-4.jpg",
             "/etafat/evenement/pool/aerial-5.jpg",
             "/etafat/evenement/pool/aerial-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Aerial photography, orthophotos and digital mapping of Casablanca",
+            "short": "Aerial photography, orthophotos and digital mapping of Casablanca",
+            "description": "Aerial photography, orthophotos and digital mapping of Casablanca for an urban topographic reference dataset.",
+            "subThemes": [
+              "Aerial photogrammetry",
+              "Orthophotography",
+              "Urban mapping",
+              "Topographic reference data"
+            ]
+          }
         },
         {
           "title": "Plan topographique de Sousse par LiDAR aéroporté et orthophotographies",
@@ -156,7 +233,18 @@
             "/etafat/evenement/pool/aerial-5.jpg",
             "/etafat/evenement/pool/aerial-1.jpg",
             "/etafat/evenement/pool/aerial-2.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Topographic map of Sousse from airborne LiDAR and orthophotography",
+            "short": "Topographic map of Sousse by airborne LiDAR",
+            "description": "Topographic map of Sousse produced from airborne LiDAR and orthophotography.",
+            "subThemes": [
+              "Airborne LiDAR",
+              "Photogrammetry",
+              "Urban mapping",
+              "Terrain modelling"
+            ]
+          }
         },
         {
           "title": "Inventaire et évaluation des façades historiques de Rabat — Lagza, Laälou, Sidi Fateh, Waqqassa et Mellah",
@@ -172,7 +260,18 @@
             "/etafat/evenement/pool/heritage-3.jpg",
             "/etafat/evenement/pool/heritage-1.jpg",
             "/etafat/evenement/pool/heritage-2.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Inventory and assessment of Rabat’s historic façades — Lagza, Laälou, Sidi Fateh, Waqqassa and Mellah",
+            "short": "Inventory and assessment of Rabat’s historic façades",
+            "description": "Inventory and 3D-scan survey of Rabat’s historic façades to document their restoration.",
+            "subThemes": [
+              "Architectural heritage",
+              "3D scanning",
+              "Façade surveys",
+              "Documentation for restoration"
+            ]
+          }
         },
         {
           "title": "Cartographie aérienne des localités de Béni Mellal, Azilal, Fquih Ben Salah et Khouribga",
@@ -188,7 +287,18 @@
             "/etafat/evenement/pool/aerial-1.jpg",
             "/etafat/evenement/pool/aerial-2.jpg",
             "/etafat/evenement/pool/aerial-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Aerial mapping of Béni Mellal, Azilal, Fquih Ben Salah and Khouribga",
+            "short": "Aerial mapping of Béni Mellal, Azilal, Fquih Ben Salah, Khouribga",
+            "description": "Aerial mapping of Béni Mellal, Azilal, Fquih Ben Salah and Khouribga: orthophotography and digital terrain models.",
+            "subThemes": [
+              "Aerial photogrammetry",
+              "Orthophotography",
+              "Map compilation",
+              "Digital terrain models"
+            ]
+          }
         },
         {
           "title": "Prises de vues aériennes et plans photogrammétriques de la province de Tétouan",
@@ -204,7 +314,18 @@
             "/etafat/evenement/pool/aerial-2.jpg",
             "/etafat/evenement/pool/aerial-3.jpg",
             "/etafat/evenement/pool/aerial-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Aerial photography and photogrammetric maps of the province of Tétouan",
+            "short": "Aerial photography and photogrammetric maps of Tétouan",
+            "description": "Aerial photography and photogrammetric maps of the province of Tétouan, compiled at 1:2,000.",
+            "subThemes": [
+              "Aerial acquisition",
+              "Territorial mapping",
+              "Orthophoto maps",
+              "1:2,000 mapping"
+            ]
+          }
         },
         {
           "title": "Prises de vues aériennes et orthophotoplans de la province d’El Jadida",
@@ -220,7 +341,18 @@
             "/etafat/evenement/pool/aerial-3.jpg",
             "/etafat/evenement/pool/aerial-4.jpg",
             "/etafat/evenement/pool/aerial-5.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Aerial photography and orthophoto maps of the province of El Jadida",
+            "short": "Aerial photography and orthophoto maps of El Jadida",
+            "description": "Aerial photography and orthophoto maps of the province of El Jadida, with elevation and surface models.",
+            "subThemes": [
+              "Photogrammetry",
+              "Orthophotography",
+              "Elevation and surface models",
+              "Urban mapping"
+            ]
+          }
         },
         {
           "title": "Acquisition aérienne et restitution pour l’aménagement de la vallée du Bouregreg",
@@ -236,9 +368,24 @@
             "/etafat/evenement/pool/aerial-4.jpg",
             "/etafat/evenement/pool/aerial-5.jpg",
             "/etafat/evenement/pool/aerial-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Aerial acquisition and mapping for the development of the Bouregreg Valley",
+            "short": "Aerial acquisition for the Bouregreg Valley development",
+            "description": "High-resolution aerial acquisition and mapping for the development of the Bouregreg Valley.",
+            "subThemes": [
+              "Territorial development",
+              "Aerial acquisition",
+              "High-resolution orthophotography",
+              "Terrain modelling"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Cities, territories and heritage",
+        "tagline": "Urban modelling, mapping and heritage enhancement"
+      }
     },
     {
       "label": "Foncier, cadastre et systèmes d’information",
@@ -278,7 +425,18 @@
             "/etafat/evenement/pool/cadastre-1.jpg",
             "/etafat/evenement/pool/cadastre-2.jpg",
             "/etafat/evenement/pool/cadastre-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "PAGEF — Strengthening the cadastre of Abidjan",
+            "short": "PAGEF — Strengthening the cadastre of Abidjan",
+            "description": "Strengthening Abidjan’s fiscal cadastre: property inventory, cadastral mapping and aerial and LiDAR acquisition.",
+            "subThemes": [
+              "Fiscal cadastre",
+              "Property inventory",
+              "Cadastral mapping",
+              "Aerial and LiDAR acquisition"
+            ]
+          }
         },
         {
           "title": "REGIS — Gestion du patrimoine foncier et immobilier de l’OCP",
@@ -294,7 +452,18 @@
             "/etafat/evenement/pool/gis-1.jpg",
             "/etafat/evenement/pool/gis-2.jpg",
             "/etafat/evenement/pool/gis-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "REGIS — Land and real-estate asset management for OCP",
+            "short": "REGIS — OCP land and real-estate assets",
+            "description": "Web and mobile GIS platform to manage OCP’s land and real-estate assets and digitalise its procedures.",
+            "subThemes": [
+              "Land asset management",
+              "Web and mobile GIS",
+              "Digitalisation of procedures",
+              "Document management"
+            ]
+          }
         },
         {
           "title": "PAGDS — Cadastre de Daloa, Korhogo et Yamoussoukro",
@@ -310,7 +479,18 @@
             "/etafat/evenement/pool/cadastre-2.jpg",
             "/etafat/evenement/pool/cadastre-3.jpg",
             "/etafat/evenement/pool/cadastre-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "PAGDS — Cadastre of Daloa, Korhogo and Yamoussoukro",
+            "short": "PAGDS — Cadastre of Daloa, Korhogo and Yamoussoukro",
+            "description": "Urban cadastre of Daloa, Korhogo and Yamoussoukro: land tenure surveys, 3D building modelling and online publication of the cadastre.",
+            "subThemes": [
+              "Urban cadastre",
+              "Land tenure surveys",
+              "3D building modelling",
+              "Online cadastre"
+            ]
+          }
         },
         {
           "title": "SMART PAMOFOR — Application web et mobile pour la sécurisation foncière rurale",
@@ -326,7 +506,18 @@
             "/etafat/evenement/pool/gis-2.jpg",
             "/etafat/evenement/pool/gis-3.jpg",
             "/etafat/evenement/pool/gis-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "SMART PAMOFOR — Web and mobile app for rural land tenure security",
+            "short": "SMART PAMOFOR — Rural land security (web & mobile)",
+            "description": "Web and mobile application for rural land tenure security, with offline data collection, data centralisation and a geoportal.",
+            "subThemes": [
+              "Land information system",
+              "Offline mobile data collection",
+              "Data centralisation",
+              "Geoportal"
+            ]
+          }
         },
         {
           "title": "SMART IFE — Application web et mobile pour un projet foncier",
@@ -342,7 +533,18 @@
             "/etafat/evenement/pool/gis-3.jpg",
             "/etafat/evenement/pool/gis-4.jpg",
             "/etafat/evenement/pool/gis-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "SMART IFE — Web and mobile app for a land project",
+            "short": "SMART IFE — Web and mobile app for a land project",
+            "description": "Web and mobile land registration application: mobile data collection, parcel data management and GIS.",
+            "subThemes": [
+              "Land registration",
+              "Mobile data collection",
+              "Parcel data management",
+              "GIS"
+            ]
+          }
         },
         {
           "title": "Système d’information du patrimoine immobilier de Barid Al-Maghrib",
@@ -358,7 +560,18 @@
             "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
             "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
             "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Real-estate asset information system for Barid Al-Maghrib",
+            "short": "Barid Al-Maghrib real-estate information system",
+            "description": "Real-estate asset information system for Barid Al-Maghrib: asset register, lease management and digitalisation of procedures.",
+            "subThemes": [
+              "Property management",
+              "Asset register",
+              "Lease management",
+              "Digitalisation of procedures"
+            ]
+          }
         },
         {
           "title": "Inventaire et gestion des actifs imposables de Skhirate–Témara",
@@ -375,9 +588,24 @@
             "/etafat/evenement/projets/26-skhirate-temara/odp.jpg",
             "/etafat/evenement/projets/26-skhirate-temara/fiche-tnb.jpg",
             "/etafat/evenement/projets/26-skhirate-temara/detail-activite.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Inventory and management of taxable assets in Skhirate–Témara",
+            "short": "Taxable assets inventory — Skhirate–Témara",
+            "description": "Inventory of Skhirate–Témara’s taxable assets: use of public land, signage and fee calculation.",
+            "subThemes": [
+              "Local taxation",
+              "Use of public land",
+              "Signs and billboards inventory",
+              "Fee calculation"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Land, cadastre and information systems",
+        "tagline": "Land tenure security, cadastre and information systems"
+      }
     },
     {
       "label": "Infrastructures, transports et réseaux",
@@ -420,7 +648,18 @@
             "/etafat/evenement/pool/networks-1.jpg",
             "/etafat/evenement/pool/networks-2.jpg",
             "/etafat/evenement/pool/networks-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "PETROCI pipeline detection — Pacobo–Yamoussoukro",
+            "short": "PETROCI pipeline detection — Pacobo–Yamoussoukro",
+            "description": "Detection and georeferencing of the PETROCI pipeline between Pacobo and Yamoussoukro, with mapping of the underground networks.",
+            "subThemes": [
+              "Pipelines",
+              "Underground network detection",
+              "Georeferencing",
+              "Network mapping"
+            ]
+          }
         },
         {
           "title": "PAGDS — Suivi des chantiers pour l’AGEROUTE",
@@ -436,7 +675,18 @@
             "/etafat/evenement/pool/roads-1.jpg",
             "/etafat/evenement/pool/roads-2.jpg",
             "/etafat/evenement/pool/roads-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "PAGDS — Construction-site monitoring for AGEROUTE",
+            "short": "PAGDS — Construction-site monitoring for AGEROUTE",
+            "description": "Monitoring of AGEROUTE road construction sites by drone photogrammetry, with multi-date comparison and team training.",
+            "subThemes": [
+              "Road construction monitoring",
+              "Drone photogrammetry",
+              "Multi-date comparison",
+              "Training"
+            ]
+          }
         },
         {
           "title": "Maquette numérique 3D du tramway T2 de Casablanca",
@@ -452,7 +702,18 @@
             "/etafat/evenement/pool/urban-1.jpg",
             "/etafat/evenement/pool/urban-2.jpg",
             "/etafat/evenement/pool/urban-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "3D digital model of Casablanca’s T2 tramway",
+            "short": "3D digital model of Casablanca’s T2 tramway",
+            "description": "Interactive 3D model of Casablanca’s T2 tramway to visualise the works on a touch interface.",
+            "subThemes": [
+              "Urban transport",
+              "Interactive 3D model",
+              "Construction visualisation",
+              "Touch interface"
+            ]
+          }
         },
         {
           "title": "Levé LiDAR de la route Liranga–Ngangania",
@@ -468,7 +729,18 @@
             "/etafat/evenement/pool/roads-2.jpg",
             "/etafat/evenement/pool/roads-3.jpg",
             "/etafat/evenement/pool/roads-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "LiDAR survey of the Liranga–Ngangania road",
+            "short": "LiDAR survey of the Liranga–Ngangania road",
+            "description": "Study of the Liranga–Ngangania road corridor with airborne LiDAR and digital terrain models.",
+            "subThemes": [
+              "Road studies",
+              "Corridor mapping",
+              "Airborne LiDAR",
+              "Digital terrain models"
+            ]
+          }
         },
         {
           "title": "Détection des réseaux souterrains de Jorf Lasfar",
@@ -484,7 +756,18 @@
             "/etafat/evenement/pool/networks-2.jpg",
             "/etafat/evenement/pool/networks-3.jpg",
             "/etafat/evenement/pool/networks-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Underground network detection at Jorf Lasfar",
+            "short": "Underground network detection at Jorf Lasfar",
+            "description": "Ground-penetrating radar and electromagnetic detection of Jorf Lasfar’s buried industrial networks, with georeferenced plans.",
+            "subThemes": [
+              "Buried industrial networks",
+              "Ground-penetrating radar and electromagnetic detection",
+              "Georeferencing",
+              "Network plans"
+            ]
+          }
         },
         {
           "title": "Mise en place d’un SIG pilote pour la RADEEJ",
@@ -500,7 +783,18 @@
             "/etafat/evenement/pool/networks-4.jpg",
             "/etafat/evenement/pool/networks-1.jpg",
             "/etafat/evenement/pool/networks-2.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Setting up a pilot GIS for RADEEJ",
+            "short": "Pilot GIS for RADEEJ",
+            "description": "RADEEJ pilot GIS structuring its drinking water, sanitation and MV/LV electrical network data.",
+            "subThemes": [
+              "Drinking water",
+              "Sanitation",
+              "MV/LV electrical networks",
+              "GIS data structuring"
+            ]
+          }
         },
         {
           "title": "Relevé de la route nationale n°8 par scanner laser 3D mobile",
@@ -516,7 +810,18 @@
             "/etafat/evenement/pool/roads-4.jpg",
             "/etafat/evenement/pool/roads-1.jpg",
             "/etafat/evenement/pool/roads-2.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Survey of National Road 8 by mobile 3D laser scanning",
+            "short": "Survey of National Road 8 by mobile 3D laser scanning",
+            "description": "Survey of National Road 8 by mobile 3D laser scanning: road inventory, point clouds and 360° panoramic imagery.",
+            "subThemes": [
+              "Mobile mapping",
+              "Road inventory",
+              "3D point clouds",
+              "360° panoramic imagery"
+            ]
+          }
         },
         {
           "title": "Prestations géospatiales pour l’avant-projet de l’autoroute Rabat–Casablanca et de la section Mohammedia Ouest–Aïn Harrouda",
@@ -532,7 +837,18 @@
             "/etafat/evenement/pool/roads-3.jpg",
             "/etafat/evenement/pool/roads-4.jpg",
             "/etafat/evenement/pool/roads-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Geospatial services for the preliminary design of the Rabat–Casablanca motorway and the Mohammedia West–Aïn Harrouda section",
+            "short": "Geospatial services — Rabat–Casablanca motorway",
+            "description": "Geospatial services for the preliminary design of the Rabat–Casablanca motorway: satellite imagery, DTM and parcel plans.",
+            "subThemes": [
+              "Motorway studies",
+              "Satellite imagery",
+              "Digital terrain models",
+              "Parcel plans"
+            ]
+          }
         },
         {
           "title": "Détection des réseaux enterrés entre Tobène et Taïba",
@@ -548,7 +864,18 @@
             "/etafat/evenement/pool/networks-3.jpg",
             "/etafat/evenement/pool/networks-4.jpg",
             "/etafat/evenement/pool/networks-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Underground network detection between Tobène and Taïba",
+            "short": "Underground network detection between Tobène and Taïba",
+            "description": "Ground-penetrating radar and electromagnetic detection and mapping of the underground networks between Tobène and Taïba.",
+            "subThemes": [
+              "Ground-penetrating radar",
+              "Electromagnetic detection",
+              "Georeferencing",
+              "Network mapping"
+            ]
+          }
         },
         {
           "title": "Topographie et détection des réseaux enterrés de l’usine Oulmès",
@@ -564,9 +891,24 @@
             "/etafat/evenement/pool/networks-1.jpg",
             "/etafat/evenement/pool/networks-2.jpg",
             "/etafat/evenement/pool/networks-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Topography and underground network detection at the Oulmès plant",
+            "short": "Underground networks at the Oulmès plant",
+            "description": "Topography and non-intrusive detection of the Oulmès plant’s underground networks, with georeferenced plans.",
+            "subThemes": [
+              "Industrial networks",
+              "Non-intrusive detection",
+              "Topographic surveys",
+              "Georeferenced plans"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Infrastructure, transport and networks",
+        "tagline": "Roads, underground networks and major structures"
+      }
     },
     {
       "label": "Eau, environnement et ouvrages maritimes",
@@ -601,7 +943,17 @@
             "/etafat/evenement/pool/port-1.jpg",
             "/etafat/evenement/pool/port-2.jpg",
             "/etafat/evenement/pool/port-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Bathymetry and 3D assessment of the Tanger Med structures",
+            "short": "Bathymetry and 3D assessment of the Tanger Med structures",
+            "description": "Port bathymetry and 3D assessment of the structures of the port of Tanger Med.",
+            "subThemes": [
+              "Port bathymetry",
+              "Structural assessment",
+              "3D surveys"
+            ]
+          }
         },
         {
           "title": "MNT LiDAR pour le suivi des inondations au Burkina Faso",
@@ -617,7 +969,18 @@
             "/etafat/evenement/pool/terrain-1.jpg",
             "/etafat/evenement/pool/terrain-2.jpg",
             "/etafat/evenement/pool/terrain-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "LiDAR DTM for flood monitoring in Burkina Faso",
+            "short": "LiDAR DTM for flood monitoring in Burkina Faso",
+            "description": "LiDAR digital terrain models to monitor flood risk and hydraulic structures in Burkina Faso.",
+            "subThemes": [
+              "Flood risk",
+              "Watercourse topography",
+              "Digital terrain models",
+              "Hydraulic structure surveys"
+            ]
+          }
         },
         {
           "title": "Levé LiDAR pour le barrage hydroélectrique de Saltinho",
@@ -633,7 +996,18 @@
             "/etafat/evenement/pool/terrain-2.jpg",
             "/etafat/evenement/pool/terrain-3.jpg",
             "/etafat/evenement/pool/terrain-4.jpg"
-          ]
+          ],
+          "en": {
+            "title": "LiDAR survey for the Saltinho hydroelectric dam",
+            "short": "LiDAR survey for the Saltinho hydroelectric dam",
+            "description": "Airborne LiDAR survey and geodetic network for the Saltinho hydroelectric dam.",
+            "subThemes": [
+              "Hydropower",
+              "Site topography",
+              "Airborne LiDAR",
+              "Geodetic network"
+            ]
+          }
         },
         {
           "title": "Contrôle du dragage par bathymétrie à Tanger Med",
@@ -648,9 +1022,23 @@
             "/etafat/evenement/pool/port-2.jpg",
             "/etafat/evenement/pool/port-3.jpg",
             "/etafat/evenement/pool/port-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Dredging control by bathymetry at Tanger Med",
+            "short": "Dredging control by bathymetry at Tanger Med",
+            "description": "Control of the dredging works at the port of Tanger Med by multibeam bathymetry.",
+            "subThemes": [
+              "Port dredging",
+              "Multibeam bathymetry",
+              "Control of maritime works"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Water, environment and maritime works",
+        "tagline": "Bathymetry, hydrology and maritime structures"
+      }
     },
     {
       "label": "Bâtiment, industrie et mines",
@@ -684,7 +1072,18 @@
             "/etafat/evenement/pool/building-1.jpg",
             "/etafat/evenement/pool/building-2.jpg",
             "/etafat/evenement/pool/building-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "BIM model of the Harmattan Hotel in Bouaké",
+            "short": "BIM model of the Harmattan Hotel in Bouaké",
+            "description": "Mobile-scanner survey and BIM model of the Harmattan Hotel in Bouaké, with plans, floor areas and virtual tours.",
+            "subThemes": [
+              "As-built survey by mobile scanner",
+              "BIM modelling",
+              "Plans and floor areas",
+              "Virtual tours"
+            ]
+          }
         },
         {
           "title": "Système d’information des opérations minières de MAADEN",
@@ -700,7 +1099,18 @@
             "/etafat/evenement/pool/mining-1.jpg",
             "/etafat/evenement/pool/mining-2.jpg",
             "/etafat/evenement/pool/mining-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Information system for MAADEN’s mining operations",
+            "short": "Information system for MAADEN’s mining operations",
+            "description": "Geographic information system for MAADEN’s mining operations: permits, operating areas and field reporting.",
+            "subThemes": [
+              "Mining GIS",
+              "Permit management",
+              "Operating areas management",
+              "Field reporting"
+            ]
+          }
         },
         {
           "title": "Évaluation volumétrique des actifs industriels de l’OCP",
@@ -716,9 +1126,24 @@
             "/etafat/evenement/pool/mining-2.jpg",
             "/etafat/evenement/pool/mining-3.jpg",
             "/etafat/evenement/pool/mining-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Volumetric assessment of OCP’s industrial assets",
+            "short": "Volumetric assessment of OCP’s industrial assets",
+            "description": "Volumetric assessment of OCP’s industrial stockpiles by 3D laser scanning, to manage storage capacity.",
+            "subThemes": [
+              "Stockpile inventory",
+              "3D laser scanning",
+              "Volume calculation",
+              "Storage capacity management"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Buildings, industry and mining",
+        "tagline": "3D scanning, BIM, industrial and mining sites"
+      }
     },
     {
       "label": "Agriculture et développement rural",
@@ -749,7 +1174,18 @@
             "/etafat/evenement/pool/agri-1.jpg",
             "/etafat/evenement/pool/agri-2.jpg",
             "/etafat/evenement/pool/agri-3.jpg"
-          ]
+          ],
+          "en": {
+            "title": "DNGR GIS for rice-fish farming areas in Guinea",
+            "short": "DNGR GIS — rice-fish farming areas (Guinea)",
+            "description": "Institutional GIS for the DNGR to open up rice-fish farming production areas in Guinea.",
+            "subThemes": [
+              "Institutional GIS",
+              "Road infrastructure mapping",
+              "Improving rural access",
+              "Training"
+            ]
+          }
         },
         {
           "title": "Solution web et mobile d’expertise agricole et multirisque climatique pour la MAMDA",
@@ -765,7 +1201,18 @@
             "/etafat/evenement/pool/agri-2.jpg",
             "/etafat/evenement/pool/agri-3.jpg",
             "/etafat/evenement/pool/agri-1.jpg"
-          ]
+          ],
+          "en": {
+            "title": "Web and mobile agricultural and multi-risk climate assessment solution for MAMDA",
+            "short": "Web & mobile agricultural assessment for MAMDA",
+            "description": "Web and mobile solution for agricultural and multi-risk climate assessment for MAMDA, with geolocated data collection and dashboards.",
+            "subThemes": [
+              "Agricultural insurance",
+              "Field assessment",
+              "Geolocated data collection",
+              "Dashboards"
+            ]
+          }
         },
         {
           "title": "SIG pour le Registre national agricole",
@@ -781,9 +1228,24 @@
             "/etafat/evenement/pool/agri-3.jpg",
             "/etafat/evenement/pool/agri-1.jpg",
             "/etafat/evenement/pool/agri-2.jpg"
-          ]
+          ],
+          "en": {
+            "title": "GIS for the National Agricultural Register",
+            "short": "GIS for the National Agricultural Register",
+            "description": "GIS for the National Agricultural Register: census, parcel mapping and mobile data collection.",
+            "subThemes": [
+              "Agricultural census",
+              "Parcel mapping",
+              "Mobile data collection",
+              "Management platform"
+            ]
+          }
         }
-      ]
+      ],
+      "en": {
+        "label": "Agriculture and rural development",
+        "tagline": "Agricultural GIS and rural territorial development"
+      }
     }
   ],
   "apps": {
@@ -793,21 +1255,34 @@
     "items": [
       {
         "name": "PROCASEF",
-        "tagline": "Sécurisation foncière rurale — enquêtes, délimitation et levé des parcelles (Sénégal)."
+        "tagline": "Sécurisation foncière rurale — enquêtes, délimitation et levé des parcelles (Sénégal).",
+        "en": {
+          "tagline": "Rural land tenure security — surveys, boundary demarcation and parcel surveying (Senegal)."
+        }
       },
       {
         "name": "PRESFOR",
-        "tagline": "Renforcement de la sécurisation foncière rurale (Côte d’Ivoire)."
+        "tagline": "Renforcement de la sécurisation foncière rurale (Côte d’Ivoire).",
+        "en": {
+          "tagline": "Strengthening rural land tenure security (Côte d’Ivoire)."
+        }
       },
       {
         "name": "SRM",
-        "tagline": "Suivi et relevé de terrain — projet SRM, Casablanca."
+        "tagline": "Suivi et relevé de terrain — projet SRM, Casablanca.",
+        "en": {
+          "tagline": "Field monitoring and surveying — SRM project, Casablanca."
+        }
       }
     ],
     "photos": [
       "/etafat/evenement/pool/cadastre-1.jpg",
       "/etafat/evenement/pool/gis-1.jpg",
       "/etafat/evenement/pool/aerial-1.jpg"
-    ]
+    ],
+    "en": {
+      "label": "Field applications",
+      "tagline": "Our data collection apps deployed in the field"
+    }
   }
 }

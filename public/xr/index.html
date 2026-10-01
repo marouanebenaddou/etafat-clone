@@ -33,6 +33,9 @@
     #hint { position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%); color: rgba(234,244,248,.55); font-size: 13px; z-index: 15; pointer-events: none; }
     #audio-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 16; background: rgba(42,181,180,.15); border: 1.5px solid #2ab5b4; color: #eaf4f8; font: 600 13px system-ui, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
     #audio-toggle:hover { background: rgba(42,181,180,.28); }
+    #lang-toggle { position: fixed; right: 16px; bottom: 58px; z-index: 16; display: flex; padding: 3px; border-radius: 999px; border: 1.5px solid #2ab5b4; background: rgba(8,23,38,.55); backdrop-filter: blur(6px); }
+    #lang-toggle button { background: none; border: 0; color: rgba(234,244,248,.6); font: 700 12px system-ui, sans-serif; letter-spacing: .08em; padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+    #lang-toggle button[aria-pressed="true"] { background: #2ab5b4; color: #fff; }
     #credits { position: fixed; left: 16px; top: 12px; max-width: min(760px, calc(100vw - 32px)); color: rgba(234,244,248,.42); font-size: 11px; line-height: 1.4; z-index: 15; pointer-events: none; }
   </style>
   <script type="importmap">
@@ -42,13 +45,25 @@
 <body>
   <div id="loading">
     <img src="./img/etafat-logo-dark.png" alt="ETAFAT" />
-    <h1>Expérience immersive</h1>
+    <h1 data-fr="Expérience immersive" data-en="Immersive experience">Expérience immersive</h1>
     <div class="bar"><i></i></div>
-    <p>Le paysage, l’équipe et le globe se mettent en place…</p>
+    <p data-fr="Le paysage, l’équipe et le globe se mettent en place…" data-en="The landscape, the team and the globe are getting ready…">Le paysage, l’équipe et le globe se mettent en place…</p>
   </div>
-  <div id="hint">Glissez pour regarder autour · le menu sous le regard vous emmène vers le globe, les expertises, la Cité portugaise en 3D, le cinéma et les chiffres · flèches : tourner le globe</div>
+  <div id="hint" data-fr="Glissez pour regarder autour · le menu sous le regard vous emmène vers le globe, les expertises, la Cité portugaise en 3D, le cinéma et les chiffres · flèches : tourner le globe" data-en="Drag to look around · the menu below your gaze takes you to the globe, our expertise, the Portuguese City in 3D, the cinema and the key figures · arrows: turn the globe">Glissez pour regarder autour · le menu sous le regard vous emmène vers le globe, les expertises, la Cité portugaise en 3D, le cinéma et les chiffres · flèches : tourner le globe</div>
+  <div id="lang-toggle" role="group" aria-label="Langue / Language"><button type="button" data-lang="fr" aria-pressed="true">FR</button><button type="button" data-lang="en" aria-pressed="false">EN</button></div>
   <button id="audio-toggle" type="button">♪ Musique</button>
-  <div id="credits">Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages, véhicule et camp : Quaternius (CC0) · Cité portugaise : maquette 3D par drone ETAFAT, positions des lieux © contributeurs OpenStreetMap · Mains : WebXR Input Profiles (MIT) · Musique : générée avec Magnific (Google Lyria) · Drapeaux : flagcdn · Photos des pays : Wikimedia Commons (auteurs et licences sur chaque bannière)</div>
+  <div id="credits" data-fr="Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages, véhicule et camp : Quaternius (CC0) · Cité portugaise : maquette 3D par drone ETAFAT, positions des lieux © contributeurs OpenStreetMap · Mains : WebXR Input Profiles (MIT) · Musique : générée avec Magnific (Google Lyria) · Drapeaux : flagcdn · Photos des pays : Wikimedia Commons (auteurs et licences sur chaque bannière)" data-en="Aït Bouguemez valley, High Atlas · Terrain: AWS Terrain Tiles (SRTM, NASA/USGS) · Characters, vehicle and camp: Quaternius (CC0) · Portuguese City: ETAFAT drone 3D model, place positions © OpenStreetMap contributors · Hands: WebXR Input Profiles (MIT) · Music: generated with Magnific (Google Lyria) · Flags: flagcdn · Country photos: Wikimedia Commons (authors and licences on each banner)">Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages, véhicule et camp : Quaternius (CC0) · Cité portugaise : maquette 3D par drone ETAFAT, positions des lieux © contributeurs OpenStreetMap · Mains : WebXR Input Profiles (MIT) · Musique : générée avec Magnific (Google Lyria) · Drapeaux : flagcdn · Photos des pays : Wikimedia Commons (auteurs et licences sur chaque bannière)</div>
+  <script>
+    // page texts in the saved language right away (the modules take over once loaded: i18n.js)
+    (function () {
+      var q = new URLSearchParams(location.search).get("lang"), l = q;
+      if (l !== "en" && l !== "fr") { try { l = localStorage.getItem("etafat-vr-lang"); } catch (e) { l = null; } }
+      if (l !== "en") return;
+      document.documentElement.lang = "en"; document.title = "ETAFAT · VR experience";
+      document.querySelectorAll("[data-en]").forEach(function (el) { el.textContent = el.getAttribute("data-en"); });
+      document.querySelectorAll("#lang-toggle button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.lang === "en")); });
+    })();
+  </script>
   <script type="module">
     import "./app.js";
     // hide the loader once the first frame has plausibly rendered

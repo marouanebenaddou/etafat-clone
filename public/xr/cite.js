@@ -7,16 +7,43 @@
 // valley stops rendering altogether), leaving puts it back exactly where it was.
 // The model is bundled in the Quest app only: the website build reports `available` = false.
 import * as THREE from "three";
+import { I18N, L } from "./i18n.js";
 
 const DEG = Math.PI / 180;
 const TEAL = "#2ab5b4", TEAL_L = "#8ee6e4";
 const FONT = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
 const CAT = {
-  patrimoine: { label: "Patrimoine", color: "#f5b942" },
-  religieux: { label: "Lieu de culte", color: "#b99bff" },
-  bastion: { label: "Bastion", color: "#ff8a5c" },
-  porte: { label: "Porte", color: "#5fd4ff" },
+  patrimoine: { label: "Patrimoine", en: "Heritage", color: "#f5b942" },
+  religieux: { label: "Lieu de culte", en: "Place of worship", color: "#b99bff" },
+  bastion: { label: "Bastion", en: "Bastion", color: "#ff8a5c" },
+  porte: { label: "Porte", en: "Gate", color: "#5fd4ff" },
 };
+const catLabel = (c) => L(c.label, c.en);
+// English names of the landmarks and photo places (pois.json / panos.json are French) + landmark texts
+const NAME_EN = {
+  "Citerne portugaise": "Portuguese Cistern", "Église de l’Assomption": "Church of the Assumption", "Grande Mosquée": "Great Mosque",
+  "Porte de la Mer": "Sea Gate", "Porta da Terra": "Porta da Terra", "Palais du Gouverneur": "Governor’s Palace", "Torre de Rebate": "Torre de Rebate",
+  "Synagogue": "Synagogue", "Bastion de l’Ange": "Angel Bastion", "Bastion Saint-Sébastien": "St Sebastian Bastion",
+  "Bastion Saint-Antoine": "St Anthony Bastion", "Bastion Saint-Esprit": "Holy Spirit Bastion", "Bastion du Gouverneur": "Governor’s Bastion",
+  "Rempart sud": "South rampart", "Rempart est": "East rampart", "Ruelles de la cité": "City lanes", "Atelier d’artiste": "Artist’s studio",
+  "Place de l’église": "Church square", "Rue principale": "Main street", "Salles du château": "Castle halls", "Cour du château": "Castle courtyard",
+};
+const TEXT_EN = {
+  "Citerne portugaise": "Vaulted Manueline hall, once the arms store of the 1514 castle, turned into a cistern in the 16th century. Its columns are mirrored in a thin sheet of water; Orson Welles filmed “Othello” here.",
+  "Église de l’Assomption": "16th-century Portuguese parish church, at the heart of the fortified city.",
+  "Grande Mosquée": "The city’s mosque; its five-sided minaret is said to be a former Portuguese lighthouse tower.",
+  "Porte de la Mer": "Bab El Bhar opened onto the old harbour. The Portuguese left Mazagan by sea in 1769.",
+  "Porta da Terra": "The former main gate on the land side, in line with the city’s main street.",
+  "Palais du Gouverneur": "Remains of the Portuguese governor’s residence in Mazagan.",
+  "Torre de Rebate": "Tower of the 1514 castle — the oldest core of the fortress, before the bastioned walls.",
+  "Synagogue": "A reminder of the Jewish community that long lived in the city.",
+  "Bastion de l’Ange": "South-east bastion facing the ocean; its cannons are still lined up.",
+  "Bastion Saint-Sébastien": "North-east bastion of the walls, facing the harbour.",
+  "Bastion Saint-Antoine": "North-west bastion, guarding the land front.",
+  "Bastion Saint-Esprit": "South-west bastion of the star-shaped walls.",
+};
+const nm = (s) => L(s, NAME_EN[s] || s);
+const poiText = (p) => L(p.text, TEXT_EN[p.name] || p.text);
 const DISC_R = 0.6;                                  // radius of the table-top window (m)
 const TABLE_POS = new THREE.Vector3(0, 0.9, -0.95);  // in front of the visitor (local-floor: metres above the floor)
 const FIT_R = 255;                                   // metres of city visible in the window at zoom 1
@@ -24,8 +51,10 @@ const ZOOM_MIN = 0.6, ZOOM_MAX = 8;
 const BASE_Y = 48;                                   // ellipsoidal height laid on the plinth (≈ sea level here)
 const YAW0 = 0;
 const DESK_CAM = new THREE.Vector3(0, 1.72, 0.62);   // desktop: far enough back to see the side panels
-const HINT_MODEL = "Glissez pour tourner autour · molette : zoom · flèches : tourner la maquette · cliquez un point d’intérêt · Échap : retour à la présentation";
-const HINT_PANO = "Glissez pour regarder autour · molette : zoom · ← → : photo précédente / suivante · flèches au sol : avancer · Échap : retour à la maquette";
+const HINT_MODEL = () => L("Glissez pour tourner autour · molette : zoom · flèches : tourner la maquette · cliquez un point d’intérêt · Échap : retour à la présentation",
+  "Drag to orbit · wheel: zoom · arrows: turn the model · click a point of interest · Esc: back to the presentation");
+const HINT_PANO = () => L("Glissez pour regarder autour · molette : zoom · ← → : photo précédente / suivante · flèches au sol : avancer · Échap : retour à la maquette",
+  "Drag to look around · wheel: zoom · ← →: previous / next photo · floor arrows: move on · Esc: back to the model");
 const UP = new THREE.Vector3(0, 1, 0);
 
 function rr(x, X, Y, W, H, r) { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
@@ -287,23 +316,23 @@ varying vec3 vMapP;`;
     let hoverPoi = null, hoverPanel = null, hoverKey = null;
     function setSound(k, on) { if (k === "music") fx.setMusic(on); else fx.on.sfx = on; menu.redraw(); if (onAudio) onAudio(); }
 
-    const LAYER_ROWS = [
-      ["pins", "Points d’intérêt", "12 lieux de la cité"],
-      ["panos", "Photos 360°", `${PANO.panos.length} vues immersives · janvier 2022`],
-      ["walls", "Remparts", "Enceinte bastionnée, 1541–1548"],
-      ["scan", "Balayage LiDAR", "Onde de relevé sur la maquette"],
-      ["contour", "Altimétrie", "Teinte hypsométrique · courbes 2 m"],
-      ["drone", "Drone de relevé", "Acquisition photogrammétrique"],
+    const LAYER_ROWS = () => [
+      ["pins", L("Points d’intérêt", "Points of interest"), L("12 lieux de la cité", "12 places in the city")],
+      ["panos", L("Photos 360°", "360° photos"), L(`${PANO.panos.length} vues immersives · janvier 2022`, `${PANO.panos.length} immersive views · January 2022`)],
+      ["walls", L("Remparts", "Ramparts"), L("Enceinte bastionnée, 1541–1548", "Bastioned walls, 1541–1548")],
+      ["scan", L("Balayage LiDAR", "LiDAR sweep"), L("Onde de relevé sur la maquette", "Survey wave across the model")],
+      ["contour", L("Altimétrie", "Elevation"), L("Teinte hypsométrique · courbes 2 m", "Hypsometric tint · 2 m contours")],
+      ["drone", L("Drone de relevé", "Survey drone"), L("Acquisition photogrammétrique", "Photogrammetric capture")],
     ];
     const logoImg = new Image(); logoImg.onload = () => menu.redraw(); logoImg.src = "./img/etafat-logo-dark.png";
-    const menu = new Panel(560, 1560, 0.25, (x, P) => {
+    const menu = new Panel(560, 1650, 0.25, (x, P) => {
       const W = P.w, H = P.h;
       panelBg(x, W, H);
       if (logoImg.complete && logoImg.naturalWidth) { const h = 120, w = h * logoImg.naturalWidth / logoImg.naturalHeight; x.drawImage(logoImg, (W - w) / 2, 26, w, h); }
       x.fillStyle = "rgba(142,230,228,0.25)"; x.fillRect(40, 168, W - 80, 2);
-      x.font = `700 26px ${FONT}`; spaced(x, "5px"); x.fillStyle = TEAL_L; x.fillText("CALQUES", 40, 210); spaced(x, "0px");
+      x.font = `700 26px ${FONT}`; spaced(x, "5px"); x.fillStyle = TEAL_L; x.fillText(L("CALQUES", "LAYERS"), 40, 210); spaced(x, "0px");
       let y = 232;
-      for (const [key, label, sub] of LAYER_ROWS) {
+      for (const [key, label, sub] of LAYER_ROWS()) {
         const on = layers[key], hov = P.btn(22, y, W - 44, 88, key, () => { layers[key] = !layers[key]; P.redraw(); });
         if (hov) { rr(x, 22, y, W - 44, 88, 20); x.fillStyle = "rgba(42,181,180,0.16)"; x.fill(); }
         x.fillStyle = "#fff"; x.font = `600 31px ${FONT}`; x.fillText(label, 44, y + 40);
@@ -327,14 +356,14 @@ varying vec3 vMapP;`;
         x.fillStyle = "#fff"; x.font = `600 29px ${FONT}`; x.textAlign = "center"; x.fillText(label, W / 2, y + 48); x.textAlign = "left";
         y += 92;
       };
-      bigBtn("tour", tour.on ? "■  Arrêter la visite" : "▶  Visite guidée", tour.on, () => (tour.on ? stopTour() : startTour()));
-      bigBtn("reset", "⟲  Vue d’ensemble", false, () => resetView());
+      bigBtn("tour", tour.on ? L("■  Arrêter la visite", "■  Stop the tour") : L("▶  Visite guidée", "▶  Guided tour"), tour.on, () => (tour.on ? stopTour() : startTour()));
+      bigBtn("reset", L("⟲  Vue d’ensemble", "⟲  Overview"), false, () => resetView());
       // back to the presentation (the valley), then music / sound effects
-      x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText("PRÉSENTATION ETAFAT", 40, y + 22); spaced(x, "0px"); y += 40;
+      x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText(L("PRÉSENTATION ETAFAT", "ETAFAT PRESENTATION"), 40, y + 22); spaced(x, "0px"); y += 40;
       {
         const hov = P.btn(40, y, W - 80, 72, "back", () => exit());
         rr(x, 40, y, W - 80, 72, 36); x.fillStyle = hov ? TEAL : "rgba(42,181,180,0.3)"; x.fill(); x.lineWidth = 3; x.strokeStyle = TEAL; x.stroke();
-        x.fillStyle = "#fff"; x.font = `600 27px ${FONT}`; x.textAlign = "center"; x.fillText("‹  Retour à la présentation", W / 2, y + 46); x.textAlign = "left";
+        x.fillStyle = "#fff"; x.font = `600 27px ${FONT}`; x.textAlign = "center"; x.fillText(L("‹  Retour à la présentation", "‹  Back to the presentation"), W / 2, y + 46); x.textAlign = "left";
       }
       y += 88;
       { // VR ⇄ AR (passthrough), as in the presentation's dock
@@ -343,28 +372,37 @@ varying vec3 vMapP;`;
         for (const [k, X] of [["vr", 40], ["ar", W / 2]]) {
           const ok = st[k], on = cur === k, hov = ok && !on && P.btn(X, y, W / 2 - 40, 72, "mode-" + k, () => xr.go(k));
           if (on || hov) { x.save(); rr(x, 40, y, W - 80, 72, 36); x.clip(); x.fillStyle = on ? TEAL : "rgba(42,181,180,0.25)"; x.fillRect(X, y, W / 2 - 40, 72); x.restore(); }
-          const label = on ? (k === "vr" ? "Réalité virtuelle" : "Passthrough (AR)") : `${cur ? "Passer" : "Entrer"} en ${k.toUpperCase()}`;
+          const label = on ? (k === "vr" ? L("Réalité virtuelle", "Virtual reality") : "Passthrough (AR)") : L(`${cur ? "Passer" : "Entrer"} en ${k.toUpperCase()}`, `${cur ? "Switch to" : "Enter"} ${k.toUpperCase()}`);
           x.fillStyle = ok ? "#fff" : "rgba(234,244,248,0.3)"; x.font = `600 25px ${FONT}`; x.textAlign = "center"; x.fillText(label, X + (W / 2 - 40) / 2, y + 45); x.textAlign = "left";
         }
       }
       y += 88;
-      for (const [k, label, X] of [["music", "Musique", 40], ["sfx", "Effets sonores", W / 2 + 8]]) {
+      for (const [k, label, X] of [["music", L("Musique", "Music"), 40], ["sfx", L("Effets sonores", "Sound effects"), W / 2 + 8]]) {
         const on = fx.on[k], w = W / 2 - 48, hov = P.btn(X, y, w, 62, "snd-" + k, () => setSound(k, !fx.on[k]));
         rr(x, X, y, w, 62, 31); x.fillStyle = hov ? "rgba(42,181,180,0.25)" : "rgba(255,255,255,0.07)"; x.fill();
         x.beginPath(); x.arc(X + 32, y + 31, 10, 0, Math.PI * 2); x.fillStyle = on ? TEAL_L : "rgba(234,244,248,0.25)"; x.fill();
         x.fillStyle = on ? "#fff" : "rgba(234,244,248,0.5)"; x.font = `600 24px ${FONT}`; x.fillText(label, X + 54, y + 40);
       }
-      y += 92;
-      x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText("LÉGENDE", 40, y); spaced(x, "0px"); y += 22;
+      y += 80;
+      { // language: Français | English
+        rr(x, 40, y, W - 80, 62, 31); x.lineWidth = 2; x.strokeStyle = "rgba(42,181,180,0.6)"; x.stroke();
+        for (const [k, label, X] of [["fr", "Français", 40], ["en", "English", W / 2]]) {
+          const on = I18N.lang === k, hov = !on && P.btn(X, y, W / 2 - 40, 62, "lang-" + k, () => I18N.set(k));
+          if (on || hov) { x.save(); rr(x, 40, y, W - 80, 62, 31); x.clip(); x.fillStyle = on ? TEAL : "rgba(42,181,180,0.25)"; x.fillRect(X, y, W / 2 - 40, 62); x.restore(); }
+          x.fillStyle = on || hov ? "#fff" : "rgba(234,244,248,0.6)"; x.font = `600 24px ${FONT}`; x.textAlign = "center"; x.fillText(label, X + (W / 2 - 40) / 2, y + 40); x.textAlign = "left";
+        }
+      }
+      y += 102;
+      x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText(L("LÉGENDE", "LEGEND"), 40, y); spaced(x, "0px"); y += 22;
       Object.values(CAT).forEach((c, i) => {
         const X = 40 + (i % 2) * 245, Y = y + Math.floor(i / 2) * 50 + 22;
         x.beginPath(); x.arc(X + 12, Y, 11, 0, Math.PI * 2); x.fillStyle = c.color; x.fill();
-        x.fillStyle = "rgba(234,244,248,0.85)"; x.font = `500 24px ${FONT}`; x.fillText(c.label, X + 34, Y + 8);
+        x.fillStyle = "rgba(234,244,248,0.85)"; x.font = `500 24px ${FONT}`; x.fillText(catLabel(c), X + 34, Y + 8);
       });
       x.fillStyle = "rgba(234,244,248,0.45)"; x.font = `400 19px ${FONT}`;
-      x.fillText("Gâchette / pincer : choisir · maintenir + glisser : déplacer", 40, H - 90);
-      x.fillText("Deux mains sur la maquette : zoomer et tourner", 40, H - 62);
-      x.fillText("Joystick : tourner / zoomer · Grip : déplacer la maquette", 40, H - 34);
+      x.fillText(L("Gâchette / pincer : choisir · maintenir + glisser : déplacer", "Trigger / pinch: select · hold + drag: move"), 40, H - 90);
+      x.fillText(L("Deux mains sur la maquette : zoomer et tourner", "Both hands on the model: zoom and rotate"), 40, H - 62);
+      x.fillText(L("Joystick : tourner / zoomer · Grip : déplacer la maquette", "Joystick: turn / zoom · Grip: move the model"), 40, H - 34);
     });
     menu.mesh.position.set(-(DISC_R + 0.3), 0.38, 0.08); table.add(menu.mesh);
 
@@ -375,24 +413,24 @@ varying vec3 vMapP;`;
       panelBg(x, W, H, c.color);
       rr(x, 3, 40, 10, H - 80, 5); x.fillStyle = c.color; x.fill();
       x.font = `700 23px ${FONT}`; spaced(x, "3px");
-      const chip = c.label.toUpperCase(), cw = x.measureText(chip).width + 36;
+      const chip = catLabel(c).toUpperCase(), cw = x.measureText(chip).width + 36;
       rr(x, 44, 34, cw, 46, 23); x.fillStyle = rgba(c.color, 0.2); x.fill();
       x.fillStyle = c.color; x.fillText(chip, 62, 66); spaced(x, "0px");
       x.fillStyle = "rgba(234,244,248,0.5)"; x.font = `500 24px ${FONT}`; x.fillText(`${p.i + 1} / ${pois.length}`, 44 + cw + 18, 66);
       const hc = P.btn(W - 96, 24, 70, 70, "close", () => deselect());
       x.beginPath(); x.arc(W - 61, 59, 30, 0, Math.PI * 2); x.fillStyle = hc ? "rgba(255,255,255,0.22)" : "rgba(255,255,255,0.08)"; x.fill();
       x.strokeStyle = "#fff"; x.lineWidth = 4; x.beginPath(); x.moveTo(W - 72, 48); x.lineTo(W - 50, 70); x.moveTo(W - 50, 48); x.lineTo(W - 72, 70); x.stroke();
-      x.fillStyle = "#fff"; x.font = `700 54px ${FONT}`; x.fillText(p.name, 44, 150);
+      x.fillStyle = "#fff"; x.font = `700 54px ${FONT}`; x.fillText(nm(p.name), 44, 150);
       x.fillStyle = "rgba(234,244,248,0.86)"; x.font = `400 29px ${FONT}`;
-      wrapLines(x, p.text, W - 96).slice(0, 7).forEach((l, k) => x.fillText(l, 44, 210 + k * 41));
+      wrapLines(x, poiText(p), W - 96).slice(0, 7).forEach((l, k) => x.fillText(l, 44, 210 + k * 41));
       const nav = (X, id, label, fn) => {
         const hov = P.btn(X, H - 96, 230, 64, id, fn);
         rr(x, X, H - 96, 230, 64, 32); x.fillStyle = hov ? "rgba(42,181,180,0.3)" : "rgba(255,255,255,0.08)"; x.fill();
         x.fillStyle = "#fff"; x.font = `600 26px ${FONT}`; x.textAlign = "center"; x.fillText(label, X + 115, H - 55); x.textAlign = "left";
       };
-      nav(44, "prev", "‹  Précédent", () => { stopTour(); selectPOI((sel + pois.length - 1) % pois.length); });
-      nav(W - 274, "next", "Suivant  ›", () => { stopTour(); selectPOI((sel + 1) % pois.length); });
-      if (p.pano) nav(W / 2 - 115, "pano", p.panoNear ? "◉  Vue 360°" : "◉  360° proche", () => { stopTour(); openPano(p.pano.i); });
+      nav(44, "prev", L("‹  Précédent", "‹  Previous"), () => { stopTour(); selectPOI((sel + pois.length - 1) % pois.length); });
+      nav(W - 274, "next", L("Suivant  ›", "Next  ›"), () => { stopTour(); selectPOI((sel + 1) % pois.length); });
+      if (p.pano) nav(W / 2 - 115, "pano", p.panoNear ? L("◉  Vue 360°", "◉  360° view") : L("◉  360° proche", "◉  Nearby 360°"), () => { stopTour(); openPano(p.pano.i); });
       x.fillStyle = "rgba(234,244,248,0.35)"; x.font = `400 18px ${FONT}`; x.textAlign = "right"; x.fillText("Position © OpenStreetMap", W - 44, 118); x.textAlign = "left";
     });
     card.mesh.position.set(DISC_R + 0.32, 0.36, 0.08); card.mesh.visible = false; table.add(card.mesh);
@@ -401,10 +439,10 @@ varying vec3 vMapP;`;
     const title = new Panel(1600, 320, 0.8, (x, P) => {
       const W = P.w;
       x.textAlign = "center"; x.shadowColor = "rgba(0,0,0,0.6)"; x.shadowBlur = 18;
-      x.font = `700 30px ${FONT}`; spaced(x, "7px"); x.fillStyle = TEAL_L; x.fillText("ETAFAT · MAQUETTE NUMÉRIQUE 3D PAR DRONE", W / 2, 58); spaced(x, "0px");
-      x.font = `700 96px ${FONT}`; x.fillStyle = "#fff"; x.fillText(DATA.title, W / 2, 168);
-      x.font = `500 40px ${FONT}`; x.fillStyle = "rgba(234,244,248,0.8)"; x.fillText(DATA.subtitle, W / 2, 232);
-      if (loadPct < 100) { x.font = `500 28px ${FONT}`; x.fillStyle = TEAL_L; x.fillText(`Chargement de la maquette… ${loadPct} %`, W / 2, 290); }
+      x.font = `700 30px ${FONT}`; spaced(x, "7px"); x.fillStyle = TEAL_L; x.fillText(L("ETAFAT · MAQUETTE NUMÉRIQUE 3D PAR DRONE", "ETAFAT · 3D DIGITAL MODEL BY DRONE"), W / 2, 58); spaced(x, "0px");
+      x.font = `700 96px ${FONT}`; x.fillStyle = "#fff"; x.fillText(L(DATA.title, "Portuguese City of Mazagan"), W / 2, 168);
+      x.font = `500 40px ${FONT}`; x.fillStyle = "rgba(234,244,248,0.8)"; x.fillText(L(DATA.subtitle, "El Jadida · UNESCO World Heritage Site (2004)"), W / 2, 232);
+      if (loadPct < 100) { x.font = `500 28px ${FONT}`; x.fillStyle = TEAL_L; x.fillText(L(`Chargement de la maquette… ${loadPct} %`, `Loading the model… ${loadPct}%`), W / 2, 290); }
       x.textAlign = "left"; x.shadowBlur = 0;
     }, { interactive: false });
     title.mesh.position.set(0, 0.62, -(DISC_R + 0.12)); table.add(title.mesh);
@@ -413,12 +451,12 @@ varying vec3 vMapP;`;
     const scaleP = new Panel(1024, 160, 0.3, (x, P) => {
       const pxPerM = P.w / 0.3, denom = Math.round(1 / K / 10) * 10;
       let d = 10; for (const c of [10, 20, 25, 50, 100, 200, 250, 500]) if (c * K * pxPerM <= 420) d = c;
-      const L = d * K * pxPerM;
-      x.textAlign = "left"; x.font = `700 30px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText(`ÉCHELLE 1:${denom.toLocaleString("fr-FR")}`, 40, 96); spaced(x, "0px");
-      const X0 = P.w - 60 - L;
-      x.fillStyle = "#fff"; x.fillRect(X0, 88, L / 2, 14); x.fillStyle = "rgba(255,255,255,0.35)"; x.fillRect(X0 + L / 2, 88, L / 2, 14);
-      x.strokeStyle = "#fff"; x.lineWidth = 3; x.strokeRect(X0, 88, L, 14);
-      x.font = `600 28px ${FONT}`; x.fillStyle = "#fff"; x.textAlign = "center"; x.fillText("0", X0, 72); x.fillText(`${d} m`, X0 + L, 72); x.textAlign = "left";
+      const BL = d * K * pxPerM; // bar length (px)
+      x.textAlign = "left"; x.font = `700 30px ${FONT}`; spaced(x, "4px"); x.fillStyle = TEAL_L; x.fillText(`${L("ÉCHELLE", "SCALE")} 1:${denom.toLocaleString(L("fr-FR", "en-US"))}`, 40, 96); spaced(x, "0px");
+      const X0 = P.w - 60 - BL;
+      x.fillStyle = "#fff"; x.fillRect(X0, 88, BL / 2, 14); x.fillStyle = "rgba(255,255,255,0.35)"; x.fillRect(X0 + BL / 2, 88, BL / 2, 14);
+      x.strokeStyle = "#fff"; x.lineWidth = 3; x.strokeRect(X0, 88, BL, 14);
+      x.font = `600 28px ${FONT}`; x.fillStyle = "#fff"; x.textAlign = "center"; x.fillText("0", X0, 72); x.fillText(`${d} m`, X0 + BL, 72); x.textAlign = "left";
     }, { interactive: false });
     scaleP.mesh.rotation.x = -62 * DEG; scaleP.mesh.position.set(0, 0.012, DISC_R + 0.12); table.add(scaleP.mesh);
 
@@ -511,13 +549,14 @@ varying vec3 vMapP;`;
     })();
     function labelMesh(p) {
       const H = 96, pad = 16, c = document.createElement("canvas"), x = c.getContext("2d");
-      x.font = `600 44px ${FONT}`; const tw = x.measureText(p.name).width, W = Math.ceil(pad + 64 + 16 + tw + pad + 12);
+      const name = nm(p.name);
+      x.font = `600 44px ${FONT}`; const tw = x.measureText(name).width, W = Math.ceil(pad + 64 + 16 + tw + pad + 12);
       c.width = W; c.height = H;
       const col = CAT[p.cat].color;
       rr(x, 2, 2, W - 4, H - 4, 46); x.fillStyle = "rgba(8,23,38,0.84)"; x.fill(); x.lineWidth = 3; x.strokeStyle = rgba(col, 0.9); x.stroke();
       x.beginPath(); x.arc(pad + 32, H / 2, 32, 0, Math.PI * 2); x.fillStyle = col; x.fill();
       x.fillStyle = "#081726"; x.font = `800 34px ${FONT}`; x.textAlign = "center"; x.fillText(String(p.i + 1), pad + 32, H / 2 + 12);
-      x.textAlign = "left"; x.fillStyle = "#fff"; x.font = `600 44px ${FONT}`; x.fillText(p.name, pad + 64 + 16, H / 2 + 15);
+      x.textAlign = "left"; x.fillStyle = "#fff"; x.font = `600 44px ${FONT}`; x.fillText(name, pad + 64 + 16, H / 2 + 15);
       const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 4;
       const h = 0.019, w = h * W / H;
       const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h).translate(0, h / 2, 0), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthTest: false, depthWrite: false }));
@@ -640,9 +679,9 @@ varying vec3 vMapP;`;
       x.save(); rr(x, 12, 12, 496, 248, 14); x.clip();
       if (im.complete && im.naturalWidth) x.drawImage(im, 12, 12, 496, 248); else { x.fillStyle = "#0d2740"; x.fillRect(12, 12, 496, 248); }
       x.restore();
-      x.fillStyle = "#fff"; x.font = `700 30px ${FONT}`; x.fillText(p.place, 22, 302);
+      x.fillStyle = "#fff"; x.font = `700 30px ${FONT}`; x.fillText(nm(p.place), 22, 302);
       x.fillStyle = TEAL_L; x.font = `500 22px ${FONT}`;
-      x.fillText(tipFor.items ? `${tipFor.items.length} photos 360° · cliquer pour entrer` : `Photo 360° · ${p.time} · cliquer pour entrer`, 22, 342);
+      x.fillText(tipFor.items ? L(`${tipFor.items.length} photos 360° · cliquer pour entrer`, `${tipFor.items.length} 360° photos · click to enter`) : L(`Photo 360° · ${p.time} · cliquer pour entrer`, `360° photo · ${p.time} · click to enter`), 22, 342);
     }, { interactive: false });
     tip.mesh.visible = false; tip.mesh.renderOrder = 35; tip.mesh.material.depthTest = false; scene.add(tip.mesh);
 
@@ -687,7 +726,7 @@ varying vec3 vMapP;`;
         pm.on = true; pm.i = i; pm.playT = 0;
         if (first) {
           table.visible = false; env.visible = false; panoSphere.visible = true; panoHud.visible = true; arrowG.visible = true;
-          if (hintEl) hintEl.textContent = HINT_PANO;
+          if (hintEl) hintEl.textContent = HINT_PANO();
           camera.getWorldDirection(_v); pm.hudYaw = Math.atan2(-_v.x, -_v.z);
           if (!renderer.xr.isPresenting) {
             pm.saved = { pos: camera.position.clone(), quat: camera.quaternion.clone(), fov: camera.fov };
@@ -701,7 +740,7 @@ varying vec3 vMapP;`;
       const done = () => {
         pm.on = false; pm.play = false; pm.token++;
         panoSphere.visible = false; panoHud.visible = false; arrowG.visible = false;
-        table.visible = true; env.visible = !arMode; if (hintEl) hintEl.textContent = HINT_MODEL;
+        table.visible = true; env.visible = !arMode; if (hintEl) hintEl.textContent = HINT_MODEL();
         if (pm.saved) { camera.position.copy(pm.saved.pos); camera.quaternion.copy(pm.saved.quat); camera.fov = pm.saved.fov; camera.updateProjectionMatrix(); pm.saved = null; controls.enabled = true; }
         keepFull([]);
       };
@@ -731,10 +770,10 @@ varying vec3 vMapP;`;
         const g = x.createRadialGradient(cx, cy, 0, cx, cy, 34); g.addColorStop(0, "rgba(245,185,66,0.8)"); g.addColorStop(1, "rgba(245,185,66,0)"); x.fillStyle = g; x.fill();
       }
       x.beginPath(); x.arc(cx, cy, 8, 0, Math.PI * 2); x.fillStyle = "#f5b942"; x.fill(); x.lineWidth = 3; x.strokeStyle = "#fff"; x.stroke();
-      x.fillStyle = TEAL_L; x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillText(`PHOTO 360° · 19 JANV. 2022 · ${p.time}`, 272, 62); spaced(x, "0px");
-      x.fillStyle = "#fff"; x.font = `700 46px ${FONT}`; x.fillText(p.place, 272, 124);
-      x.fillStyle = "rgba(234,244,248,0.55)"; x.font = `500 24px ${FONT}`; x.fillText(`${p.i + 1} / ${panos.length}${p.north == null ? "" : " · orientée au nord"}`, 272, 166);
-      x.fillStyle = "rgba(234,244,248,0.4)"; x.font = `400 19px ${FONT}`; x.fillText("Joystick : photo précédente / suivante · B : retour", 272, 214);
+      x.fillStyle = TEAL_L; x.font = `700 22px ${FONT}`; spaced(x, "4px"); x.fillText(L(`PHOTO 360° · 19 JANV. 2022 · ${p.time}`, `360° PHOTO · 19 JAN 2022 · ${p.time}`), 272, 62); spaced(x, "0px");
+      x.fillStyle = "#fff"; x.font = `700 46px ${FONT}`; x.fillText(nm(p.place), 272, 124);
+      x.fillStyle = "rgba(234,244,248,0.55)"; x.font = `500 24px ${FONT}`; x.fillText(`${p.i + 1} / ${panos.length}${p.north == null ? "" : L(" · orientée au nord", " · north-aligned")}`, 272, 166);
+      x.fillStyle = "rgba(234,244,248,0.4)"; x.font = `400 19px ${FONT}`; x.fillText(L("Joystick : photo précédente / suivante · B : retour", "Joystick: previous / next photo · B: back"), 272, 214);
       const round = (X, id, glyph, fn) => {
         const hov = P.btn(X - 42, 88, 84, 84, id, fn);
         x.beginPath(); x.arc(X, 130, 40, 0, Math.PI * 2); x.fillStyle = hov ? "rgba(42,181,180,0.45)" : "rgba(255,255,255,0.1)"; x.fill();
@@ -745,7 +784,7 @@ varying vec3 vMapP;`;
       round(W - 282, "next", "›", () => stepPano(1));
       const hov = P.btn(W - 222, 92, 198, 76, "exit", () => closePano());
       rr(x, W - 222, 92, 198, 76, 38); x.fillStyle = hov ? TEAL : "rgba(42,181,180,0.25)"; x.fill(); x.lineWidth = 3; x.strokeStyle = TEAL; x.stroke();
-      x.fillStyle = "#fff"; x.font = `600 27px ${FONT}`; x.textAlign = "center"; x.fillText("Maquette", W - 123, 139); x.textAlign = "left";
+      x.fillStyle = "#fff"; x.font = `600 27px ${FONT}`; x.textAlign = "center"; x.fillText(L("Maquette", "Model"), W - 123, 139); x.textAlign = "left";
     });
     panoBar.mesh.position.set(0, -0.42, -0.9); panoBar.mesh.rotation.x = -0.44; panoHud.add(panoBar.mesh);
 
@@ -777,8 +816,8 @@ varying vec3 vMapP;`;
           if (cand.some((c) => Math.abs(((c.az - az + 3 * Math.PI) % (2 * Math.PI)) - Math.PI) < 0.35)) return; // same direction as a closer one
           cand.push({ q, az, dist, name });
         };
-        add(panos[p.i + 1], "Suivante"); add(panos[p.i - 1], "Précédente");
-        panos.filter((q) => q !== p).sort((a, b) => a.m.distanceTo(p.m) - b.m.distanceTo(p.m)).slice(0, 6).forEach((q) => add(q, q.place));
+        add(panos[p.i + 1], L("Suivante", "Next")); add(panos[p.i - 1], L("Précédente", "Previous"));
+        panos.filter((q) => q !== p).sort((a, b) => a.m.distanceTo(p.m) - b.m.distanceTo(p.m)).slice(0, 6).forEach((q) => add(q, nm(q.place)));
       }
       arrows.forEach((a, k) => {
         const c = cand[k]; a.target = c ? c.q : null; a.g.visible = !!c; if (!c) return;
@@ -1042,7 +1081,7 @@ varying vec3 vMapP;`;
         camera.position.copy(DESK_CAM); camera.fov = 55; controls.enabled = true; controls.update();
       }
       camera.updateProjectionMatrix();
-      if (hintEl) hintEl.textContent = HINT_MODEL;
+      if (hintEl) hintEl.textContent = HINT_MODEL();
       api.active = true; menu.redraw();
     }
     function switchOut() {
@@ -1054,7 +1093,7 @@ varying vec3 vMapP;`;
       camera.position.copy(saved.camPos); camera.quaternion.copy(saved.camQuat); camera.updateProjectionMatrix();
       renderer.toneMapping = saved.tone; controls.enabled = false; renderer.domElement.style.cursor = "";
       reticle.visible = false; tip.mesh.visible = false;
-      if (hintEl) hintEl.textContent = saved.hint;
+      if (hintEl) hintEl.textContent = hintEl.dataset[I18N.lang] || saved.hint; // the presentation's hint, in the current language
       api.active = false;
     }
 
@@ -1221,6 +1260,17 @@ varying vec3 vMapP;`;
       },
     };
 
+    // language switch (dock, 2D page or this menu): every panel, the pin labels and the floor arrows in the new language
+    I18N.on(() => {
+      for (const P of panels) P.redraw();
+      for (const p of pois) {
+        const old = p.label, label = labelMesh(p);
+        label.position.copy(old.position); label.scale.copy(old.scale); label.quaternion.copy(old.quaternion); label.visible = old.visible;
+        label.userData.poi = p; p.g.remove(old); old.geometry.dispose(); old.material.map.dispose(); old.material.dispose(); p.g.add(label); p.label = label;
+      }
+      if (pm.on) buildArrows(panos[pm.i]);
+      if (api.active && hintEl) hintEl.textContent = pm.on ? HINT_PANO() : HINT_MODEL();
+    });
     return { switchIn, switchOut, update, applyAR, redrawMenu: () => menu.redraw() };
   }
 

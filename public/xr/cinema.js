@@ -3,11 +3,14 @@
 // Ambient" idea, here in 3D), sound from the screen (positional), and a remote lectern next to the visitor:
 // film cards, play/pause, seek bar, volume, "lumières tamisées". Playing dims the landscape and the music.
 import * as THREE from "three";
+import { I18N, L as tr, loc } from "./i18n.js";
 
 const DEG = Math.PI / 180;
 export const FILMS = [
-  { id: "manifeste", title: "Manifeste", sub: "Pionniers de la souveraineté foncière", src: "./videos/manifeste.mp4", poster: "./videos/manifeste.jpg", dur: 58 },
-  { id: "institutionnel", title: "Film institutionnel", sub: "De la donnée au territoire", src: "./videos/institutionnel.mp4", poster: "./videos/institutionnel.jpg", dur: 130 },
+  { id: "manifeste", title: "Manifeste", sub: "Pionniers de la souveraineté foncière", src: "./videos/manifeste.mp4", poster: "./videos/manifeste.jpg", dur: 58, en: { title: "Manifesto", sub: "Pioneers of land sovereignty" } },
+  { id: "institutionnel", title: "Film institutionnel", sub: "De la donnée au territoire", src: "./videos/institutionnel.mp4", poster: "./videos/institutionnel.jpg", dur: 130, en: { title: "Corporate film", sub: "From data to territory" } },
+  // motion-design reel, no soundtrack: the background music keeps playing under it
+  { id: "reel", title: "Reel ETAFAT", sub: "Du nuage de points à la décision", src: "./videos/reel.mp4", poster: "./videos/reel.jpg", dur: 92, silent: true, en: { title: "ETAFAT reel", sub: "From point cloud to decision" } },
 ];
 const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 function rr(x, X, Y, W, H, r) { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + W, Y, X + W, Y + H, r); x.arcTo(X + W, Y + H, X, Y + H, r); x.arcTo(X, Y + H, X, Y, r); x.arcTo(X, Y, X + W, Y, r); x.closePath(); }
@@ -32,9 +35,9 @@ export function createCinema({ scene, fx, world, az = -90 }) {
   const posters = FILMS.map((f) => { const i = new Image(); i.src = f.poster; return i; });
   const idleC = document.createElement("canvas"); idleC.width = 1600; idleC.height = 900;
   const idleTex = new THREE.CanvasTexture(idleC); idleTex.colorSpace = THREE.SRGBColorSpace; idleTex.anisotropy = 8;
-  let cur = 0, playing = false, ended = false, vol = 0.9, autoDim = true, msg = "";
+  let cur = 0, playing = false, ended = false, vol = 0.9, autoDim = true, msg = null; // msg: () => text in the current language
   function drawIdle() {
-    const x = idleC.getContext("2d"), W = idleC.width, Hh = idleC.height, f = FILMS[cur], img = posters[cur];
+    const x = idleC.getContext("2d"), W = idleC.width, Hh = idleC.height, f = loc(FILMS[cur]), img = posters[cur];
     x.fillStyle = "#06121f"; x.fillRect(0, 0, W, Hh);
     if (img.complete && img.naturalWidth) cover(x, img, 0, 0, W, Hh);
     const g = x.createLinearGradient(0, Hh * 0.35, 0, Hh); g.addColorStop(0, "rgba(4,12,22,0)"); g.addColorStop(1, "rgba(4,12,22,0.92)");
@@ -45,10 +48,10 @@ export function createCinema({ scene, fx, world, az = -90 }) {
     x.fillStyle = "#fff"; x.beginPath(); x.moveTo(W / 2 - 28, Hh * 0.44 - 44); x.lineTo(W / 2 + 50, Hh * 0.44); x.lineTo(W / 2 - 28, Hh * 0.44 + 44); x.closePath(); x.fill();
     x.textAlign = "center"; x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif";
     if ("letterSpacing" in x) x.letterSpacing = "8px";
-    x.fillText(ended ? "REVOIR" : "ETAFAT · CINÉMA", W / 2, Hh * 0.7); if ("letterSpacing" in x) x.letterSpacing = "0px";
+    x.fillText(ended ? tr("REVOIR", "WATCH AGAIN") : tr("ETAFAT · CINÉMA", "ETAFAT · CINEMA"), W / 2, Hh * 0.7); if ("letterSpacing" in x) x.letterSpacing = "0px";
     x.fillStyle = "#fff"; x.font = "800 84px system-ui, sans-serif"; x.fillText(f.title, W / 2, Hh * 0.8);
     x.fillStyle = "rgba(234,244,248,0.8)"; x.font = "400 38px system-ui, sans-serif"; x.fillText(`${f.sub}  ·  ${fmt(f.dur)}`, W / 2, Hh * 0.87);
-    if (msg) { x.fillStyle = "#ffd28a"; x.font = "600 32px system-ui, sans-serif"; x.fillText(msg, W / 2, Hh * 0.94); }
+    if (msg) { x.fillStyle = "#ffd28a"; x.font = "600 32px system-ui, sans-serif"; x.fillText(msg(), W / 2, Hh * 0.94); }
     idleTex.needsUpdate = true;
   }
   posters.forEach((p) => (p.onload = () => { drawIdle(); remote.userData.redraw(); }));
@@ -73,8 +76,13 @@ export function createCinema({ scene, fx, world, az = -90 }) {
   }
   // label above the screen
   const lc = document.createElement("canvas"); lc.width = 1024; lc.height = 96; const lx = lc.getContext("2d");
-  lx.textAlign = "center"; lx.fillStyle = "#8ee6e4"; lx.font = "700 44px system-ui, sans-serif"; if ("letterSpacing" in lx) lx.letterSpacing = "14px"; lx.fillText("ETAFAT  ·  CINÉMA", 512, 64);
   const lt = new THREE.CanvasTexture(lc); lt.colorSpace = THREE.SRGBColorSpace;
+  const drawLabel = () => {
+    lx.clearRect(0, 0, 1024, 96);
+    lx.textAlign = "center"; lx.fillStyle = "#8ee6e4"; lx.font = "700 44px system-ui, sans-serif"; if ("letterSpacing" in lx) lx.letterSpacing = "14px"; lx.fillText(tr("ETAFAT  ·  CINÉMA", "ETAFAT  ·  CINEMA"), 512, 64);
+    lt.needsUpdate = true;
+  };
+  drawLabel();
   group.add(new THREE.Mesh(curved(A - dA(1.6), A + dA(1.6), y1 + 0.18, y1 + 0.48, R - 0.02, 16), basic({ map: lt, transparent: true, side: THREE.DoubleSide })));
 
   // ambient glow behind the screen, tinted with the film's average colour
@@ -97,16 +105,16 @@ export function createCinema({ scene, fx, world, az = -90 }) {
     const v = document.createElement("video");
     v.src = FILMS[i].src; v.playsInline = true; v.preload = "auto"; v.crossOrigin = "anonymous";
     v.addEventListener("ended", () => { playing = false; ended = true; screen.material.map = idleTex; drawIdle(); fx.duck(false); remote.userData.redraw(); });
-    v.addEventListener("error", () => { playing = false; msg = "Vidéo indisponible dans cette version (disponible dans l’application)"; drawIdle(); remote.userData.redraw(); });
+    v.addEventListener("error", () => { playing = false; msg = () => tr("Vidéo indisponible dans cette version (disponible dans l’application)", "Video not available in this version (available in the app)"); drawIdle(); remote.userData.redraw(); });
     const s = new THREE.PositionalAudio(fx.listener); s.setMediaElementSource(v); s.setRefDistance(7); s.setRolloffFactor(0.35); s.setVolume(vol); anchor.add(s);
     const t = new THREE.VideoTexture(v); t.colorSpace = THREE.SRGBColorSpace;
     videos[i] = v; sounds[i] = s; textures[i] = t; return v;
   }
   function play() {
-    const v = video(cur); fx.unlock(); msg = "";
+    const v = video(cur); fx.unlock(); msg = null;
     if (ended) { v.currentTime = 0; ended = false; }
-    v.play().then(() => { playing = true; screen.material.map = textures[cur]; screen.material.needsUpdate = true; fx.duck(true); remote.userData.redraw(); })
-      .catch(() => { v.muted = true; v.play().then(() => { playing = true; msg = ""; screen.material.map = textures[cur]; fx.duck(true); remote.userData.redraw(); }).catch(() => { msg = "Lecture impossible"; drawIdle(); }); });
+    v.play().then(() => { playing = true; screen.material.map = textures[cur]; screen.material.needsUpdate = true; fx.duck(!FILMS[cur].silent); remote.userData.redraw(); })
+      .catch(() => { v.muted = true; v.play().then(() => { playing = true; msg = null; screen.material.map = textures[cur]; fx.duck(!FILMS[cur].silent); remote.userData.redraw(); }).catch(() => { msg = () => tr("Lecture impossible", "Playback failed"); drawIdle(); }); });
   }
   function pause() { if (videos[cur]) videos[cur].pause(); playing = false; fx.duck(false); remote.userData.redraw(); }
   function select(i, autoplay = true) {
@@ -127,18 +135,23 @@ export function createCinema({ scene, fx, world, az = -90 }) {
     const x = rx; x.setTransform(RS, 0, 0, RS, 0, 0); x.clearRect(0, 0, RW, RH); regions = [];
     const g = x.createLinearGradient(0, 0, 0, RH); g.addColorStop(0, "rgba(19,49,80,0.95)"); g.addColorStop(1, "rgba(7,20,34,0.97)");
     rr(x, 2, 2, RW - 4, RH - 4, 30); x.fillStyle = g; x.fill(); x.lineWidth = 3; x.strokeStyle = "rgba(42,181,180,0.75)"; x.stroke();
-    x.fillStyle = "#8ee6e4"; x.font = "700 22px system-ui, sans-serif"; if ("letterSpacing" in x) x.letterSpacing = "6px"; x.fillText("CINÉMA ETAFAT", 40, 52); if ("letterSpacing" in x) x.letterSpacing = "0px";
-    x.fillStyle = "rgba(234,244,248,0.6)"; x.font = "400 20px system-ui, sans-serif"; x.textAlign = "right"; x.fillText("Choisissez un film · il s’affiche sur le grand écran", RW - 40, 52); x.textAlign = "left";
-    FILMS.forEach((f, i) => { // film cards
-      const X = 40 + i * 470, Y = 76, W = 450, Hh = 214, hov = btn(X, Y, W, Hh, "film" + i, () => select(i)), sel = i === cur;
+    x.fillStyle = "#8ee6e4"; x.font = "700 22px system-ui, sans-serif"; if ("letterSpacing" in x) x.letterSpacing = "6px"; x.fillText(tr("CINÉMA ETAFAT", "ETAFAT CINEMA"), 40, 52); if ("letterSpacing" in x) x.letterSpacing = "0px";
+    x.fillStyle = "rgba(234,244,248,0.6)"; x.font = "400 20px system-ui, sans-serif"; x.textAlign = "right"; x.fillText(tr("Choisissez un film · il s’affiche sur le grand écran", "Pick a film · it plays on the big screen"), RW - 40, 52); x.textAlign = "left";
+    const NF = FILMS.length, CG = 20, CW = (RW - 80 - (NF - 1) * CG) / NF;
+    const fit = (s, w) => { if (x.measureText(s).width <= w) return s; while (s.length > 1 && x.measureText(s + "…").width > w) s = s.slice(0, -1); return s.trimEnd() + "…"; };
+    FILMS.forEach((f0, i) => { // film cards
+      const f = loc(f0);
+      const X = 40 + i * (CW + CG), Y = 76, W = CW, Hh = 214, hov = btn(X, Y, W, Hh, "film" + i, () => select(i)), sel = i === cur;
       x.save(); rr(x, X, Y, W, Hh, 18); x.clip();
       const img = posters[i]; if (img.complete && img.naturalWidth) cover(x, img, X, Y, W, Hh); else { x.fillStyle = "#0d2740"; x.fillRect(X, Y, W, Hh); }
       const sh = x.createLinearGradient(0, Y + 80, 0, Y + Hh); sh.addColorStop(0, "rgba(4,12,22,0)"); sh.addColorStop(1, "rgba(4,12,22,0.92)"); x.fillStyle = sh; x.fillRect(X, Y, W, Hh);
       x.restore();
       rr(x, X, Y, W, Hh, 18); x.lineWidth = sel ? 5 : hov ? 4 : 2; x.strokeStyle = sel ? "#2ab5b4" : hov ? "#8ee6e4" : "rgba(255,255,255,0.18)"; x.stroke();
-      x.fillStyle = "#fff"; x.font = "700 30px system-ui, sans-serif"; x.fillText(f.title, X + 22, Y + Hh - 46);
-      x.fillStyle = "rgba(234,244,248,0.75)"; x.font = "400 20px system-ui, sans-serif"; x.fillText(`${f.sub} · ${fmt(f.dur)}`, X + 22, Y + Hh - 18);
-      if (sel && playing) { x.fillStyle = "#2ab5b4"; rr(x, X + W - 130, Y + 14, 116, 34, 17); x.fill(); x.fillStyle = "#fff"; x.font = "700 18px system-ui, sans-serif"; x.fillText("▶ EN COURS", X + W - 117, Y + 37); }
+      x.fillStyle = "rgba(4,12,22,0.75)"; rr(x, X + 12, Y + 14, 70, 30, 15); x.fill(); // duration chip
+      x.fillStyle = "#fff"; x.font = "600 17px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(fmt(f.dur), X + 47, Y + 35); x.textAlign = "left";
+      x.fillStyle = "#fff"; x.font = `700 ${NF > 2 ? 26 : 30}px system-ui, sans-serif`; x.fillText(fit(f.title, W - 40), X + 20, Y + Hh - 46);
+      x.fillStyle = "rgba(234,244,248,0.75)"; x.font = `400 ${NF > 2 ? 17 : 20}px system-ui, sans-serif`; x.fillText(fit(f.sub, W - 40), X + 20, Y + Hh - 18);
+      if (sel && playing) { x.fillStyle = "#2ab5b4"; rr(x, X + W - 130, Y + 14, 116, 34, 17); x.fill(); x.fillStyle = "#fff"; x.font = "700 18px system-ui, sans-serif"; x.fillText(tr("▶ EN COURS", "▶ PLAYING"), X + W - 117, Y + 37); }
     });
     // transport
     const ty = 330, v = videos[cur], t = v ? v.currentTime : 0, d = v && v.duration ? v.duration : FILMS[cur].dur;
@@ -158,14 +171,14 @@ export function createCinema({ scene, fx, world, az = -90 }) {
     x.fillStyle = "rgba(234,244,248,0.8)"; x.font = "600 20px system-ui, sans-serif"; x.fillText(fmt(t), BX, BY + 44); x.textAlign = "right"; x.fillText(fmt(d), BX + BW, BY + 44); x.textAlign = "left";
     round(872, "vol-", "−", () => { vol = Math.max(0, vol - 0.15); sounds.forEach((s) => s && s.setVolume(vol)); });
     round(944, "vol+", "+", () => { vol = Math.min(1.4, vol + 0.15); sounds.forEach((s) => s && s.setVolume(vol)); });
-    x.fillStyle = "rgba(234,244,248,0.55)"; x.font = "600 16px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(`VOLUME ${Math.round(vol / 1.4 * 100)} %`, 908, ty + 104); x.textAlign = "left";
+    x.fillStyle = "rgba(234,244,248,0.55)"; x.font = "600 16px system-ui, sans-serif"; x.textAlign = "center"; x.fillText(tr(`VOLUME ${Math.round(vol / 1.4 * 100)} %`, `VOLUME ${Math.round(vol / 1.4 * 100)}%`), 908, ty + 104); x.textAlign = "left";
     // dim toggle
     const dh = btn(40, 466, 330, 60, "dim", () => { autoDim = !autoDim; });
     rr(x, 40, 466, 330, 60, 30); x.fillStyle = dh ? "rgba(42,181,180,0.28)" : "rgba(255,255,255,0.07)"; x.fill();
     rr(x, 60, 482, 56, 28, 14); x.fillStyle = autoDim ? "#2ab5b4" : "rgba(255,255,255,0.2)"; x.fill();
     x.beginPath(); x.arc(autoDim ? 102 : 74, 496, 11, 0, 7); x.fillStyle = "#fff"; x.fill();
-    x.fillStyle = "#fff"; x.font = "600 22px system-ui, sans-serif"; x.fillText("Lumières tamisées", 132, 504);
-    x.fillStyle = "rgba(234,244,248,0.5)"; x.font = "400 18px system-ui, sans-serif"; x.fillText("Le son vient de l’écran · la musique s’efface pendant le film", 400, 504);
+    x.fillStyle = "#fff"; x.font = "600 22px system-ui, sans-serif"; x.fillText(tr("Lumières tamisées", "Dimmed lights"), 132, 504);
+    x.fillStyle = "rgba(234,244,248,0.5)"; x.font = "400 18px system-ui, sans-serif"; x.fillText(FILMS[cur].silent ? tr("Film sans bande son · la musique d’ambiance continue", "No soundtrack · the background music plays on") : tr("Le son vient de l’écran · la musique s’efface pendant le film", "Sound comes from the screen · the music fades during the film"), 400, 504);
     rtex.needsUpdate = true;
   };
   remote.userData.onClick = (hit) => { const r = regionAt(hit); if (r) { r.fn(hit.uv.x); fx.click(hit.ctrl); remote.userData.redraw(); } };
@@ -173,6 +186,7 @@ export function createCinema({ scene, fx, world, az = -90 }) {
   const regionAt = (hit) => { if (!hit || !hit.uv) return null; const px = hit.uv.x * RW, py = (1 - hit.uv.y) * RH; return regions.find((r) => px >= r.X && px <= r.X + r.W && py >= r.Y && py <= r.Y + r.H) || null; };
   remote.position.set(1.48 * Math.sin(A), 1.02, -1.48 * Math.cos(A)); remote.lookAt(0, 1.62, 0);
   group.add(remote); remote.userData.redraw();
+  I18N.on(() => { drawLabel(); drawIdle(); remote.userData.redraw(); });
 
   let acc = 0, lastDraw = 0, dim = 0;
   return {

@@ -84,16 +84,21 @@ export function PresenceGlobe({
   onSelect,
   colors: colorsProp,
   className,
+  label,
 }: {
   onSelect?: (c: PresenceCountry) => void;
   colors?: Partial<Colors>;
   className?: string;
+  /** name shown on the hovered-country chip (e.g. the English name); defaults to country.name */
+  label?: (c: PresenceCountry) => string;
 }) {
   const colors = { ...DEFAULT_COLORS, ...colorsProp };
   const wrapRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
+  const labelRef = useRef(label);
+  useEffect(() => { labelRef.current = label; }, [label]);
 
   // active countries (ETAFAT presence) with their feature + centroid
   const active = useMemo(() => {
@@ -238,7 +243,7 @@ export function PresenceGlobe({
         const p = a && isVisible(a.centroid) ? projection(a.centroid) : null;
         if (a && p) {
           ctx.font = "600 13px var(--font-figtree, system-ui, sans-serif)";
-          const text = a.country.name;
+          const text = labelRef.current ? labelRef.current(a.country) : a.country.name;
           const tw = ctx.measureText(text).width;
           const bx = p[0] + 10, by = p[1] - 22;
           ctx.fillStyle = "rgba(255,255,255,0.92)";
