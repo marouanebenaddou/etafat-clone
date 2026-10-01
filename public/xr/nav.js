@@ -97,10 +97,11 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
   dot.renderOrder = 63; group.add(dot);
 
   const head = new THREE.Vector3(), dir = new THREE.Vector3();
-  let yaw = null, show = 0;
+  let yaw = null, show = 0, following = false;
   const api = {
     group, targets,
     visible: false,
+    shift(rad) { if (yaw !== null) yaw += rad; }, // the visitor was turned (dock / snap-turn): keep the dock in front
     update(dt, t) {
       show = Math.min(1, Math.max(0, show + (api.visible ? dt * 2.5 : -dt * 4)));
       group.visible = show > 0.001;
@@ -109,7 +110,13 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
       const want = Math.atan2(dir.x, -dir.z); // azimuth the visitor faces
       if (yaw === null) yaw = want;
       let d = Math.atan2(Math.sin(want - yaw), Math.cos(want - yaw));
-      if (Math.abs(d) > 0.6 || show < 0.05) yaw += d * Math.min(1, dt * (show < 0.05 ? 30 : 3)); // lazy follow
+      // lazy follow: once you look ~35° away it glides back all the way to the centre (stopping at the edge
+      // left it in the corner of the lenses); it holds still while a button is under the pointer
+      if (show < 0.05) { yaw = want; following = false; }
+      else if (!targets.some((b) => b.userData.hover)) {
+        if (Math.abs(d) > 0.6) following = true;
+        if (following) { yaw += d * Math.min(1, dt * 4); if (Math.abs(d) < 0.03) following = false; }
+      }
       const dist = xr ? 0.6 : 0.95, drop = xr ? 0.44 : 0.4;
       const e = 1 - Math.pow(1 - show, 3);
       group.position.set(head.x + Math.sin(yaw) * dist, head.y - drop - (1 - e) * 0.12, head.z - Math.cos(yaw) * dist);

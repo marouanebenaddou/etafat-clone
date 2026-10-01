@@ -722,9 +722,11 @@ function drawPamofor(x, W, H, d, t) {
 
 function makeInfoPanel(draw, d, W, H, widthM) {
   const c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  draw(x, W, H, d, 0);
-  const mesh = panelMesh(c, widthM, widthM * H / W);
-  return { mesh, redraw: (t) => { draw(x, W, H, d, t); mesh.material.map.needsUpdate = true; } };
+  draw(x, W, H, d, 99); // at rest the panel shows the real figures; facing it replays the count-up
+  const mesh = panelMesh(c, widthM, widthM * H / W), tex = mesh.material.map;
+  const mips = (on) => { if (tex.generateMipmaps === on) return; tex.generateMipmaps = on; tex.minFilter = on ? THREE.LinearMipmapLinearFilter : THREE.LinearFilter; tex.dispose(); };
+  // animation frames skip the mip chain (a full rebuild per frame is what made the count-ups crawl on the Quest)
+  return { mesh, redraw: (t, last = false) => { draw(x, W, H, d, t); mips(last); tex.needsUpdate = true; } };
 }
 
 function buildChiffres(data) {
@@ -902,7 +904,7 @@ let lookTween = null;
 function headAz() { const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera; cam.getWorldDirection(_dir); return Math.atan2(_dir.x, -_dir.z); }
 function turnBy(rad, fade = true) {
   if (!renderer.xr.isPresenting) { lookTween = { from: lookYaw, to: lookYaw - rad, t: 0 }; return; } // desktop: lookYaw is the azimuth faced
-  const go = () => { renderer.xr.getCamera().getWorldPosition(_head); rig.position.sub(_head).applyAxisAngle(UP, rad).add(_head); rig.rotation.y += rad; };
+  const go = () => { renderer.xr.getCamera().getWorldPosition(_head); rig.position.sub(_head).applyAxisAngle(UP, rad).add(_head); rig.rotation.y += rad; dock.shift(-rad); };
   if (fade) fx.blackout(go, 9); else go();
 }
 function turnTo(azDeg) { const d = headAz() - azDeg * DEG; turnBy(Math.atan2(Math.sin(d), Math.cos(d))); fx.sfx("whoosh", 0.35); }
@@ -1066,18 +1068,20 @@ function loop() {
     if (u.halo) u.halo.material.opacity = e * (0.22 + 0.1 * Math.sin(elapsed * 1.6) + u.lift * 0.25);
   }
 
-  // chiffres wall: (re)play a panel's animation whenever the viewer turns to face it
+  // chiffres wall: replay a panel's count-up whenever the viewer turns to face it (real figures the rest of the
+  // time). Wall-clock timed, so dropped frames can't stretch it; one panel redrawn per frame, ~20 fps each.
   if (chiffresPanels.length) {
     const cam = xr ? renderer.xr.getCamera() : camera;
     cam.getWorldDirection(camDir); camDir.y = 0; camDir.normalize();
-    const now = performance.now();
+    const now = performance.now(); let drew = false;
     for (const cp of chiffresPanels) {
       const dot = camDir.dot(cp.dir);
-      if (cp.armed && dot > 0.8) { cp.armed = false; cp.active = true; cp.t0 = elapsed; }
-      else if (!cp.armed && !cp.active && dot < -0.2) { cp.armed = true; cp.redraw(0); } // reset while out of view
-      if (cp.active && now - cp.lastDraw > 45) {
-        const t = elapsed - cp.t0; cp.redraw(t); cp.lastDraw = now;
-        if (t > 3.4) cp.active = false; // final frame drawn
+      if (cp.armed && dot > 0.8) { cp.armed = false; cp.active = true; cp.t0 = now; cp.lastDraw = 0; }
+      else if (!cp.armed && !cp.active && dot < 0.1) cp.armed = true; // looked away: replay next time
+      if (cp.active && !drew && now - cp.lastDraw > 50) {
+        const t = (now - cp.t0) / 1000 * 1.45, last = t > 3.4; // whole sequence ≈ 2.3 s
+        cp.redraw(last ? 99 : t, last); cp.lastDraw = now; drew = true;
+        if (last) cp.active = false;
       }
     }
   }
