@@ -105,7 +105,7 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
     update(dt, t) {
       show = Math.min(1, Math.max(0, show + (api.visible ? dt * 2.5 : -dt * 4)));
       group.visible = show > 0.001;
-      const xr = renderer.xr.isPresenting, cam = xr ? renderer.xr.getCamera() : camera;
+      const xr = renderer.xr.isPresenting, cam = camera; // the rig's camera: its world pose includes the rig's turns (the XR ArrayCamera's doesn't)
       cam.getWorldPosition(head); cam.getWorldDirection(dir);
       const want = Math.atan2(dir.x, -dir.z); // azimuth the visitor faces
       if (yaw === null) yaw = want;

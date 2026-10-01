@@ -901,10 +901,12 @@ function activate(p, ctrl) {
 // ── turning: dock buttons and snap-turn rotate the rig around the head (VR); desktop eases the view ──
 const _head = new THREE.Vector3(), _dir = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
 let lookTween = null;
-function headAz() { const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera; cam.getWorldDirection(_dir); return Math.atan2(_dir.x, -_dir.z); }
+// head pose: always from the rig's camera — in XR three keeps it at rig × headset pose after each frame, whereas
+// getWorldPosition/Direction on renderer.xr.getCamera() (no parent) silently drop the rig's turns and offset
+function headAz() { camera.getWorldDirection(_dir); return Math.atan2(_dir.x, -_dir.z); }
 function turnBy(rad, fade = true) {
   if (!renderer.xr.isPresenting) { lookTween = { from: lookYaw, to: lookYaw - rad, t: 0 }; return; } // desktop: lookYaw is the azimuth faced
-  const go = () => { renderer.xr.getCamera().getWorldPosition(_head); rig.position.sub(_head).applyAxisAngle(UP, rad).add(_head); rig.rotation.y += rad; dock.shift(-rad); };
+  const go = () => { camera.getWorldPosition(_head); rig.position.sub(_head).applyAxisAngle(UP, rad).add(_head); rig.rotation.y += rad; dock.shift(-rad); };
   if (fade) fx.blackout(go, 9); else go();
 }
 function turnTo(azDeg) { const d = headAz() - azDeg * DEG; turnBy(Math.atan2(Math.sin(d), Math.cos(d))); fx.sfx("whoosh", 0.35); }
@@ -1071,8 +1073,7 @@ function loop() {
   // chiffres wall: replay a panel's count-up whenever the viewer turns to face it (real figures the rest of the
   // time). Wall-clock timed, so dropped frames can't stretch it; one panel redrawn per frame, ~20 fps each.
   if (chiffresPanels.length) {
-    const cam = xr ? renderer.xr.getCamera() : camera;
-    cam.getWorldDirection(camDir); camDir.y = 0; camDir.normalize();
+    camera.getWorldDirection(camDir); camDir.y = 0; camDir.normalize();
     const now = performance.now(); let drew = false;
     for (const cp of chiffresPanels) {
       const dot = camDir.dot(cp.dir);

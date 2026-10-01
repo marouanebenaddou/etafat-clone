@@ -1033,7 +1033,7 @@ varying vec3 vMapP;`;
       renderer.toneMapping = THREE.NoToneMapping; // the photogrammetry is unlit: show its colours as captured
       camera.near = 0.01; camera.far = 200;
       if (renderer.xr.isPresenting) { // turn and slide the rig so the visitor stands at the origin, facing the table
-        const xc = renderer.xr.getCamera(); xc.getWorldPosition(_h); xc.getWorldDirection(_d);
+        camera.getWorldPosition(_h); camera.getWorldDirection(_d); // the rig's camera: world pose incl. the rig's turns
         const az = Math.atan2(_d.x, -_d.z);
         user.position.sub(_h).applyAxisAngle(UP, az).add(_h); user.rotation.y += az;
         user.position.x -= _h.x; user.position.z -= _h.z;

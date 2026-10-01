@@ -1274,8 +1274,7 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
 
   const fwd = new THREE.Vector3(), to = new THREE.Vector3(), eye = new THREE.Vector3();
   function looking(pos, deg) {
-    const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
-    cam.getWorldDirection(fwd); cam.getWorldPosition(eye);
+    camera.getWorldDirection(fwd); camera.getWorldPosition(eye); // the rig's camera (includes the rig's turns)
     to.set(pos.x, pos.y + 1.4, pos.z).sub(eye).normalize();
     return fwd.dot(to) > Math.cos(deg * DEG);
   }
@@ -1283,7 +1282,7 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
   const hp = new THREE.Vector3(), pq = new THREE.Quaternion(), qa = new THREE.Quaternion(), qb = new THREE.Quaternion(), UP = new THREE.Vector3(0, 1, 0), right = new THREE.Vector3();
   function headLook(c, dt) {
     if (!c.head) return;
-    const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera; cam.getWorldPosition(eye);
+    camera.getWorldPosition(eye);
     c.head.getWorldPosition(hp);
     const dist = hp.distanceTo(eye), want = dist < 16 && looking(c.obj.position, 14) ? 0.85 : 0;
     c.look += (want - c.look) * Math.min(1, dt * 2.5); if (c.look < 0.01) return;
