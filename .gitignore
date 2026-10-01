@@ -83,3 +83,7 @@ cite-vr/android/build/
 cite-vr/android/app/build/
 cite-vr/android/local.properties
 cite-vr/android/app/src/main/assets/www/
+
+# VR cinema films (125 MB): bundled only in the offline Quest APK; the posters stay in git.
+# Source: ~/Documents/{manifesto_final,institution_fin}.mp4, re-encoded H.264 CRF 21 + faststart.
+public/xr/videos/*.mp4

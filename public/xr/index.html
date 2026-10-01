@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
-  <title>ETAFAT · Présence VR</title>
+  <title>ETAFAT · Expérience VR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#081726" />
   <link rel="manifest" href="./manifest.webmanifest" />
@@ -18,16 +18,20 @@
       transition: opacity .6s ease; text-align: center; padding: 24px;
     }
     #loading.hide { opacity: 0; pointer-events: none; }
-    #loading h1 { font-size: 40px; font-weight: 700; letter-spacing: .04em; }
-    #loading p { color: #8ee6e4; font-size: 18px; font-weight: 500; }
-    .ring { width: 46px; height: 46px; border: 3px solid rgba(142,230,228,.25); border-top-color: #2ab5b4; border-radius: 50%; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    /* three.js VRButton styling override to match brand */
-    #VRButton { background: rgba(42,181,180,.15) !important; border: 2px solid #2ab5b4 !important; color: #eaf4f8 !important; font-weight: 600 !important; border-radius: 999px !important; }
-    #hint { position: fixed; left: 50%; bottom: 84px; transform: translateX(-50%); color: rgba(234,244,248,.55); font-size: 13px; z-index: 15; pointer-events: none; }
+    #loading img { width: 150px; height: auto; filter: drop-shadow(0 8px 30px rgba(42,181,180,.35)); animation: float 3s ease-in-out infinite; }
+    #loading h1 { font-size: 15px; font-weight: 700; letter-spacing: .5em; color: #8ee6e4; text-transform: uppercase; margin-top: 6px; }
+    #loading p { color: rgba(234,244,248,.7); font-size: 16px; font-weight: 400; }
+    .bar { width: 220px; height: 3px; border-radius: 3px; background: rgba(142,230,228,.18); overflow: hidden; }
+    .bar i { display: block; height: 100%; width: 40%; background: linear-gradient(90deg, transparent, #2ab5b4, transparent); animation: sweep 1.2s ease-in-out infinite; }
+    @keyframes sweep { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+    @keyframes float { 50% { transform: translateY(-6px); } }
+    #enter-vr { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); z-index: 16; background: linear-gradient(180deg, rgba(42,181,180,.32), rgba(42,181,180,.14)); border: 2px solid #2ab5b4; color: #eaf4f8; font: 600 15px system-ui, sans-serif; padding: 12px 26px; border-radius: 999px; cursor: pointer; backdrop-filter: blur(6px); box-shadow: 0 6px 24px rgba(42,181,180,.25); }
+    #enter-vr:hover:not([disabled]) { background: rgba(42,181,180,.45); }
+    #enter-vr[disabled] { opacity: .55; cursor: default; box-shadow: none; }
+    #hint { position: fixed; left: 50%; bottom: 78px; transform: translateX(-50%); color: rgba(234,244,248,.55); font-size: 13px; z-index: 15; pointer-events: none; }
     #audio-toggle { position: fixed; right: 16px; bottom: 16px; z-index: 16; background: rgba(42,181,180,.15); border: 1.5px solid #2ab5b4; color: #eaf4f8; font: 600 13px system-ui, sans-serif; padding: 8px 14px; border-radius: 999px; cursor: pointer; }
     #audio-toggle:hover { background: rgba(42,181,180,.28); }
-    #credits { position: fixed; left: 16px; bottom: 18px; max-width: calc(100vw - 140px); color: rgba(234,244,248,.42); font-size: 11px; line-height: 1.4; z-index: 15; pointer-events: none; }
+    #credits { position: fixed; left: 16px; top: 12px; max-width: min(760px, calc(100vw - 32px)); color: rgba(234,244,248,.42); font-size: 11px; line-height: 1.4; z-index: 15; pointer-events: none; }
   </style>
   <script type="importmap">
     { "imports": { "three": "./vendor/three.module.js" } }
@@ -35,20 +39,22 @@
 </head>
 <body>
   <div id="loading">
-    <h1>ETAFAT</h1>
-    <div class="ring"></div>
-    <p>Préparation de l'expérience immersive…</p>
+    <img src="./img/etafat-logo-dark.png" alt="ETAFAT" />
+    <h1>Expérience immersive</h1>
+    <div class="bar"><i></i></div>
+    <p>Le paysage, l’équipe et le globe se mettent en place…</p>
   </div>
-  <div id="hint">Joystick (flèches au clavier) : tourner le globe · survolez un pays pour ses projets · glissez pour regarder autour (chiffres clés derrière vous) · « Enter VR » avec le casque</div>
-  <button id="audio-toggle" type="button">♪ Son</button>
-  <div id="credits">Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages : Quaternius (CC0) · Drapeaux : flagcdn · Photos des pays : Wikimedia Commons (auteurs et licences sur chaque bannière)</div>
+  <div id="hint">Glissez pour regarder autour · le menu sous le regard vous emmène vers le globe, les expertises, le cinéma et les chiffres · flèches : tourner le globe</div>
+  <button id="audio-toggle" type="button">♪ Musique</button>
+  <div id="credits">Vallée des Aït Bouguemez, Haut Atlas · Relief : AWS Terrain Tiles (SRTM, NASA/USGS) · Personnages, véhicule et camp : Quaternius (CC0) · Mains : WebXR Input Profiles (MIT) · Musique : générée avec Magnific (Google Lyria) · Drapeaux : flagcdn · Photos des pays : Wikimedia Commons (auteurs et licences sur chaque bannière)</div>
   <script type="module">
     import "./app.js";
     // hide the loader once the first frame has plausibly rendered
-    addEventListener("load", () => setTimeout(() => document.getElementById("loading")?.classList.add("hide"), 1400));
+    addEventListener("load", () => setTimeout(() => document.getElementById("loading")?.classList.add("hide"), 12000)); // fallback: app.js hides it when the world is ready
     // offline service worker (precache everything for Quest offline use)
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./sw.js").catch(() => {});
+      if (/[?&](debug|nosw)/.test(location.search)) navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.unregister())); // dev: always fresh files
+      else navigator.serviceWorker.register("./sw.js").catch(() => {});
     }
   </script>
 </body>

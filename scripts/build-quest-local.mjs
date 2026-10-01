@@ -1,7 +1,8 @@
 // Stages the VR experience into the offline Quest APK (quest-local/app/src/main/assets/www), keeping
 // the site's paths so the on-device server (127.0.0.1) serves them exactly like the website does.
 // File list = the VR service worker's PRECACHE (already the complete offline set) + any asset literal
-// found in the VR sources, as a safety net. Then build:  cd quest-local && ./gradlew assembleRelease
+// found in the VR sources, as a safety net (this is what brings in the cinema's films, which the
+// service worker deliberately leaves to HTTP range requests). Then build:  cd quest-local && ./gradlew assembleRelease
 import { readFile, mkdir, cp, rm, stat } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -20,9 +21,9 @@ const precache = new Function(`return ${arr};`)();
 const files = new Set(["/xr/sw.js"]);
 const norm = (u) => (u.startsWith("./") ? "/xr/" + u.slice(2) : u);
 for (const u of precache) files.add(norm(u));
-for (const f of ["xr/index.html", "xr/app.js", "xr/world.js"]) { // safety net: literal asset paths in the sources
+for (const f of ["xr/index.html", "xr/app.js", "xr/world.js", "xr/fx.js", "xr/nav.js", "xr/cinema.js"]) { // safety net: literal asset paths in the sources
   const src = await readFile(join(PUB, f), "utf8");
-  for (const m of src.matchAll(/["'`](\.\/[\w\-./]+\.(?:js|json|png|jpe?g|glb|bin|webmanifest|html))["'`]/g)) files.add(norm(m[1]));
+  for (const m of src.matchAll(/["'`](\.\/[\w\-./]+\.(?:js|json|png|jpe?g|glb|bin|mp3|mp4|webmanifest|html))["'`]/g)) files.add(norm(m[1]));
   for (const m of src.matchAll(/["'`](\/etafat\/[\w\-./]+\.(?:png|jpe?g|json|webmanifest))["'`]/g)) files.add(m[1]);
 }
 

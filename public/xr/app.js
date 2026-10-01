@@ -1,8 +1,10 @@
 // ETAFAT — Immersive presence experience (WebXR, Quest 3). Offline, self-contained.
 import * as THREE from "three";
-import { VRButton } from "./vendor/VRButton.js";
-import { createWorld } from "./world.js";
+import { createWorld, ZONES, NIGHT } from "./world.js";
 import { mergeGeometries } from "./vendor/jsm/utils/BufferGeometryUtils.js";
+import { createFX } from "./fx.js";
+import { createDock } from "./nav.js";
+import { createCinema } from "./cinema.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
@@ -13,8 +15,11 @@ const USER = new THREE.Vector3(0, 1.6, 0);
 
 const scene = new THREE.Scene(); // sky, fog and lights come from world.js
 
-const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.1, 30000);
+const camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 0.05, 30000);
 camera.position.copy(USER);
+// the visitor's rig: camera, controllers and hands ride on it, so turning to a zone (dock, snap-turn)
+// rotates the rig around the head instead of moving the world
+const rig = new THREE.Group(); scene.add(rig); rig.add(camera);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setPixelRatio(Math.min(2, devicePixelRatio));
@@ -25,7 +30,16 @@ renderer.toneMappingExposure = 1.0;
 renderer.xr.enabled = true;
 renderer.xr.setReferenceSpaceType("local-floor");
 document.body.appendChild(renderer.domElement);
-document.body.appendChild(VRButton.createButton(renderer));
+// "Entrer en VR" (asks for hand tracking too, so the hands appear when controllers are put down)
+const vrBtn = document.createElement("button"); vrBtn.id = "enter-vr"; vrBtn.textContent = "Entrer dans l’expérience VR"; vrBtn.disabled = true; document.body.appendChild(vrBtn);
+if (navigator.xr) navigator.xr.isSessionSupported("immersive-vr").then((ok) => { vrBtn.disabled = !ok; if (!ok) vrBtn.textContent = "Mode bureau · casque VR non détecté"; }).catch(() => {});
+else vrBtn.textContent = "Mode bureau · WebXR indisponible";
+vrBtn.addEventListener("click", async () => {
+  if (renderer.xr.isPresenting) { renderer.xr.getSession().end(); return; }
+  try { fx.unlock(); const sess = await navigator.xr.requestSession("immersive-vr", { optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking", "layers"] }); await renderer.xr.setSession(sess); } catch (e) { console.warn(e); }
+});
+renderer.xr.addEventListener("sessionstart", () => { vrBtn.textContent = "Quitter la VR"; });
+renderer.xr.addEventListener("sessionend", () => { vrBtn.textContent = "Entrer dans l’expérience VR"; });
 
 addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
@@ -33,6 +47,7 @@ addEventListener("resize", () => {
 });
 
 const world = createWorld({ scene, renderer, camera });
+const fx = createFX({ renderer, camera, rig, scene });
 
 // ── globe: map with clear country borders (earth.png, ETAFAT palette) ────────────
 // ETAFAT countries in teal; pointing at one lights it up (fill glow + crisp outline from an id map)
@@ -44,7 +59,19 @@ const texLoader = new THREE.TextureLoader();
 const dummy = new THREE.Object3D(), _v = new THREE.Vector3();
 
 const earthTex = texLoader.load("./earth.png"); earthTex.colorSpace = THREE.SRGBColorSpace; earthTex.anisotropy = 8;
-const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 96, 64), new THREE.MeshBasicMaterial({ map: earthTex }));
+// the earth is revealed by a scan line sweeping up from the south pole (intro), with a teal edge
+const reveal = { value: 0 };
+const earthMat = new THREE.MeshBasicMaterial({ map: earthTex, toneMapped: false, transparent: true });
+earthMat.onBeforeCompile = (sh) => {
+  sh.uniforms.uReveal = reveal;
+  sh.vertexShader = sh.vertexShader.replace("#include <common>", "#include <common>\nvarying float vLat;").replace("#include <begin_vertex>", "#include <begin_vertex>\nvLat = position.y / " + GLOBE_R.toFixed(3) + " * 0.5 + 0.5;");
+  sh.fragmentShader = sh.fragmentShader.replace("#include <common>", "#include <common>\nvarying float vLat; uniform float uReveal;")
+    .replace("#include <map_fragment>", `#include <map_fragment>
+      float edge = uReveal * 1.12 - vLat;
+      if (edge < 0.0) discard;
+      diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.56, 0.95, 0.93), (1.0 - smoothstep(0.0, 0.05, edge)) * step(uReveal, 0.999));`);
+};
+const sphere = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R, 96, 64), earthMat);
 spin.add(sphere);
 const atmo = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 1.14, 64, 48), new THREE.ShaderMaterial({
   transparent: true, blending: THREE.AdditiveBlending, side: THREE.BackSide, depthWrite: false,
@@ -53,6 +80,24 @@ const atmo = new THREE.Mesh(new THREE.SphereGeometry(GLOBE_R * 1.14, 64, 48), ne
   fragmentShader: `varying vec3 vN; uniform vec3 uColor; void main(){ float i = pow(0.72 - dot(vN, vec3(0.0,0.0,1.0)), 3.0); gl_FragColor = vec4(uColor, clamp(i,0.0,1.0)*0.9);}`
 }));
 globe.add(atmo);
+
+// holographic emitter on the deck: a dark metal pedestal with light rings projecting a cone up to the globe
+const emitter = new THREE.Group(); emitter.position.set(GLOBE_POS.x, 0, GLOBE_POS.z); scene.add(emitter);
+{
+  const metal = new THREE.MeshStandardMaterial({ color: 0x1b242e, roughness: 0.32, metalness: 0.85 });
+  const ped = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 0.42, 48).translate(0, 0.21, 0), metal); ped.castShadow = true; emitter.add(ped);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.33, 0.3, 0.05, 48).translate(0, 0.445, 0), metal); emitter.add(cap);
+  for (const [y, r] of [[0.08, 0.402], [0.47, 0.334]]) emitter.add(new THREE.Mesh(new THREE.TorusGeometry(r, 0.008, 6, 64).rotateX(Math.PI / 2).translate(0, y, 0), new THREE.MeshBasicMaterial({ color: 0x5ff5f0, toneMapped: false })));
+  const lens = new THREE.Mesh(new THREE.CircleGeometry(0.26, 48).rotateX(-Math.PI / 2).translate(0, 0.472, 0), new THREE.MeshBasicMaterial({ color: 0x8ee6e4, toneMapped: false, transparent: true, opacity: 0.85 }));
+  emitter.add(lens);
+  const coneMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, uniforms: { uTime: { value: 0 } },
+    vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }",
+    fragmentShader: "uniform float uTime; varying vec2 vUv; void main(){ float a = (1.0 - vUv.y) * 0.32 + step(0.86, fract(vUv.y * 6.0 - uTime * 0.7)) * 0.12; gl_FragColor = vec4(0.37, 0.96, 0.94, a * (0.6 + 0.4 * vUv.y)); }",
+  });
+  const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.26, GLOBE_POS.y - GLOBE_R - 0.47 + 0.18, 48, 1, true).translate(0, 0.47 + (GLOBE_POS.y - GLOBE_R - 0.47 + 0.18) / 2, 0), coneMat);
+  cone.renderOrder = 3; emitter.add(cone); emitter.userData.cone = coneMat;
+}
 
 // hovered-country highlight: a shell reading the id map (index+1 in R, checksum G = 255−R, B = 128)
 const idTex = texLoader.load("./countries-id.png");
@@ -93,7 +138,7 @@ function glowTexture(hex) {
 
 let DATA = null, ID = null;
 const countryByIso = new Map();
-const arcMat = new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0.42, depthWrite: false }); // subtle: the network, not the star
+const arcMat = new THREE.MeshBasicMaterial({ color: TEAL, transparent: true, opacity: 0.42, depthWrite: false, toneMapped: false }); // subtle: the network, not the star
 const arcTime = { value: 0 };
 arcMat.onBeforeCompile = (sh) => { // all arcs in one mesh: grow in one after another, then carry travelling light pulses
   sh.uniforms.uTime = arcTime;
@@ -120,7 +165,7 @@ function buildGlobe(d) {
   // glowing markers (one draw call each): ETAFAT countries + the Casablanca HQ
   const pts = (list, hex, size) => {
     const g = new THREE.BufferGeometry().setFromPoints(list.map(([lon, lat]) => lonLatToVec3(lon, lat, GLOBE_R * 1.012)));
-    return new THREE.Points(g, new THREE.PointsMaterial({ map: glowTexture(hex), size, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+    return new THREE.Points(g, new THREE.PointsMaterial({ map: glowTexture(hex), size, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, toneMapped: false }));
   };
   spin.add(pts(d.countries.map((c) => [c.lon, c.lat]), TEAL_L, 0.06 * GK));
   spin.add(pts([[d.hq.lon, d.hq.lat]], TEAL_L, 0.07 * GK));
@@ -164,7 +209,7 @@ function roundRect(x, X, Y, W, H, r){ x.beginPath(); x.moveTo(X+r,Y); x.arcTo(X+
 function wrap(x, text, X, Y, maxW, lh, maxLines){ const words=String(text).split(" "); let line="", n=1; for(const w of words){ const t=line?line+" "+w:w; if(x.measureText(t).width>maxW && line){ x.fillText(line,X,Y); Y+=lh; line=w; if(++n>maxLines){ x.fillText("…",X,Y); return Y+lh; } } else line=t; } x.fillText(line,X,Y); return Y+lh; }
 function panelMesh(canvas, w, h) {
   const tex = new THREE.CanvasTexture(canvas); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
-  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  return new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false }));
 }
 
 // theme / apps section tiles arranged around the viewer
@@ -172,44 +217,33 @@ const sections = new THREE.Group(); scene.add(sections);
 const tileTargets = [];          // theme panels the user can aim at to open their projects
 fetch("./sections-xr.json").then(r => r.json()).then(buildSections);
 
-function makeThemePanel(t) {
-  const W = 820, H = 1240, HERO = 342, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
-  const g = x.createLinearGradient(0,0,0,H); g.addColorStop(0,"rgba(19,49,80,0.96)"); g.addColorStop(1,"rgba(10,30,48,0.98)");
-  x.fillStyle = g; roundRect(x,0,0,W,H,30); x.fill();
-  x.strokeStyle = t.accent + "cc"; x.lineWidth = 4; roundRect(x,6,6,W-12,H-12,26); x.stroke();
-  const TOP = HERO + 34;
-  x.fillStyle = t.accent; roundRect(x,44,TOP,120,10,5); x.fill(); // accent bar
-  x.fillStyle = "#fff"; x.font = "700 44px system-ui, sans-serif";
-  let y = wrap(x, t.label, 44, TOP + 66, W-88, 52, 2);
-  x.fillStyle = t.accent; x.font = "500 27px system-ui, sans-serif";
-  y = wrap(x, t.tagline, 44, y + 6, W-88, 34, 2) + 10;
-  x.strokeStyle = "rgba(142,230,228,0.25)"; x.lineWidth = 2; x.beginPath(); x.moveTo(44,y); x.lineTo(W-44,y); x.stroke(); y += 44;
-  x.font = "400 26px system-ui, sans-serif";
-  for (const p of t.projects) {
-    x.fillStyle = t.accent; x.fillText("▸", 44, y);
-    x.fillStyle = "#e7f3f7"; y = wrap(x, p, 82, y, W-130, 33, 2) + 10;
-    if (y > H - 36) break;
-  }
-  const mesh = panelMesh(c, 1.18, 1.18 * H / W);
-  // hero thumbnail — the theme's first photo across the top (loads async)
+function makeThemePanel(t) { // gallery card: hero photo, title, tagline, project count — reacts to the pointer
+  const W = 900, H = 920, HERO = 468, n = (t.items || t.projects || []).length;
+  const m = canvasMesh(W, H, (x, W2, H2, me) => {
+    const hov = me.userData.hover, img = me.userData.img;
+    cardBg(x, W2, H2, hov ? "#8ee6e4" : t.accent);
+    x.save(); roundRect(x, 8, 8, W2 - 16, HERO, 24); x.clip();
+    if (img) { const r = Math.max((W2 - 16) / img.width, HERO / img.height), dw = img.width * r, dh = img.height * r; x.drawImage(img, 8 + (W2 - 16 - dw) / 2, 8 + (HERO - dh) / 2, dw, dh); }
+    else { const g = x.createLinearGradient(0, 0, W2, HERO); g.addColorStop(0, "#0d3350"); g.addColorStop(1, "#16486b"); x.fillStyle = g; x.fillRect(0, 0, W2, HERO); }
+    const fade = x.createLinearGradient(0, HERO - 170, 0, HERO + 8); fade.addColorStop(0, "rgba(19,49,80,0)"); fade.addColorStop(1, "rgba(19,49,80,1)");
+    x.fillStyle = fade; x.fillRect(0, HERO - 170, W2, 180);
+    x.restore();
+    x.fillStyle = "rgba(8,23,38,0.78)"; roundRect(x, 30, 30, 196, 46, 23); x.fill();          // project count chip on the photo
+    x.fillStyle = t.accent; x.beginPath(); x.arc(56, 53, 8, 0, 7); x.fill();
+    x.fillStyle = "#fff"; x.font = "700 22px system-ui, sans-serif"; x.fillText(`${n} projet${n > 1 ? "s" : ""}`, 74, 61);
+    x.fillStyle = t.accent; roundRect(x, 44, HERO + 22, 110, 8, 4); x.fill();
+    x.fillStyle = "#fff"; x.font = "700 46px system-ui, sans-serif";
+    let y = HERO + 86; for (const l of lines(x, t.label, W2 - 88, 2)) { x.fillText(l, 44, y); y += 54; }
+    x.fillStyle = "rgba(220,238,244,0.78)"; x.font = "400 27px system-ui, sans-serif";
+    for (const l of lines(x, t.tagline, W2 - 88, 2)) { x.fillText(l, 44, y + 4); y += 35; }
+    const by = H2 - 92;                                                                          // call to action
+    x.fillStyle = hov ? "#2ab5b4" : "rgba(42,181,180,0.14)"; roundRect(x, 44, by, W2 - 88, 58, 29); x.fill();
+    x.strokeStyle = hov ? "#8ee6e4" : "rgba(142,230,228,0.55)"; x.lineWidth = 2; roundRect(x, 44, by, W2 - 88, 58, 29); x.stroke();
+    x.fillStyle = "#fff"; x.font = "600 26px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("Explorer les projets  ›", W2 / 2, by + 38); x.textAlign = "start";
+  }, 1.4);
   const src = t.photos && t.photos[0];
-  if (src) {
-    const img = new Image();
-    img.onload = () => {
-      x.save();
-      roundRect(x, 8, 8, W - 16, HERO, 22); x.clip();
-      const r = Math.max((W - 16) / img.width, HERO / img.height), dw = img.width * r, dh = img.height * r;
-      x.drawImage(img, 8 + ((W - 16) - dw) / 2, 8 + (HERO - dh) / 2, dw, dh);
-      const fade = x.createLinearGradient(0, HERO - 140, 0, HERO + 10);
-      fade.addColorStop(0, "rgba(19,49,80,0)"); fade.addColorStop(1, "rgba(19,49,80,1)");
-      x.fillStyle = fade; x.fillRect(0, HERO - 140, W, 152);
-      x.restore();
-      x.fillStyle = t.accent; x.fillRect(30, HERO + 12, W - 60, 3);
-      mesh.material.map.needsUpdate = true;
-    };
-    img.src = src;
-  }
-  return mesh;
+  if (src) { const img = new Image(); img.onload = () => { m.userData.img = img; m.userData.redraw(); }; img.src = src; }
+  return m;
 }
 function makeAppsPanel(a) {
   const W = 820, H = 620, c = document.createElement("canvas"); c.width = W; c.height = H; const x = c.getContext("2d");
@@ -230,15 +264,22 @@ function placeAroundUser(mesh, azimuthDeg, y, radius) {
   mesh.position.set(USER.x + radius * Math.sin(a), y, USER.z - radius * Math.cos(a));
   mesh.lookAt(USER.x, y, USER.z);
   mesh.userData.floatBase = y; mesh.userData.phase = Math.random() * Math.PI * 2;
+  mesh.userData.home = mesh.position.clone(); mesh.userData.out = new THREE.Vector3(Math.sin(a), 0, -Math.cos(a)); mesh.userData.lift = 0;
   return mesh;
 }
+const GALLERY_AZ = ZONES.find((z) => z.key === "expertises").az;
 function buildSections(data) {
-  const az = [-128, -98, -68, 68, 98, 128]; // 3 left, 3 right — the front stays open onto the valley
+  // "Nos expertises": a 3 × 2 gallery wall on the right (the cinema is on the left, key figures behind)
+  const cols = [GALLERY_AZ - 25, GALLERY_AZ, GALLERY_AZ + 25], rows = [2.12, 1.12];
   data.themes.forEach((t, i) => {
-    const m = makeThemePanel(t); placeAroundUser(m, az[i], 1.55, 2.75);
-    m.userData.theme = t; tileTargets.push(m); sections.add(m);
+    const m = makeThemePanel(t); placeAroundUser(m, cols[i % 3], rows[Math.floor(i / 3)], 2.72);
+    m.userData.theme = t; m.userData.delay = 1.3 + i * 0.12; tileTargets.push(m); sections.add(m);
   });
-  // "Applications terrain" tile intentionally omitted in VR (not needed here)
+  const head = canvasMesh(1400, 150, (x, W, H) => {
+    x.textAlign = "center"; kicker(x, "Nos expertises", W / 2 + 3, 50, 26); x.textAlign = "center";
+    x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.save(); x.shadowColor = "rgba(0,0,0,0.6)"; x.shadowBlur = 18; x.fillText("Six métiers, des projets sur quatre continents", W / 2, 116); x.restore(); x.textAlign = "start";
+  }, 1.4);
+  placeAroundUser(head, GALLERY_AZ, 2.86, 2.74); head.userData.delay = 1.1; sections.add(head);
 }
 
 // ── theme pop-up: tile → animated project list → project details & photos ─────────
@@ -259,7 +300,7 @@ function coverUV(geo, planeAspect, imgAspect) { // crop-to-fill, like CSS object
   const uv = geo.attributes.uv; uv.setXY(0, u0, v1); uv.setXY(1, u1, v1); uv.setXY(2, u0, v0); uv.setXY(3, u1, v0); uv.needsUpdate = true;
 }
 function photoMesh(wPx, hPx, src) {
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ color: 0x12304a, transparent: true }));
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ color: 0x12304a, transparent: true, toneMapped: false }));
   m.userData.setSrc = (s2) => {
     m.userData.src = s2;
     photoTex(s2).then((t) => {
@@ -274,7 +315,7 @@ function photoMesh(wPx, hPx, src) {
 function canvasMesh(wPx, hPx, draw, S = 1.5) {
   const c = document.createElement("canvas"); c.width = Math.round(wPx * S); c.height = Math.round(hPx * S);
   const x = c.getContext("2d"), tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
-  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ map: tex, transparent: true }));
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(wPx * PX, hPx * PX), new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false }));
   m.userData.ownTex = tex;
   m.userData.redraw = () => { x.setTransform(S, 0, 0, S, 0, 0); x.clearRect(0, 0, wPx, hPx); draw(x, wPx, hPx, m); tex.needsUpdate = true; };
   m.userData.redraw();
@@ -417,7 +458,7 @@ function showDetail(i) {
     if (imgs.length > 1) {
       const TW = 214, GAP = 16, tot = imgs.length * TW + (imgs.length - 1) * GAP, x0 = 40 + (920 - tot) / 2, frames = [];
       imgs.forEach((src, k) => {
-        const fr = new THREE.Mesh(new THREE.PlaneGeometry((TW + 12) * PX, 142 * PX), new THREE.MeshBasicMaterial({ color: 0x8ee6e4, transparent: true }));
+        const fr = new THREE.Mesh(new THREE.PlaneGeometry((TW + 12) * PX, 142 * PX), new THREE.MeshBasicMaterial({ color: 0x8ee6e4, transparent: true, toneMapped: false }));
         v.add(place(fr, x0 + k * (TW + GAP) - 6, 598, TW + 12, 142, 0.004, H, { d: 0.22 + k * 0.06, op: k === 0 ? 1 : 0 })); frames.push(fr);
         const th2 = photoMesh(TW, 130, src);
         th2.userData.onClick = () => { hero.userData.setSrc(src); frames.forEach((f, j) => { f.userData.a.op = j === k ? 1 : 0; }); };
@@ -666,8 +707,8 @@ function pullCountry(hit) {
   if (cPull) { cPull.closing = true; cClosing.push(cPull); }
   const card = makeCountryPanel(hit.country); card.scale.setScalar(0.74); card.renderOrder = 30; card.material.depthTest = true;
   const g = new THREE.Group(); g.add(card); g.scale.setScalar(0.001); scene.add(g);
-  const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }), LEAD_N); line.frustumCulled = false; scene.add(line);
-  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, side: THREE.DoubleSide, depthWrite: false }));
+  const line = new THREE.InstancedMesh(beadGeo, new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, toneMapped: false }), LEAD_N); line.frustumCulled = false; scene.add(line);
+  const ring = new THREE.Mesh(new THREE.RingGeometry(0.018 * GK, 0.027 * GK, 28), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, side: THREE.DoubleSide, depthWrite: false, toneMapped: false }));
   ring.position.copy(hit.local).setLength(GLOBE_R * 1.006); ring.lookAt(_v.copy(ring.position).multiplyScalar(9)); spin.add(ring);
   cPull = { country: hit.country, local: hit.local.clone(), g, card, line, ring, t: 0, idle: 0, closing: false, cardH: card.geometry.parameters.height * 0.8 };
 }
@@ -726,116 +767,102 @@ const titleCard = (() => {
   return m;
 })();
 
-// ── controllers ────────────────────────────────────────────────────────────────
+// ── controllers (on the rig) ─────────────────────────────────────────────────────────────────────────
 const raycaster = new THREE.Raycaster();
 const tmpM = new THREE.Matrix4();
 const controllers = [];
-let grabbing = null, lastGrabA = null;
-const reticle = new THREE.Mesh(new THREE.SphereGeometry(0.014, 12, 12), new THREE.MeshBasicMaterial({ color: TEAL_L }));
-reticle.visible = false; scene.add(reticle);
-
+const reticle = new THREE.Mesh(new THREE.SphereGeometry(0.012, 12, 12), new THREE.MeshBasicMaterial({ color: TEAL_L, toneMapped: false, depthTest: false }));
+reticle.renderOrder = 70; reticle.visible = false; scene.add(reticle);
 for (let i = 0; i < 2; i++) {
   const ctrl = renderer.xr.getController(i);
-  const ray = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,-5)]),
-    new THREE.LineBasicMaterial({ color: TEAL_L, transparent: true, opacity: 0.6 }));
-  ctrl.add(ray);
-  ctrl.addEventListener("selectstart", () => onSelectStart(ctrl));
-  ctrl.addEventListener("selectend", () => { if (grabbing === ctrl) { grabbing = null; lastGrabA = null; } });
-  scene.add(ctrl); controllers.push(ctrl);
+  const ray = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, -5)]),
+    new THREE.LineBasicMaterial({ color: TEAL_L, transparent: true, opacity: 0.6, toneMapped: false }));
+  ctrl.add(ray); ctrl.userData.ray = ray;
+  ctrl.addEventListener("connected", (e) => { ctrl.userData.source = e.data; });
+  ctrl.addEventListener("disconnected", () => { ctrl.userData.source = null; });
+  ctrl.addEventListener("selectstart", () => { fx.unlock(); aim(ctrl); activate(pick(ctrl), ctrl); });
+  rig.add(ctrl); controllers.push(ctrl);
 }
 function aim(originObj) {
   tmpM.identity().extractRotation(originObj.matrixWorld);
   raycaster.ray.origin.setFromMatrixPosition(originObj.matrixWorld);
   raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tmpM);
 }
-function onSelectStart(ctrl) {
-  aim(ctrl);
-  const ui = raycaster.intersectObjects(uiTargets, false);
-  if (ui.length) { ui[0].object.userData.onClick(); return; }
-  if (cPull && raycaster.intersectObject(cPull.card, false).length) return; // reading the country pop-up
-  const tiles = raycaster.intersectObjects(tileTargets, false);
-  if (tiles.length) { openThemePopup(tiles[0].object); return; }
-  const ch = countryAtRay(); if (ch) pullCountry(ch);
+// one pointer router: dock & cinema → pop-up UI → country pop-up → globe countries → gallery tiles
+function pick(ctrl) {
+  const hud = [...dock.targets, ...(cinema ? cinema.targets : [])].filter((m) => m.visible && (!m.parent || m.parent.visible));
+  let h = hud.length ? raycaster.intersectObjects(hud, false)[0] : null;
+  if (h) return { kind: "hud", obj: h.object, point: h.point, uv: h.uv, ctrl };
+  h = uiTargets.length ? raycaster.intersectObjects(uiTargets, false)[0] : null;
+  if (h) return { kind: "ui", obj: h.object, point: h.point, ctrl };
+  if (cPull) { h = raycaster.intersectObject(cPull.card, false)[0]; if (h) return { kind: "card", point: h.point, ctrl }; }
+  const ch = countryAtRay(); if (ch) return { kind: "country", hit: ch, point: raycaster.intersectObject(sphere, false)[0]?.point, ctrl };
+  h = tileTargets.length ? raycaster.intersectObjects(tileTargets, false)[0] : null;
+  if (h) return { kind: "tile", obj: h.object, point: h.point, ctrl };
+  return null;
 }
-function controllerAzimuth(ctrl) {
-  const p = new THREE.Vector3().setFromMatrixPosition(ctrl.matrixWorld);
-  return Math.atan2(p.x - GLOBE_POS.x, -(p.z - GLOBE_POS.z));
+function activate(p, ctrl) {
+  if (!p) return;
+  if (p.kind === "hud") { const u = p.obj.userData; if (u.onClick) { if (!u.onHover) fx.click(ctrl); u.onClick({ uv: p.uv, ctrl }); } return; }
+  if (p.kind === "ui") { fx.click(ctrl); p.obj.userData.onClick(); return; }
+  if (p.kind === "tile") { fx.click(ctrl, "select"); openThemePopup(p.obj); return; }
+  if (p.kind === "country") { fx.click(ctrl, "select"); pullCountry(p.hit); }
 }
 
-// desktop fallback: drag to spin, click to select
-// drag on the globe spins it; drag anywhere else looks around (so the wall behind is reachable)
+// ── turning: dock buttons and snap-turn rotate the rig around the head (VR); desktop eases the view ──
+const _head = new THREE.Vector3(), _dir = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+let lookTween = null;
+function headAz() { const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera; cam.getWorldDirection(_dir); return Math.atan2(_dir.x, -_dir.z); }
+function turnBy(rad, fade = true) {
+  if (!renderer.xr.isPresenting) { lookTween = { from: lookYaw, to: lookYaw - rad, t: 0 }; return; } // desktop: lookYaw is the azimuth faced
+  const go = () => { renderer.xr.getCamera().getWorldPosition(_head); rig.position.sub(_head).applyAxisAngle(UP, rad).add(_head); rig.rotation.y += rad; };
+  if (fade) fx.blackout(go, 9); else go();
+}
+function turnTo(azDeg) { const d = headAz() - azDeg * DEG; turnBy(Math.atan2(Math.sin(d), Math.cos(d))); fx.sfx("whoosh", 0.35); }
+
+// ── dock + cinema ───────────────────────────────────────────────────────────────────────────────────
+const dock = createDock({
+  scene, camera, renderer, zones: ZONES,
+  getAmbiance: () => world.ambiance, getMusic: () => fx.on.music,
+  onZone: (key) => turnTo(ZONES.find((z) => z.key === key).az),
+  onAmbiance: (k) => fx.blackout(() => world.setAmbiance(k), 5),
+  onMusic: (v) => { fx.setMusic(v); syncAudioBtn(); },
+});
+let cinema = null;
+world.ready.then(() => {
+  cinema = createCinema({ scene, fx, world, az: ZONES.find((z) => z.key === "cinema").az });
+  const ld = document.getElementById("loading"); if (ld) ld.classList.add("hide"); // landscape, crew and models are in
+});
+
+// desktop fallback: drag to look around, click to select, arrows spin the globe
 let mouseNDC = null;
-const keys = new Set(); // desktop stand-in for the joystick
-addEventListener("keydown", (e) => { if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } });
+const keys = new Set();
+addEventListener("keydown", (e) => { fx.unlock(); if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } });
 addEventListener("keyup", (e) => keys.delete(e.key));
 renderer.domElement.addEventListener("pointerleave", () => { mouseNDC = null; });
-let dragging = false, dragMode = "globe", px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
+let dragging = false, px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
 camera.rotation.order = "YXZ";
-renderer.domElement.addEventListener("pointerdown", (e) => {
-  dragging = true; px = e.clientX; py = e.clientY; moved = 0;
-  raycaster.setFromCamera(new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1), camera);
-  dragMode = "look"; // the globe turns with the joystick only (arrow keys on desktop)
-});
+renderer.domElement.addEventListener("pointerdown", (e) => { fx.unlock(); dragging = true; px = e.clientX; py = e.clientY; moved = 0; lookTween = null; });
 renderer.domElement.addEventListener("pointermove", (e) => {
-  mouseNDC = new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1); // hover is resolved per frame
-  if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx)+Math.abs(dy);
-  if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.7, 0.7); camera.rotation.set(lookPitch, lookYaw, 0); }
+  mouseNDC = new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx) + Math.abs(dy);
+  if (!renderer.xr.isPresenting) { lookYaw += dx * 0.004; lookPitch = THREE.MathUtils.clamp(lookPitch + dy * 0.003, -0.8, 0.8); }
   px = e.clientX; py = e.clientY;
 });
 addEventListener("pointerup", (e) => {
   if (dragging && moved < 6 && !renderer.xr.isPresenting) {
-    const ndc = new THREE.Vector2((e.clientX/innerWidth)*2-1, -(e.clientY/innerHeight)*2+1);
-    raycaster.setFromCamera(ndc, camera);
-    const ui = raycaster.intersectObjects(uiTargets, false);
-    if (ui.length) ui[0].object.userData.onClick();
-    else {
-      const ch = countryAtRay();
-      if (ch) pullCountry(ch);
-      else { const tiles = raycaster.intersectObjects(tileTargets, false); if (tiles.length) openThemePopup(tiles[0].object); }
-    }
+    raycaster.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
+    activate(pick(null), null);
   }
   dragging = false;
 });
 
-// ── soft ambient background music (procedural pad — fully offline) ──────────────
-let ambient = null;
-function startAmbient() {
-  if (ambient) { if (ambient.ctx.state === "suspended") ambient.ctx.resume(); return; }
-  const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-  const ctx = new AC();
-  const master = ctx.createGain(); master.gain.value = 0.0001; master.connect(ctx.destination);
-  const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 620; lp.Q.value = 0.7; lp.connect(master);
-  const delay = ctx.createDelay(1.0); delay.delayTime.value = 0.5; const fb = ctx.createGain(); fb.gain.value = 0.32;
-  delay.connect(fb); fb.connect(delay); delay.connect(master); lp.connect(delay);
-  [110, 164.81, 220, 277.18, 329.63].forEach((f, i) => { // A2 E3 A3 C#4 E4 — soft airy chord
-    const o1 = ctx.createOscillator(); o1.type = "sine"; o1.frequency.value = f;
-    const o2 = ctx.createOscillator(); o2.type = "triangle"; o2.frequency.value = f * 1.004;
-    const g = ctx.createGain(); g.gain.value = 0.11 / (1 + i * 0.35);
-    o1.connect(g); o2.connect(g); g.connect(lp); o1.start(); o2.start();
-    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.04 + i * 0.017; const lg = ctx.createGain(); lg.gain.value = g.gain.value * 0.5;
-    lfo.connect(lg); lg.connect(g.gain); lfo.start();
-  });
-  const flfo = ctx.createOscillator(); flfo.frequency.value = 0.025; const fg = ctx.createGain(); fg.gain.value = 260;
-  flfo.connect(fg); fg.connect(lp.frequency); flfo.start();
-  master.gain.setValueAtTime(0.0001, ctx.currentTime);
-  master.gain.exponentialRampToValueAtTime(0.07, ctx.currentTime + 5);
-  ambient = { ctx, master, muted: false };
-}
-function toggleAmbient() {
-  if (!ambient) { startAmbient(); return true; }
-  ambient.muted = !ambient.muted;
-  ambient.master.gain.cancelScheduledValues(ambient.ctx.currentTime);
-  ambient.master.gain.linearRampToValueAtTime(ambient.muted ? 0.0001 : 0.07, ambient.ctx.currentTime + 0.6);
-  return !ambient.muted;
-}
-renderer.domElement.addEventListener("pointerdown", startAmbient, { once: true });
-renderer.xr.addEventListener("sessionstart", startAmbient);
+// music button (2D page)
 const audioBtn = document.getElementById("audio-toggle");
-if (audioBtn) audioBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
-  if (!ambient) { startAmbient(); audioBtn.textContent = "♪ Son"; return; }
-  audioBtn.textContent = toggleAmbient() ? "♪ Son" : "♪ Muet";
-});
+function syncAudioBtn() { if (audioBtn) audioBtn.textContent = fx.on.music ? "♪ Musique" : "♪ Muet"; }
+if (audioBtn) audioBtn.addEventListener("click", (e) => { e.stopPropagation(); fx.unlock(); fx.setMusic(!fx.on.music); syncAudioBtn(); dock.targets.forEach((t) => t.userData.redraw()); });
+syncAudioBtn();
+renderer.xr.addEventListener("sessionstart", () => { fx.unlock(); elapsed = 0; fx.reveal(0.7); rig.position.set(0, 0, 0); rig.rotation.set(0, 0, 0); }); // replay the entrance in the headset
 
 // ── fresh deploys: the SW is cache-first, so a page opened just after a deploy runs the old
 // files while the new worker installs. When that worker takes over, reload once (after VR exit).
@@ -848,60 +875,78 @@ if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
 
 // ── loop ────────────────────────────────────────────────────────────────────────
 const clock = new THREE.Clock();
-let elapsed = location.search.includes("nointro") ? 4 : 0; // debug: skip the entrance animation
+let elapsed = location.search.includes("nointro") ? 6 : 0; // debug: skip the entrance animation
+if (location.search.includes("nointro")) fx.reveal(50);
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
-if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections };
+const stickPrev = new Map();
+let hoverKey = null;
+if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections, rig, fx, dock, get cinema() { return cinema; }, turnTo, get elapsed() { return elapsed; }, set elapsed(v) { elapsed = v; } };
 
 renderer.setAnimationLoop(() => {
-  const dt = clock.getDelta(); elapsed += dt; const ms = elapsed * 1000;
+  const dt = Math.min(0.05, clock.getDelta()); elapsed += dt;
+  const xr = renderer.xr.isPresenting;
 
-  const intro = Math.min(1, elapsed / 2.0), ei = easeOut(intro);
-  globe.scale.setScalar(ei);
+  // entrance: the globe scans in, the gallery flies in (per tile), the dock and the title follow
+  reveal.value = easeOut(Math.min(1, Math.max(0, (elapsed - 0.5) / 2.2)));
+  const gi = easeOut(Math.min(1, Math.max(0, (elapsed - 0.3) / 1.6)));
+  globe.scale.setScalar(0.82 + 0.18 * gi); atmo.material.opacity = gi;
+  titleCard.material.opacity = easeOut(Math.min(1, Math.max(0, (elapsed - 2.4) / 0.8))); titleCard.visible = titleCard.material.opacity > 0.01;
+  emitter.userData.cone.uniforms.uTime.value = elapsed;
+  dock.visible = elapsed > 2.8;
   world.update(dt, elapsed);
-  sections.children.forEach((m) => { m.position.y = m.userData.floatBase + Math.sin(elapsed*0.6 + m.userData.phase) * 0.015; m.material.opacity = intro; m.material.transparent = true; });
+  fx.update(dt);
+  if (xr) fx.updateHands(controllers);
+  if (cinema) cinema.update(dt, elapsed);
 
-  // spin: NO auto-rotation — only user commands
+  // desktop view: drag-look, or ease toward a zone chosen on the dock
+  if (!xr) {
+    if (lookTween) { lookTween.t = Math.min(1, lookTween.t + dt * 1.8); lookYaw = lookTween.from + (lookTween.to - lookTween.from) * easeOut(lookTween.t); lookPitch *= 0.9; if (lookTween.t === 1) lookTween = null; }
+    camera.rotation.set(-lookPitch, -lookYaw, 0);
+  }
+
+  // pointer: dock & cinema, pop-ups, country pop-up, globe, gallery (VR: both controllers; desktop: mouse)
+  let hit = null;
+  const rays = xr ? controllers : (mouseNDC && !(dragging && moved > 6) ? [null] : []);
+  for (const ctrl of rays) { if (ctrl) aim(ctrl); else raycaster.setFromCamera(mouseNDC, camera); hit = pick(ctrl); if (hit) break; }
+  const hoverMesh = hit && (hit.kind === "hud" || hit.kind === "ui" || hit.kind === "tile") ? hit.obj : null;
+  setHover(hoverMesh);
+  for (const m of [...dock.targets, ...(cinema ? cinema.targets : [])]) if (m.userData.onHover) m.userData.onHover(hit && hit.obj === m ? { uv: hit.uv, ctrl: hit.ctrl } : null);
+  const key = hit ? (hit.kind === "country" ? "c" + hit.hit.country.iso : hit.obj ? hit.obj.uuid : hit.kind) : null;
+  if (key && key !== hoverKey && hit.kind !== "card" && !(hit.obj && hit.obj.userData.onHover)) fx.hover(hit.ctrl);
+  hoverKey = key;
+  const cHit = hit && hit.kind === "country" ? hit.hit : null, onPanel = hit && hit.kind === "card";
+  if (xr) { reticle.visible = !!(hit && hit.point); if (reticle.visible) reticle.position.copy(hit.point); }
+  else renderer.domElement.style.cursor = hit && hit.kind !== "card" ? "pointer" : "";
+  updateCountryPull(dt, cHit, onPanel, elapsed);
+  updateCountryHighlight(elapsed, cPull ? cPull.country.iso : (cHit ? cHit.country.iso : null));
+
+  // sticks: on the globe they spin / tilt it; elsewhere a flick turns you by 30°
   let thumb = 0;
-  if (renderer.xr.isPresenting) {
+  if (xr) {
     const s = renderer.xr.getSession();
     if (s) for (const src of s.inputSources) {
       const gp = src.gamepad; if (!gp || !gp.axes) continue;
       const ax = gp.axes[2] ?? gp.axes[0] ?? 0, ay = gp.axes[3] ?? gp.axes[1] ?? 0;
-      if (Math.abs(ax) > 0.15) thumb += ax;
-      if (Math.abs(ay) > 0.25) tiltY = THREE.MathUtils.clamp(tiltY - ay * dt * 0.9, -0.55, 0.55); // stick up → north comes to you
+      const ctrl = controllers.find((c) => c.userData.source === src), onGlobe = hit && hit.kind === "country" && (!hit.ctrl || hit.ctrl === ctrl) || (ctrl && (aim(ctrl), raycaster.intersectObject(sphere, false).length > 0));
+      const prev = stickPrev.get(src) || 0, flick = ax > 0.75 ? 1 : ax < -0.75 ? -1 : 0;
+      if (onGlobe) { if (Math.abs(ax) > 0.15) thumb += ax; if (Math.abs(ay) > 0.25) tiltY = THREE.MathUtils.clamp(tiltY - ay * dt * 0.9, -0.55, 0.55); }
+      else if (flick && flick !== prev) { turnBy(-flick * 30 * DEG); fx.sfx("whoosh", 0.18); }
+      stickPrev.set(src, onGlobe ? 0 : flick);
     }
   }
   if (keys.has("ArrowLeft")) thumb -= 1; if (keys.has("ArrowRight")) thumb += 1;
   if (keys.has("ArrowUp")) tiltY = Math.min(0.55, tiltY + dt * 0.9); if (keys.has("ArrowDown")) tiltY = Math.max(-0.55, tiltY - dt * 0.9);
   spin.rotation.y += manualSpin + thumb * dt * 1.5; manualSpin *= 0.86;
   spin.rotation.x = THREE.MathUtils.clamp(spin.rotation.x + (tiltY - spin.rotation.x) * 0.1, -0.6, 0.6);
-
   arcTime.value = elapsed;
-
-  // pointer: theme pop-up UI first, then the country pop-up, then the globe (VR: both controllers; desktop: mouse)
-  let uiHit = null, cHit = null, onPanel = false, rPoint = null;
-  const rays = renderer.xr.isPresenting ? controllers.filter((c) => c !== grabbing) : (mouseNDC && !(dragging && moved > 6) ? [null] : []);
-  for (const ctrl of rays) {
-    if (ctrl) aim(ctrl); else raycaster.setFromCamera(mouseNDC, camera);
-    const u = uiTargets.length ? raycaster.intersectObjects(uiTargets, false) : [];
-    if (u.length) { uiHit = u[0]; rPoint = u[0].point; break; }
-    const cp = cPull ? raycaster.intersectObject(cPull.card, false) : [];
-    if (cp.length) { onPanel = true; rPoint = cp[0].point; break; }
-    const ch = countryAtRay(); if (ch) { cHit = ch; rPoint = raycaster.intersectObject(sphere, false)[0]?.point; break; }
-  }
-  setHover(uiHit ? uiHit.object : null);
-  if (renderer.xr.isPresenting) { reticle.visible = !!rPoint; if (rPoint) reticle.position.copy(rPoint); }
-  if (!renderer.xr.isPresenting) renderer.domElement.style.cursor = uiHit || cHit ? "pointer" : "";
-  updateCountryPull(dt, cHit, onPanel, elapsed);
-  updateCountryHighlight(elapsed, cPull ? cPull.country.iso : (cHit ? cHit.country.iso : null));
-
+  dock.update(dt, elapsed);
 
   animatePopup(dt);
 
   // chiffres wall: (re)play a panel's animation whenever the viewer turns to face it
   if (chiffresPanels.length) {
-    const cam = renderer.xr.isPresenting ? renderer.xr.getCamera() : camera;
+    const cam = xr ? renderer.xr.getCamera() : camera;
     cam.getWorldDirection(camDir); camDir.y = 0; camDir.normalize();
     const now = performance.now();
     for (const cp of chiffresPanels) {

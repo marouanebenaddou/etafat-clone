@@ -1,20 +1,33 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v19";
+const CACHE = "etafat-vr-v20";
 const PRECACHE = [
   "./index.html",
   "./app.js",
   "./vendor/three.module.js",
-  "./vendor/VRButton.js",
+  "./fx.js",
+  "./nav.js",
+  "./cinema.js",
   "./vendor/jsm/loaders/GLTFLoader.js",
   "./vendor/jsm/utils/BufferGeometryUtils.js",
   "./vendor/jsm/utils/SkeletonUtils.js",
-  // living landscape: real relief + CC0 survey crew
+  "./vendor/jsm/objects/Sky.js",
+  "./vendor/jsm/webxr/XRHandModelFactory.js",
+  "./vendor/jsm/webxr/XRHandMeshModel.js",
+  "./vendor/jsm/webxr/XRHandPrimitiveModel.js",
+  "./vendor/hands/left.glb",
+  "./vendor/hands/right.glb",
+  // living landscape: real relief + river network + CC0 survey crew, guide, vehicle and camp
   "./world.js",
   "./terrain/dem.bin",
   "./terrain/dem.json",
-  "./models/worker.glb",
-  "./models/woman.glb",
+  "./terrain/river.bin",
+  ...["worker", "woman", "guide", "casual", "suv", "tent", "solar", "antenna"].map((m) => `./models/${m}.glb`),
+  ...["music", "hover1", "hover2", "click", "select", "whoosh"].map((a) => `./audio/${a}.mp3`),
+  "./img/etafat-logo-dark.png",
+  // cinema: posters (the films themselves stream from the server, they are not cached by the worker)
+  "./videos/manifeste.jpg",
+  "./videos/institutionnel.jpg",
   "./earth.png",
   "./countries-id.png",
   // country banners (flag × landmark) shown in the globe pop-ups
@@ -89,6 +102,7 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // never touch cross-origin
+  if (url.pathname.endsWith(".mp4")) return;        // films: streamed with range requests, never cached here
   // cache-first for everything under our scope + the shared icons
   e.respondWith(
     caches.match(req).then((hit) => hit || fetch(req).then((res) => {
