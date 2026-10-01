@@ -7,8 +7,7 @@ import { relatedSkills } from "@/lib/etafat";
  * "Les savoir-faire associés" section shown at the bottom of every
  * savoir-faire detail page. Lists the skills thematically related to the
  * current one (acquisition, foncier, data/SIG, 3D, conseil families),
- * matching the geofit "savoir-faire associés" layout: centered icon cards
- * with an "Explorer" link.
+ * as illustrated white cards with an "Explorer" link (see SkillCard).
  */
 export function RelatedSkills({ currentSlug }: { currentSlug: string }) {
   const related = relatedSkills(currentSlug);
@@ -20,16 +19,16 @@ export function RelatedSkills({ currentSlug }: { currentSlug: string }) {
         <Reveal variant="line" duration={1000}>
           <h2 className="text-navy mb-14">Les savoir-faire associés</h2>
         </Reveal>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">
+        <div className="flex flex-wrap justify-center gap-4">
           {related.map((s, i) => (
-            <Reveal key={s.slug} delay={i * 60}>
+            <Reveal key={s.slug} delay={i * 60} className="w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)]">
               <SkillCard title={s.title} href={`/savoir-faire/${s.slug}/`} />
             </Reveal>
           ))}
         </div>
         <Reveal delay={related.length * 60 + 100}>
           <div className="flex justify-center mt-14">
-            <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
+            <Pill href="/savoir-faire/" variant="teal" arrow="right">
               Tous nos savoir-faire
             </Pill>
           </div>

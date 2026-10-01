@@ -4,7 +4,6 @@ import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
 import { QuestionCTA } from "@/components/QuestionCTA";
 import { ArrowRightIcon } from "@/components/icons";
-import { AfricaPresenceMap } from "@/components/AfricaPresenceMap";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 
@@ -36,7 +35,7 @@ const FILIALES: Filiale[] = [
     address: "Lot 57, Lotissement Salaj, Aïn Diab\n20180 Casablanca — Maroc",
     phones: ["+212 522 79 87 00", "+212 522 79 87 01"],
     email: "contact@etafat.ma",
-    image: "/etafat/skills/cadastre-et-securisation-fonciere.jpg",
+    image: "/etafat/visuels/filiales/etafat-ing.jpg",
   },
   {
     slug: "etafat-senegal",
@@ -47,7 +46,7 @@ const FILIALES: Filiale[] = [
     address: "Mamelles Résidences, Lot 200 M, Ouakam\nDakar — Sénégal",
     phones: ["+221 77 644 58 68"],
     email: "etafat@etafat.ma",
-    image: "/etafat/skills/cartographie.jpg",
+    image: "/etafat/visuels/filiales/etafat-senegal.jpg",
   },
   {
     slug: "etafat-afrique",
@@ -58,7 +57,7 @@ const FILIALES: Filiale[] = [
     address: "Rue du 7 Décembre, Zone 4\nAbidjan — Côte d'Ivoire",
     phones: ["+225 07 68 51 33 16"],
     email: "etafat@etafat.ma",
-    image: "/etafat/skills/etudes-territoriales.jpg",
+    image: "/etafat/visuels/filiales/etafat-afrique.jpg",
   },
 ];
 
@@ -109,7 +108,7 @@ export default function FilialesPage() {
                       sizes="(min-width:768px) 33vw, 100vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-[#00669d]/45" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#00669d]/40 via-transparent to-transparent" />
                     <div className="absolute top-4 left-4 w-12 h-12 rounded-full bg-white/20 backdrop-blur flex items-center justify-center">
                       <Icon icon="ph:map-pin-duotone" width={24} height={24} className="text-white" />
                     </div>
@@ -181,9 +180,17 @@ export default function FilialesPage() {
             </div>
           </Reveal>
 
-          {/* Africa map illustration */}
+          {/* Casablanca · Dakar · Abidjan, teams in the field */}
           <Reveal variant="zoom-out" delay={150}>
-            <AfricaPresenceMap />
+            <div className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-xl">
+              <Image
+                src="/etafat/visuels/filiales/presence.jpg"
+                alt="Présence d'ETAFAT en Afrique : équipes terrain, Casablanca, Dakar et Abidjan"
+                fill
+                sizes="(min-width:768px) 50vw, 100vw"
+                className="object-cover"
+              />
+            </div>
           </Reveal>
         </div>
       </section>

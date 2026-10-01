@@ -326,6 +326,13 @@ const DOMAINS: DomainData[] = [
 ];
 
 // Thumbnails cropped from the domain mockups (public/etafat/references/<slug>-<n>.jpg)
+// — the older crops carry the domain badge baked in; the 2026 project photos below are clean, so the
+// card draws the same badge over them.
+const CLEAN_PHOTOS = new Set([
+  "foncier-1", "foncier-2", "foncier-3", "foncier-4",
+  "energie-mines-2", "batiment-patrimoine-3", "batiment-patrimoine-4", "agriculture-eau-4",
+]);
+const hasCleanPhoto = (image: string) => CLEAN_PHOTOS.has(image.split("/").pop()!.replace(/\.jpg$/, ""));
 for (const d of DOMAINS) {
   d.projects.forEach((p, i) => {
     p.image = `/etafat/references/${d.domainSlug}-${i + 1}.jpg`;
@@ -453,6 +460,11 @@ export function ReferencesExplorer() {
                       sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
+                    {p.icon && hasCleanPhoto(p.image) && (
+                      <span className="absolute left-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#1d5d9b] shadow-md ring-2 ring-white/70">
+                        <Icon icon={p.icon} width={24} height={24} className="text-white" />
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-1 flex-col p-6">
                     <h3 className="mb-1.5 text-lg font-semibold leading-tight text-navy">

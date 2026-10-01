@@ -44,6 +44,16 @@ function nameToSlug(name: string) {
 }
 
 // Domaines with a dedicated intro photo in /public/etafat/domaines/intro/.
+// domains whose savoir-faire cards have illustrated pictures (cut from each domain's mockup, in card order)
+const ILLUSTRATED_DOMAINS = new Set([
+  "amenagement-du-territoire",
+  "energie-mines",
+  "batiment-patrimoine",
+  "infrastructures",
+  "foncier",
+  "agriculture-eau",
+]);
+
 const DOMAIN_INTRO_PHOTOS = new Set([
   "amenagement-du-territoire",
   "energie-mines",
@@ -158,14 +168,15 @@ export default async function DomaineDetail({
           <Reveal variant="line" duration={1000}>
             <h2 className="text-navy mb-14">Les savoir-faire associés</h2>
           </Reveal>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-4 gap-y-12">
+          <div className="flex flex-wrap justify-center gap-4">
             {cards.map((c, i) => {
               const slug = cardSkillSlug(c.name);
               return (
-                <Reveal key={c.index} delay={i * 60}>
+                <Reveal key={c.index} delay={i * 60} className="w-[calc(50%-0.5rem)] md:w-[calc(33.333%-0.67rem)] lg:w-[calc(20%-0.8rem)]">
                   <SkillCard
                     title={c.name}
                     href={slug ? `/savoir-faire/${slug}/` : "/savoir-faire/"}
+                    illustration={ILLUSTRATED_DOMAINS.has(d.slug) ? `/etafat/visuels/savoir-faire/${d.slug}/${i + 1}.jpg` : undefined}
                   />
                 </Reveal>
               );
@@ -173,7 +184,7 @@ export default async function DomaineDetail({
           </div>
           <Reveal delay={cards.length * 60 + 100}>
             <div className="flex justify-center mt-14">
-              <Pill href="/savoir-faire/" variant="outline-teal" arrow="right">
+              <Pill href="/savoir-faire/" variant="teal" arrow="right">
                 Tous nos savoir-faire
               </Pill>
             </div>

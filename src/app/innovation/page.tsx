@@ -33,11 +33,11 @@ const PILIERS = [
 ];
 
 const ETAPES = [
-  { icon: "ph:magnifying-glass-duotone", title: "Comprendre le besoin", text: "Analyse des enjeux et des usages." },
-  { icon: "ph:flask-duotone", title: "Tester la solution", text: "Expérimentation et validation de la valeur ajoutée." },
-  { icon: "ph:gear-duotone", title: "Industrialiser les méthodes", text: "Standardisation, automatisation et qualité des processus." },
-  { icon: "ph:map-pin-duotone", title: "Déployer sur le terrain", text: "Mise en œuvre opérationnelle et accompagnement." },
-  { icon: "ph:graduation-cap-duotone", title: "Transférer les compétences", text: "Formations et transfert de savoir-faire." },
+  { title: "Comprendre le besoin", text: "Analyse des enjeux et des usages." },
+  { title: "Tester la solution", text: "Expérimentation et validation de la valeur ajoutée." },
+  { title: "Industrialiser les méthodes", text: "Standardisation, automatisation et qualité des processus." },
+  { title: "Déployer sur le terrain", text: "Mise en œuvre opérationnelle et accompagnement." },
+  { title: "Transférer les compétences", text: "Formations et transfert de savoir-faire." },
 ];
 
 const AXES = [
@@ -173,19 +173,23 @@ export default function InnovationPage() {
         <div className="container-etafat">
           <Reveal>
             <h2 className="mb-14 text-navy leading-tight text-2xl md:text-3xl">
-              De l&apos;expérimentation à la solution opérationnelle
+              De l&apos;expérimentation à la <span className="text-[#00669d]">solution opérationnelle</span>
             </h2>
           </Reveal>
-          <div className="relative grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
-            <span className="absolute left-[8%] right-[8%] top-4 hidden h-px bg-[#00669d]/25 lg:block" aria-hidden />
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5 lg:gap-6">
             {ETAPES.map((e, i) => (
               <Reveal key={e.title} delay={i * 90}>
-                <div className="relative">
-                  <span className="mb-6 flex h-9 w-9 items-center justify-center rounded-full bg-[#00669d] text-sm font-semibold text-white">
-                    {i + 1}
-                  </span>
-                  <Icon icon={e.icon} width={34} height={34} className="mb-4 text-[#00669d]" />
-                  <h3 className="mb-1.5 text-base font-semibold leading-tight text-navy">{e.title}</h3>
+                {/* numbered illustration (number badge drawn in the picture), title, rule, text */}
+                <div className="group text-center">
+                  <Image
+                    src={`/etafat/visuels/innovation/etape-${i + 1}.jpg`}
+                    alt={`Étape ${i + 1}`}
+                    width={280}
+                    height={268}
+                    className="mx-auto mb-4 h-36 w-auto transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <h3 className="text-base font-semibold leading-tight text-navy">{e.title}</h3>
+                  <span className="mx-auto my-3 block h-0.5 w-8 rounded bg-[#00669d]" aria-hidden />
                   <p className="text-sm leading-relaxed text-body">{e.text}</p>
                 </div>
               </Reveal>

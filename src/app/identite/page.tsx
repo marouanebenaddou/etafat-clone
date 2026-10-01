@@ -6,7 +6,6 @@ import { CountUp } from "@/components/CountUp";
 import { Pill } from "@/components/Pill";
 import {
   ArrowRightIcon,
-  CheckCircleIcon,
 } from "@/components/icons";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
@@ -36,19 +35,21 @@ const VALEURS: { image: string; title: string; text: string }[] = [
   },
 ];
 
+const V = "/etafat/visuels/identite";
+
 const CHIFFRES = [
-  { value: "+200 000", unit: "km²", label: "Superficie couverte en prises de vues aériennes" },
-  { value: "+1 000 000", unit: "ha", label: "Superficie immatriculée" },
-  { value: "+35", unit: "", label: "Solutions SIG métier développées" },
-  { value: "+10 000", unit: "ha", label: "de projets d'aménagement urbain" },
+  { value: "+200 000", unit: "km²", label: "Superficie couverte en prises de vues aériennes", icon: "tabler:drone", image: `${V}/chiffres-1.jpg` },
+  { value: "+1 000 000", unit: "ha", label: "Superficie immatriculée", icon: "tabler:map-pin-2", image: `${V}/chiffres-2.jpg` },
+  { value: "+35", unit: "", label: "Solutions SIG métier développées", icon: "ph:stack-duotone", image: `${V}/chiffres-3.jpg` },
+  { value: "+10 000", unit: "ha", label: "de projets d'aménagement urbain", icon: "ph:buildings-duotone", image: `${V}/chiffres-4.jpg` },
 ];
 
 const HISTOIRE = [
-  { year: "1983", title: "Création d'ETAFAT" },
-  { year: "1999", title: "1er Projet à l'International" },
-  { year: "2012", title: "Activité de PVA" },
-  { year: "2020", title: "Développement à l'échelle Africaine" },
-  { year: "2025", title: "1er Projet en Asie" },
+  { year: "1983", title: "Création d'ETAFAT", image: `${V}/historique-1.jpg` },
+  { year: "1999", title: "1er Projet à l'International", image: `${V}/historique-2.jpg` },
+  { year: "2012", title: "Activité de PVA", image: `${V}/historique-3.jpg` },
+  { year: "2020", title: "Développement à l'échelle Africaine", image: `${V}/historique-4.jpg` },
+  { year: "2025", title: "1er Projet en Asie", image: `${V}/historique-5.jpg` },
 ];
 
 const FILIALES = [
@@ -57,21 +58,21 @@ const FILIALES = [
     title: "ETAFAT ING",
     subtitle: "Entité ingénierie",
     text: "ETAFAT ING porte les expertises d'ingénierie du Groupe, en accompagnant les projets d'aménagement, d'infrastructure, d'études techniques et de valorisation des territoires.",
-    image: "/etafat/skills/etudes-territoriales.jpg",
+    image: "/etafat/visuels/filiales/etafat-ing.jpg",
   },
   {
     slug: "etafat-senegal",
     title: "ETAFAT Sénégal",
     subtitle: "Entité de développement international",
     text: "ETAFAT Sénégal contribue au développement des activités du Groupe en Afrique de l'Ouest, en mobilisant les savoir-faire techniques d'ETAFAT au service des projets territoriaux, fonciers et géospatiaux.",
-    image: "/etafat/skills/cartographie.jpg",
+    image: "/etafat/visuels/filiales/etafat-senegal.jpg",
   },
   {
     slug: "etafat-afrique",
     title: "ETAFAT Afrique",
     subtitle: "Entité de développement international",
     text: "ETAFAT Afrique accompagne le rayonnement du Groupe sur le continent africain, en renforçant sa capacité à intervenir sur des projets d'envergure dans des contextes locaux, institutionnels et techniques variés.",
-    image: "/etafat/skills/cadastre-et-securisation-fonciere.jpg",
+    image: "/etafat/visuels/filiales/etafat-afrique.jpg",
   },
 ];
 
@@ -117,8 +118,8 @@ export default function IdentitePage() {
           <Reveal variant="zoom-out" delay={200}>
             <div className="relative aspect-[4/3] rounded-md overflow-hidden">
               <Image
-                src="/etafat/skills/modelisation-3d-et-bim.jpg"
-                alt="Vision ETAFAT"
+                src={`${V}/vision.jpg`}
+                alt="Opérateur ETAFAT et relevé géospatial par drone au-dessus d'un territoire"
                 fill
                 sizes="(min-width:768px) 50vw, 100vw"
                 className="object-cover"
@@ -187,8 +188,8 @@ export default function IdentitePage() {
           <Reveal variant="zoom-out" delay={200}>
             <div className="relative aspect-[4/3] rounded-md overflow-hidden">
               <Image
-                src="/etafat/skills/conseil-et-audit-geospatial.jpg"
-                alt="Direction Générale ETAFAT"
+                src={`${V}/direction.jpg`}
+                alt="Équipe ETAFAT analysant des données géospatiales"
                 fill
                 sizes="(min-width:768px) 50vw, 100vw"
                 className="object-cover"
@@ -202,6 +203,7 @@ export default function IdentitePage() {
       <section id="chiffres-cles" className="bg-white py-20 md:py-24 scroll-mt-[170px]">
         <div className="container-etafat">
           <Reveal>
+            <span className="block w-10 h-[3px] rounded bg-[#00669d] mb-3" aria-hidden />
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-10 block">
               ETAFAT en chiffres
             </span>
@@ -209,13 +211,29 @@ export default function IdentitePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {CHIFFRES.map((c, i) => (
               <Reveal key={i} delay={i * 100}>
-                <div className="bg-[#00669d] text-white rounded-md p-8 h-full">
-                  <Icon icon="ph:mountains-duotone" width={36} height={36} className="text-white/80 mb-5" />
-                  <p className="text-3xl md:text-4xl font-semibold leading-none mb-2" style={{ fontFamily: "var(--font-figtree)", color: "#fff" }}>
-                    <CountUp value={c.value} />
-                    {c.unit && <span className="text-xl ml-1 font-normal">{c.unit}</span>}
-                  </p>
-                  <p className="text-white/85 text-sm leading-snug mt-3">{c.label}</p>
+                {/* photo melting into the ETAFAT blue, icon badge, figure */}
+                <div className="group relative h-full overflow-hidden rounded-xl bg-[#0a4c82] text-white shadow-lg">
+                  <div className="relative h-40">
+                    <Image
+                      src={c.image}
+                      alt=""
+                      fill
+                      sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-[#0a4c82]/0 via-[#0a4c82]/25 to-[#0a4c82]" />
+                  </div>
+                  <div className="relative -mt-12 px-7 pb-8">
+                    <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-white shadow-md">
+                      <Icon icon={c.icon} width={30} height={30} className="text-[#00669d]" />
+                    </div>
+                    <p className="text-3xl md:text-4xl font-semibold leading-none" style={{ fontFamily: "var(--font-figtree)", color: "#fff" }}>
+                      <CountUp value={c.value} />
+                      {c.unit && <span className="text-xl ml-1 font-normal">{c.unit}</span>}
+                    </p>
+                    <span className="mt-4 mb-3 block h-[3px] w-12 rounded bg-[#5cc8ef]" aria-hidden />
+                    <p className="text-white/90 text-sm leading-snug">{c.label}</p>
+                  </div>
                 </div>
               </Reveal>
             ))}
@@ -224,28 +242,36 @@ export default function IdentitePage() {
       </section>
 
       {/* HISTORIQUE — 43 ans d'évolution */}
-      <section id="historique" className="bg-[#f5f7f9] py-20 md:py-28 scroll-mt-[170px]">
-        <div className="container-etafat">
+      <section id="historique" className="relative overflow-hidden bg-white pt-20 md:pt-28 pb-40 md:pb-52 scroll-mt-[170px]">
+        {/* misty landscape along the bottom edge */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 md:h-60" aria-hidden>
+          <Image src={`${V}/historique-paysage.jpg`} alt="" fill sizes="100vw" className="object-cover object-bottom" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-white/30 to-transparent" />
+        </div>
+        <div className="container-etafat relative">
           <Reveal>
+            <span className="block w-10 h-[3px] rounded bg-[#00669d] mb-3" aria-hidden />
             <span className="text-teal text-sm font-semibold uppercase tracking-wider mb-3 block">
               Historique
             </span>
             <h2 className="text-navy mb-12 leading-tight">43 ans d&apos;évolution</h2>
           </Reveal>
           <div className="relative">
-            {/* horizontal connector */}
-            <div className="hidden md:block absolute top-7 left-[5%] right-[5%] h-px bg-[#00669d]/30" />
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
+            {/* timeline through the year dots */}
+            <div className="hidden md:block absolute top-[3.6rem] left-[10%] right-[6%] h-px bg-[#7fb3d6]" />
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-x-6 gap-y-10">
               {HISTOIRE.map((h, i) => (
                 <Reveal key={h.year} delay={i * 100}>
-                  <div className="text-center md:text-left">
-                    <p className="text-navy text-2xl font-semibold mb-3" style={{ fontFamily: "var(--font-figtree)" }}>
+                  <div className="text-center">
+                    <p className="text-[#0d5a9a] text-2xl md:text-[1.7rem] font-bold mb-3" style={{ fontFamily: "var(--font-figtree)" }}>
                       {h.year}
                     </p>
-                    <div className="mx-auto md:mx-0 w-14 h-14 rounded-full bg-[#00669d] flex items-center justify-center mb-4">
-                      <CheckCircleIcon className="w-6 h-6 text-white" />
+                    <span className="relative z-10 mx-auto block h-4 w-4 rounded-full bg-[#00669d] ring-4 ring-white" aria-hidden />
+                    <div className="relative mx-auto mt-3 h-28 w-28 md:h-32 md:w-32 overflow-hidden rounded-full border-4 border-white shadow-md ring-2 ring-[#00669d] transition-transform duration-300 hover:scale-105">
+                      <Image src={h.image} alt="" fill sizes="128px" className="object-cover" />
                     </div>
-                    <h3 className="text-navy text-base font-semibold">{h.title}</h3>
+                    <h3 className="mt-4 text-navy text-base font-semibold leading-snug">{h.title}</h3>
+                    <span className="mx-auto mt-3 block h-0.5 w-8 rounded bg-[#00669d]" aria-hidden />
                   </div>
                 </Reveal>
               ))}
@@ -277,7 +303,6 @@ export default function IdentitePage() {
                       sizes="(min-width:768px) 33vw, 100vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-[#00669d]/30" />
                   </div>
                   <div className="p-7 flex-1 flex flex-col">
                     <h3 className="text-navy text-xl font-semibold mb-1">{f.title}</h3>

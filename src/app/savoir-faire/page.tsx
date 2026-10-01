@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
 import { Reveal } from "@/components/Reveal";
@@ -25,12 +26,14 @@ type Pillar = {
   short: string;
   description: string;
   icon: string;
+  illustration: string;
   skills: Skill[];
 };
 
 const PILLARS: Pillar[] = [
   {
     letter: "A",
+    illustration: "/etafat/visuels/savoir-faire/besoin-1.jpg",
     anchor: "expertise-fonciere",
     title: "Expertise foncière",
     short:
@@ -52,6 +55,7 @@ const PILLARS: Pillar[] = [
   },
   {
     letter: "B",
+    illustration: "/etafat/visuels/savoir-faire/besoin-2.jpg",
     anchor: "acquisition-de-donnees",
     title: "Acquisition de données",
     short:
@@ -69,6 +73,7 @@ const PILLARS: Pillar[] = [
   },
   {
     letter: "C",
+    illustration: "/etafat/visuels/savoir-faire/besoin-3.jpg",
     anchor: "ingenierie-de-donnees",
     title: "Ingénierie de données",
     short:
@@ -91,6 +96,7 @@ const PILLARS: Pillar[] = [
   },
   {
     letter: "D",
+    illustration: "/etafat/visuels/savoir-faire/besoin-4.jpg",
     anchor: "ingenierie-conseil",
     title: "Ingénierie Conseil",
     short:
@@ -159,7 +165,9 @@ export default function SavoirFairePage() {
       <section className="bg-white py-16 md:py-20">
         <div className="container-etafat">
           <Reveal>
-            <h2 className="text-navy text-center mb-3">Quel est votre besoin&nbsp;?</h2>
+            <h2 className="text-navy text-center mb-3">
+              Quel est votre <span className="text-[#00669d]">besoin</span>&nbsp;?
+            </h2>
             <div className="w-12 h-0.5 bg-[#00669d] mx-auto mb-14" />
           </Reveal>
 
@@ -171,9 +179,13 @@ export default function SavoirFairePage() {
                   className="group relative bg-white p-7 rounded-md border border-[#e5e7eb] h-full flex flex-col text-center items-center hover:shadow-lg hover:-translate-y-1 hover:border-[#00669d] transition-all duration-300 overflow-hidden"
                 >
                   <div className="absolute top-0 left-0 right-0 h-1 bg-[#00669d] scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300" />
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                    <Icon icon={p.icon} width={44} height={44} className="text-[#00669d]" />
-                  </div>
+                  <Image
+                    src={p.illustration}
+                    alt=""
+                    width={240}
+                    height={180}
+                    className="mb-5 h-32 w-auto transition-transform duration-300 group-hover:scale-105"
+                  />
                   <h3 className="text-navy text-lg font-semibold mb-3 leading-tight">
                     {p.title}
                   </h3>

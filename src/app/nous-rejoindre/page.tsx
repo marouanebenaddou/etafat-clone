@@ -16,24 +16,26 @@ export const metadata: Metadata = {
 
 const YOUTUBE = "https://www.youtube.com/@etafatgroup";
 
-const POURQUOI: { icon: string; title: string; text: string }[] = [
+const V = "/etafat/visuels/rejoindre";
+
+const POURQUOI: { image: string; title: string; text: string }[] = [
   {
-    icon: "ph:globe-hemisphere-west-duotone",
+    image: `${V}/pourquoi-1.jpg`,
     title: "Des projets à impact",
     text: "Contribuez à des projets concrets qui accompagnent la transition écologique et l'aménagement des territoires.",
   },
   {
-    icon: "tabler:drone",
+    image: `${V}/pourquoi-2.jpg`,
     title: "Des métiers techniques et innovants",
     text: "Travaillez avec des technologies de pointe et des expertises reconnues.",
   },
   {
-    icon: "ph:mountains-duotone",
+    image: `${V}/pourquoi-3.jpg`,
     title: "Une culture terrain",
     text: "Le terrain fait partie de notre ADN. Nous valorisons la proximité, l'autonomie et le sens du concret.",
   },
   {
-    icon: "ph:trend-up-duotone",
+    image: `${V}/pourquoi-4.jpg`,
     title: "Une évolution professionnelle",
     text: "Nous accompagnons vos envies d'évoluer et de développer vos compétences.",
   },
@@ -79,10 +81,10 @@ export default function NousRejoindrePage() {
       <section className="bg-white py-20 md:py-28">
         <div className="container-etafat grid items-center gap-12 md:grid-cols-2 lg:gap-16">
           <Reveal variant="zoom-out">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+            <div className="relative aspect-[16/10] overflow-hidden rounded-xl shadow-lg">
               <Image
-                src="/etafat/skills/geospatial-intelligence.jpg"
-                alt="La culture d'entreprise ETAFAT"
+                src={`${V}/culture.jpg`}
+                alt="Équipe ETAFAT sur le terrain, carte de l'Afrique et relevés par drone"
                 fill
                 sizes="(min-width:768px) 50vw, 100vw"
                 className="object-cover"
@@ -115,8 +117,9 @@ export default function NousRejoindrePage() {
       <section id="pourquoi" className="scroll-mt-[170px] bg-[#f5f7f9] py-20 md:py-28">
         <div className="container-etafat">
           <Reveal>
+            <span className="mx-auto mb-4 block h-[3px] w-10 rounded bg-[#00669d]" aria-hidden />
             <h2 className="mb-14 text-center leading-tight text-navy">
-              Pourquoi nous rejoindre&nbsp;?
+              Pourquoi <span className="text-[#00669d]">nous rejoindre</span>&nbsp;?
             </h2>
           </Reveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -124,9 +127,13 @@ export default function NousRejoindrePage() {
               <Reveal key={p.title} delay={i * 80}>
                 <div className="group relative h-full overflow-hidden rounded-md border border-[#e5e7eb] bg-white p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
                   <div className="absolute left-0 right-0 top-0 h-1 origin-left scale-x-0 bg-[#00669d] transition-transform duration-300 group-hover:scale-x-100" />
-                  <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-md bg-gradient-to-br from-[#e0eef6] to-[#cfe3f0] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                    <Icon icon={p.icon} width={36} height={36} className="text-[#00669d]" />
-                  </div>
+                  <Image
+                    src={p.image}
+                    alt=""
+                    width={160}
+                    height={120}
+                    className="mx-auto mb-5 h-20 w-auto transition-transform duration-300 group-hover:scale-110"
+                  />
                   <h3 className="mb-3 text-lg font-semibold leading-tight text-navy">
                     {p.title}
                   </h3>
@@ -166,12 +173,12 @@ export default function NousRejoindrePage() {
             </ol>
           </div>
           <Reveal variant="zoom-out" delay={150}>
-            <div className="relative aspect-[4/3] overflow-hidden rounded-md">
+            <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden rounded-xl shadow-lg">
               <Image
-                src="/etafat/skills/assistance-fonciere.jpg"
-                alt="Entretien de recrutement ETAFAT"
+                src={`${V}/recrutement.jpg`}
+                alt="Les quatre étapes du recrutement chez ETAFAT : candidature, rencontre, réponse, intégration"
                 fill
-                sizes="(min-width:768px) 50vw, 100vw"
+                sizes="(min-width:768px) 28rem, 100vw"
                 className="object-cover"
               />
             </div>
@@ -244,8 +251,8 @@ export default function NousRejoindrePage() {
       {/* NOTRE VISION */}
       <section id="vision" className="relative scroll-mt-[170px] overflow-hidden">
         <Image
-          src="/etafat/skills/releves-geospatiaux.jpg"
-          alt="La vision ETAFAT"
+          src={`${V}/vision.jpg`}
+          alt="Équipe ETAFAT surplombant une ville et sa vallée, relevé par drone"
           fill
           sizes="100vw"
           className="object-cover"

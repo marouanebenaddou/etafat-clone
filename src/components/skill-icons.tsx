@@ -42,6 +42,68 @@ const KEYWORD_RULES: Array<[RegExp, string]> = [
 ];
 
 /**
+ * Illustrated pictures of the savoir-faire (2026 visual refresh): cut from the per-domain mockups into
+ * /etafat/visuels/savoir-faire/<domain>/<n>.jpg. Keyed by title slug; the first domain showing a skill wins,
+ * plus a few aliases for close titles. Skills without one keep their line icon.
+ */
+const SKILL_ILLUSTRATIONS: Record<string, string> = {
+  "assistance-fonciere": "foncier/1",
+  "cadastre-et-securisation-fonciere": "foncier/2",
+  "topographie-et-geodesie": "foncier/3",
+  "plans-parcellaires-et-emprises": "foncier/4",
+  "cartographie-fonciere": "foncier/5",
+  "sig-foncier-et-bases-cadastrales": "foncier/6",
+  "etudes-foncieres-et-diagnostics-territoriaux": "foncier/7",
+  "releves-geospatiaux": "foncier/8",
+  "geospatial-intelligence-fonciere": "foncier/9",
+  "conseil-et-audit-foncier-geospatial": "foncier/10",
+  "cartographie": "amenagement-du-territoire/5",
+  "geospatial-intelligence": "amenagement-du-territoire/6",
+  "modelisation-3d-et-bim": "amenagement-du-territoire/7",
+  "systemes-dinformation-geographique": "amenagement-du-territoire/8",
+  "etudes-territoriales": "amenagement-du-territoire/9",
+  "conseil-et-audit-geospatial": "amenagement-du-territoire/10",
+  "sig-et-bases-de-donnees-geographiques": "energie-mines/4",
+  "foncier-et-securisation-des-emprises": "energie-mines/5",
+  "scanner-laser-3d-et-nuages-de-points": "batiment-patrimoine/3",
+  "inspection-des-structures": "batiment-patrimoine/5",
+  "cartographie-et-plans-du-bati": "batiment-patrimoine/6",
+  "sig-et-gestion-patrimoniale": "batiment-patrimoine/7",
+  "cartographie-et-plans-techniques": "infrastructures/3",
+  "sig-et-bases-de-donnees-dinfrastructures": "infrastructures/4",
+  "modelisation-3d-et-bim-infrastructure": "infrastructures/6",
+  "cartographie-agricole-et-occupation-du-sol": "agriculture-eau/3",
+  "sig-agricole-et-bases-de-donnees-rurales": "agriculture-eau/4",
+  "gestion-de-leau-et-ouvrages-hydrauliques": "agriculture-eau/5",
+  "bathymetrie-et-releves-hydrographiques": "agriculture-eau/6",
+  "foncier-rural-et-securisation-des-emprises": "agriculture-eau/7",
+  "modeles-numeriques-et-analyse-du-relief": "agriculture-eau/8",
+  "geospatial-intelligence-agricole-et-hydrique": "agriculture-eau/9",
+  // aliases
+  "scanner-laser-3d-et-mms": "batiment-patrimoine/3",
+  "bathymetrie-et-hydrographie": "agriculture-eau/6",
+  "inspection-et-surveillance-douvrage": "infrastructures/5",
+  "releves-aeriens-et-lidar": "amenagement-du-territoire/4",
+};
+
+function slugOf(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['’]/g, "")
+    .replace(/&/g, "et")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+/** Illustrated picture for a savoir-faire title, if one exists. */
+export function illustrationForSkillTitle(title: string): string | undefined {
+  const key = SKILL_ILLUSTRATIONS[slugOf(title)];
+  return key ? `/etafat/visuels/savoir-faire/${key}.jpg` : undefined;
+}
+
+/**
  * Resolve a savoir-faire title to an Iconify icon name.
  * First tries exact slug match; falls back to keyword pattern matching;
  * defaults to compass.
