@@ -260,7 +260,8 @@
         "/etafat/evenement/pool/gis-1.jpg",
         "/etafat/evenement/pool/gis-2.jpg",
         "/etafat/evenement/pool/gis-3.jpg",
-        "/etafat/evenement/pool/gis-4.jpg"
+        "/etafat/evenement/pool/gis-4.jpg",
+        "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg"
       ],
       "items": [
         {
@@ -354,9 +355,9 @@
             "Digitalisation des procédures"
           ],
           "images": [
-            "/etafat/evenement/pool/gis-4.jpg",
-            "/etafat/evenement/pool/gis-1.jpg",
-            "/etafat/evenement/pool/gis-2.jpg"
+            "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
+            "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
+            "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg"
           ]
         },
         {
@@ -370,9 +371,10 @@
             "Calcul des redevances"
           ],
           "images": [
-            "/etafat/evenement/pool/gis-1.jpg",
-            "/etafat/evenement/pool/gis-2.jpg",
-            "/etafat/evenement/pool/gis-3.jpg"
+            "/etafat/evenement/projets/26-skhirate-temara/tnb.jpg",
+            "/etafat/evenement/projets/26-skhirate-temara/odp.jpg",
+            "/etafat/evenement/projets/26-skhirate-temara/fiche-tnb.jpg",
+            "/etafat/evenement/projets/26-skhirate-temara/detail-activite.jpg"
           ]
         }
       ]

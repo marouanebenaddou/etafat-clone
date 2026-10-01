@@ -33,7 +33,8 @@ for (const rel of copies) {
   if (!existsSync(src)) continue;
   const dst = path.join(www, rel);
   mkdirSync(path.dirname(dst), { recursive: true });
-  cpSync(src, dst, { recursive: true });
+  // etafat/evenement/photos/ is a loose folder of post images the kiosk never shows — keep it out of the APK
+  cpSync(src, dst, { recursive: true, filter: (f) => !f.includes(`${path.sep}etafat${path.sep}evenement${path.sep}photos`) });
 }
 // Optional root file (referenced by the page <head>; avoids a console 404).
 for (const file of ["evenement.webmanifest"]) {
