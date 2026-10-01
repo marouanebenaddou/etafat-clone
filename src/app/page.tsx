@@ -5,7 +5,6 @@ import { PlayIcon, ArrowRightIcon } from "@/components/icons";
 import { Reveal } from "@/components/Reveal";
 import { VideoGate } from "@/components/VideoGate";
 import { VideoLightbox } from "@/components/VideoLightbox";
-import { PresenceSection } from "@/components/PresenceSection";
 import { Icon } from "@iconify/react";
 import { linkedinPosts } from "@/data/linkedin-posts";
 
@@ -219,9 +218,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* NOTRE PRÉSENCE (globe interactif) */}
-      <PresenceSection />
 
       {/* QUEL EST VOTRE BESOIN ? */}
       <section className="bg-[#f5f7f9] py-20 md:py-28">
