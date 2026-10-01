@@ -2,9 +2,9 @@
 // the site's paths so the on-device server (127.0.0.1) serves them exactly like the website does.
 // File list = the VR service worker's PRECACHE (already the complete offline set) + any asset literal
 // found in the VR sources, as a safety net (this is what brings in the cinema's films, which the
-// service worker deliberately leaves to HTTP range requests). Then build:  cd quest-local && ./gradlew assembleRelease
-import { readFile, mkdir, cp, rm, stat } from "node:fs/promises";
-import { existsSync } from "node:fs";
+// service worker deliberately leaves to HTTP range requests), plus the Cité maquette directories. Then build:  cd quest-local && ./gradlew assembleRelease
+import { readFile, mkdir, cp, rm, stat, readdir } from "node:fs/promises";
+import { existsSync, constants } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import { createCanvas, loadImage } from "@napi-rs/canvas";
@@ -21,7 +21,7 @@ const precache = new Function(`return ${arr};`)();
 const files = new Set(["/xr/sw.js"]);
 const norm = (u) => (u.startsWith("./") ? "/xr/" + u.slice(2) : u);
 for (const u of precache) files.add(norm(u));
-for (const f of ["xr/index.html", "xr/app.js", "xr/world.js", "xr/fx.js", "xr/nav.js", "xr/cinema.js"]) { // safety net: literal asset paths in the sources
+for (const f of ["xr/index.html", "xr/app.js", "xr/world.js", "xr/fx.js", "xr/nav.js", "xr/cinema.js", "xr/cite.js"]) { // safety net: literal asset paths in the sources
   const src = await readFile(join(PUB, f), "utf8");
   for (const m of src.matchAll(/["'`](\.\/[\w\-./]+\.(?:js|json|png|jpe?g|glb|bin|mp3|mp4|webmanifest|html))["'`]/g)) files.add(norm(m[1]));
   for (const m of src.matchAll(/["'`](\/etafat\/[\w\-./]+\.(?:png|jpe?g|json|webmanifest))["'`]/g)) files.add(m[1]);
@@ -35,6 +35,16 @@ for (const f of [...files].sort()) {
   await mkdir(dirname(join(WWW, f)), { recursive: true });
   await cp(src, join(WWW, f));
   bytes += (await stat(src)).size;
+}
+
+// the Cité portugaise room: the 3D Tiles maquette (418 MB) and the 360° photos (95 MB) — gitignored, taken from
+// public/xr/cite/ when present (dev clone), else from the standalone Cité viewer (cite-vr/www/)
+const du = async (d) => { let n = 0; for (const e of await readdir(d, { withFileTypes: true, recursive: true })) if (e.isFile()) n += (await stat(join(e.parentPath ?? e.path, e.name))).size; return n; };
+for (const dir of ["model", "panos"]) {
+  const src = [join(PUB, "xr/cite", dir), join(ROOT, "cite-vr/www", dir)].find((d) => existsSync(join(d, dir === "model" ? "tileset.json" : "thumbs")));
+  if (!src) { missing.push(`/xr/cite/${dir}/ (Cité ${dir})`); continue; }
+  await cp(src, join(WWW, "xr/cite", dir), { recursive: true, mode: constants.COPYFILE_FICLONE });
+  const n = await du(src); bytes += n; console.log(`  + Cité ${dir}: ${(n / 1048576).toFixed(0)} MB from ${src.replace(ROOT + "/", "")}`);
 }
 
 // launcher icon from the kiosk/VR app icon

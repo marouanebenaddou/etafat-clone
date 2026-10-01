@@ -63,15 +63,18 @@ const cityDist = (x, z) => Math.hypot(x - CITY_X, z - CITY_Z);
 export function createWorld({ scene, renderer, camera }) {
   const updaters = [];
   const api = { heightAt: () => 0, ready: null, update(dt, t) { for (const u of updaters) u(dt, t); } };
-  setupSkyAndLight(scene, renderer, camera, updaters, api);
+  // everything the landscape builds lives under one group, so AR (passthrough) can drop it in one go
+  const root = new THREE.Group(); root.name = "world"; scene.add(root);
+  setupSkyAndLight(scene, root, renderer, camera, updaters, api);
   updaters.push((dt, t) => { TIME.value = t; });
   api.ready = (async () => {
+    const scene = root; // the builders below only add objects
     const T = await buildTerrain(scene);
     api.heightAt = T.heightAt;
     buildVegetation(scene, T);
     buildVillages(scene, T);
     buildCity(scene, T, updaters);
-    const L = new GLTFLoader(), names = ["worker", "woman", "guide", "casual", "suv", "tent", "solar", "antenna"];
+    const L = new GLTFLoader(), names = ["worker", "woman", "casual", "suv", "tent", "solar", "antenna"];
     const M = Object.fromEntries(await Promise.all(names.map((n) => L.loadAsync(`./models/${n}.glb`).then((g) => [n, g]))));
     buildRoadAndCar(scene, T, updaters, M.suv);
     buildDrones(scene, T, updaters);
@@ -125,8 +128,8 @@ function bakeSky(renderer, A) {
   return { bg: rt.texture, env };
 }
 
-function setupSkyAndLight(scene, renderer, camera, updaters, api) {
-  scene.fog = new THREE.FogExp2(0xd5bea2, 0.000105); // aerial perspective over ~10 km
+function setupSkyAndLight(scene, root, renderer, camera, updaters, api) {
+  const fog = scene.fog = new THREE.FogExp2(0xd5bea2, 0.000105); // aerial perspective over ~10 km
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const sun = new THREE.DirectionalLight(0xffc58a, 2.8);
@@ -150,22 +153,22 @@ function setupSkyAndLight(scene, renderer, camera, updaters, api) {
   }
   const sg = new THREE.BufferGeometry(); sg.setAttribute("position", new THREE.BufferAttribute(sp, 3)); sg.setAttribute("color", new THREE.BufferAttribute(sc, 3));
   const stars = new THREE.Points(sg, new THREE.PointsMaterial({ size: 2.2, sizeAttenuation: false, vertexColors: true, fog: false, transparent: true, depthWrite: false }));
-  stars.frustumCulled = false; stars.visible = false; scene.add(stars);
+  stars.frustumCulled = false; stars.visible = false; root.add(stars);
   const mc = document.createElement("canvas"); mc.width = mc.height = 256; const mx = mc.getContext("2d");
   let g = mx.createRadialGradient(128, 128, 0, 128, 128, 128); g.addColorStop(0, "rgba(255,255,255,1)"); g.addColorStop(0.16, "rgba(235,242,255,1)"); g.addColorStop(0.2, "rgba(190,210,255,0.5)"); g.addColorStop(0.5, "rgba(120,150,220,0.12)"); g.addColorStop(1, "rgba(80,110,200,0)");
   mx.fillStyle = g; mx.fillRect(0, 0, 256, 256);
   const moonTex = new THREE.CanvasTexture(mc); moonTex.colorSpace = THREE.SRGBColorSpace;
   const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: moonTex, fog: false, transparent: true, depthWrite: false }));
-  moon.scale.setScalar(2600); moon.visible = false; scene.add(moon);
+  moon.scale.setScalar(2600); moon.visible = false; root.add(moon);
   updaters.push(() => { stars.position.copy(camera.position); });
 
   const cache = {};
-  let dimK = 0, curA = AMBIANCES.golden;
+  let dimK = 0, curA = AMBIANCES.golden, ar = false;
   const applyLight = () => { // ambiance × cinema dimming (the landscape darkens while a film plays)
     const A = curA, f = 1 - 0.72 * dimK;
     sun.intensity = A.sun[1] * f; hemi.intensity = A.hemi[2] * f;
     scene.backgroundIntensity = A.bg * (1 - 0.65 * dimK); scene.environmentIntensity = A.env * f;
-    scene.fog.color.set(A.fog).multiplyScalar(1 - 0.6 * dimK);
+    fog.color.set(A.fog).multiplyScalar(1 - 0.6 * dimK);
   };
   api.setDim = (k) => { if (Math.abs(k - dimK) < 0.003) return; dimK = k; applyLight(); };
   api.ambiance = "golden";
@@ -173,12 +176,12 @@ function setupSkyAndLight(scene, renderer, camera, updaters, api) {
     const A = AMBIANCES[key]; if (!A) return;
     api.ambiance = key; curA = A;
     const sky = cache[key] || (cache[key] = bakeSky(renderer, A));
-    scene.background = sky.bg; scene.environment = sky.env;
+    scene.background = ar ? null : sky.bg; scene.environment = sky.env;
     SUN_DIR = sunDir(A);
     sun.color.set(A.sun[0]);
     sun.position.copy(sun.target.position).addScaledVector(SUN_DIR, 150);
     hemi.color.set(A.hemi[0]); hemi.groundColor.set(A.hemi[1]);
-    scene.fog.density = A.fogD;
+    fog.density = A.fogD;
     applyLight();
     NIGHT.value = A.night;
     stars.visible = moon.visible = !!A.moon;
@@ -187,6 +190,12 @@ function setupSkyAndLight(scene, renderer, camera, updaters, api) {
   };
   api.onAmbiance = [];
   api.setAmbiance("golden");
+  // AR (passthrough): no sky, no fog, no landscape — the presentation floats in the visitor's own room.
+  // The lights stay (the globe's pedestal is metal) and so does the reflection map.
+  api.setAR = (on) => {
+    ar = on; root.visible = !on;
+    scene.background = on ? null : cache[api.ambiance].bg; scene.fog = on ? null : fog;
+  };
 }
 
 /* ------------------------------- terrain ------------------------------- */
@@ -980,7 +989,8 @@ function buildCamp(scene, T, updaters, M) {
 export const DECK_R = 3.0;
 export const ZONES = [ // world azimuths (° clockwise from north = straight ahead at start)
   { key: "presence", label: "PRÉSENCE", dock: "Présence dans le monde", az: 0 },
-  { key: "expertises", label: "EXPERTISES", dock: "Nos expertises", az: 97 },
+  { key: "expertises", label: "EXPERTISES", dock: "Nos expertises", az: 88 },
+  { key: "cite", label: "CITÉ PORTUGAISE", dock: "Cité portugaise · maquette 3D", az: 132 },
   { key: "cinema", label: "CINÉMA", dock: "Cinéma ETAFAT", az: -90 },
   { key: "chiffres", label: "CHIFFRES CLÉS", dock: "Chiffres clés", az: 180 },
 ];
@@ -1119,6 +1129,7 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
     const mixer = new THREE.AnimationMixer(obj), actions = {};
     for (const clip of src.animations) actions[clip.name] = mixer.clipAction(clip);
     const c = { obj, mixer, actions, current: null, foot, t: 0, state: 0, head: obj.getObjectByName("Head"), look: 0 };
+    c.headRest = c.head ? c.head.quaternion.clone() : null; // the look-at is re-applied on this every frame (clips that don't key the head would otherwise accumulate it)
     c.play = (name, fade = 0.35, once = false) => {
       const next = actions[name]; if (!next || c.current === next) return;
       next.reset(); next.setLoop(once ? THREE.LoopOnce : THREE.LoopRepeat, once ? 1 : Infinity); next.clampWhenFinished = once;
@@ -1237,33 +1248,23 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
   n.play("Idle"); n.t = 3;
   crew.push({ c: n, tick(dt) { n.t += dt; if (n.t > 10) n.t = 0; n.play(n.t < 3.2 ? "Interact" : "Idle"); } });
 
-  // the ETAFAT guide (Quaternius "Business Man", CC0) greets the visitor at the edge of the deck
-  const [gx, gz] = polar(-31, 3.9);
-  const gd = spawn(M.guide, { x: gx, z: gz, face: faceTo(gx, gz, 0, 0), height: 1.8, recolor: { Suit: 0x123a5c, Tie: 0x2ab5b4, White: 0xf2f4f6, Skin: 0x6e4430, Hair: 0x15100d, Eyebrows: 0x15100d } });
-  gd.play("Idle"); gd.cool = 0; gd.greet = 0;
-  const bubble = (() => { // speech bubble while the scene assembles
-    const c = document.createElement("canvas"); c.width = 900; c.height = 330; const x = c.getContext("2d");
-    const rrr = (X, Y, w, h, r) => { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
-    rrr(6, 6, 888, 270, 40); x.fillStyle = "rgba(10,30,48,0.94)"; x.fill(); x.lineWidth = 4; x.strokeStyle = "#2ab5b4"; x.stroke();
-    x.beginPath(); x.moveTo(140, 274); x.lineTo(110, 322); x.lineTo(190, 274); x.closePath(); x.fillStyle = "rgba(10,30,48,0.94)"; x.fill();
+  // welcome card while the scene assembles (left of the globe, inside the first view)
+  const welcome = (() => {
+    const c = document.createElement("canvas"); c.width = 900; c.height = 300; const x = c.getContext("2d");
+    x.beginPath(); x.roundRect(6, 6, 888, 288, 40); x.fillStyle = "rgba(10,30,48,0.92)"; x.fill(); x.lineWidth = 4; x.strokeStyle = "#2ab5b4"; x.stroke();
     x.fillStyle = "#8ee6e4"; x.font = "700 30px system-ui, sans-serif"; x.fillText("BIENVENUE CHEZ ETAFAT", 46, 70);
-    x.fillStyle = "#fff"; x.font = "600 38px system-ui, sans-serif"; x.fillText("Je suis votre guide.", 46, 128);
-    x.fillStyle = "rgba(234,244,248,0.85)"; x.font = "400 30px system-ui, sans-serif";
-    x.fillText("Baissez les yeux : le menu vous emmène vers", 46, 182); x.fillText("le globe, nos expertises, le cinéma et les chiffres.", 46, 224);
+    x.fillStyle = "#fff"; x.font = "600 36px system-ui, sans-serif"; x.fillText("Baissez les yeux : le menu vous guide", 46, 128);
+    x.fillStyle = "rgba(234,244,248,0.85)"; x.font = "400 29px system-ui, sans-serif";
+    x.fillText("vers le globe, nos expertises, la Cité portugaise", 46, 186); x.fillText("en 3D, le cinéma et les chiffres clés.", 46, 228);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
-    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.35, 0.495), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }));
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.4), new THREE.MeshBasicMaterial({ map: t, transparent: true, depthWrite: false, toneMapped: false }));
+    const [wx, wz] = polar(-34, 2.9); m.position.set(wx, 1.95, wz); m.lookAt(0, 1.6, 0);
     m.renderOrder = 40; m.visible = false; scene.add(m); return m;
   })();
-  crew.push({ c: gd, tick(dt, t) {
-    gd.cool -= dt;
-    if (t > 3.2 && t < 3.6 && gd.greet === 0) { gd.greet = 1; gd.play("Wave", 0.3, true); gd.back = 2.8; }
-    else if (gd.cool <= 0 && t > 16 && looking(gd.obj.position, 12)) { gd.play("Wave", 0.25, true); gd.back = 2.6; gd.cool = 18; }
-    if (gd.back != null) { gd.back -= dt; if (gd.back <= 0) { gd.back = null; gd.play("Idle"); } }
-    if (t < 3.6) gd.greet = 0;
+  updaters.push((dt, t) => {
     const show = Math.min(1, Math.max(0, (t - 3.4) / 0.5)) * Math.min(1, Math.max(0, (15 - t) / 0.8));
-    bubble.visible = show > 0.01; bubble.material.opacity = show;
-    if (bubble.visible) { bubble.position.set(gd.obj.position.x + 0.45, gd.obj.position.y + 2.25 + 0.04 * Math.sin(t * 1.5), gd.obj.position.z + 0.35); bubble.lookAt(0, 1.6, 0); }
-  } });
+    welcome.visible = show > 0.01; welcome.material.opacity = show; welcome.position.y = 1.95 + 0.02 * Math.sin(t * 1.5);
+  });
 
   // data engineer at the field desk (Quaternius "Casual Character", CC0), checking the LiDAR point cloud
   const dk = camp.desk, [ex, ez] = [dk.x + Math.sin(dk.rot) * -0.62, dk.z + Math.cos(dk.rot) * -0.62];
@@ -1294,5 +1295,5 @@ async function buildCrew(scene, T, camp, renderer, camera, updaters, M, api) {
     c.head.parent.getWorldQuaternion(pq);
     c.head.quaternion.premultiply(pq.clone().invert().multiply(qa).multiply(pq));
   }
-  updaters.push((dt, t) => { for (const m of crew) { m.c.mixer.update(dt); m.tick(dt, t); headLook(m.c, dt); } });
+  updaters.push((dt, t) => { for (const m of crew) { if (m.c.headRest) m.c.head.quaternion.copy(m.c.headRest); m.c.mixer.update(dt); m.tick(dt, t); headLook(m.c, dt); } });
 }

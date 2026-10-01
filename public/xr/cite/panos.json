@@ -1,0 +1,907 @@
+{
+ "date": "2022-01-19",
+ "camera": "Insta360 One X2",
+ "note": "Positions reconstructed from the photos (no GPS on the camera); north from the sun where visible.",
+ "panos": [
+  {
+   "id": "c01",
+   "place": "Bastion Saint-Esprit",
+   "time": "10:38",
+   "lat": 33.2555556,
+   "lon": -8.5033111,
+   "h": 69.9,
+   "north": 0.6201,
+   "src": "IMG_20220119_103843_00_merged.jpg"
+  },
+  {
+   "id": "c02",
+   "place": "Bastion Saint-Esprit",
+   "time": "10:39",
+   "lat": 33.2555286,
+   "lon": -8.5032466,
+   "h": 69.8,
+   "north": 0.7099,
+   "src": "IMG_20220119_103916_00_merged.jpg"
+  },
+  {
+   "id": "c03",
+   "place": "Bastion Saint-Esprit",
+   "time": "10:40",
+   "lat": 33.2555017,
+   "lon": -8.5033755,
+   "h": 71.6,
+   "north": 0.7695,
+   "src": "IMG_20220119_104007_00_merged.jpg"
+  },
+  {
+   "id": "c04",
+   "place": "Bastion Saint-Esprit",
+   "time": "10:41",
+   "lat": 33.2556005,
+   "lon": -8.5032789,
+   "h": 69.8,
+   "north": 0.6316,
+   "src": "IMG_20220119_104151_00_merged.jpg"
+  },
+  {
+   "id": "c05",
+   "place": "Rempart sud",
+   "time": "10:43",
+   "lat": 33.2556544,
+   "lon": -8.5030103,
+   "h": 68.5,
+   "north": 0.0724,
+   "src": "IMG_20220119_104302_00_merged.jpg"
+  },
+  {
+   "id": "c06",
+   "place": "Rempart sud",
+   "time": "10:43",
+   "lat": 33.2556813,
+   "lon": -8.5029243,
+   "h": 67.7,
+   "north": 0.1967,
+   "src": "IMG_20220119_104346_00_merged.jpg"
+  },
+  {
+   "id": "c07",
+   "place": "Rempart sud",
+   "time": "10:45",
+   "lat": 33.2557801,
+   "lon": -8.5025806,
+   "h": 67.1,
+   "north": 0.3612,
+   "src": "IMG_20220119_104520_00_merged.jpg"
+  },
+  {
+   "id": "c08",
+   "place": "Rempart sud",
+   "time": "10:45",
+   "lat": 33.255879,
+   "lon": -8.502312,
+   "h": 66.9,
+   "north": 0.8682,
+   "src": "IMG_20220119_104550_00_merged.jpg"
+  },
+  {
+   "id": "c09",
+   "place": "Rempart sud",
+   "time": "10:46",
+   "lat": 33.2559149,
+   "lon": -8.5020972,
+   "h": 68,
+   "north": 0.6472,
+   "src": "IMG_20220119_104629_00_merged.jpg"
+  },
+  {
+   "id": "c10",
+   "place": "Rempart sud",
+   "time": "10:47",
+   "lat": 33.2559598,
+   "lon": -8.5018286,
+   "h": 67.1,
+   "north": null,
+   "src": "IMG_20220119_104717_00_merged.jpg"
+  },
+  {
+   "id": "c11",
+   "place": "Rempart sud",
+   "time": "10:48",
+   "lat": 33.2559598,
+   "lon": -8.5017749,
+   "h": 68,
+   "north": null,
+   "src": "IMG_20220119_104830_00_merged.jpg"
+  },
+  {
+   "id": "c12",
+   "place": "Rempart est",
+   "time": "10:50",
+   "lat": 33.256364,
+   "lon": -8.5008832,
+   "h": 61.1,
+   "north": null,
+   "src": "IMG_20220119_105018_00_merged.jpg"
+  },
+  {
+   "id": "c13",
+   "place": "Rempart est",
+   "time": "10:50",
+   "lat": 33.2564,
+   "lon": -8.5008188,
+   "h": 57.1,
+   "north": 0.551,
+   "src": "IMG_20220119_105054_00_merged.jpg"
+  },
+  {
+   "id": "c14",
+   "place": "Rempart est",
+   "time": "10:52",
+   "lat": 33.2564898,
+   "lon": -8.5009047,
+   "h": 56.8,
+   "north": 0.6943,
+   "src": "IMG_20220119_105208_00_merged.jpg"
+  },
+  {
+   "id": "c15",
+   "place": "Bastion de l’Ange",
+   "time": "10:54",
+   "lat": 33.2560766,
+   "lon": -8.500518,
+   "h": 71.8,
+   "north": 0.1683,
+   "src": "IMG_20220119_105445_00_merged.jpg"
+  },
+  {
+   "id": "c16",
+   "place": "Bastion de l’Ange",
+   "time": "10:55",
+   "lat": 33.2560047,
+   "lon": -8.5004535,
+   "h": 72.8,
+   "north": 0.3262,
+   "src": "IMG_20220119_105509_00_merged.jpg"
+  },
+  {
+   "id": "c17",
+   "place": "Bastion de l’Ange",
+   "time": "10:55",
+   "lat": 33.2559508,
+   "lon": -8.5003891,
+   "h": 72.8,
+   "north": 0.2229,
+   "src": "IMG_20220119_105555_00_merged.jpg"
+  },
+  {
+   "id": "c18",
+   "place": "Bastion de l’Ange",
+   "time": "10:56",
+   "lat": 33.2559239,
+   "lon": -8.5003568,
+   "h": 72.8,
+   "north": 0.1005,
+   "src": "IMG_20220119_105629_00_merged.jpg"
+  },
+  {
+   "id": "c19",
+   "place": "Porte de la Mer",
+   "time": "11:01",
+   "lat": 33.2566695,
+   "lon": -8.5013774,
+   "h": 65.1,
+   "north": 0.2322,
+   "src": "IMG_20220119_110126_00_merged.jpg"
+  },
+  {
+   "id": "c20",
+   "place": "Porte de la Mer",
+   "time": "11:03",
+   "lat": 33.2567234,
+   "lon": -8.5015063,
+   "h": 59.6,
+   "north": 0.0878,
+   "src": "IMG_20220119_110311_00_merged.jpg"
+  },
+  {
+   "id": "c21",
+   "place": "Rempart est",
+   "time": "11:07",
+   "lat": 33.2572624,
+   "lon": -8.5011303,
+   "h": 67.6,
+   "north": null,
+   "src": "IMG_20220119_110734_00_merged.jpg"
+  },
+  {
+   "id": "c22",
+   "place": "Rempart est",
+   "time": "11:09",
+   "lat": 33.2576666,
+   "lon": -8.5012377,
+   "h": 66.7,
+   "north": 0.4923,
+   "src": "IMG_20220119_110940_00_merged.jpg"
+  },
+  {
+   "id": "c23",
+   "place": "Bastion Saint-Sébastien",
+   "time": "11:11",
+   "lat": 33.2583224,
+   "lon": -8.5013989,
+   "h": 70.4,
+   "north": 0.0343,
+   "src": "IMG_20220119_111124_00_merged.jpg"
+  },
+  {
+   "id": "c24",
+   "place": "Bastion Saint-Sébastien",
+   "time": "11:12",
+   "lat": 33.2582505,
+   "lon": -8.5015278,
+   "h": 69.4,
+   "north": 0.7678,
+   "src": "IMG_20220119_111248_00_merged.jpg"
+  },
+  {
+   "id": "c25",
+   "place": "Ruelles de la cité",
+   "time": "11:20",
+   "lat": 33.2579361,
+   "lon": -8.5017212,
+   "h": 71.8,
+   "north": null,
+   "src": "IMG_20220119_112057_00_merged.jpg"
+  },
+  {
+   "id": "c26",
+   "place": "Ruelles de la cité",
+   "time": "11:29",
+   "lat": 33.2576666,
+   "lon": -8.5020972,
+   "h": 60,
+   "north": null,
+   "src": "IMG_20220119_112952_00_merged.jpg"
+  },
+  {
+   "id": "c27",
+   "place": "Ruelles de la cité",
+   "time": "11:30",
+   "lat": 33.2575768,
+   "lon": -8.5022368,
+   "h": 71.7,
+   "north": 0.1526,
+   "src": "IMG_20220119_113047_00_merged.jpg"
+  },
+  {
+   "id": "c28",
+   "place": "Ruelles de la cité",
+   "time": "11:31",
+   "lat": 33.2575319,
+   "lon": -8.5022798,
+   "h": 73.4,
+   "north": null,
+   "src": "IMG_20220119_113112_00_merged.jpg"
+  },
+  {
+   "id": "c29",
+   "place": "Atelier d’artiste",
+   "time": "11:31",
+   "lat": 33.2574959,
+   "lon": -8.5023228,
+   "h": 68.4,
+   "north": null,
+   "src": "IMG_20220119_113140_00_merged.jpg"
+  },
+  {
+   "id": "c30",
+   "place": "Atelier d’artiste",
+   "time": "11:32",
+   "lat": 33.257478,
+   "lon": -8.5023442,
+   "h": 71.7,
+   "north": null,
+   "src": "IMG_20220119_113215_00_merged.jpg"
+  },
+  {
+   "id": "c31",
+   "place": "Atelier d’artiste",
+   "time": "11:32",
+   "lat": 33.25746,
+   "lon": -8.5023657,
+   "h": 70.8,
+   "north": null,
+   "src": "IMG_20220119_113241_00_merged.jpg"
+  },
+  {
+   "id": "c32",
+   "place": "Bastion du Gouverneur",
+   "time": "11:40",
+   "lat": 33.2564718,
+   "lon": -8.5038482,
+   "h": 62.4,
+   "north": 0.3889,
+   "src": "IMG_20220119_114008_00_merged.jpg"
+  },
+  {
+   "id": "c33",
+   "place": "Bastion du Gouverneur",
+   "time": "11:40",
+   "lat": 33.2565078,
+   "lon": -8.5038912,
+   "h": 63.1,
+   "north": 0.6552,
+   "src": "IMG_20220119_114038_00_merged.jpg"
+  },
+  {
+   "id": "c34",
+   "place": "Bastion du Gouverneur",
+   "time": "11:41",
+   "lat": 33.2565347,
+   "lon": -8.5038267,
+   "h": 65.6,
+   "north": 0.6309,
+   "src": "IMG_20220119_114108_00_merged.jpg"
+  },
+  {
+   "id": "c35",
+   "place": "Bastion du Gouverneur",
+   "time": "11:41",
+   "lat": 33.2564988,
+   "lon": -8.5037838,
+   "h": 65,
+   "north": 0.6395,
+   "src": "IMG_20220119_114134_00_merged.jpg"
+  },
+  {
+   "id": "c36",
+   "place": "Bastion du Gouverneur",
+   "time": "11:42",
+   "lat": 33.2564359,
+   "lon": -8.5038482,
+   "h": 61.3,
+   "north": 0.6662,
+   "src": "IMG_20220119_114202_00_merged.jpg"
+  },
+  {
+   "id": "c37",
+   "place": "Bastion du Gouverneur",
+   "time": "11:42",
+   "lat": 33.256382,
+   "lon": -8.5037408,
+   "h": 62.8,
+   "north": 0.864,
+   "src": "IMG_20220119_114237_00_merged.jpg"
+  },
+  {
+   "id": "c38",
+   "place": "Place de l’église",
+   "time": "11:53",
+   "lat": 33.2563371,
+   "lon": -8.5029888,
+   "h": 71.2,
+   "north": null,
+   "src": "IMG_20220119_115304_00_merged.jpg"
+  },
+  {
+   "id": "c39",
+   "place": "Place de l’église",
+   "time": "11:53",
+   "lat": 33.256382,
+   "lon": -8.5029243,
+   "h": 67.8,
+   "north": 0.1584,
+   "src": "IMG_20220119_115357_00_merged.jpg"
+  },
+  {
+   "id": "c40",
+   "place": "Place de l’église",
+   "time": "11:54",
+   "lat": 33.2564179,
+   "lon": -8.5029029,
+   "h": 64.8,
+   "north": 0.1926,
+   "src": "IMG_20220119_115419_00_merged.jpg"
+  },
+  {
+   "id": "c41",
+   "place": "Place de l’église",
+   "time": "11:54",
+   "lat": 33.2564539,
+   "lon": -8.5029566,
+   "h": 61.3,
+   "north": null,
+   "src": "IMG_20220119_115457_00_merged.jpg"
+  },
+  {
+   "id": "c42",
+   "place": "Place de l’église",
+   "time": "11:55",
+   "lat": 33.2564359,
+   "lon": -8.5030103,
+   "h": 60.8,
+   "north": null,
+   "src": "IMG_20220119_115523_00_merged.jpg"
+  },
+  {
+   "id": "c43",
+   "place": "Place de l’église",
+   "time": "11:55",
+   "lat": 33.256382,
+   "lon": -8.5030533,
+   "h": 60.9,
+   "north": null,
+   "src": "IMG_20220119_115547_00_merged.jpg"
+  },
+  {
+   "id": "c44",
+   "place": "Place de l’église",
+   "time": "11:56",
+   "lat": 33.2563461,
+   "lon": -8.5030318,
+   "h": 69.2,
+   "north": null,
+   "src": "IMG_20220119_115610_00_merged.jpg"
+  },
+  {
+   "id": "c45",
+   "place": "Rue principale",
+   "time": "12:02",
+   "lat": 33.256382,
+   "lon": -8.5026021,
+   "h": 68,
+   "north": null,
+   "src": "IMG_20220119_120235_00_merged.jpg"
+  },
+  {
+   "id": "c46",
+   "place": "Citerne portugaise",
+   "time": "12:03",
+   "lat": 33.2564359,
+   "lon": -8.5025376,
+   "h": 63.4,
+   "north": null,
+   "src": "IMG_20220119_120305_00_merged.jpg"
+  },
+  {
+   "id": "c47",
+   "place": "Citerne portugaise",
+   "time": "12:03",
+   "lat": 33.2564629,
+   "lon": -8.5025161,
+   "h": 63.9,
+   "north": null,
+   "src": "IMG_20220119_120329_00_merged.jpg"
+  },
+  {
+   "id": "c48",
+   "place": "Citerne portugaise",
+   "time": "12:03",
+   "lat": 33.2564898,
+   "lon": -8.5024946,
+   "h": 66.2,
+   "north": null,
+   "src": "IMG_20220119_120351_00_merged.jpg"
+  },
+  {
+   "id": "c49",
+   "place": "Citerne portugaise",
+   "time": "12:04",
+   "lat": 33.2565168,
+   "lon": -8.5025376,
+   "h": 65.1,
+   "north": null,
+   "src": "IMG_20220119_120452_00_merged.jpg"
+  },
+  {
+   "id": "c50",
+   "place": "Citerne portugaise",
+   "time": "12:05",
+   "lat": 33.2565437,
+   "lon": -8.5025161,
+   "h": 64.8,
+   "north": null,
+   "src": "IMG_20220119_120513_00_merged.jpg"
+  },
+  {
+   "id": "c51",
+   "place": "Citerne portugaise",
+   "time": "12:05",
+   "lat": 33.2565527,
+   "lon": -8.5024839,
+   "h": 64.7,
+   "north": null,
+   "src": "IMG_20220119_120536_00_merged.jpg"
+  },
+  {
+   "id": "c52",
+   "place": "Citerne portugaise",
+   "time": "12:06",
+   "lat": 33.2565886,
+   "lon": -8.5024517,
+   "h": 64.3,
+   "north": null,
+   "src": "IMG_20220119_120602_00_merged.jpg"
+  },
+  {
+   "id": "c53",
+   "place": "Citerne portugaise",
+   "time": "12:06",
+   "lat": 33.2566246,
+   "lon": -8.5024409,
+   "h": 64.4,
+   "north": null,
+   "src": "IMG_20220119_120632_00_merged.jpg"
+  },
+  {
+   "id": "c54",
+   "place": "Citerne portugaise",
+   "time": "12:06",
+   "lat": 33.2566066,
+   "lon": -8.5025161,
+   "h": 64.1,
+   "north": null,
+   "src": "IMG_20220119_120657_00_merged.jpg"
+  },
+  {
+   "id": "c55",
+   "place": "Citerne portugaise",
+   "time": "12:08",
+   "lat": 33.2565437,
+   "lon": -8.5024409,
+   "h": 65.2,
+   "north": null,
+   "src": "IMG_20220119_120826_00_merged.jpg"
+  },
+  {
+   "id": "c56",
+   "place": "Citerne portugaise",
+   "time": "12:08",
+   "lat": 33.2565168,
+   "lon": -8.5024732,
+   "h": 65.8,
+   "north": null,
+   "src": "IMG_20220119_120856_00_merged.jpg"
+  },
+  {
+   "id": "c57",
+   "place": "Citerne portugaise",
+   "time": "12:09",
+   "lat": 33.2565796,
+   "lon": -8.5025054,
+   "h": 64.1,
+   "north": null,
+   "src": "IMG_20220119_120916_00_merged.jpg"
+  },
+  {
+   "id": "c58",
+   "place": "Citerne portugaise",
+   "time": "12:09",
+   "lat": 33.2565707,
+   "lon": -8.5024839,
+   "h": 64.2,
+   "north": null,
+   "src": "IMG_20220119_120950_00_merged.jpg"
+  },
+  {
+   "id": "c59",
+   "place": "Salles du château",
+   "time": "12:13",
+   "lat": 33.2565976,
+   "lon": -8.502645,
+   "h": 64.1,
+   "north": 0.7646,
+   "src": "IMG_20220119_121322_00_merged.jpg"
+  },
+  {
+   "id": "c60",
+   "place": "Salles du château",
+   "time": "12:13",
+   "lat": 33.2566335,
+   "lon": -8.502688,
+   "h": 64,
+   "north": null,
+   "src": "IMG_20220119_121347_00_merged.jpg"
+  },
+  {
+   "id": "c61",
+   "place": "Salles du château",
+   "time": "12:14",
+   "lat": 33.2566695,
+   "lon": -8.5027202,
+   "h": 63.8,
+   "north": null,
+   "src": "IMG_20220119_121411_00_merged.jpg"
+  },
+  {
+   "id": "c62",
+   "place": "Salles du château",
+   "time": "12:14",
+   "lat": 33.2567054,
+   "lon": -8.5027525,
+   "h": 64.1,
+   "north": null,
+   "src": "IMG_20220119_121443_00_merged.jpg"
+  },
+  {
+   "id": "c63",
+   "place": "Salles du château",
+   "time": "12:15",
+   "lat": 33.2567413,
+   "lon": -8.5027847,
+   "h": 64.7,
+   "north": null,
+   "src": "IMG_20220119_121508_00_merged.jpg"
+  },
+  {
+   "id": "c64",
+   "place": "Salles du château",
+   "time": "12:15",
+   "lat": 33.2567054,
+   "lon": -8.5028169,
+   "h": 65,
+   "north": null,
+   "src": "IMG_20220119_121534_00_merged.jpg"
+  },
+  {
+   "id": "c65",
+   "place": "Salles du château",
+   "time": "12:15",
+   "lat": 33.2566605,
+   "lon": -8.5027954,
+   "h": 63.8,
+   "north": null,
+   "src": "IMG_20220119_121555_00_merged.jpg"
+  },
+  {
+   "id": "c66",
+   "place": "Salles du château",
+   "time": "12:16",
+   "lat": 33.2566335,
+   "lon": -8.5027632,
+   "h": 64.1,
+   "north": null,
+   "src": "IMG_20220119_121615_00_merged.jpg"
+  },
+  {
+   "id": "c67",
+   "place": "Torre de Rebate",
+   "time": "12:17",
+   "lat": 33.2566515,
+   "lon": -8.5028814,
+   "h": 64.4,
+   "north": null,
+   "src": "IMG_20220119_121756_00_merged.jpg"
+  },
+  {
+   "id": "c68",
+   "place": "Torre de Rebate",
+   "time": "12:18",
+   "lat": 33.2567503,
+   "lon": -8.5029243,
+   "h": 64,
+   "north": 0.322,
+   "src": "IMG_20220119_121843_00_merged.jpg"
+  },
+  {
+   "id": "c69",
+   "place": "Cour du château",
+   "time": "12:19",
+   "lat": 33.2568132,
+   "lon": -8.5027954,
+   "h": 65,
+   "north": 0.904,
+   "src": "IMG_20220119_121904_00_merged.jpg"
+  },
+  {
+   "id": "c70",
+   "place": "Cour du château",
+   "time": "12:19",
+   "lat": 33.2568491,
+   "lon": -8.502731,
+   "h": 66.2,
+   "north": 0.4877,
+   "src": "IMG_20220119_121928_00_merged.jpg"
+  },
+  {
+   "id": "c71",
+   "place": "Cour du château",
+   "time": "12:20",
+   "lat": 33.2568671,
+   "lon": -8.5026665,
+   "h": 66.5,
+   "north": 0.6557,
+   "src": "IMG_20220119_122002_00_merged.jpg"
+  },
+  {
+   "id": "c72",
+   "place": "Cour du château",
+   "time": "12:20",
+   "lat": 33.2568761,
+   "lon": -8.5026021,
+   "h": 72.2,
+   "north": 0.2927,
+   "src": "IMG_20220119_122029_00_merged.jpg"
+  },
+  {
+   "id": "c73",
+   "place": "Cour du château",
+   "time": "12:21",
+   "lat": 33.2568491,
+   "lon": -8.5025376,
+   "h": 64.8,
+   "north": 0.2933,
+   "src": "IMG_20220119_122103_00_merged.jpg"
+  },
+  {
+   "id": "c74",
+   "place": "Cour du château",
+   "time": "12:21",
+   "lat": 33.2568042,
+   "lon": -8.5024946,
+   "h": 63.4,
+   "north": null,
+   "src": "IMG_20220119_122133_00_merged.jpg"
+  },
+  {
+   "id": "c75",
+   "place": "Cour du château",
+   "time": "12:21",
+   "lat": 33.2567503,
+   "lon": -8.5025161,
+   "h": 62.7,
+   "north": 0.044,
+   "src": "IMG_20220119_122153_00_merged.jpg"
+  },
+  {
+   "id": "c76",
+   "place": "Cour du château",
+   "time": "12:22",
+   "lat": 33.2567324,
+   "lon": -8.5025806,
+   "h": 63.7,
+   "north": 0.7966,
+   "src": "IMG_20220119_122220_00_merged.jpg"
+  },
+  {
+   "id": "c77",
+   "place": "Cour du château",
+   "time": "12:23",
+   "lat": 33.2567683,
+   "lon": -8.5026665,
+   "h": 64.2,
+   "north": 0.2778,
+   "src": "IMG_20220119_122333_00_merged.jpg"
+  },
+  {
+   "id": "c78",
+   "place": "Cour du château",
+   "time": "12:25",
+   "lat": 33.2567593,
+   "lon": -8.502731,
+   "h": 64.4,
+   "north": 0.2939,
+   "src": "IMG_20220119_122541_00_merged.jpg"
+  },
+  {
+   "id": "c79",
+   "place": "Ruelles de la cité",
+   "time": "12:28",
+   "lat": 33.2562922,
+   "lon": -8.5028491,
+   "h": 60.2,
+   "north": 0.2862,
+   "src": "IMG_20220119_122841_00_merged.jpg"
+  },
+  {
+   "id": "c80",
+   "place": "Ruelles de la cité",
+   "time": "12:29",
+   "lat": 33.2562562,
+   "lon": -8.5029029,
+   "h": 59.9,
+   "north": 0.5444,
+   "src": "IMG_20220119_122902_00_merged.jpg"
+  },
+  {
+   "id": "c81",
+   "place": "Ruelles de la cité",
+   "time": "12:29",
+   "lat": 33.2562293,
+   "lon": -8.5029458,
+   "h": 60,
+   "north": 0.5385,
+   "src": "IMG_20220119_122927_00_merged.jpg"
+  },
+  {
+   "id": "c82",
+   "place": "Église de l’Assomption",
+   "time": "12:34",
+   "lat": 33.2562742,
+   "lon": -8.5030103,
+   "h": 71.2,
+   "north": 0.3077,
+   "src": "IMG_20220119_123439_00_merged.jpg"
+  },
+  {
+   "id": "c83",
+   "place": "Église de l’Assomption",
+   "time": "12:35",
+   "lat": 33.2562562,
+   "lon": -8.503064,
+   "h": 71.1,
+   "north": null,
+   "src": "IMG_20220119_123502_00_merged.jpg"
+  },
+  {
+   "id": "c84",
+   "place": "Église de l’Assomption",
+   "time": "12:36",
+   "lat": 33.2562473,
+   "lon": -8.5030962,
+   "h": 71.5,
+   "north": null,
+   "src": "IMG_20220119_123618_00_merged.jpg"
+  },
+  {
+   "id": "c85",
+   "place": "Église de l’Assomption",
+   "time": "12:36",
+   "lat": 33.2562293,
+   "lon": -8.5031177,
+   "h": 70.7,
+   "north": null,
+   "src": "IMG_20220119_123642_00_merged.jpg"
+  },
+  {
+   "id": "c86",
+   "place": "Église de l’Assomption",
+   "time": "12:37",
+   "lat": 33.2562113,
+   "lon": -8.5031392,
+   "h": 69.9,
+   "north": null,
+   "src": "IMG_20220119_123702_00_merged.jpg"
+  },
+  {
+   "id": "c87",
+   "place": "Église de l’Assomption",
+   "time": "12:37",
+   "lat": 33.2561934,
+   "lon": -8.5031607,
+   "h": 69.1,
+   "north": null,
+   "src": "IMG_20220119_123727_00_merged.jpg"
+  },
+  {
+   "id": "c88",
+   "place": "Église de l’Assomption",
+   "time": "12:37",
+   "lat": 33.2561754,
+   "lon": -8.5031822,
+   "h": 68.3,
+   "north": null,
+   "src": "IMG_20220119_123749_00_merged.jpg"
+  },
+  {
+   "id": "c89",
+   "place": "Église de l’Assomption",
+   "time": "12:38",
+   "lat": 33.2561664,
+   "lon": -8.5031929,
+   "h": 68.1,
+   "north": null,
+   "src": "IMG_20220119_123809_00_merged.jpg"
+  },
+  {
+   "id": "c90",
+   "place": "Église de l’Assomption",
+   "time": "12:39",
+   "lat": 33.2562562,
+   "lon": -8.503107,
+   "h": 72,
+   "north": null,
+   "src": "IMG_20220119_123920_00_merged.jpg"
+  }
+ ]
+}

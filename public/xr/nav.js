@@ -1,7 +1,8 @@
 // ETAFAT VR — navigation dock (visionOS-style, inspired by 21st.dev floating docks): a glass pill floating
-// below the visitor's gaze. Zone buttons turn you to the globe, the expertise gallery, the cinema or the key
-// figures; then ambiance (sunset → day → night) and music. Icons swell on hover with a label above; a dot
-// marks the zone you are facing. It follows your heading lazily, so it is always one glance down.
+// below the visitor’s gaze. Zone buttons turn you to the globe, the expertise gallery, the cinema or the key
+// figures, or open the 3D maquette of the Cité portugaise; then ambiance (sunset → day → night), music and
+// VR ⇄ AR (passthrough). Icons swell on hover with a label above; a dot marks the zone you are facing. It
+// follows your heading lazily, so it is always one glance down.
 import * as THREE from "three";
 
 const PX = 0.00058; // canvas px → metres
@@ -18,24 +19,32 @@ function canvasPlane(w, h, draw, S = 2) {
 const ICONS = {
   presence(x) { x.beginPath(); x.arc(50, 50, 32, 0, 7); x.stroke(); x.beginPath(); x.ellipse(50, 50, 14, 32, 0, 0, 7); x.stroke(); x.beginPath(); x.moveTo(18, 50); x.lineTo(82, 50); x.moveTo(24, 34); x.lineTo(76, 34); x.moveTo(24, 66); x.lineTo(76, 66); x.stroke(); },
   expertises(x) { for (const [a, b] of [[20, 20], [55, 20], [20, 55], [55, 55]]) { rr(x, a, b, 25, 25, 6); x.stroke(); } },
+  cite(x) { // bastion: crenellated wall with a gate
+    x.beginPath(); x.moveTo(20, 82); x.lineTo(20, 28); x.lineTo(31, 28); x.lineTo(31, 38); x.lineTo(44, 38); x.lineTo(44, 28); x.lineTo(56, 28); x.lineTo(56, 38); x.lineTo(69, 38); x.lineTo(69, 28); x.lineTo(80, 28); x.lineTo(80, 82); x.closePath(); x.stroke();
+    x.beginPath(); x.moveTo(41, 82); x.lineTo(41, 64); x.arc(50, 64, 9, Math.PI, 0); x.lineTo(59, 82); x.stroke();
+  },
   cinema(x) { rr(x, 14, 24, 72, 52, 8); x.stroke(); x.beginPath(); x.moveTo(43, 38); x.lineTo(62, 50); x.lineTo(43, 62); x.closePath(); x.fill(); },
   chiffres(x) { x.beginPath(); x.moveTo(18, 82); x.lineTo(82, 82); x.stroke(); for (const [X, H] of [[26, 22], [44, 38], [62, 54]]) { rr(x, X, 80 - H, 12, H, 3); x.fill(); } x.beginPath(); x.moveTo(24, 44); x.lineTo(44, 30); x.lineTo(58, 36); x.lineTo(80, 18); x.stroke(); },
   golden(x) { x.beginPath(); x.arc(50, 62, 18, Math.PI, 0); x.stroke(); x.beginPath(); x.moveTo(16, 64); x.lineTo(84, 64); x.stroke(); for (let a = -150; a <= -30; a += 30) { const r = a * Math.PI / 180; x.beginPath(); x.moveTo(50 + 26 * Math.cos(r), 62 + 26 * Math.sin(r)); x.lineTo(50 + 34 * Math.cos(r), 62 + 34 * Math.sin(r)); x.stroke(); } x.beginPath(); x.moveTo(30, 76); x.lineTo(70, 76); x.stroke(); },
   day(x) { x.beginPath(); x.arc(50, 50, 16, 0, 7); x.stroke(); for (let a = 0; a < 360; a += 45) { const r = a * Math.PI / 180; x.beginPath(); x.moveTo(50 + 24 * Math.cos(r), 50 + 24 * Math.sin(r)); x.lineTo(50 + 33 * Math.cos(r), 50 + 33 * Math.sin(r)); x.stroke(); } },
   night(x) { x.beginPath(); x.arc(52, 50, 28, Math.PI * 0.32, Math.PI * 1.68); x.arc(66, 42, 22, Math.PI * 1.45, Math.PI * 0.55, true); x.closePath(); x.stroke(); for (const [a, b] of [[76, 24], [82, 62]]) { x.beginPath(); x.arc(a, b, 3, 0, 7); x.fill(); } },
   music(x) { x.beginPath(); x.moveTo(40, 72); x.lineTo(40, 26); x.lineTo(74, 18); x.lineTo(74, 64); x.stroke(); x.beginPath(); x.ellipse(32, 72, 9, 7, -0.4, 0, 7); x.fill(); x.beginPath(); x.ellipse(66, 64, 9, 7, -0.4, 0, 7); x.fill(); },
+  ar(x) { rr(x, 14, 22, 72, 56, 14); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("AR", 50, 61); x.restore(); },
+  vr(x) { rr(x, 14, 22, 72, 56, 14); x.stroke(); x.save(); x.font = "800 30px system-ui, sans-serif"; x.textAlign = "center"; x.fillText("VR", 50, 61); x.restore(); },
   mute(x) { ICONS.music(x); x.strokeStyle = "#ff8a7a"; x.lineWidth = 7; x.beginPath(); x.moveTo(20, 20); x.lineTo(82, 82); x.stroke(); },
 };
 const AMB_NEXT = { golden: "day", day: "night", night: "golden" };
 const AMB_LABEL = { golden: "Coucher de soleil", day: "Plein jour", night: "Nuit étoilée" };
 
-export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone, onAmbiance, onMusic, getMusic }) {
+export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone, onAmbiance, onMusic, getMusic, getXR, onXR }) {
   const group = new THREE.Group(); group.visible = false; scene.add(group);
   const items = [
     ...zones.map((z) => ({ key: z.key, label: z.dock, kind: "zone", icon: z.key, az: z.az })),
     { kind: "sep" },
     { key: "ambiance", kind: "tool", label: () => `Ambiance : ${AMB_LABEL[getAmbiance()]}`, icon: () => getAmbiance() },
     { key: "music", kind: "tool", label: () => (getMusic() ? "Couper la musique" : "Activer la musique"), icon: () => (getMusic() ? "music" : "mute") },
+    // réalité virtuelle ⇄ passthrough: the icon shows the mode a click switches to
+    { key: "xr", kind: "tool", label: () => getXR().label, icon: () => getXR().icon },
   ];
   const B = 112, GAP = 14, SEP = 30, W = items.reduce((s, it) => s + (it.kind === "sep" ? SEP : B + GAP), 0) + 36, H = 150;
   const bg = canvasPlane(W, H, (x, w, h) => {
@@ -68,6 +77,7 @@ export function createDock({ scene, camera, renderer, zones, getAmbiance, onZone
       if (it.kind === "zone") onZone(it.key);
       else if (it.key === "ambiance") onAmbiance(AMB_NEXT[getAmbiance()]);
       else if (it.key === "music") onMusic(!getMusic());
+      else if (it.key === "xr") onXR();
       for (const t of targets) t.userData.redraw();
       tip.userData.redraw();
     };

@@ -87,3 +87,6 @@ cite-vr/android/app/src/main/assets/www/
 # VR cinema films (125 MB): bundled only in the offline Quest APK; the posters stay in git.
 # Source: ~/Documents/{manifesto_final,institution_fin}.mp4, re-encoded H.264 CRF 21 + faststart.
 public/xr/videos/*.mp4
+# Cité portugaise maquette + 360° photos inside the VR presentation (dev APFS clones of cite-vr/www/{model,panos}; ~513 MB, APK only)
+public/xr/cite/model/
+public/xr/cite/panos/

@@ -2,7 +2,6 @@
 // Keeps only the animations the scene uses, prunes/dedups, writes public/xr/models/*.glb.
 //   worker.glb   — "Worker" by Quaternius, CC0            (https://poly.pizza/m/Yg2bQZO6Hj)
 //   woman.glb    — "Animated Woman" by Quaternius, CC0    (https://poly.pizza/m/qJ2gsTUBHL)
-//   guide.glb    — "Business Man" by Quaternius, CC0      (https://poly.pizza/m/JFrLIKqvCH)  → the ETAFAT host
 //   casual.glb   — "Casual Character" by Quaternius, CC0  (https://poly.pizza/m/kZ3DmIoGip)  → data engineer
 //   woman3.glb   — "Animated Woman" by Quaternius, CC0    (https://poly.pizza/m/nIItLV9nxS)
 //   suv.glb      — "SUV" by Quaternius, CC0               (https://poly.pizza/m/xsMtZhBkxL)  → mobile-mapping vehicle
@@ -22,7 +21,6 @@ const KEEP = new Set(["Idle", "Idle_Neutral", "Walk", "Interact", "Wave", "Idle_
 const CAST = [
   { file: "worker.glb", url: "https://static.poly.pizza/3a5f3056-ffe6-42eb-bd52-122afcbd22b2.glb" },
   { file: "woman.glb", url: "https://static.poly.pizza/ba7a1955-ea51-4cb9-a561-188bdef0a6c7.glb" },
-  { file: "guide.glb", url: "https://static.poly.pizza/e599abbe-7d73-488c-9d7e-3ead281e705c.glb" },
   { file: "casual.glb", url: "https://static.poly.pizza/90a9e2d4-053f-42f1-99a2-8f5e1180ea7f.glb" },
   { file: "woman3.glb", url: "https://static.poly.pizza/46d6db5a-3c9f-4238-8cdf-8eb7194498dc.glb" },
   { file: "suv.glb", url: "https://static.poly.pizza/e5fbf2ee-5c9e-47d5-8ab6-80cacd463baa.glb" },

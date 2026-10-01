@@ -5,45 +5,68 @@ import { XRHandModelFactory } from "./vendor/jsm/webxr/XRHandModelFactory.js";
 
 export function createFX({ renderer, camera, rig, scene }) {
   // ── audio ────────────────────────────────────────────────────────────────────────────────────────
-  // Music (Magnific / Google Lyria, -18.5 LUFS) loops from 8 s with a 6 s crossfade; it ducks under films.
+  // Two looped beds (Magnific / Google Lyria), crossfaded when the visitor changes room; they duck under films.
+  //   ambient — the presentation: a quiet pad (Lyria 3, 27 s, −21 LUFS), each pass entering at a different
+  //             point so the loop doesn't repeat audibly
+  //   music   — the Cité portugaise: the standalone Cité viewer's track (Lyria 3 Pro, 172 s, −18.5 LUFS)
   const listener = new THREE.AudioListener(); camera.add(listener);
   const ctx = listener.context, out = listener.getInput();
-  const music = ctx.createGain(); music.gain.value = 0; music.connect(out);
   const sfxOut = ctx.createGain(); sfxOut.gain.value = 0.85; sfxOut.connect(out);
   const buf = {}, on = { music: true, sfx: true };
-  let started = false, duck = false, alt = 0, lastHover = 0;
-  const MUSIC_VOL = 0.42, LOOP_FROM = 8, XFADE = 6;
+  let started = false, duck = false, alt = 0, lastHover = 0, track = "ambient";
+  const TRACKS = {
+    ambient: { vol: 0.3, from: [0, 6, 11, 3, 9], xfade: 6 },
+    music: { vol: 0.42, from: [8], xfade: 6 },
+  };
   const load = (n) => fetch(`./audio/${n}.mp3`).then((r) => r.arrayBuffer()).then((b) => ctx.decodeAudioData(b)).then((d) => (buf[n] = d));
-  ["hover1", "hover2", "click", "select", "whoosh"].forEach((n) => load(n).catch(() => {}));
-  const musicReady = load("music").catch(() => null);
-  function pass(offset) {
-    const b = buf.music; if (!b) return;
-    const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; src.connect(g); g.connect(music);
-    const t = ctx.currentTime, dur = b.duration - offset;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + (offset ? XFADE : 4));
-    g.gain.setValueAtTime(1, t + dur - XFADE); g.gain.linearRampToValueAtTime(0, t + dur);
-    src.start(t, offset);
-    setTimeout(() => pass(LOOP_FROM), (dur - XFADE) * 1000);
+  ["click", "select", "whoosh"].forEach((n) => load(n).catch(() => {}));
+  for (const [k, T] of Object.entries(TRACKS)) { T.bus = ctx.createGain(); T.bus.gain.value = 0; T.bus.connect(out); T.n = 0; T.ready = null; }
+  function pass(k, offset) {
+    const T = TRACKS[k], b = buf[k]; if (!b) return;
+    const src = ctx.createBufferSource(), g = ctx.createGain(); src.buffer = b; src.connect(g); g.connect(T.bus);
+    const t = ctx.currentTime, dur = b.duration - offset, X = Math.min(T.xfade, dur / 3);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(1, t + (T.n ? X : 4));
+    g.gain.setValueAtTime(1, t + dur - X); g.gain.linearRampToValueAtTime(0, t + dur);
+    src.start(t, offset); T.n++;
+    setTimeout(() => pass(k, T.from[T.n % T.from.length]), (dur - X) * 1000);
   }
-  const musicTarget = () => (on.music ? (duck ? 0.06 : MUSIC_VOL) : 0);
+  function startTrack(k) { // decoded and looped on first use only (the Cité track is 60 MB of PCM)
+    const T = TRACKS[k];
+    if (!T.ready) T.ready = load(k).then(() => pass(k, 0)).catch(() => null);
+    return T.ready;
+  }
+  const gainFor = (k) => (on.music && k === track ? (duck ? 0.06 : TRACKS[k].vol) : 0);
+  function mix(tc) { for (const k in TRACKS) TRACKS[k].bus.gain.setTargetAtTime(gainFor(k), ctx.currentTime, tc); }
   const fx = {
     listener, ctx, on,
     unlock() { // first gesture / entering VR: browsers keep audio locked until then
       if (ctx.state === "suspended") ctx.resume();
       if (started) return; started = true;
-      musicReady.then(() => { pass(0); music.gain.setTargetAtTime(musicTarget(), ctx.currentTime, 0.8); });
+      startTrack(track).then(() => mix(0.8));
     },
-    setMusic(v) { on.music = v; music.gain.setTargetAtTime(musicTarget(), ctx.currentTime, 0.5); },
-    duck(v) { duck = v; music.gain.setTargetAtTime(musicTarget(), ctx.currentTime, 0.6); },
+    setTrack(k) { // "ambient" (presentation) or "music" (Cité): crossfade between the two beds
+      if (k === track) return; track = k;
+      if (started) startTrack(k).then(() => mix(1.2));
+      mix(1.2);
+    },
+    setMusic(v) { on.music = v; mix(0.5); },
+    duck(v) { duck = v; mix(0.6); },
     sfx(name, vol = 1) {
       if (!on.sfx || !buf[name] || ctx.state !== "running") return;
       const s = ctx.createBufferSource(), g = ctx.createGain();
       s.buffer = buf[name]; s.playbackRate.value = 0.96 + Math.random() * 0.08; g.gain.value = vol;
       s.connect(g); g.connect(sfxOut); s.start();
     },
-    hover(ctrl) { // soft tick + tiny vibration when the pointer lands on something new
-      const now = performance.now(); if (now - lastHover < 70) return; lastHover = now;
-      fx.sfx(alt++ % 2 ? "hover1" : "hover2", 0.3); fx.haptic(ctrl, 0.12, 12);
+    hover(ctrl) { // a barely-there glassy tick + the lightest vibration when the pointer lands on something new
+      const now = performance.now(); if (now - lastHover < 90) return; lastHover = now;
+      if (on.sfx && ctx.state === "running") {
+        const t = ctx.currentTime, f = alt++ % 2 ? 1180 : 1320, o = ctx.createOscillator(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
+        o.type = "sine"; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f * 0.72, t + 0.05);
+        lp.type = "lowpass"; lp.frequency.value = 2400;
+        g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.05, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.075);
+        o.connect(lp); lp.connect(g); g.connect(sfxOut); o.start(t); o.stop(t + 0.09);
+      }
+      fx.haptic(ctrl, 0.06, 8);
     },
     click(ctrl, kind = "click") { fx.sfx(kind, kind === "select" ? 0.5 : 0.75); fx.haptic(ctrl, 0.45, 30); },
     haptic(ctrl, strength, ms) {
@@ -59,6 +82,8 @@ export function createFX({ renderer, camera, rig, scene }) {
   const _cp = new THREE.Vector3();
   fx.blackout = (fn, speed = 6) => { fadeFn = fn; fadeDir = speed; };
   fx.reveal = (speed = 0.8) => { fadeT = 1; fadeDir = -speed; };
+  fx.hold = () => { fadeT = 1; fadeDir = 0; }; // stay black (e.g. while the next room loads), until reveal()
+  fx.fader = fader;                            // moved along with the visitor between scenes
   fx.update = (dt) => {
     if (fadeDir) {
       fadeT = Math.min(1, Math.max(0, fadeT + fadeDir * dt));

@@ -5,6 +5,7 @@ import { mergeGeometries } from "./vendor/jsm/utils/BufferGeometryUtils.js";
 import { createFX } from "./fx.js";
 import { createDock } from "./nav.js";
 import { createCinema } from "./cinema.js";
+import { createCite } from "./cite.js";
 
 const DEG = Math.PI / 180;
 const TEAL = 0x2ab5b4, TEAL_L = 0x8ee6e4, NAVY = 0x0a1e30, BLUE = 0x00669d; // ETAFAT palette
@@ -21,7 +22,8 @@ camera.position.copy(USER);
 // rotates the rig around the head instead of moving the world
 const rig = new THREE.Group(); scene.add(rig); rig.add(camera);
 
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); // alpha: AR passthrough
+renderer.setClearAlpha(1);
 renderer.setPixelRatio(Math.min(2, devicePixelRatio));
 renderer.setSize(innerWidth, innerHeight);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -30,16 +32,48 @@ renderer.toneMappingExposure = 1.0;
 renderer.xr.enabled = true;
 renderer.xr.setReferenceSpaceType("local-floor");
 document.body.appendChild(renderer.domElement);
-// "Entrer en VR" (asks for hand tracking too, so the hands appear when controllers are put down)
-const vrBtn = document.createElement("button"); vrBtn.id = "enter-vr"; vrBtn.textContent = "Entrer dans l’expérience VR"; vrBtn.disabled = true; document.body.appendChild(vrBtn);
-if (navigator.xr) navigator.xr.isSessionSupported("immersive-vr").then((ok) => { vrBtn.disabled = !ok; if (!ok) vrBtn.textContent = "Mode bureau · casque VR non détecté"; }).catch(() => {});
-else vrBtn.textContent = "Mode bureau · WebXR indisponible";
-vrBtn.addEventListener("click", async () => {
-  if (renderer.xr.isPresenting) { renderer.xr.getSession().end(); return; }
-  try { fx.unlock(); const sess = await navigator.xr.requestSession("immersive-vr", { optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking", "layers"] }); await renderer.xr.setSession(sess); } catch (e) { console.warn(e); }
+// ── XR sessions: "Entrer en VR" / "Entrer en AR" (passthrough). Both ask for hand tracking, so the hands appear
+// when the controllers are put down. In the headset the dock (and the Cité menu) switch VR ⇄ AR: the session
+// ends and the other one is requested straight away, still inside the trigger press that asked for it
+// (WebXR select events count as a user gesture).
+const xrBar = document.createElement("div"); xrBar.id = "xr-buttons"; document.body.appendChild(xrBar);
+const vrBtn = document.createElement("button"); vrBtn.textContent = "Entrer dans l’expérience VR"; vrBtn.disabled = true;
+const arBtn = document.createElement("button"); arBtn.textContent = "Entrer en AR"; arBtn.hidden = true;
+xrBar.append(vrBtn, arBtn);
+const xrSupport = { vr: false, ar: false };
+let arMode = false, switchTo = null, switching = false;
+if (navigator.xr) {
+  navigator.xr.isSessionSupported("immersive-vr").then((ok) => { xrSupport.vr = ok; vrBtn.disabled = !ok; if (!ok) vrBtn.textContent = "Mode bureau · casque VR non détecté"; }).catch(() => {});
+  navigator.xr.isSessionSupported("immersive-ar").then((ok) => { xrSupport.ar = ok; arBtn.hidden = !ok; }).catch(() => {});
+} else vrBtn.textContent = "Mode bureau · WebXR indisponible";
+async function startXR(mode) {
+  try {
+    fx.unlock();
+    const sess = await navigator.xr.requestSession(mode, { optionalFeatures: ["local-floor", "bounded-floor", "hand-tracking", "layers"] });
+    setAR(mode === "immersive-ar");
+    await renderer.xr.setSession(sess);
+  } catch (e) { console.warn(e); setAR(false); switching = false; }
+}
+function setAR(on) { // passthrough: no landscape, sky or Cité dome; the clear colour lets the room through
+  arMode = on; renderer.setClearAlpha(on ? 0 : 1);
+  world.setAR(on); cite.setAR(on); cite.redraw();
+  dock.targets.forEach((t) => t.userData.redraw());
+}
+function switchXR(k) { // "vr" | "ar"
+  const mode = k === "ar" ? "immersive-ar" : "immersive-vr", s = renderer.xr.getSession();
+  if (!s) { startXR(mode); return; }
+  if ((k === "ar") === arMode) return;
+  switchTo = mode; switching = true; s.end();
+}
+const xrState = () => ({ mode: renderer.xr.isPresenting ? (arMode ? "ar" : "vr") : null, vr: xrSupport.vr, ar: xrSupport.ar });
+vrBtn.addEventListener("click", () => { if (renderer.xr.isPresenting) renderer.xr.getSession().end(); else startXR("immersive-vr"); });
+arBtn.addEventListener("click", () => { if (renderer.xr.isPresenting) renderer.xr.getSession().end(); else startXR("immersive-ar"); });
+renderer.xr.addEventListener("sessionstart", () => { vrBtn.textContent = arBtn.textContent = "Quitter l’expérience"; arBtn.hidden = vrBtn.hidden = false; });
+renderer.xr.addEventListener("sessionend", () => {
+  vrBtn.textContent = "Entrer dans l’expérience VR"; arBtn.textContent = "Entrer en AR"; arBtn.hidden = !xrSupport.ar;
+  if (switchTo) { const m = switchTo; switchTo = null; startXR(m); return; }
+  setAR(false);
 });
-renderer.xr.addEventListener("sessionstart", () => { vrBtn.textContent = "Quitter la VR"; });
-renderer.xr.addEventListener("sessionend", () => { vrBtn.textContent = "Entrer dans l’expérience VR"; });
 
 addEventListener("resize", () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
@@ -267,10 +301,12 @@ function placeAroundUser(mesh, azimuthDeg, y, radius) {
   mesh.userData.home = mesh.position.clone(); mesh.userData.out = new THREE.Vector3(Math.sin(a), 0, -Math.cos(a)); mesh.userData.lift = 0;
   return mesh;
 }
-const GALLERY_AZ = ZONES.find((z) => z.key === "expertises").az;
+const GALLERY_AZ = ZONES.find((z) => z.key === "expertises").az, CITE_AZ = ZONES.find((z) => z.key === "cite").az;
+let citeTile = null;
 function buildSections(data) {
-  // "Nos expertises": a 3 × 2 gallery wall on the right (the cinema is on the left, key figures behind)
-  const cols = [GALLERY_AZ - 25, GALLERY_AZ, GALLERY_AZ + 25], rows = [2.12, 1.12];
+  // "Nos expertises": a 3 × 2 gallery wall on the right (the cinema is on the left, key figures behind),
+  // closed by a tall featured tile: the Cité portugaise maquette, a room of its own
+  const cols = [GALLERY_AZ - 22, GALLERY_AZ, GALLERY_AZ + 22], rows = [2.12, 1.12];
   data.themes.forEach((t, i) => {
     const m = makeThemePanel(t); placeAroundUser(m, cols[i % 3], rows[Math.floor(i / 3)], 2.72);
     m.userData.theme = t; m.userData.delay = 1.3 + i * 0.12; tileTargets.push(m); sections.add(m);
@@ -280,6 +316,57 @@ function buildSections(data) {
     x.fillStyle = "#fff"; x.font = "800 50px system-ui, sans-serif"; x.save(); x.shadowColor = "rgba(0,0,0,0.6)"; x.shadowBlur = 18; x.fillText("Six métiers, des projets sur quatre continents", W / 2, 116); x.restore(); x.textAlign = "start";
   }, 1.4);
   placeAroundUser(head, GALLERY_AZ, 2.86, 2.74); head.userData.delay = 1.1; sections.add(head);
+  citeTile = makeCiteTile(); placeAroundUser(citeTile, CITE_AZ, (rows[0] + rows[1]) / 2, 2.72);
+  citeTile.userData.cite = true; citeTile.userData.delay = 1.3 + data.themes.length * 0.12; tileTargets.push(citeTile); sections.add(citeTile);
+  cite.available.then((ok) => { citeTile.userData.available = ok; citeTile.userData.redraw(); });
+}
+function makeCiteTile() { // portrait card spanning both gallery rows: drone render, title, figures, call to action
+  const W = 900, H = 1938, HERO = 1060, GOLD = "#f5b942";
+  const m = canvasMesh(W, H, (x, W2, H2, me) => {
+    const hov = me.userData.hover, img = me.userData.img, ok = me.userData.available !== false;
+    cardBg(x, W2, H2, hov ? "#8ee6e4" : GOLD);
+    x.save(); roundRect(x, 8, 8, W2 - 16, HERO, 24); x.clip();
+    if (img) { const r = Math.max((W2 - 16) / img.width, HERO / img.height), dw = img.width * r, dh = img.height * r; x.drawImage(img, 8 + (W2 - 16 - dw) / 2, 8 + (HERO - dh) / 2, dw, dh); }
+    else { const g = x.createRadialGradient(W2 / 2, HERO * 0.45, 20, W2 / 2, HERO * 0.45, HERO * 0.7); g.addColorStop(0, "#1d5a74"); g.addColorStop(1, "#0a2033"); x.fillStyle = g; x.fillRect(0, 0, W2, HERO + 8); }
+    const fade = x.createLinearGradient(0, HERO - 260, 0, HERO + 8); fade.addColorStop(0, "rgba(19,49,80,0)"); fade.addColorStop(1, "rgba(19,49,80,1)");
+    x.fillStyle = fade; x.fillRect(0, HERO - 260, W2, 270);
+    x.restore();
+    const chip = (X, Y, text, col) => { x.font = "700 22px system-ui, sans-serif"; spaced(x, "3px"); const w = x.measureText(text).width + 64; x.fillStyle = "rgba(8,23,38,0.8)"; roundRect(x, X, Y, w, 50, 25); x.fill(); x.fillStyle = col; x.beginPath(); x.arc(X + 26, Y + 25, 8, 0, 7); x.fill(); x.fillStyle = "#fff"; x.fillText(text, X + 44, Y + 33); spaced(x, "0px"); return w; };
+    chip(30, 30, "EXPÉRIENCE IMMERSIVE", "#8ee6e4");
+    chip(30, 92, "PATRIMOINE MONDIAL UNESCO", GOLD);
+    let y = HERO + 40;
+    x.fillStyle = GOLD; roundRect(x, 48, y, 110, 8, 4); x.fill(); y += 58;
+    kicker(x, "Jumeau numérique 3D par drone", 48, y, 24, "#8ee6e4"); y += 76;
+    x.fillStyle = "#fff"; x.font = "800 64px system-ui, sans-serif"; x.fillText("Cité portugaise", 48, y); y += 70; x.fillText("d’El Jadida", 48, y); y += 56;
+    x.fillStyle = "rgba(220,238,244,0.8)"; x.font = "400 29px system-ui, sans-serif";
+    for (const l of lines(x, "Entrez dans la maquette de l’ancienne Mazagan : remparts, bastions, citerne et 90 photos 360°, à portée de main.", W2 - 96, 3)) { x.fillText(l, 48, y); y += 40; }
+    y += 30;
+    const stats = [["12", "lieux"], ["90", "photos 360°"], ["6", "calques"]], sw = (W2 - 96 - 32) / 3;
+    stats.forEach(([n, l], i) => {
+      const sx = 48 + i * (sw + 16);
+      x.fillStyle = "rgba(255,255,255,0.07)"; roundRect(x, sx, y, sw, 116, 18); x.fill();
+      x.fillStyle = "#8ee6e4"; x.font = "800 48px system-ui, sans-serif"; x.fillText(n, sx + 22, y + 60);
+      x.fillStyle = "rgba(234,244,248,0.8)"; x.font = "500 23px system-ui, sans-serif"; x.fillText(l, sx + 22, y + 96);
+    });
+    const by = H2 - 120;                                                                        // call to action
+    x.fillStyle = !ok ? "rgba(255,255,255,0.08)" : hov ? "#2ab5b4" : "rgba(42,181,180,0.2)"; roundRect(x, 48, by, W2 - 96, 76, 38); x.fill();
+    x.strokeStyle = !ok ? "rgba(234,244,248,0.25)" : hov ? "#8ee6e4" : "rgba(142,230,228,0.7)"; x.lineWidth = 2.5; roundRect(x, 48, by, W2 - 96, 76, 38); x.stroke();
+    x.fillStyle = ok ? "#fff" : "rgba(234,244,248,0.65)"; x.font = `600 ${ok ? 31 : 25}px system-ui, sans-serif`; x.textAlign = "center";
+    x.fillText(ok ? "Entrer dans la maquette  ›" : "Disponible dans l’application Quest", W2 / 2, by + 49); x.textAlign = "start";
+  }, 1.2);
+  const img = new Image(); img.onload = () => { m.userData.img = img; m.userData.redraw(); }; img.src = "./cite/hero.jpg";
+  // a soft gold halo behind the featured tile, breathing slowly
+  const hc = document.createElement("canvas"); hc.width = 256; hc.height = 512; const hx = hc.getContext("2d");
+  hx.shadowColor = "rgba(245,185,66,1)"; hx.shadowBlur = 40; hx.fillStyle = "rgba(245,185,66,1)"; roundRect(hx, 44, 44, 168, 424, 24); hx.fill();
+  const halo = new THREE.Mesh(new THREE.PlaneGeometry(W * PX * 1.2, H * PX * 1.08), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(hc), transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  halo.position.z = -0.03; halo.renderOrder = -1; m.add(halo); m.userData.halo = halo;
+  return m;
+}
+function openCite(ctrl) {
+  cite.available.then((ok) => {
+    if (ok) { fx.click(ctrl, "select"); cite.enter(); return; }
+    fx.click(ctrl); turnTo(CITE_AZ); // website build: show the tile, which says where to find it
+  });
 }
 
 // ── theme pop-up: tile → animated project list → project details & photos ─────────
@@ -780,7 +867,7 @@ for (let i = 0; i < 2; i++) {
   ctrl.add(ray); ctrl.userData.ray = ray;
   ctrl.addEventListener("connected", (e) => { ctrl.userData.source = e.data; });
   ctrl.addEventListener("disconnected", () => { ctrl.userData.source = null; });
-  ctrl.addEventListener("selectstart", () => { fx.unlock(); aim(ctrl); activate(pick(ctrl), ctrl); });
+  ctrl.addEventListener("selectstart", () => { fx.unlock(); if (cite.active) return; aim(ctrl); activate(pick(ctrl), ctrl); }); // the Cité room has its own handlers
   rig.add(ctrl); controllers.push(ctrl);
 }
 function aim(originObj) {
@@ -805,7 +892,7 @@ function activate(p, ctrl) {
   if (!p) return;
   if (p.kind === "hud") { const u = p.obj.userData; if (u.onClick) { if (!u.onHover) fx.click(ctrl); u.onClick({ uv: p.uv, ctrl }); } return; }
   if (p.kind === "ui") { fx.click(ctrl); p.obj.userData.onClick(); return; }
-  if (p.kind === "tile") { fx.click(ctrl, "select"); openThemePopup(p.obj); return; }
+  if (p.kind === "tile") { if (p.obj.userData.cite) { openCite(ctrl); return; } fx.click(ctrl, "select"); openThemePopup(p.obj); return; }
   if (p.kind === "country") { fx.click(ctrl, "select"); pullCountry(p.hit); }
 }
 
@@ -824,11 +911,26 @@ function turnTo(azDeg) { const d = headAz() - azDeg * DEG; turnBy(Math.atan2(Mat
 const dock = createDock({
   scene, camera, renderer, zones: ZONES,
   getAmbiance: () => world.ambiance, getMusic: () => fx.on.music,
-  onZone: (key) => turnTo(ZONES.find((z) => z.key === key).az),
+  onZone: (key) => (key === "cite" ? openCite(null) : turnTo(ZONES.find((z) => z.key === key).az)),
+  getXR: () => {
+    const st = xrState();
+    if (st.mode === "ar") return { icon: "vr", label: "Revenir en réalité virtuelle" };
+    if (!st.ar) return { icon: "ar", label: "AR indisponible sur cet appareil" };
+    return { icon: "ar", label: st.mode ? "Passer en AR (passthrough)" : "Entrer en AR (passthrough)" };
+  },
+  onXR: () => { const st = xrState(); if (st.ar) switchXR(st.mode === "ar" ? "vr" : "ar"); },
   onAmbiance: (k) => fx.blackout(() => world.setAmbiance(k), 5),
   onMusic: (v) => { fx.setMusic(v); syncAudioBtn(); },
 });
 let cinema = null;
+// the Cité portugaise maquette: a room of its own (same session, rig, controllers, hands and sound)
+const cite = createCite({
+  renderer, camera, user: rig, home: scene, fx, controllers, hintEl: document.getElementById("hint"),
+  xr: { state: xrState, go: switchXR },
+  onEnter: () => { if (cinema) cinema.pause(); setHover(null); },
+  onAudio: () => { syncAudioBtn(); dock.targets.forEach((t) => t.userData.redraw()); },
+});
+world.ready.then(() => setTimeout(() => cite.available.then((ok) => { if (ok) cite.prepare(); }), 2500)); // build it quietly once the valley is in
 world.ready.then(() => {
   cinema = createCinema({ scene, fx, world, az: ZONES.find((z) => z.key === "cinema").az });
   const ld = document.getElementById("loading"); if (ld) ld.classList.add("hide"); // landscape, crew and models are in
@@ -837,12 +939,12 @@ world.ready.then(() => {
 // desktop fallback: drag to look around, click to select, arrows spin the globe
 let mouseNDC = null;
 const keys = new Set();
-addEventListener("keydown", (e) => { fx.unlock(); if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } });
+addEventListener("keydown", (e) => { fx.unlock(); if (cite.active) return; if (e.key.startsWith("Arrow")) { keys.add(e.key); e.preventDefault(); } });
 addEventListener("keyup", (e) => keys.delete(e.key));
 renderer.domElement.addEventListener("pointerleave", () => { mouseNDC = null; });
 let dragging = false, px = 0, py = 0, moved = 0, manualSpin = 0, tiltY = 0, lookYaw = 0, lookPitch = 0;
 camera.rotation.order = "YXZ";
-renderer.domElement.addEventListener("pointerdown", (e) => { fx.unlock(); dragging = true; px = e.clientX; py = e.clientY; moved = 0; lookTween = null; });
+renderer.domElement.addEventListener("pointerdown", (e) => { fx.unlock(); if (cite.active) return; dragging = true; px = e.clientX; py = e.clientY; moved = 0; lookTween = null; });
 renderer.domElement.addEventListener("pointermove", (e) => {
   mouseNDC = new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
   if (!dragging) return; const dx = e.clientX - px, dy = e.clientY - py; moved += Math.abs(dx) + Math.abs(dy);
@@ -850,7 +952,7 @@ renderer.domElement.addEventListener("pointermove", (e) => {
   px = e.clientX; py = e.clientY;
 });
 addEventListener("pointerup", (e) => {
-  if (dragging && moved < 6 && !renderer.xr.isPresenting) {
+  if (dragging && moved < 6 && !renderer.xr.isPresenting && !cite.active) {
     raycaster.setFromCamera(new THREE.Vector2((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1), camera);
     activate(pick(null), null);
   }
@@ -862,7 +964,9 @@ const audioBtn = document.getElementById("audio-toggle");
 function syncAudioBtn() { if (audioBtn) audioBtn.textContent = fx.on.music ? "♪ Musique" : "♪ Muet"; }
 if (audioBtn) audioBtn.addEventListener("click", (e) => { e.stopPropagation(); fx.unlock(); fx.setMusic(!fx.on.music); syncAudioBtn(); dock.targets.forEach((t) => t.userData.redraw()); });
 syncAudioBtn();
-renderer.xr.addEventListener("sessionstart", () => { fx.unlock(); elapsed = 0; fx.reveal(0.7); rig.position.set(0, 0, 0); rig.rotation.set(0, 0, 0); }); // replay the entrance in the headset
+renderer.xr.addEventListener("sessionstart", () => { // replay the entrance in the headset (not on a VR ⇄ AR switch)
+  fx.unlock(); if (!switching) elapsed = 0; switching = false; fx.reveal(0.7); rig.position.set(0, 0, 0); rig.rotation.set(0, 0, 0);
+});
 
 // ── fresh deploys: the SW is cache-first, so a page opened just after a deploy runs the old
 // files while the new worker installs. When that worker takes over, reload once (after VR exit).
@@ -881,11 +985,17 @@ const easeOut = (t) => 1 - Math.pow(1 - t, 3);
 const camDir = new THREE.Vector3();
 const stickPrev = new Map();
 let hoverKey = null;
-if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections, rig, fx, dock, get cinema() { return cinema; }, turnTo, get elapsed() { return elapsed; }, set elapsed(v) { elapsed = v; } };
+if (location.search.includes("debug")) window.XR = { pullCountry, countryAtRay, get cPull() { return cPull; }, get mouseNDC() { return mouseNDC; }, globe, spin, raycaster, openThemePopup, showDetail, uiTargets, get popup() { return popup; }, tileTargets, chiffresPanels, world, get data() { return DATA; }, camera, renderer, scene, sections, rig, fx, dock, get cinema() { return cinema; }, turnTo, get elapsed() { return elapsed; }, set elapsed(v) { elapsed = v; }, cite, citeTile: () => citeTile, openCite, switchXR, setAR,
+  async pump(ms = 1000) { const end = performance.now() + ms; while (performance.now() < end) { loop(); await new Promise((r) => setTimeout(r, 16)); } } };
 
-renderer.setAnimationLoop(() => {
+renderer.setAnimationLoop(loop);
+function loop() {
   const dt = Math.min(0.05, clock.getDelta()); elapsed += dt;
   const xr = renderer.xr.isPresenting;
+  if (cite.active) { // in the Cité room: the valley is not rendered at all
+    fx.update(dt); if (xr) fx.updateHands(controllers);
+    cite.update(dt); renderer.render(cite.scene, camera); return;
+  }
 
   // entrance: the globe scans in, the gallery flies in (per tile), the dock and the title follow
   reveal.value = easeOut(Math.min(1, Math.max(0, (elapsed - 0.5) / 2.2)));
@@ -894,7 +1004,7 @@ renderer.setAnimationLoop(() => {
   titleCard.material.opacity = easeOut(Math.min(1, Math.max(0, (elapsed - 2.4) / 0.8))); titleCard.visible = titleCard.material.opacity > 0.01;
   emitter.userData.cone.uniforms.uTime.value = elapsed;
   dock.visible = elapsed > 2.8;
-  world.update(dt, elapsed);
+  if (!arMode) world.update(dt, elapsed);
   fx.update(dt);
   if (xr) fx.updateHands(controllers);
   if (cinema) cinema.update(dt, elapsed);
@@ -944,6 +1054,18 @@ renderer.setAnimationLoop(() => {
 
   animatePopup(dt);
 
+  // gallery: tiles fly in one after another, then breathe gently and lift toward the pointer
+  for (const m of sections.children) {
+    const u = m.userData; if (!u.home) continue;
+    const e = easeOut(Math.min(1, Math.max(0, (elapsed - (u.delay ?? 1)) / 0.9)));
+    u.lift += ((m === uiHover ? 1 : 0) - u.lift) * Math.min(1, dt * 10);
+    m.position.copy(u.home).addScaledVector(u.out, (1 - e) * 0.9 - u.lift * 0.1);
+    m.position.y = u.floatBase - (1 - e) * 0.25 + Math.sin(elapsed * 0.7 + u.phase) * 0.008;
+    m.scale.setScalar(0.92 + 0.08 * e + u.lift * 0.025);
+    m.material.opacity = e; m.visible = e > 0.001;
+    if (u.halo) u.halo.material.opacity = e * (0.22 + 0.1 * Math.sin(elapsed * 1.6) + u.lift * 0.25);
+  }
+
   // chiffres wall: (re)play a panel's animation whenever the viewer turns to face it
   if (chiffresPanels.length) {
     const cam = xr ? renderer.xr.getCamera() : camera;
@@ -961,4 +1083,4 @@ renderer.setAnimationLoop(() => {
   }
 
   renderer.render(scene, camera);
-});
+}

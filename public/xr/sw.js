@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v20";
+const CACHE = "etafat-vr-v21";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -17,13 +17,32 @@ const PRECACHE = [
   "./vendor/jsm/webxr/XRHandPrimitiveModel.js",
   "./vendor/hands/left.glb",
   "./vendor/hands/right.glb",
-  // living landscape: real relief + river network + CC0 survey crew, guide, vehicle and camp
+  // Cité portugaise room: viewer, landmarks, 360° photo index, tiles streaming + decoders. The maquette and the
+  // photos themselves (~500 MB, Quest app only) are served by the app's own server and never cached here.
+  "./cite.js",
+  "./cite/pois.json",
+  "./cite/panos.json",
+  "./cite/hero.jpg",
+  "./vendor/3d-tiles-renderer.js",
+  "./vendor/jsm/controls/OrbitControls.js",
+  "./vendor/jsm/loaders/DRACOLoader.js",
+  "./vendor/jsm/loaders/KTX2Loader.js",
+  "./vendor/jsm/libs/ktx-parse.module.js",
+  "./vendor/jsm/libs/zstddec.module.js",
+  "./vendor/jsm/libs/basis/basis_transcoder.js",
+  "./vendor/jsm/libs/basis/basis_transcoder.wasm",
+  "./vendor/jsm/libs/draco/gltf/draco_decoder.js",
+  "./vendor/jsm/libs/draco/gltf/draco_decoder.wasm",
+  "./vendor/jsm/libs/draco/gltf/draco_wasm_wrapper.js",
+  "./vendor/jsm/utils/WorkerPool.js",
+  "./vendor/jsm/postprocessing/Pass.js",
+  // living landscape: real relief + river network + CC0 survey crew, vehicle and camp
   "./world.js",
   "./terrain/dem.bin",
   "./terrain/dem.json",
   "./terrain/river.bin",
-  ...["worker", "woman", "guide", "casual", "suv", "tent", "solar", "antenna"].map((m) => `./models/${m}.glb`),
-  ...["music", "hover1", "hover2", "click", "select", "whoosh"].map((a) => `./audio/${a}.mp3`),
+  ...["worker", "woman", "casual", "suv", "tent", "solar", "antenna"].map((m) => `./models/${m}.glb`),
+  ...["ambient", "music", "click", "select", "whoosh"].map((a) => `./audio/${a}.mp3`), // hover = synthesised tick
   "./img/etafat-logo-dark.png",
   // cinema: posters (the films themselves stream from the server, they are not cached by the worker)
   "./videos/manifeste.jpg",
@@ -103,6 +122,7 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // never touch cross-origin
   if (url.pathname.endsWith(".mp4")) return;        // films: streamed with range requests, never cached here
+  if (/\/cite\/(model|panos)\//.test(url.pathname)) return; // the Cité maquette + 360° photos: ~500 MB, straight from the server
   // cache-first for everything under our scope + the shared icons
   e.respondWith(
     caches.match(req).then((hit) => hit || fetch(req).then((res) => {
