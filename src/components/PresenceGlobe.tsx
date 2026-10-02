@@ -129,6 +129,7 @@ export function PresenceGlobe({
     let last = { x: 0, y: 0, moved: 0 };
     let hoveredIso: number | null = null;
     let lastInteract = performance.now(); // hold on the start view briefly before drifting
+    let handTurned = false;                // turned / zoomed / a country picked by hand → the idle spin stops for good
     let flyTarget: [number, number] | null = null;
     let zoom = 1;                                        // pinch / wheel zoom factor
     const ZOOM_MIN = 1, ZOOM_MAX = 6;
@@ -266,7 +267,7 @@ export function PresenceGlobe({
         rotation[0] += dl * 0.12;
         rotation[1] += dp * 0.12;
         if (Math.abs(dl) < 0.2 && Math.abs(dp) < 0.2) { rotation[0] = flyTarget[0]; rotation[1] = flyTarget[1]; flyTarget = null; }
-      } else if (!dragging && !reduce && performance.now() - lastInteract > 3000) {
+      } else if (!dragging && !reduce && !handTurned && performance.now() - lastInteract > 3000) {
         rotation[0] += 0.08; // gentle idle auto-rotate
       }
       draw();
@@ -324,7 +325,7 @@ export function PresenceGlobe({
         const [a, b] = [...pointers.values()];
         const dist = Math.hypot(a.x - b.x, a.y - b.y);
         if (pinchStartDist > 0) zoom = clamp(pinchStartZoom * (dist / pinchStartDist), ZOOM_MIN, ZOOM_MAX);
-        flyTarget = null;
+        flyTarget = null; handTurned = true;
         return;
       }
       if (dragging) { // one-finger spin
@@ -334,6 +335,7 @@ export function PresenceGlobe({
         rotation[1] = clamp(rotation[1] - dy * 0.28, -85, 85);
         last.x = x; last.y = y;
         flyTarget = null;
+        if (last.moved >= 6) handTurned = true; // a real drag, not a tap
       }
     };
 
@@ -357,12 +359,14 @@ export function PresenceGlobe({
         if (c) {
           const a = active.find((x) => x.country.iso === c.iso);
           if (a) flyTarget = [-a.centroid[0], -a.centroid[1]];
+          handTurned = true; // keep the picked country in front of its card
           onSelectRef.current?.(c);
         }
       }
     };
 
     const onWheel = (e: WheelEvent) => {
+      handTurned = true;
       e.preventDefault();
       zoom = clamp(zoom * Math.exp(-e.deltaY * 0.0015), ZOOM_MIN, ZOOM_MAX);
       lastInteract = performance.now();

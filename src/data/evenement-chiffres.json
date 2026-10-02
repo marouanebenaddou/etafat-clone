@@ -24,7 +24,7 @@
     "country": "Côte d’Ivoire",
     "name": "PAMOFOR · PAMOFOR EXT · PRESFOR",
     "tagline": "Une intervention foncière d’envergure au service des territoires ruraux",
-    "hero": { "value": 950000, "suffix": " ha", "label": "à certifier", "detail": "Sécurisation des droits fonciers ruraux" },
+    "hero": { "value": 950000, "suffix": " ha", "label": "Sécurisation des droits fonciers ruraux" },
     "stats": [
       { "value": 105600, "label": "contrats fonciers", "detail": "Formalisation des relations entre détenteurs de droits et exploitants" },
       { "value": 1020, "label": "villages accompagnés", "detail": "Ingénierie socio-foncière : information, sensibilisation, dialogue communautaire" },

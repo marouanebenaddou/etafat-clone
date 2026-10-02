@@ -15,6 +15,12 @@ export function OfflineRegister() {
       return;
     }
     if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+      // In `next dev` the chunk names never change, so the cache-first SW would keep serving stale CSS/JS:
+      // no SW there (and drop one left over from an earlier session).
+      if (process.env.NODE_ENV !== "production") {
+        navigator.serviceWorker.getRegistrations().then((rs) => rs.forEach((r) => r.active?.scriptURL.endsWith("/sw-evenement.js") && r.unregister()));
+        return;
+      }
       navigator.serviceWorker
         .register("/sw-evenement.js", { scope: "/" })
         .catch(() => {});

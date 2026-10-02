@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v6";
+const CACHE = "etafat-borne-v7";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -13,12 +13,22 @@ const PRECACHE = [
   "/etafat/videos/aerial-territory.mp4",
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
-  // real project screens (Tanger Med, Barid Al-Maghrib, Skhirate–Témara)
+  // real project screens (REGIS, Tanger Med, MAADEN, Barid Al-Maghrib, Skhirate–Témara)
   "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
   "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
   "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
   "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg",
   "/etafat/evenement/projets/05-tanger-med/plan-bathymetrique-3d.jpg",
+  "/etafat/evenement/projets/05-tanger-med/digue-detail.jpg",
+  "/etafat/evenement/projets/03-regis/tableau-de-bord.jpg",
+  "/etafat/evenement/projets/03-regis/execution-procedure.jpg",
+  "/etafat/evenement/projets/03-regis/modelisation-procedure.jpg",
+  "/etafat/evenement/projets/03-regis/ged.jpg",
+  "/etafat/evenement/projets/11-maaden/plateforme-sig.jpg",
+  "/etafat/evenement/projets/11-maaden/permis-exploitation.jpg",
+  "/etafat/evenement/projets/11-maaden/tableau-de-bord.jpg",
+  "/etafat/evenement/projets/11-maaden/comptoir-achat-vente.jpg",
+  "/etafat/evenement/projets/11-maaden/application-mobile.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

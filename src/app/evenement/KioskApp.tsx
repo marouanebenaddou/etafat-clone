@@ -359,7 +359,7 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
               </span>
               <span className="rounded-xl bg-[#2ab5b4]/25 px-4 py-3 ring-1 ring-[#8ee6e4]/40 backdrop-blur">
                 <span className="block text-xl md:text-2xl font-bold leading-none" style={{ fontFamily: "var(--font-figtree)" }}>{fmt(PAMOFOR.hero.value)} ha</span>
-                <span className="mt-1 block text-xs text-white/75">{tr.toCertifyCI}</span>
+                <span className="mt-1 block text-xs text-white/75">{tr.areaCI}</span>
               </span>
             </div>
           </motion.button>
@@ -400,9 +400,9 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
 }
 
 /* ------------------------- APPLICATIONS ---------------------------- */
-// The 3 field apps are installed on the borne. MainActivity exposes a JS bridge
-// (window.BorneApps) to launch them by package name and check install state.
-type BorneBridge = { launch: (pkg: string) => string; installed: (pkg: string) => string };
+// The field apps' web versions. On the borne, MainActivity's JS bridge (window.BorneApps.openUrl) opens them in a
+// Chrome Custom Tab over the kiosk (its ✕ returns here); in a browser — or an older APK without openUrl — a new tab.
+type BorneBridge = { openUrl?: (url: string) => string };
 
 function useBorne(): BorneBridge | null {
   const [bridge, setBridge] = useState<BorneBridge | null>(null);
@@ -410,7 +410,7 @@ function useBorne(): BorneBridge | null {
     let tries = 0;
     const read = () => {
       const w = window as unknown as { BorneApps?: BorneBridge };
-      if (w.BorneApps && typeof w.BorneApps.launch === "function") { setBridge(w.BorneApps); return true; }
+      if (w.BorneApps) { setBridge(w.BorneApps); return true; }
       return false;
     };
     if (read()) return;
@@ -420,26 +420,16 @@ function useBorne(): BorneBridge | null {
   return bridge;
 }
 
+function openWebApp(url: string, borne: BorneBridge | null) {
+  if (borne && typeof borne.openUrl === "function") {
+    try { if (borne.openUrl(url) === "ok") return; } catch { /* fall back to a tab */ }
+  }
+  window.open(url, "_blank", "noopener,noreferrer");
+}
+
 function AppsScreen({ onBack }: { onBack: () => void }) {
   const { t, app: L } = useI18n();
   const borne = useBorne();
-  const [status, setStatus] = useState<Record<string, "ok" | "missing" | "preview">>({});
-
-  useEffect(() => {
-    if (!borne) return;
-    const s: Record<string, "ok" | "missing" | "preview"> = {};
-    for (const app of BORNE_APPS) {
-      try { s[app.key] = borne.installed(app.pkg) === "1" ? "ok" : "missing"; } catch { /* ignore */ }
-    }
-    setStatus((p) => ({ ...p, ...s }));
-  }, [borne]);
-
-  const launch = (app: BorneApp) => {
-    if (!borne) { setStatus((p) => ({ ...p, [app.key]: "preview" })); return; }
-    let r = "";
-    try { r = borne.launch(app.pkg); } catch { /* ignore */ }
-    if (r !== "ok") setStatus((p) => ({ ...p, [app.key]: "missing" }));
-  };
 
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
@@ -466,24 +456,28 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     </span>
                     <div>
                       <h2 className="text-2xl font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{app.name}</h2>
-                      {status[app.key] === "missing" && (
-                        <p className="text-xs font-medium text-[#b7791f]">{t.notInstalled}</p>
-                      )}
+                      <p className="text-xs font-medium uppercase tracking-wider text-[var(--k-accent)]">{t.webApp}</p>
                     </div>
                   </div>
                   <p className="mt-4 text-sm leading-relaxed text-[var(--k-muted)]">{app.tagline}</p>
                 </div>
-                <div className="shrink-0 self-center text-center">
+                <div className="flex shrink-0 flex-col items-center gap-2 self-center">
                   <button
                     type="button"
-                    onClick={() => launch(app)}
+                    onClick={() => openWebApp(app.url, borne)}
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--k-accent)] px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform active:scale-95"
                   >
-                    <Icon icon="ph:play-fill" width={18} height={18} />
                     {t.launch}
+                    <Icon icon="ph:arrow-right-bold" width={18} height={18} />
                   </button>
-                  {status[app.key] === "preview" && (
-                    <p className="mt-2 text-xs text-[var(--k-muted)]">{t.availableOnBorne}</p>
+                  {app.legacyUrl && (
+                    <button
+                      type="button"
+                      onClick={() => openWebApp(app.legacyUrl!, borne)}
+                      className="rounded-full px-4 py-2 text-sm font-medium text-[var(--k-muted)] underline-offset-4 transition-colors hover:text-[var(--k-text)] hover:underline active:scale-95"
+                    >
+                      {t.legacyVersion}
+                    </button>
                   )}
                 </div>
               </div>
@@ -586,8 +580,8 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
                 </button>
               </div>
               <div className="h-1 w-full bg-[var(--k-accent)]" />
+              {sel.projects.length > 0 && (
               <div className="p-5 pt-4">
-              {sel.projects.length ? (
                 <ul className="max-h-56 space-y-2 overflow-y-auto">
                   {sel.projects.map((p, i) => (
                     <li key={i} className="rounded-lg bg-[var(--k-chip)] px-3 py-2 text-sm leading-snug text-[var(--k-text)]">
@@ -596,10 +590,8 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
                     </li>
                   ))}
                 </ul>
-              ) : (
-                <p className="text-sm text-[var(--k-muted)]">{t.presenceOnly}</p>
-              )}
               </div>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -770,8 +762,12 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
   const items: string[] =
     kind === "images" ? m.images ?? [] : kind === "videos" ? m.videos ?? [] : kind === "plans" ? m.plans ?? [] : m.model ? [m.model] : [];
   const [idx, setIdx] = useState(0);
+  // tap-to-zoom on pictures: the tapped point (fractions of the picture) is centred in the 2.4× view, drag pans
+  const [zoom, setZoom] = useState<{ fx: number; fy: number } | null>(null);
+  const [aspects, setAspects] = useState<Record<string, number>>({});
   const many = items.length > 1;
-  const go = (d: number) => setIdx((i) => (i + d + items.length) % items.length);
+  const show = (i: number) => { setIdx(i); setZoom(null); };
+  const go = (d: number) => { setIdx((i) => (i + d + items.length) % items.length); setZoom(null); };
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -785,33 +781,81 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
   }, [many, items.length]);
 
   const label = t.media[kind];
+  const picture = kind === "images" || kind === "plans";
+  const src = items[idx];
+  const ar = aspects[src] ?? 16 / 9;
+  // the vertical borne leaves wide bands around landscape pictures: fill them with the picture itself, blurred
+  const backdrop = picture ? src : projet.photo;
+
+  const zoomAt = (e: React.MouseEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const w = Math.min(r.width, r.height * ar), h = w / ar; // the contained picture inside the stage
+    const clamp = (v: number) => Math.min(1, Math.max(0, v));
+    setZoom({ fx: clamp((e.clientX - r.left - (r.width - w) / 2) / w), fy: clamp((e.clientY - r.top - (r.height - h) / 2) / h) });
+  };
+  const focus = (el: HTMLDivElement | null) => {
+    if (!el || !zoom) return;
+    requestAnimationFrame(() => {
+      const c = el.firstElementChild as HTMLElement;
+      el.scrollLeft = zoom.fx * c.scrollWidth - el.clientWidth / 2;
+      el.scrollTop = zoom.fy * c.scrollHeight - el.clientHeight / 2;
+    });
+  };
 
   return (
-    <motion.div className="fixed inset-0 z-[60] flex flex-col bg-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
-      <div className="flex shrink-0 items-center justify-between px-6 md:px-10 py-5">
+    <motion.div className="fixed inset-0 z-[60] flex flex-col overflow-hidden bg-black" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
+      <AnimatePresence initial={false}>
+        {backdrop && (
+          <motion.div key={backdrop} className="absolute inset-0" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+            <Image src={backdrop} alt="" fill unoptimized sizes="100vw" className="scale-125 transform-gpu object-cover blur-3xl brightness-[0.45] saturate-150" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/55 via-black/5 to-black/60" />
+
+      <div className="relative z-10 flex shrink-0 items-center justify-between px-6 md:px-10 py-5">
         <div className="min-w-0">
           <p className="text-[#2ab5b4] text-xs font-semibold uppercase tracking-[0.25em]">{label}</p>
           <p className="truncate text-white/80 text-sm md:text-base">{projet.title}</p>
         </div>
-        <button type="button" onClick={onClose} className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition-colors hover:bg-white/15 active:scale-95" aria-label={t.close}>
+        <button type="button" onClick={onClose} className="flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-black/30 text-white backdrop-blur transition-colors hover:bg-white/15 active:scale-95" aria-label={t.close}>
           <Icon icon="ph:x-bold" width={22} height={22} />
         </button>
       </div>
 
-      <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 md:px-16 pb-4">
+      <div className={`relative z-10 flex flex-1 items-center justify-center overflow-hidden pb-4 ${picture ? "" : "px-4 md:px-16"}`}>
         <AnimatePresence mode="wait">
-          <motion.div key={idx} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }} className="relative flex h-full w-full items-center justify-center">
+          <motion.div key={idx} initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.98 }} transition={{ duration: 0.3 }} className="relative flex h-full w-full items-center justify-center [container-type:size]">
             {kind === "videos" ? (
-              <video key={items[idx]} src={items[idx]} controls autoPlay playsInline className="max-h-full max-w-full rounded-xl" />
+              <video key={src} src={src} controls autoPlay playsInline className="max-h-full max-w-full rounded-xl shadow-2xl" />
             ) : kind === "model" ? (
-              <div className="h-full w-full max-w-5xl"><ModelViewer src={items[idx]} /></div>
+              <div className="h-full w-full max-w-5xl"><ModelViewer src={src} /></div>
+            ) : zoom ? (
+              <div ref={focus} onClick={() => setZoom(null)} className="absolute inset-0 cursor-zoom-out overflow-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                <div className="flex min-h-full min-w-full w-max items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt="" draggable={false} className="max-w-none select-none" style={{ width: `calc(min(100cqw, ${ar} * 100cqh) * 2.4)`, aspectRatio: String(ar) }} />
+                </div>
+              </div>
             ) : (
-              <div className="relative h-full w-full"><Image src={items[idx]} alt="" fill unoptimized sizes="100vw" className="object-contain" /></div>
+              <button type="button" onClick={zoomAt} aria-label={t.zoomIn} className="relative h-full w-full cursor-zoom-in">
+                <Image
+                  src={src} alt="" fill unoptimized sizes="100vw" className="object-contain drop-shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+                  onLoad={(e) => { const im = e.currentTarget; if (im.naturalWidth) setAspects((a) => ({ ...a, [src]: im.naturalWidth / im.naturalHeight })); }}
+                />
+              </button>
             )}
           </motion.div>
         </AnimatePresence>
 
-        {many && (
+        {picture && (
+          <p className="pointer-events-none absolute bottom-6 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full bg-black/45 px-4 py-2 text-xs text-white/85 backdrop-blur md:text-sm">
+            <Icon icon={zoom ? "ph:arrows-out-cardinal-duotone" : "ph:magnifying-glass-plus-duotone"} width={16} height={16} />
+            {zoom ? t.zoomOutHint : t.zoomInHint}
+          </p>
+        )}
+
+        {many && !zoom && (
           <>
             <NavArrow side="left" onClick={() => go(-1)} />
             <NavArrow side="right" onClick={() => go(1)} />
@@ -820,9 +864,9 @@ function MediaOverlay({ projet, kind, onClose }: { projet: EvenementProjet; kind
       </div>
 
       {many && kind !== "model" && (
-        <div className="flex shrink-0 items-center justify-center gap-2 px-6 py-5">
+        <div className="relative z-10 flex shrink-0 items-center justify-center gap-2 px-6 py-5">
           {items.map((it, i) => (
-            <button key={i} type="button" onClick={() => setIdx(i)} className={`relative h-14 w-20 overflow-hidden rounded-lg border-2 transition-colors ${i === idx ? "border-[#2ab5b4]" : "border-white/15 opacity-60 hover:opacity-100"}`}>
+            <button key={i} type="button" onClick={() => show(i)} className={`relative h-14 w-20 overflow-hidden rounded-lg border-2 transition-colors ${i === idx ? "border-[#2ab5b4]" : "border-white/15 opacity-60 hover:opacity-100"}`}>
               {kind === "videos" ? (
                 <span className="flex h-full w-full items-center justify-center bg-white/10"><Icon icon="ph:play-fill" width={18} height={18} className="text-white" /></span>
               ) : (

@@ -247,7 +247,7 @@ function PamoforView() {
             <CountUp value={PAMOFOR.hero.value} suffix={PAMOFOR.hero.suffix} duration={2000} />
           </p>
           <p className="mt-3 text-lg font-semibold text-white md:text-2xl">{PAMOFOR.hero.label}</p>
-          <p className="text-sm text-white/70 md:text-base">{PAMOFOR.hero.detail}</p>
+          {PAMOFOR.hero.detail && <p className="text-sm text-white/70 md:text-base">{PAMOFOR.hero.detail}</p>}
         </div>
       </Hero>
 

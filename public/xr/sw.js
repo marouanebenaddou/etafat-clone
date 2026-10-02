@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v26";
+const CACHE = "etafat-vr-v27";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -65,6 +65,16 @@ const PRECACHE = [
   "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
   "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
   "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg",
+  "/etafat/evenement/projets/05-tanger-med/digue-detail.jpg",
+  "/etafat/evenement/projets/03-regis/tableau-de-bord.jpg",
+  "/etafat/evenement/projets/03-regis/execution-procedure.jpg",
+  "/etafat/evenement/projets/03-regis/modelisation-procedure.jpg",
+  "/etafat/evenement/projets/03-regis/ged.jpg",
+  "/etafat/evenement/projets/11-maaden/plateforme-sig.jpg",
+  "/etafat/evenement/projets/11-maaden/permis-exploitation.jpg",
+  "/etafat/evenement/projets/11-maaden/tableau-de-bord.jpg",
+  "/etafat/evenement/projets/11-maaden/comptoir-achat-vente.jpg",
+  "/etafat/evenement/projets/11-maaden/application-mobile.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

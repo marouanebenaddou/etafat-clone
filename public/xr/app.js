@@ -781,7 +781,7 @@ function makeCountryPanel(country) {
   const projs = country.projects || [], shown = projs.slice(0, 7), BH = 333; // banner 1000×333 (3:1)
   const measure = measureCtx; measure.font = "400 28px system-ui, sans-serif";
   let hTxt = 0; for (const p of shown) hTxt += lines(measure, p.place ? `${p.title} — ${p.place}` : p.title, 1000 - 140, 2).length * 36 + 14;
-  const H = Math.round(BH + 70 + (shown.length ? hTxt : 90) + (projs.length > shown.length ? 40 : 10));
+  const H = Math.round(BH + (shown.length ? 70 + hTxt : 14) + (projs.length > shown.length ? 40 : 10)); // no projects listed: just the banner
   const card = canvasMesh(1000, H, (x, W, H2, me) => {
     cardBg(x, W, H2, "#2ab5b4");
     x.save(); roundRect(x, 4, 4, W - 8, H2 - 8, 27); x.clip();              // banner, clipped to the card's rounded top
@@ -800,7 +800,7 @@ function makeCountryPanel(country) {
     if (shown.length) for (const p of shown) {
       x.fillStyle = "#2ab5b4"; x.fillText("▸", 48, y);
       x.fillStyle = "#eaf4f8"; for (const l of lines(x, p.place ? `${p.title} — ${p.place}` : p.title, W - 140, 2)) { x.fillText(l, 86, y); y += 36; } y += 14;
-    } else { x.fillStyle = "rgba(234,244,248,0.72)"; x.font = "400 30px system-ui, sans-serif"; for (const l of lines(x, tr("Présence ETAFAT — projets en cours de référencement.", "ETAFAT presence — projects being documented."), W - 96, 2)) { x.fillText(l, 48, y); y += 40; } }
+    }
     if (projs.length > shown.length) { x.fillStyle = "#8ee6e4"; x.font = "600 24px system-ui, sans-serif"; x.fillText(tr(`+ ${projs.length - shown.length} autres projets`, `+ ${projs.length - shown.length} more projects`), 48, H2 - 30); }
   }, 1);
   countryBanner(country.iso).then((img) => { if (img) { card.userData.banner = img; card.userData.redraw(); } });

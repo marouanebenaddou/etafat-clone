@@ -128,7 +128,7 @@ export const CHIFFRES_EN = {
   pamofor: {
     country: "Côte d’Ivoire",
     tagline: "A large-scale land operation serving rural territories",
-    hero: { label: "to be certified", detail: "Securing rural land rights" },
+    hero: { label: "Securing rural land rights" },
     stats: [
       { label: "land contracts", detail: "Formalising relations between rights holders and land users" },
       { label: "villages supported", detail: "Socio-land engineering: information, awareness and community dialogue" },

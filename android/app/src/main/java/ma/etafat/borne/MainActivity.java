@@ -2,18 +2,22 @@ package ma.etafat.borne;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
+
+import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.getcapacitor.BridgeActivity;
 
 /**
  * ETAFAT borne tactile.
  * Kiosk behaviour: screen kept awake + immersive fullscreen (restored on focus).
- * Exposes a JS bridge (window.BorneApps) so the "Applications" tile can launch
- * the field apps that are installed on the borne — they run on the tablet itself.
+ * Exposes a JS bridge (window.BorneApps) so the "Applications" tile can open the
+ * field apps' web versions in a Chrome Custom Tab over the kiosk (its close button
+ * comes back to the borne), or launch an app installed on the tablet.
  */
 public class MainActivity extends BridgeActivity {
 
@@ -38,6 +42,25 @@ public class MainActivity extends BridgeActivity {
       } catch (Exception e) {
         return "0";
       }
+    }
+
+    /** Opens a web app in a Chrome Custom Tab (browser fallback). Only http(s) URLs. */
+    @JavascriptInterface
+    public String openUrl(String url) {
+      if (url == null || !(url.startsWith("https://") || url.startsWith("http://"))) return "invalid";
+      runOnUiThread(() -> {
+        Uri uri = Uri.parse(url);
+        try {
+          new CustomTabsIntent.Builder().setShowTitle(true).build().launchUrl(MainActivity.this, uri);
+        } catch (Exception e) {
+          try {
+            startActivity(new Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+          } catch (Exception ignored) {
+            // no browser on the tablet
+          }
+        }
+      });
+      return "ok";
     }
 
     @JavascriptInterface

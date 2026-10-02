@@ -404,11 +404,11 @@
         "/etafat/evenement/pool/cadastre-1.jpg",
         "/etafat/evenement/pool/cadastre-2.jpg",
         "/etafat/evenement/pool/cadastre-3.jpg",
-        "/etafat/evenement/pool/gis-1.jpg",
-        "/etafat/evenement/pool/gis-2.jpg",
-        "/etafat/evenement/pool/gis-3.jpg",
-        "/etafat/evenement/pool/gis-4.jpg",
-        "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg"
+        "/etafat/evenement/projets/03-regis/tableau-de-bord.jpg",
+        "/etafat/evenement/projets/03-regis/execution-procedure.jpg",
+        "/etafat/evenement/projets/03-regis/modelisation-procedure.jpg",
+        "/etafat/evenement/projets/03-regis/ged.jpg",
+        "/etafat/evenement/pool/gis-2.jpg"
       ],
       "items": [
         {
@@ -449,9 +449,10 @@
             "Gestion documentaire"
           ],
           "images": [
-            "/etafat/evenement/pool/gis-1.jpg",
-            "/etafat/evenement/pool/gis-2.jpg",
-            "/etafat/evenement/pool/gis-3.jpg"
+            "/etafat/evenement/projets/03-regis/tableau-de-bord.jpg",
+            "/etafat/evenement/projets/03-regis/execution-procedure.jpg",
+            "/etafat/evenement/projets/03-regis/modelisation-procedure.jpg",
+            "/etafat/evenement/projets/03-regis/ged.jpg"
           ],
           "en": {
             "title": "REGIS — Land and real-estate asset management for OCP",
@@ -922,9 +923,9 @@
       ],
       "photos": [
         "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
+        "/etafat/evenement/projets/05-tanger-med/digue-detail.jpg",
         "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
         "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
-        "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg",
         "/etafat/evenement/pool/terrain-1.jpg",
         "/etafat/evenement/pool/terrain-2.jpg",
         "/etafat/evenement/pool/terrain-3.jpg",
@@ -942,9 +943,9 @@
           ],
           "images": [
             "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
+            "/etafat/evenement/projets/05-tanger-med/digue-detail.jpg",
             "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
-            "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
-            "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg"
+            "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg"
           ],
           "en": {
             "title": "Bathymetry and 3D assessment of the Tanger Med structures",
@@ -1055,9 +1056,11 @@
         "/etafat/evenement/pool/building-1.jpg",
         "/etafat/evenement/pool/building-2.jpg",
         "/etafat/evenement/pool/building-3.jpg",
-        "/etafat/evenement/pool/mining-1.jpg",
-        "/etafat/evenement/pool/mining-2.jpg",
-        "/etafat/evenement/pool/mining-3.jpg"
+        "/etafat/evenement/projets/11-maaden/plateforme-sig.jpg",
+        "/etafat/evenement/projets/11-maaden/permis-exploitation.jpg",
+        "/etafat/evenement/projets/11-maaden/tableau-de-bord.jpg",
+        "/etafat/evenement/projets/11-maaden/comptoir-achat-vente.jpg",
+        "/etafat/evenement/pool/mining-2.jpg"
       ],
       "items": [
         {
@@ -1098,9 +1101,10 @@
             "Reporting terrain"
           ],
           "images": [
-            "/etafat/evenement/pool/mining-1.jpg",
-            "/etafat/evenement/pool/mining-2.jpg",
-            "/etafat/evenement/pool/mining-3.jpg"
+            "/etafat/evenement/projets/11-maaden/plateforme-sig.jpg",
+            "/etafat/evenement/projets/11-maaden/permis-exploitation.jpg",
+            "/etafat/evenement/projets/11-maaden/tableau-de-bord.jpg",
+            "/etafat/evenement/projets/11-maaden/comptoir-achat-vente.jpg"
           ],
           "en": {
             "title": "Information system for MAADEN’s mining operations",
