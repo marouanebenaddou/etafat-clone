@@ -19,6 +19,9 @@ const nextConfig: NextConfig = {
     ...(isKioskExport ? { unoptimized: true } : {}),
   },
   ...(isKioskExport ? { output: "export" as const } : {}),
+  // Static exports (etafat.ma, borne APK) keep one build id, so a page whose content didn't change is
+  // byte-identical from one build to the next and the FTP deploy only sends what really changed.
+  ...(isKioskExport ? { generateBuildId: async () => "etafat-static" } : {}),
   // Allow trailing slashes since the original site uses them
   trailingSlash: true,
 };

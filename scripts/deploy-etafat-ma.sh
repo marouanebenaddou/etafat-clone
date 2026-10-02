@@ -11,7 +11,11 @@
 # existing file stay as they are; only files with the same name as ours are replaced. Before uploading, the
 # server's current .htaccess and index.html are saved to deploy-backups/<date>/ so the switch can be undone.
 # Assets go up first and pages last (.html, the .txt navigation payloads, .htaccess), so the live site never
-# points at files that are not there yet.
+# points at files that are not there yet; files are overwritten in place (mirror:overwrite), never deleted
+# then re-sent, so an interrupted upload leaves old-or-new files, not missing ones. ~1,700 small files go up
+# Fast path: deploy-state/etafat-ma.sha (gitignored) lists the checksum of every file as last uploaded; only files
+# whose checksum changed are sent (static builds use a fixed build id, so untouched pages stay byte-identical),
+# with no remote listing. Without that file (first run, or after deleting it) a full mirror compares everything.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -19,6 +23,7 @@ MODE="${1:-}"
 HOST="${FTP_HOST:-serveur131.heberjahiz.com}" # etafat.ma's server (same IP); its TLS certificate is issued to this name
 DIR="${FTP_DIR:-public_html}"
 SRC="site-www"
+STATE="deploy-state/etafat-ma.sha"
 if [[ -z "${FTP_USER:-}" ]] && command -v security >/dev/null; then
   FTP_USER=$(security find-internet-password -s "$HOST" 2>/dev/null | sed -n 's/^ *"acct"<blob>="\(.*\)"$/\1/p' | head -1)
 fi
@@ -28,7 +33,7 @@ if [[ -z "${FTP_USER:-}" || ! "$MODE" =~ ^(list|dry-run|upload)$ ]]; then sed -n
 
 # encrypted login and transfers, certificate checked; patient with a shared host
 SETTINGS="set ftp:ssl-force true; set ftp:ssl-protect-data true; set ssl:verify-certificate true; set ftp:passive-mode true;
-set net:timeout 30; set net:max-retries 3; set net:reconnect-interval-base 5; set mirror:parallel-transfer-count 4"
+set net:timeout 30; set net:max-retries 3; set net:reconnect-interval-base 5; set mirror:parallel-transfer-count 6; set mirror:overwrite true; set xfer:make-backup false"
 OPEN="open -u \"$FTP_USER\" \"ftp://$HOST\""
 if command -v security >/dev/null && LFTP_PASSWORD=$(security find-internet-password -s "$HOST" -a "$FTP_USER" -w 2>/dev/null); then
   export LFTP_PASSWORD; OPEN="open --user \"$FTP_USER\" --env-password \"ftp://$HOST\""
@@ -52,14 +57,38 @@ case "$MODE" in
     echo "→ $(echo "$files" | grep -c . || true) files would be sent to $DIR/ (nothing is ever deleted)"
     ;;
   upload)
-    bk="deploy-backups/$(date +%Y-%m-%d_%H%M%S)"; mkdir -p "$bk"
+    bk="deploy-backups/$(date +%Y-%m-%d_%H%M%S)"; mkdir -p "$bk" "$(dirname "$STATE")"
+    cur=$(mktemp); trap 'rm -f "$cur" "${cmds:-}"' EXIT
+    (cd "$SRC" && find . -type f ! -name .DS_Store -print0 | xargs -0 shasum | sed 's#  \./#  #' | sort -k2) > "$cur"
     # `cd` logs in first: a wrong password stops the script there (no further attempts that the host's
     # brute-force protection would count)
-    lftp -c "$SETTINGS; set cmd:fail-exit true; $OPEN; cd '$DIR';
-      set cmd:fail-exit false; get -O '$bk' .htaccess index.html;
-      set cmd:fail-exit true;
-      echo '▶ assets…'; mirror -R --no-perms --ignore-time --verbose=1 $ASSETS '$SRC' .;
-      echo '▶ pages…';  mirror -R --no-perms --verbose=1 $PAGES '$SRC' ."
+    if [[ -f "$STATE" ]]; then
+      changed=$(comm -13 <(sort "$STATE") <(sort "$cur") | cut -c43-)
+      n=$(printf '%s' "$changed" | grep -c . || true)
+      if [[ "$n" -eq 0 ]]; then echo "✓ Nothing changed since the last upload."; exit 0; fi
+      assets=$(printf '%s\n' "$changed" | grep -vE '\.(html|txt)$|(^|/)\.htaccess$' || true)
+      pages=$(printf '%s\n' "$changed" | grep -E '\.(html|txt)$|(^|/)\.htaccess$' || true)
+      echo "▶ $n changed files ($(printf '%s' "$assets" | grep -c . || true) assets, $(printf '%s' "$pages" | grep -c . || true) pages)"
+      cmds=$(mktemp)
+      { echo "$SETTINGS"; echo "set cmd:fail-exit true"; echo "$OPEN"; echo "cd '$DIR'"
+        echo "set cmd:fail-exit false"; echo "get -O '$PWD/$bk' .htaccess index.html"; echo "set cmd:fail-exit true"
+        echo "lcd '$SRC'"
+        for group in assets pages; do # assets first, pages last; 150 files per mput
+          list="${!group}"; [[ -z "$list" ]] && continue
+          echo "echo '▶ $group…'"
+          printf '%s\n' "$list" | grep . | awk -v q="'" '{ l = l " " q $0 q } NR % 150 == 0 { print "mput -d -P 6" l; l = "" } END { if (l != "") print "mput -d -P 6" l }'
+        done
+      } > "$cmds"
+      lftp -f "$cmds"
+    else
+      echo "▶ no upload record yet: full comparison with the server (slow, once)"
+      lftp -c "$SETTINGS; set cmd:fail-exit true; $OPEN; cd '$DIR';
+        set cmd:fail-exit false; get -O '$bk' .htaccess index.html;
+        set cmd:fail-exit true;
+        echo '▶ assets…'; mirror -R --no-perms --ignore-time --verbose=1 $ASSETS '$SRC' .;
+        echo '▶ pages…';  mirror -R --no-perms --verbose=1 $PAGES '$SRC' ."
+    fi
+    cp "$cur" "$STATE"
     echo "✓ Uploaded. Previous .htaccess / index.html (if any) saved in $bk/ — check https://etafat.ma/"
     ;;
 esac
