@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Icon, addCollection } from "@iconify/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -751,9 +752,13 @@ function DetailScreen({ projet: pr, theme: th, onBack }: { projet: EvenementProj
         </div>
       </div>
 
-      <AnimatePresence>
-        {viewer && <MediaOverlay projet={projet} kind={viewer} onClose={() => setViewer(null)} />}
-      </AnimatePresence>
+      {/* portal: the screen's transition transform would trap the overlay's z-index under the FR | EN switch */}
+      {createPortal(
+        <AnimatePresence>
+          {viewer && <MediaOverlay projet={projet} kind={viewer} onClose={() => setViewer(null)} />}
+        </AnimatePresence>,
+        document.body,
+      )}
     </motion.section>
   );
 }

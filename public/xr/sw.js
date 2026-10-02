@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v25";
+const CACHE = "etafat-vr-v26";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -61,6 +61,10 @@ const PRECACHE = [
   "/etafat/evenement/icon-192.png",
   "/etafat/evenement/icon-512.png",
   // project photos shown in the theme pop-ups (placeholders until real ones land)
+  "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
+  "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
+  "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
+  "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

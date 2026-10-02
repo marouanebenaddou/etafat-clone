@@ -921,9 +921,10 @@
         "Contrôle du dragage par bathymétrie à Tanger Med"
       ],
       "photos": [
-        "/etafat/evenement/pool/port-1.jpg",
-        "/etafat/evenement/pool/port-2.jpg",
-        "/etafat/evenement/pool/port-3.jpg",
+        "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
+        "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
+        "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
+        "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg",
         "/etafat/evenement/pool/terrain-1.jpg",
         "/etafat/evenement/pool/terrain-2.jpg",
         "/etafat/evenement/pool/terrain-3.jpg",
@@ -940,9 +941,10 @@
             "Relevés 3D"
           ],
           "images": [
-            "/etafat/evenement/pool/port-1.jpg",
-            "/etafat/evenement/pool/port-2.jpg",
-            "/etafat/evenement/pool/port-3.jpg"
+            "/etafat/evenement/projets/05-tanger-med/bathymetrie-3d.jpg",
+            "/etafat/evenement/projets/05-tanger-med/zones-levees.jpg",
+            "/etafat/evenement/projets/05-tanger-med/bathymetrie-port-passagers.jpg",
+            "/etafat/evenement/projets/05-tanger-med/bathymetrie-nord-est.jpg"
           ],
           "en": {
             "title": "Bathymetry and 3D assessment of the Tanger Med structures",
