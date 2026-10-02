@@ -75,7 +75,7 @@ case "$MODE" in
         echo "lcd '$SRC'"
         for group in assets pages; do # assets first, pages last; 150 files per mput
           list="${!group}"; [[ -z "$list" ]] && continue
-          echo "echo '▶ $group…'"
+          echo "echo '▶ ${group}…'"
           printf '%s\n' "$list" | grep . | awk -v q="'" '{ l = l " " q $0 q } NR % 150 == 0 { print "mput -d -P 6" l; l = "" } END { if (l != "") print "mput -d -P 6" l }'
         done
       } > "$cmds"
