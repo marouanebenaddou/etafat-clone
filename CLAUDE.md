@@ -17,7 +17,7 @@ A pixel-faithful clone of https://geofit.fr/, rebranded to ETAFAT. Built with Ne
   - `/offres-demploi/` + 35 jobs at `/job/<slug>`
   - Static pages: `/contact/`, `/identite/`, `/innovation/`, `/engagements/`, `/filiales/`, `/nous-rejoindre/`, `/nous-rejoindre/culture-entreprise/`, `/mentions-legales/`, `/politique-confidentialite/`, `/plan-du-site/`
 
-- **Layout shell**: header (scroll-aware), navy mega-menu, footer with 4 columns, floating cookie button — in `src/components/`.
+- **Layout shell**: header (scroll-aware), navy mega-menu, footer with 4 columns — in `src/components/`.
 
 - **Design tokens** in `src/app/globals.css`:
   - Body: Open Sans 16/26, `#676767`
@@ -38,7 +38,7 @@ npm run build     # 229 static pages
 ## Key files
 
 - Routes: `src/app/**/page.tsx`
-- Shared UI: `src/components/{SiteHeader,SiteFooter,MegaMenu,Pill,PageHero,PageBody,CardGrid,Breadcrumb,QuestionCTA,CookieButton,icons}.tsx`
+- Shared UI: `src/components/{SiteHeader,SiteFooter,MegaMenu,Pill,PageHero,PageBody,CardGrid,Breadcrumb,QuestionCTA,icons}.tsx`
 - Content helpers: `src/lib/content.ts` (`pages`, `posts`, `portfolio`, `jobs`, `findByPath`, `pageDescription`, `cleanParagraphs`, …)
 - Scraped data: `src/data/{pages,posts,portfolio,jobs,page-groups,categories}.json`
 - Scripts: `scripts/scrape.mjs` (re-scrape from geofit.fr), `scripts/rebrand.mjs` (the historical GEOFIT→ETAFAT pass), `scripts/fix-image-urls.mjs` (image URL repair after rebrand)

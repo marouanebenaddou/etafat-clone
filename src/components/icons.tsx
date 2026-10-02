@@ -139,24 +139,6 @@ export function HomeIcon(props: IconProps) {
   );
 }
 
-export function CookieIcon(props: IconProps) {
-  return (
-    <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-      <path
-        d="M16 2C8.3 2 2 8.3 2 16s6.3 14 14 14 14-6.3 14-14M16 2c1 2.5 3 4.5 5.5 5.5C24 8.5 26 10.5 27 13c1 2.5 3 4.5 5.5 5.5"
-        stroke="currentColor"
-        strokeWidth="1.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <circle cx="11" cy="13" r="1.2" fill="currentColor" />
-      <circle cx="18" cy="20" r="1.2" fill="currentColor" />
-      <circle cx="22" cy="13" r="1.2" fill="currentColor" />
-      <circle cx="12" cy="22" r="1.2" fill="currentColor" />
-    </svg>
-  );
-}
-
 /* Domain icons (used in homepage grid) */
 
 export function TerritoryIcon(props: IconProps) {

@@ -16,7 +16,7 @@ This is a static-export-friendly Next.js 16 App Router site. All content lives i
 ## What's solid
 
 - Home page is hand-built section by section — full fidelity.
-- Layout shell (header / mega-menu / footer / cookie button) is responsive and matches the source design.
+- Layout shell (header / mega-menu / footer) is responsive and matches the source design.
 - All 229 routes resolve and render with real content.
 - Brand text is uniformly ETAFAT throughout (logo, footer, metadata, body paragraphs).
 - Agency URLs follow `/etafat-<city>/` pattern.
@@ -30,7 +30,7 @@ This is a static-export-friendly Next.js 16 App Router site. All content lives i
 
 3. **Search panel** — The header search icon is a no-op. Either remove it or wire it to a client-side fuzzy search over `src/data/`.
 
-4. **Cookie banner** — The floating cookie button is a UI placeholder, not a real consent flow. Integrate a real consent library (e.g. `react-cookie-consent`) if you ship publicly.
+4. **Cookie banner** — None: the site sets no cookies (no analytics, no third-party embeds), so the cloned floating cookie button (an empty placeholder) was removed. Add a real consent flow if analytics or embeds are ever added.
 
 5. **Scroll animations / parallax** — The source uses Salient theme's parallax + scroll-driven reveals. The clone is plain CSS. Adding Lenis + IntersectionObserver-based fade-ups would close the feel gap.
 
@@ -94,7 +94,7 @@ src/
     identite/page.tsx etc.
     plan-du-site/page.tsx
   components/
-    SiteHeader.tsx + MegaMenu.tsx + SiteFooter.tsx + CookieButton.tsx
+    SiteHeader.tsx + MegaMenu.tsx + SiteFooter.tsx
     PageHero.tsx + PageBody.tsx + Breadcrumb.tsx
     Pill.tsx + CardGrid.tsx + QuestionCTA.tsx
     icons.tsx              # all extracted SVG icons + custom domain icons
