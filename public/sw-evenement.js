@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v16";
+const CACHE = "etafat-borne-v17";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -108,6 +108,20 @@ const PRECACHE = [
   "/etafat/evenement/projets/23-smart-ife/07-plan-ensemble-autocad.jpg",
   "/etafat/evenement/projets/23-smart-ife/08-plans-st.jpg",
   "/etafat/evenement/projets/23-smart-ife/09-photo-a4.jpg",
+  "/etafat/evenement/projets/06-petroci/01-poste-de-vannes-gnss.jpg",
+  "/etafat/evenement/projets/06-petroci/02-leve-gnss-trace.jpg",
+  "/etafat/evenement/projets/06-petroci/03-leve-gnss-vegetation.jpg",
+  "/etafat/evenement/projets/06-petroci/04-franchissement-pont.jpg",
+  "/etafat/evenement/projets/06-petroci/05-dalot-ouvrage-hydraulique.jpg",
+  "/etafat/evenement/projets/06-petroci/06-station.jpg",
+  "/etafat/evenement/projets/06-petroci/07-leve-zone-degagee.jpg",
+  "/etafat/evenement/projets/06-petroci/08-traversee-peage.jpg",
+  "/etafat/evenement/projets/29-rna/01-tableau-de-bord.jpg",
+  "/etafat/evenement/projets/29-rna/02-statistiques.jpg",
+  "/etafat/evenement/projets/29-rna/03-carte-exploitations.jpg",
+  "/etafat/evenement/projets/29-rna/04-parcelle-et-fiches.jpg",
+  "/etafat/evenement/projets/29-rna/05-fiches-equipements-animaux.jpg",
+  "/etafat/evenement/projets/29-rna/06-fiche-exploitant.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",
