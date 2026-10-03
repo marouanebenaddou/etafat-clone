@@ -470,15 +470,6 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                     {t.launch}
                     <Icon icon="ph:arrow-right-bold" width={18} height={18} />
                   </button>
-                  {app.legacyUrl && (
-                    <button
-                      type="button"
-                      onClick={() => openWebApp(app.legacyUrl!, borne)}
-                      className="rounded-full px-4 py-2 text-sm font-medium text-[var(--k-muted)] underline-offset-4 transition-colors hover:text-[var(--k-text)] hover:underline active:scale-95"
-                    >
-                      {t.legacyVersion}
-                    </button>
-                  )}
                 </div>
               </div>
             </motion.div>

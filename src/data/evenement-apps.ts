@@ -8,7 +8,6 @@ export type BorneApp = {
   icon: string;
   tagline: string;
   url: string; // web app
-  legacyUrl?: string; // previous version, still online
 };
 
 export const BORNE_APPS: BorneApp[] = [
@@ -19,7 +18,6 @@ export const BORNE_APPS: BorneApp[] = [
     tagline:
       "Sécurisation foncière rurale — enquêtes, délimitation et levé des parcelles (Sénégal).",
     url: "http://81.192.142.205:5056/",
-    legacyUrl: "http://81.192.142.205:93/",
   },
   {
     key: "presfor",
