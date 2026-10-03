@@ -330,15 +330,18 @@ const DOMAINS: DomainData[] = [
 // card draws the same badge over them.
 const CLEAN_PHOTOS = new Set([
   "foncier-1", "foncier-2", "foncier-3", "foncier-4",
-  "energie-mines-2", "batiment-patrimoine-3", "batiment-patrimoine-4", "agriculture-eau-4",
+  "energie-mines-2", "batiment-patrimoine-3", "palais-presidentiel", "agriculture-eau-4",
 ]);
 // …except where the photo carries the ETAFAT logo in that corner (PROCASEF, PETROCI's vest)
 const LOGO_IN_CORNER = new Set(["foncier-2", "energie-mines-2"]);
 const photoName = (image: string) => image.split("/").pop()!.replace(/\.jpg$/, "");
 const hasCleanPhoto = (image: string) => CLEAN_PHOTOS.has(photoName(image)) && !LOGO_IN_CORNER.has(photoName(image));
+// Real project visuals that replaced a mockup crop get their own file name (etafat.ma caches images 30 days)
+const RENAMED: Record<string, string> = { "batiment-patrimoine-4": "palais-presidentiel" };
 for (const d of DOMAINS) {
   d.projects.forEach((p, i) => {
-    p.image = `/etafat/references/${d.domainSlug}-${i + 1}.jpg`;
+    const name = `${d.domainSlug}-${i + 1}`;
+    p.image = `/etafat/references/${RENAMED[name] ?? name}.jpg`;
   });
 }
 
