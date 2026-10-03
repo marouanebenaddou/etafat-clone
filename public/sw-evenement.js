@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v15";
+const CACHE = "etafat-borne-v16";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -99,6 +99,15 @@ const PRECACHE = [
   "/etafat/evenement/projets/39-el-jadida/port-el-jadida.jpg",
   "/etafat/evenement/projets/40-bouregreg/bouregreg-rabat-sale.jpg",
   "/etafat/evenement/projets/40-bouregreg/marina-bouregreg.jpg",
+  "/etafat/evenement/projets/23-smart-ife/01-creation-parcelle.jpg",
+  "/etafat/evenement/projets/23-smart-ife/02-application-terrain.jpg",
+  "/etafat/evenement/projets/23-smart-ife/03-routes-et-pistes.jpg",
+  "/etafat/evenement/projets/23-smart-ife/04-enquete-juridique-carte.jpg",
+  "/etafat/evenement/projets/23-smart-ife/05-details-parcelle.jpg",
+  "/etafat/evenement/projets/23-smart-ife/06-tableau-de-bord.jpg",
+  "/etafat/evenement/projets/23-smart-ife/07-plan-ensemble-autocad.jpg",
+  "/etafat/evenement/projets/23-smart-ife/08-plans-st.jpg",
+  "/etafat/evenement/projets/23-smart-ife/09-photo-a4.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",
