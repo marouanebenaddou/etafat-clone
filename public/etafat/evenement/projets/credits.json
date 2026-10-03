@@ -1,0 +1,108 @@
+{
+ "10-sacre-coeur/interieur-sacre-coeur.jpg": {
+  "source": "Unsplash",
+  "author": "JR Harris",
+  "page": "https://unsplash.com/photos/white-concrete-hallway-with-red-lights-7eHMelI1KOM",
+  "license": "Unsplash License"
+ },
+ "19-fes/medina-fes-panorama.jpg": {
+  "source": "Unsplash",
+  "author": "Matt Dany",
+  "page": "https://unsplash.com/photos/a-city-with-many-buildings-9FFvBUYmCKQ",
+  "license": "Unsplash License"
+ },
+ "19-fes/medina-fes-toits.jpg": {
+  "source": "Unsplash",
+  "author": "Selina Bubendorfer",
+  "page": "https://unsplash.com/photos/aerial-view-of-city-buildings-during-daytime-e-6LEkIUvAw",
+  "license": "Unsplash License"
+ },
+ "19-fes/medina-fes-riad.jpg": {
+  "source": "Unsplash",
+  "author": "Mohammed",
+  "page": "https://unsplash.com/photos/brown-concrete-building-under-blue-sky-during-daytime-7d3rAyEyw2U",
+  "license": "Unsplash License"
+ },
+ "33-rabat-facades/porte-oudaya.jpg": {
+  "source": "Unsplash",
+  "author": "Hamza Nahal",
+  "page": "https://unsplash.com/photos/a-blue-door-with-red-flowers-in-front-of-it-lESryq4e3xs",
+  "license": "Unsplash License"
+ },
+ "33-rabat-facades/remparts-rabat.jpg": {
+  "source": "Unsplash",
+  "author": "Zakaria Kasmi",
+  "page": "https://unsplash.com/photos/brown-concrete-building-under-blue-sky-during-daytime-wfDoR9rp5dY",
+  "license": "Unsplash License"
+ },
+ "33-rabat-facades/kasbah-oudaya.jpg": {
+  "source": "Unsplash",
+  "author": "Xhiliana",
+  "page": "https://unsplash.com/photos/street-lamps-line-a-road-with-a-distant-city-view-upwxLZf0STM",
+  "license": "Unsplash License"
+ },
+ "37-beni-mellal/beni-mellal.jpg": {
+  "source": "Unsplash",
+  "author": "Oussama Abouchatir",
+  "page": "https://unsplash.com/photos/a-view-of-a-city-from-a-hill-AbH1A0fZtjU",
+  "license": "Unsplash License"
+ },
+ "37-beni-mellal/plaine-beni-mellal.jpg": {
+  "source": "Unsplash",
+  "author": "Kamil Pietrzak",
+  "page": "https://unsplash.com/photos/a-green-field-with-mountains-in-the-background-sKbnsJ6gchE",
+  "license": "Unsplash License"
+ },
+ "37-beni-mellal/cascades-ouzoud-azilal.jpg": {
+  "source": "Unsplash",
+  "author": "Mohamed bachqi",
+  "page": "https://unsplash.com/photos/waterfalls-in-brown-and-green-trees-under-blue-sky-during-daytime-llAZiJ1FNP4",
+  "license": "Unsplash License"
+ },
+ "38-tetouan/medina-tetouan.jpg": {
+  "source": "Unsplash",
+  "author": "Maddie Leopardo",
+  "page": "https://unsplash.com/photos/white-concrete-building-under-blue-sky-during-daytime-egd0IU4wVy0",
+  "license": "Unsplash License"
+ },
+ "38-tetouan/tetouan-nuit.jpg": {
+  "source": "Unsplash",
+  "author": "Othman Alghanmi",
+  "page": "https://unsplash.com/photos/a-view-of-a-city-at-night-from-a-hill-kNRSTRJEZK8",
+  "license": "Unsplash License"
+ },
+ "38-tetouan/cote-mdiq.jpg": {
+  "source": "Unsplash",
+  "author": "zaka ziko",
+  "page": "https://unsplash.com/photos/a-beach-with-buildings-and-water-wQpw5HatYQw",
+  "license": "Unsplash License"
+ },
+ "39-el-jadida/maquette-cite-portugaise.jpg": {
+  "source": "ETAFAT",
+  "note": "render of ETAFAT's drone 3D model of the Cité portugaise (VR)"
+ },
+ "39-el-jadida/cite-portugaise-el-jadida.jpg": {
+  "source": "Unsplash",
+  "author": "AYOUB OUAZIZI",
+  "page": "https://unsplash.com/photos/a-tall-tower-with-a-clock-on-the-top-of-it-wd0cr_V2hWc",
+  "license": "Unsplash License"
+ },
+ "39-el-jadida/port-el-jadida.jpg": {
+  "source": "Unsplash",
+  "author": "Samy Slow",
+  "page": "https://unsplash.com/photos/a-group-of-boats-sitting-next-to-each-other-8Pf9ZGkDZrE",
+  "license": "Unsplash License"
+ },
+ "40-bouregreg/bouregreg-rabat-sale.jpg": {
+  "source": "Unsplash",
+  "author": "Souhail BIDA",
+  "page": "https://unsplash.com/photos/a-group-of-boats-floating-on-top-of-a-body-of-water-QvXKyUbrTbw",
+  "license": "Unsplash License"
+ },
+ "40-bouregreg/marina-bouregreg.jpg": {
+  "source": "Unsplash",
+  "author": "Souhail BIDA",
+  "page": "https://unsplash.com/photos/a-group-of-boats-docked-at-a-marina-Y-yQ5pEoP6o",
+  "license": "Unsplash License"
+ }
+}

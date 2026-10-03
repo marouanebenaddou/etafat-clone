@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v14";
+const CACHE = "etafat-borne-v15";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -81,6 +81,24 @@ const PRECACHE = [
   "/etafat/evenement/projets/08-burkina/leve-terrain-gampela.jpg",
   "/etafat/evenement/projets/08-burkina/ouagadougou.jpg",
   "/etafat/evenement/projets/08-burkina/plateforme-visualisation.jpg",
+  "/etafat/evenement/projets/10-sacre-coeur/interieur-sacre-coeur.jpg",
+  "/etafat/evenement/projets/19-fes/medina-fes-panorama.jpg",
+  "/etafat/evenement/projets/19-fes/medina-fes-toits.jpg",
+  "/etafat/evenement/projets/19-fes/medina-fes-riad.jpg",
+  "/etafat/evenement/projets/33-rabat-facades/porte-oudaya.jpg",
+  "/etafat/evenement/projets/33-rabat-facades/remparts-rabat.jpg",
+  "/etafat/evenement/projets/33-rabat-facades/kasbah-oudaya.jpg",
+  "/etafat/evenement/projets/37-beni-mellal/beni-mellal.jpg",
+  "/etafat/evenement/projets/37-beni-mellal/plaine-beni-mellal.jpg",
+  "/etafat/evenement/projets/37-beni-mellal/cascades-ouzoud-azilal.jpg",
+  "/etafat/evenement/projets/38-tetouan/medina-tetouan.jpg",
+  "/etafat/evenement/projets/38-tetouan/tetouan-nuit.jpg",
+  "/etafat/evenement/projets/38-tetouan/cote-mdiq.jpg",
+  "/etafat/evenement/projets/39-el-jadida/maquette-cite-portugaise.jpg",
+  "/etafat/evenement/projets/39-el-jadida/cite-portugaise-el-jadida.jpg",
+  "/etafat/evenement/projets/39-el-jadida/port-el-jadida.jpg",
+  "/etafat/evenement/projets/40-bouregreg/bouregreg-rabat-sale.jpg",
+  "/etafat/evenement/projets/40-bouregreg/marina-bouregreg.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",
