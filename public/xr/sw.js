@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v27";
+const CACHE = "etafat-vr-v28";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -75,6 +75,30 @@ const PRECACHE = [
   "/etafat/evenement/projets/11-maaden/tableau-de-bord.jpg",
   "/etafat/evenement/projets/11-maaden/comptoir-achat-vente.jpg",
   "/etafat/evenement/projets/11-maaden/application-mobile.jpg",
+  "/etafat/evenement/projets/02-pagef/koumassi-marcory-panorama.jpg",
+  "/etafat/evenement/projets/02-pagef/koumassi-marcory-1.jpg",
+  "/etafat/evenement/projets/02-pagef/koumassi-marcory-2.jpg",
+  "/etafat/evenement/projets/02-pagef/koumassi-marcory-3.jpg",
+  "/etafat/evenement/projets/04-pointe-noire/pointe-noire-panorama.jpg",
+  "/etafat/evenement/projets/04-pointe-noire/pointe-noire-1.jpg",
+  "/etafat/evenement/projets/04-pointe-noire/pointe-noire-2.jpg",
+  "/etafat/evenement/projets/04-pointe-noire/pointe-noire-3.jpg",
+  "/etafat/evenement/projets/15-pilier/village-ortho-10cm.jpg",
+  "/etafat/evenement/projets/15-pilier/detail-10cm.jpg",
+  "/etafat/evenement/projets/15-pilier/village-2.jpg",
+  "/etafat/evenement/projets/15-pilier/dalle-1-5-km.jpg",
+  "/etafat/evenement/projets/31-sousse/vue-aerienne-sousse.jpg",
+  "/etafat/evenement/projets/31-sousse/avion-cn-fly.jpg",
+  "/etafat/evenement/projets/31-sousse/plan-de-vol.jpg",
+  "/etafat/evenement/projets/31-sousse/capteur-lidar.jpg",
+  "/etafat/evenement/projets/31-sousse/equipage.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/public-accueil.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/public-marches.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/public-meteo.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/interne-accueil.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/interne-securisation-fonciere.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/interne-carte-utilisation-terres.jpg",
+  "/etafat/evenement/projets/41-sead-burundi/interne-suivi-evaluation.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

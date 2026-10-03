@@ -23,11 +23,11 @@
         "/etafat/evenement/pool/aerial-1.jpg",
         "/etafat/evenement/pool/aerial-2.jpg",
         "/etafat/evenement/pool/aerial-3.jpg",
-        "/etafat/evenement/pool/aerial-4.jpg",
-        "/etafat/evenement/pool/heritage-1.jpg",
-        "/etafat/evenement/pool/heritage-2.jpg",
-        "/etafat/evenement/pool/heritage-3.jpg",
-        "/etafat/evenement/pool/aerial-5.jpg"
+        "/etafat/evenement/projets/04-pointe-noire/pointe-noire-panorama.jpg",
+        "/etafat/evenement/projets/04-pointe-noire/pointe-noire-1.jpg",
+        "/etafat/evenement/projets/04-pointe-noire/pointe-noire-2.jpg",
+        "/etafat/evenement/projets/04-pointe-noire/pointe-noire-3.jpg",
+        "/etafat/evenement/pool/heritage-1.jpg"
       ],
       "items": [
         {
@@ -68,9 +68,10 @@
             "Orthophotographie"
           ],
           "images": [
-            "/etafat/evenement/pool/aerial-2.jpg",
-            "/etafat/evenement/pool/aerial-3.jpg",
-            "/etafat/evenement/pool/aerial-4.jpg"
+            "/etafat/evenement/projets/04-pointe-noire/pointe-noire-panorama.jpg",
+            "/etafat/evenement/projets/04-pointe-noire/pointe-noire-1.jpg",
+            "/etafat/evenement/projets/04-pointe-noire/pointe-noire-2.jpg",
+            "/etafat/evenement/projets/04-pointe-noire/pointe-noire-3.jpg"
           ],
           "en": {
             "title": "LiDAR surveys of Brazzaville and Pointe-Noire",
@@ -122,9 +123,10 @@
             "Référentiel géographique"
           ],
           "images": [
-            "/etafat/evenement/pool/aerial-3.jpg",
-            "/etafat/evenement/pool/aerial-4.jpg",
-            "/etafat/evenement/pool/aerial-5.jpg"
+            "/etafat/evenement/projets/15-pilier/village-ortho-10cm.jpg",
+            "/etafat/evenement/projets/15-pilier/detail-10cm.jpg",
+            "/etafat/evenement/projets/15-pilier/village-2.jpg",
+            "/etafat/evenement/projets/15-pilier/dalle-1-5-km.jpg"
           ],
           "en": {
             "title": "PILIER — Aerial data and urban plans for N’Djamena",
@@ -230,9 +232,10 @@
             "Modélisation du terrain"
           ],
           "images": [
-            "/etafat/evenement/pool/aerial-5.jpg",
-            "/etafat/evenement/pool/aerial-1.jpg",
-            "/etafat/evenement/pool/aerial-2.jpg"
+            "/etafat/evenement/projets/31-sousse/vue-aerienne-sousse.jpg",
+            "/etafat/evenement/projets/31-sousse/avion-cn-fly.jpg",
+            "/etafat/evenement/projets/31-sousse/plan-de-vol.jpg",
+            "/etafat/evenement/projets/31-sousse/capteur-lidar.jpg"
           ],
           "en": {
             "title": "Topographic map of Sousse from airborne LiDAR and orthophotography",
@@ -401,14 +404,14 @@
         "Inventaire des actifs imposables de Skhirate–Témara"
       ],
       "photos": [
-        "/etafat/evenement/pool/cadastre-1.jpg",
-        "/etafat/evenement/pool/cadastre-2.jpg",
-        "/etafat/evenement/pool/cadastre-3.jpg",
+        "/etafat/evenement/projets/02-pagef/koumassi-marcory-panorama.jpg",
+        "/etafat/evenement/projets/02-pagef/koumassi-marcory-1.jpg",
+        "/etafat/evenement/projets/02-pagef/koumassi-marcory-2.jpg",
+        "/etafat/evenement/projets/02-pagef/koumassi-marcory-3.jpg",
         "/etafat/evenement/projets/03-regis/tableau-de-bord.jpg",
         "/etafat/evenement/projets/03-regis/execution-procedure.jpg",
         "/etafat/evenement/projets/03-regis/modelisation-procedure.jpg",
-        "/etafat/evenement/projets/03-regis/ged.jpg",
-        "/etafat/evenement/pool/gis-2.jpg"
+        "/etafat/evenement/projets/03-regis/ged.jpg"
       ],
       "items": [
         {
@@ -422,9 +425,10 @@
             "Acquisition aérienne et LiDAR"
           ],
           "images": [
-            "/etafat/evenement/pool/cadastre-1.jpg",
-            "/etafat/evenement/pool/cadastre-2.jpg",
-            "/etafat/evenement/pool/cadastre-3.jpg"
+            "/etafat/evenement/projets/02-pagef/koumassi-marcory-panorama.jpg",
+            "/etafat/evenement/projets/02-pagef/koumassi-marcory-1.jpg",
+            "/etafat/evenement/projets/02-pagef/koumassi-marcory-2.jpg",
+            "/etafat/evenement/projets/02-pagef/koumassi-marcory-3.jpg"
           ],
           "en": {
             "title": "PAGEF — Strengthening the cadastre of Abidjan",
@@ -1163,7 +1167,11 @@
       "photos": [
         "/etafat/evenement/pool/agri-1.jpg",
         "/etafat/evenement/pool/agri-2.jpg",
-        "/etafat/evenement/pool/agri-3.jpg"
+        "/etafat/evenement/pool/agri-3.jpg",
+        "/etafat/evenement/projets/41-sead-burundi/public-accueil.jpg",
+        "/etafat/evenement/projets/41-sead-burundi/public-marches.jpg",
+        "/etafat/evenement/projets/41-sead-burundi/public-meteo.jpg",
+        "/etafat/evenement/projets/41-sead-burundi/interne-accueil.jpg"
       ],
       "items": [
         {
@@ -1244,6 +1252,36 @@
               "Parcel mapping",
               "Mobile data collection",
               "Management platform"
+            ]
+          }
+        },
+        {
+          "title": "SEAD — Portails public et interne du PADCAE-B (Burundi)",
+          "short": "SEAD — Portails public et interne du PADCAE-B (Burundi)",
+          "description": "Plateforme SEAD du PADCAE-B au Burundi : portail public (marchés agricoles géolocalisés, météo agricole par commune, annuaire des acteurs, financement) et portail interne (suivi-évaluation, sécurisation foncière des parcelles, carte d’occupation des sols, comparaison d’années des rapports SEAD).",
+          "subThemes": [
+            "Portail SIG public & interne",
+            "Suivi-évaluation agricole",
+            "Sécurisation foncière",
+            "Météo agricole en temps réel",
+            "Marchés agricoles & annuaire des acteurs"
+          ],
+          "images": [
+            "/etafat/evenement/projets/41-sead-burundi/public-accueil.jpg",
+            "/etafat/evenement/projets/41-sead-burundi/public-marches.jpg",
+            "/etafat/evenement/projets/41-sead-burundi/public-meteo.jpg",
+            "/etafat/evenement/projets/41-sead-burundi/interne-accueil.jpg"
+          ],
+          "en": {
+            "title": "SEAD — Public & internal portals of PADCAE-B (Burundi)",
+            "short": "SEAD — PADCAE-B portals (Burundi)",
+            "description": "SEAD platform for PADCAE-B in Burundi: public portal (geolocated agricultural markets, weather by commune, stakeholder directory, financing) and internal portal (monitoring and evaluation, parcel-level land tenure security, land-use map, year-over-year comparison of SEAD reports).",
+            "subThemes": [
+              "Public & internal GIS portal",
+              "Agricultural monitoring and evaluation",
+              "Land tenure security",
+              "Real-time agricultural weather",
+              "Agricultural markets & stakeholder directory"
             ]
           }
         }
