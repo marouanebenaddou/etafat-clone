@@ -11,8 +11,8 @@ android {
         applicationId 'ma.etafat.vr.offline'
         minSdk 29
         targetSdk 32          // sideloaded on Quest; keeps foreground-service rules simple
-        versionCode 11
-        versionName '2.8'
+        versionCode 12
+        versionName '2.9'
     }
 
     signingConfigs {
