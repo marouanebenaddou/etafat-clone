@@ -620,13 +620,13 @@
       ],
       "photos": [
         "/etafat/evenement/projets/06-petroci/detection-gpr.jpg",
+        "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-chantier.jpg",
         "/etafat/evenement/projets/09-pagds-ageroute/plateforme-suivi.jpg",
-        "/etafat/evenement/projets/09-pagds-ageroute/equipes-drone.jpg",
+        "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-tablier.jpg",
+        "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-viaduc.jpg",
         "/etafat/evenement/projets/13-tramway-t2/maquette-3d-t2.jpg",
         "/etafat/evenement/pool/roads-2.jpg",
-        "/etafat/evenement/pool/roads-3.jpg",
-        "/etafat/evenement/pool/roads-4.jpg",
-        "/etafat/evenement/projets/18-jorf-lasfar/detection-reseaux.jpg"
+        "/etafat/evenement/pool/roads-3.jpg"
       ],
       "items": [
         {
@@ -665,8 +665,10 @@
             "Formation"
           ],
           "images": [
+            "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-chantier.jpg",
             "/etafat/evenement/projets/09-pagds-ageroute/plateforme-suivi.jpg",
-            "/etafat/evenement/projets/09-pagds-ageroute/equipes-drone.jpg"
+            "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-tablier.jpg",
+            "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-viaduc.jpg"
           ],
           "en": {
             "title": "PAGDS — Construction-site monitoring for AGEROUTE",

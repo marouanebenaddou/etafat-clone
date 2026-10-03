@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v10";
+const CACHE = "etafat-borne-v11";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -61,6 +61,10 @@ const PRECACHE = [
   "/etafat/evenement/projets/27-mamda/parcours-expert.jpg",
   "/etafat/evenement/projets/30-pva-casablanca/pva-15cm.jpg",
   "/etafat/evenement/projets/36-oulmes/maquette-usine.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-chantier.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-tablier.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-viaduc.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-silos.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

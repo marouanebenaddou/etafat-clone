@@ -1,6 +1,6 @@
 /* ETAFAT VR (Quest) — offline service worker. Precache the whole experience so it
    runs with no network after the first online launch. Bump CACHE to force refresh. */
-const CACHE = "etafat-vr-v29";
+const CACHE = "etafat-vr-v30";
 const PRECACHE = [
   "./index.html",
   "./app.js",
@@ -114,6 +114,10 @@ const PRECACHE = [
   "/etafat/evenement/projets/27-mamda/parcours-expert.jpg",
   "/etafat/evenement/projets/30-pva-casablanca/pva-15cm.jpg",
   "/etafat/evenement/projets/36-oulmes/maquette-usine.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-chantier.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-tablier.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-viaduc.jpg",
+  "/etafat/evenement/projets/09-pagds-ageroute/pont-solibra-silos.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",
