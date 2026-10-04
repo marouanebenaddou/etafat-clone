@@ -69,6 +69,17 @@ const MOROCCO_MERGED: Feat = (() => {
   } as Feat;
 })();
 
+/** Highlight layer drawn over the presence colours (e.g. the AAGP pipeline): a set of countries filled and
+ *  outlined, an optional route line, and the view the globe flies/zooms to while it is shown. */
+export type GlobeOverlay = {
+  isos: number[];
+  route?: [number, number][];
+  fill: string;
+  stroke: string;
+  line?: string;
+  focus?: { center: [number, number]; zoom: number };
+};
+
 function clamp(v: number, lo: number, hi: number) {
   return Math.max(lo, Math.min(hi, v));
 }
@@ -85,12 +96,15 @@ export function PresenceGlobe({
   colors: colorsProp,
   className,
   label,
+  overlay,
 }: {
   onSelect?: (c: PresenceCountry) => void;
   colors?: Partial<Colors>;
   className?: string;
   /** name shown on the hovered-country chip (e.g. the English name); defaults to country.name */
   label?: (c: PresenceCountry) => string;
+  /** highlight layer (countries + route); null/undefined = none */
+  overlay?: GlobeOverlay | null;
 }) {
   const colors = { ...DEFAULT_COLORS, ...colorsProp };
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -99,6 +113,23 @@ export function PresenceGlobe({
   onSelectRef.current = onSelect;
   const labelRef = useRef(label);
   useEffect(() => { labelRef.current = label; }, [label]);
+
+  // overlay: its country features, read by the draw loop through a ref; turning it on/off also asks the
+  // loop to fly to its focus view (or back to the default zoom)
+  const overlayRef = useRef<{ o: GlobeOverlay; feats: Feat[] } | null>(null);
+  const viewRef = useRef<{ center?: [number, number]; zoom: number } | null>(null);
+  useEffect(() => {
+    if (!overlay) {
+      if (overlayRef.current) viewRef.current = { zoom: 1 };
+      overlayRef.current = null;
+      return;
+    }
+    const want = new Set(overlay.isos);
+    const feats = COUNTRIES.filter((f) => want.has(Number(f.id)) && Number(f.id) !== WSAHARA_ISO)
+      .map((f) => (Number(f.id) === MOROCCO_ISO ? MOROCCO_MERGED : f));
+    overlayRef.current = { o: overlay, feats };
+    if (overlay.focus) viewRef.current = { center: overlay.focus.center, zoom: overlay.focus.zoom };
+  }, [overlay]);
 
   // active countries (ETAFAT presence) with their feature + centroid
   const active = useMemo(() => {
@@ -132,6 +163,7 @@ export function PresenceGlobe({
     let handTurned = false;                // turned / zoomed / a country picked by hand → the idle spin stops for good
     let flyTarget: [number, number] | null = null;
     let zoom = 1;                                        // pinch / wheel zoom factor
+    let zoomTarget: number | null = null;                // animated zoom (overlay focus)
     const ZOOM_MIN = 1, ZOOM_MAX = 6;
     const pointers = new Map<number, { x: number; y: number }>(); // active touch/mouse points
     let pinchStartDist = 0, pinchStartZoom = 1;
@@ -238,6 +270,49 @@ export function PresenceGlobe({
         ctx.stroke();
       }
 
+      // overlay: highlighted countries, then the route (white halo + animated dashes) on top
+      const ov = overlayRef.current;
+      if (ov) {
+        ctx.beginPath();
+        for (const f of ov.feats) path(f as unknown as GeoPermissibleObjects);
+        ctx.fillStyle = ov.o.fill;
+        ctx.fill();
+        ctx.strokeStyle = ov.o.stroke;
+        ctx.lineWidth = 1.6;
+        ctx.lineJoin = "round";
+        ctx.stroke();
+        if (ov.o.route && ov.o.route.length > 1) {
+          const line = { type: "LineString", coordinates: ov.o.route } as GeoPermissibleObjects;
+          ctx.beginPath();
+          path(line);
+          ctx.strokeStyle = "rgba(255,255,255,0.9)";
+          ctx.lineWidth = 5.5;
+          ctx.lineCap = "round";
+          ctx.stroke();
+          ctx.beginPath();
+          path(line);
+          ctx.strokeStyle = ov.o.line ?? ov.o.stroke;
+          ctx.lineWidth = 3;
+          ctx.setLineDash([9, 6]);
+          ctx.lineDashOffset = reduce ? 0 : -(performance.now() / 45) % 15;
+          ctx.stroke();
+          ctx.setLineDash([]);
+          // start / end points
+          for (const pt of [ov.o.route[0], ov.o.route[ov.o.route.length - 1]]) {
+            if (!isVisible(pt)) continue;
+            const q = projection(pt);
+            if (!q) continue;
+            ctx.beginPath();
+            ctx.arc(q[0], q[1], 5, 0, 2 * Math.PI);
+            ctx.fillStyle = "#ffffff";
+            ctx.fill();
+            ctx.lineWidth = 2.5;
+            ctx.strokeStyle = ov.o.line ?? ov.o.stroke;
+            ctx.stroke();
+          }
+        }
+      }
+
       // hovered country name chip (centroid dots removed)
       if (hoveredIso != null) {
         const a = active.find((x) => x.country.iso === hoveredIso);
@@ -258,8 +333,23 @@ export function PresenceGlobe({
       ctx.globalAlpha = 1;
     };
 
+    const skipIntro = () => { if (INTRO_MS) introStart = performance.now() - INTRO_MS; };
+
     let raf = 0;
     const tick = () => {
+      // overlay turned on/off → fly to its view (or zoom back out)
+      const v = viewRef.current;
+      if (v) {
+        viewRef.current = null;
+        if (v.center) flyTarget = [-v.center[0], -v.center[1]];
+        zoomTarget = v.zoom;
+        handTurned = true;
+        skipIntro();
+      }
+      if (zoomTarget != null) {
+        zoom += (zoomTarget - zoom) * 0.1;
+        if (Math.abs(zoomTarget - zoom) < 0.005) { zoom = zoomTarget; zoomTarget = null; }
+      }
       // fly-to animation
       if (flyTarget) {
         const dl = angleDelta(rotation[0], flyTarget[0]);
@@ -289,8 +379,6 @@ export function PresenceGlobe({
       }
       return null;
     };
-
-    const skipIntro = () => { if (INTRO_MS) introStart = performance.now() - INTRO_MS; };
 
     const onDown = (e: PointerEvent) => {
       const [x, y] = pointer(e);
@@ -325,6 +413,7 @@ export function PresenceGlobe({
         const [a, b] = [...pointers.values()];
         const dist = Math.hypot(a.x - b.x, a.y - b.y);
         if (pinchStartDist > 0) zoom = clamp(pinchStartZoom * (dist / pinchStartDist), ZOOM_MIN, ZOOM_MAX);
+        zoomTarget = null;
         flyTarget = null; handTurned = true;
         return;
       }
@@ -369,6 +458,7 @@ export function PresenceGlobe({
       handTurned = true;
       e.preventDefault();
       zoom = clamp(zoom * Math.exp(-e.deltaY * 0.0015), ZOOM_MIN, ZOOM_MAX);
+      zoomTarget = null;
       lastInteract = performance.now();
       skipIntro();
     };

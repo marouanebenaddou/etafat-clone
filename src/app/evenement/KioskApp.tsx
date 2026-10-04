@@ -13,7 +13,8 @@ import {
 } from "@/data/evenement";
 import evenementIcons from "@/data/evenement-icons.json";
 import { BORNE_APPS, type BorneApp } from "@/data/evenement-apps";
-import { PresenceGlobe } from "@/components/PresenceGlobe";
+import { PresenceGlobe, type GlobeOverlay } from "@/components/PresenceGlobe";
+import { AAGP_COUNTRIES, AAGP_ROUTE, AAGP_FOCUS } from "@/data/aagp";
 import { PRESENCE_COUNT, PRESENCE_PROJECT_COUNT, type PresenceCountry } from "@/data/presence";
 import { ChiffresContent, ChartGlyph } from "./ChiffresSection";
 import { LangProvider, LangToggle, useI18n } from "./i18n";
@@ -504,9 +505,22 @@ function GlobeGlyph() {
   );
 }
 
+// AAGP button on the globe: the countries the pipeline crosses in green, its route dashed on top
+const AAGP_GREEN = "#2e9b4f";
+const AAGP_LINE = "#d9480f";
+const AAGP_OVERLAY: GlobeOverlay = {
+  isos: AAGP_COUNTRIES.map((c) => c.iso),
+  route: AAGP_ROUTE,
+  fill: AAGP_GREEN,
+  stroke: "#145c2c",
+  line: AAGP_LINE,
+  focus: AAGP_FOCUS,
+};
+
 function GlobeScreen({ onBack }: { onBack: () => void }) {
-  const { t, country: L } = useI18n();
+  const { t, lang, country: L } = useI18n();
   const [picked, setSel] = useState<PresenceCountry | null>(null);
+  const [aagp, setAagp] = useState(false);
   const sel = picked ? L(picked) : null;
   return (
     <motion.section {...screenMotion} className="relative z-10 flex h-full w-full flex-col">
@@ -520,7 +534,49 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
           <p className="mt-1 text-sm text-[var(--k-muted)]">{t.globeStat(PRESENCE_PROJECT_COUNT)}</p>
         </div>
 
-        <PresenceGlobe className="absolute inset-0" onSelect={setSel} label={(c) => L(c).name} />
+        <PresenceGlobe className="absolute inset-0" onSelect={setSel} label={(c) => L(c).name} overlay={aagp ? AAGP_OVERLAY : null} />
+
+        {/* AAGP — African Atlantic Gas Pipeline toggle + legend */}
+        <div className="absolute right-6 top-3 z-10 flex max-w-[min(20rem,calc(100%-3rem))] flex-col items-end gap-2 md:right-10">
+          <button
+            type="button"
+            onClick={() => setAagp((v) => !v)}
+            aria-pressed={aagp}
+            className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold shadow-[0_8px_28px_rgba(8,20,36,0.12)] transition-colors ${
+              aagp
+                ? "border-transparent bg-[#2e9b4f] text-white"
+                : "border-[var(--k-border)] bg-[var(--k-surface)] text-[var(--k-text)] hover:border-[#2e9b4f]"
+            }`}
+          >
+            <Icon icon="ph:pipe-duotone" width={20} height={20} />
+            {t.aagpButton}
+          </button>
+          <AnimatePresence>
+            {aagp && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.25 }}
+                className={`w-full rounded-2xl border border-[var(--k-border)] bg-[var(--k-surface)]/95 p-4 backdrop-blur ${CARD}`}
+              >
+                <p className="text-sm font-semibold leading-tight text-[var(--k-text)]" style={{ fontFamily: "var(--font-figtree)" }}>{t.aagpTitle}</p>
+                <p className="mt-0.5 text-xs text-[var(--k-muted)]">{t.aagpLine(AAGP_COUNTRIES.length)}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {AAGP_COUNTRIES.map((c) => (
+                    <span key={c.iso} className="rounded-full bg-[#2e9b4f]/12 px-2 py-0.5 text-[11px] font-medium text-[#145c2c]">
+                      {lang === "en" ? c.en : c.fr}
+                    </span>
+                  ))}
+                </div>
+                <div className="mt-3 space-y-1.5 text-[11px] text-[var(--k-muted)]">
+                  <p className="flex items-center gap-2"><span className="h-3 w-5 rounded-sm bg-[#2e9b4f]" />{t.aagpLegendCountries}</p>
+                  <p className="flex items-center gap-2"><span className="w-5 border-t-[3px] border-dashed border-[#d9480f]" />{t.aagpLegendPipe}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {!sel && (
           <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-[var(--k-surface)]/80 px-4 py-2 text-xs text-[var(--k-muted)] backdrop-blur">
