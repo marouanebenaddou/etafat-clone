@@ -123,7 +123,7 @@ export const PRESENCE: PresenceCountry[] = [
       { title: "PAGDS – Suivi des chantiers par photogrammétrie pour l’AGEROUTE" },
       { title: "PRESFOR – Lot 5 – Région du Gontougo" },
       { title: "PRESFOR – Lot 12 – Région du Bafing" },
-      { title: "Fourniture, installation et maintenance de 11 stations permanentes GNSS/CORS" },
+      { title: "PRESFOR CORS – Fourniture, installation, mise en service et maintenance de 11 stations permanentes GNSS" },
       { title: "Levé bathymétrique multifaisceaux de la lagune d’Ébrié" },
       { title: "Relevé IMMS et modélisation 3D BIM de l’Hôtel Harmattan à Bouaké" },
       { title: "Relevé IMMS et modélisation 3D BIM du Palais Présidentiel" },

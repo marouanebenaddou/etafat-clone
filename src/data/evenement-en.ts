@@ -60,6 +60,7 @@ export const PROJETS_EN: Record<string, ProjetEn> = {
   "maquette-bim-du-palais-presidentiel-en-cote-divoire": { title: "BIM model of the Presidential Palace in Côte d’Ivoire", short: "BIM model of the Presidential Palace (Côte d’Ivoire)", subThemes: ["Mobile scanner survey (IMMS)", "Point cloud", "BIM modelling", "Plans and façades"], description: "Detailed IMMS (mobile scanner) survey of the Presidential Palace and a BIM model for management, maintenance and decision-making, with floor plans and façades." },
   "plans-facades-et-coupes-de-la-villa-112-a-lome-togo": { title: "2D survey and drawings of Villa 112 in Lomé (Togo)", short: "Villa 112 — 2D survey and drawings (Lomé)", subThemes: ["2D survey", "Floor plans", "Façades and sections", "Architectural drawing"], description: "2D survey of Villa 112 in Lomé and production of its drawings: ground-floor, first-floor and roof plans, four façades and sections." },
   "scan-3d-de-la-facade-du-nouveau-parc-des-expositions-dabidjan": { title: "3D scan of the façade of Abidjan’s new exhibition centre", short: "3D scan — Abidjan exhibition centre", subThemes: ["3D laser scanner (FARO)", "Point cloud", "Façade survey", "Façade cladding"], description: "3D laser-scanning mission at Abidjan’s new exhibition centre: point cloud of the façade and structure for its cladding works." },
+  "presfor-cors-11-stations-permanentes-gnss-en-cote-divoire": { title: "PRESFOR CORS — 11 permanent GNSS stations in Côte d’Ivoire", short: "PRESFOR CORS — 11 GNSS stations (Côte d’Ivoire)", subThemes: ["Permanent GNSS stations (CORS)", "Geodetic reference network", "Commissioning and maintenance", "Rural land tenure security"], description: "Supply, installation, commissioning and maintenance of eleven (11) permanent GNSS stations in Côte d’Ivoire, as part of the Rural Land Tenure Security Strengthening Programme (PRESFOR)." },
 };
 
 // field applications (borne "Applications terrain" tile / VR apps panel)
@@ -182,7 +183,7 @@ export const PRESENCE_EN: Record<number, { name: string; projects?: { title: str
     { title: "PAGDS – Photogrammetric construction-site monitoring for AGEROUTE" },
     { title: "PRESFOR – Lot 5 – Gontougo region" },
     { title: "PRESFOR – Lot 12 – Bafing region" },
-    { title: "Supply, installation and maintenance of 11 permanent GNSS/CORS stations" },
+    { title: "PRESFOR CORS – Supply, installation, commissioning and maintenance of 11 permanent GNSS stations" },
     { title: "Multibeam bathymetric survey of the Ébrié lagoon" },
     { title: "IMMS survey and 3D BIM modelling of the Harmattan Hotel in Bouaké" },
     { title: "IMMS survey and 3D BIM modelling of the Presidential Palace" },
