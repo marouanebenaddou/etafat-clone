@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v25";
+const CACHE = "etafat-borne-v26";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -191,10 +191,14 @@ const PRECACHE = [
   "/etafat/evenement/projets/45-parc-expositions-abidjan/03-scan-sous-auvent.jpg",
   "/etafat/evenement/projets/45-parc-expositions-abidjan/04-auvent-du-parc.jpg",
   "/etafat/evenement/projets/45-parc-expositions-abidjan/05-ecran-scanner.jpg",
-  "/etafat/evenement/projets/46-presfor-cors/01-cote-divoire-satellite.jpg",
-  "/etafat/evenement/projets/46-presfor-cors/02-station-de-reference-gnss.jpg",
-  "/etafat/evenement/projets/46-presfor-cors/03-station-cors.jpg",
-  "/etafat/evenement/projets/46-presfor-cors/04-station-gnss-terrain.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/01-antenne-et-armoire.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/02-mats-de-monumentation.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/03-antenne-gnss.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/04-carte-des-stations.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/05-couverture-methodologie.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/06-installation-des-stations.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/07-calcul-du-reseau.jpg",
+  "/etafat/evenement/projets/46-presfor-cors/08-maintenance-mco.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

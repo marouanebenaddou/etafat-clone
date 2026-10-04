@@ -80,27 +80,5 @@
  "39-el-jadida/maquette-cite-portugaise.jpg": {
   "source": "ETAFAT",
   "note": "render of ETAFAT's drone 3D model of the Cité portugaise (VR)"
- },
- "46-presfor-cors/01-cote-divoire-satellite.jpg": {
-  "source": "Sentinel-2 cloudless — https://s2maps.eu by EOX IT Services GmbH (contains modified Copernicus Sentinel data 2016)",
-  "license": "CC BY 4.0"
- },
- "46-presfor-cors/02-station-de-reference-gnss.jpg": {
-  "source": "Wikimedia Commons",
-  "author": "Stefan Kühn",
-  "page": "https://commons.wikimedia.org/wiki/File:DGPS_Reference_Station.jpg",
-  "license": "CC BY-SA 3.0"
- },
- "46-presfor-cors/03-station-cors.jpg": {
-  "source": "Wikimedia Commons",
-  "author": "IXTA9",
-  "page": "https://commons.wikimedia.org/wiki/File:CORS_Yaizu_A.jpg",
-  "license": "CC BY-SA 4.0"
- },
- "46-presfor-cors/04-station-gnss-terrain.jpg": {
-  "source": "Wikimedia Commons",
-  "author": "Rorosyfingers",
-  "page": "https://commons.wikimedia.org/wiki/File:GNSS_reference_station,_White_Park_Bay.jpg",
-  "license": "CC BY-SA 4.0"
  }
 }
