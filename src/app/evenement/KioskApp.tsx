@@ -401,9 +401,10 @@ function ThemesScreen({ onBack, onOpen, onApps, onGlobe, onChiffres }: { onBack:
 }
 
 /* ------------------------- APPLICATIONS ---------------------------- */
-// The field apps' web versions. On the borne, MainActivity's JS bridge (window.BorneApps.openUrl) opens them in a
-// Chrome Custom Tab over the kiosk (its ✕ returns here); in a browser — or an older APK without openUrl — a new tab.
-type BorneBridge = { openUrl?: (url: string) => string };
+// The field apps' web versions. On the borne, MainActivity's JS bridge opens them full screen inside the kiosk
+// (window.BorneApps.openApp → WebAppActivity, its "back to the kiosk" bar returns here); older APKs had only openUrl
+// (Chrome Custom Tab); in a browser, a new tab.
+type BorneBridge = { openApp?: (url: string, title: string, close: string) => string; openUrl?: (url: string) => string };
 
 function useBorne(): BorneBridge | null {
   const [bridge, setBridge] = useState<BorneBridge | null>(null);
@@ -421,7 +422,10 @@ function useBorne(): BorneBridge | null {
   return bridge;
 }
 
-function openWebApp(url: string, borne: BorneBridge | null) {
+function openWebApp(url: string, borne: BorneBridge | null, title = "", close = "") {
+  if (borne && typeof borne.openApp === "function") {
+    try { if (borne.openApp(url, title, close) === "ok") return; } catch { /* fall back */ }
+  }
   if (borne && typeof borne.openUrl === "function") {
     try { if (borne.openUrl(url) === "ok") return; } catch { /* fall back to a tab */ }
   }
@@ -465,7 +469,7 @@ function AppsScreen({ onBack }: { onBack: () => void }) {
                 <div className="flex shrink-0 flex-col items-center gap-2 self-center">
                   <button
                     type="button"
-                    onClick={() => openWebApp(app.url, borne)}
+                    onClick={() => openWebApp(app.url, borne, app.name, t.backToKiosk)}
                     className="inline-flex items-center gap-2 rounded-full bg-[var(--k-accent)] px-8 py-4 text-base font-semibold text-white shadow-lg transition-transform active:scale-95"
                   >
                     {t.launch}

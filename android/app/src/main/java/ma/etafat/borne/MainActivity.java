@@ -45,6 +45,24 @@ public class MainActivity extends BridgeActivity {
     }
 
     /**
+     * Opens a web app full screen inside the borne (WebAppActivity: its own WebView + a "back to the kiosk" bar).
+     * Used by the kiosk since 4.2 — no other app involved, so it also works when the tablet is pinned / in kiosk
+     * mode. Only http(s) URLs.
+     */
+    @JavascriptInterface
+    public String openApp(String url, String title, String close) {
+      if (url == null || !(url.startsWith("https://") || url.startsWith("http://"))) return "invalid";
+      runOnUiThread(() -> {
+        Intent i = new Intent(MainActivity.this, WebAppActivity.class);
+        i.putExtra(WebAppActivity.EXTRA_URL, url);
+        i.putExtra(WebAppActivity.EXTRA_TITLE, title);
+        i.putExtra(WebAppActivity.EXTRA_CLOSE, close);
+        startActivity(i);
+      });
+      return "ok";
+    }
+
+    /**
      * Opens a web app in a Custom Tab over the kiosk, pinned to Chrome when it is installed: the tablet's
      * default browser may be an older one that can't run the single-page apps (PROCASEF, SRM — blank page),
      * while they work in Chrome. Falls back to the default browser. Only http(s) URLs.
