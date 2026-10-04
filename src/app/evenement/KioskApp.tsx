@@ -573,7 +573,7 @@ function GlobeScreen({ onBack }: { onBack: () => void }) {
               <div className="h-1 w-full bg-[var(--k-accent)]" />
               {sel.projects.length > 0 && (
               <div className="p-5 pt-4">
-                <ul className="max-h-56 space-y-2 overflow-y-auto">
+                <ul className="max-h-[42vh] space-y-2 overflow-y-auto overscroll-contain">
                   {sel.projects.map((p, i) => (
                     <li key={i} className="rounded-lg bg-[var(--k-chip)] px-3 py-2 text-sm leading-snug text-[var(--k-text)]">
                       {p.title}

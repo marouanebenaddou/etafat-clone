@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v20";
+const CACHE = "etafat-borne-v21";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -181,15 +181,16 @@ const PRECACHE = [
   "/etafat/evenement/projets/42-esatic-abidjan/02-radar-gpr.jpg",
   "/etafat/evenement/projets/42-esatic-abidjan/03-regard-detecteur.jpg",
   "/etafat/evenement/projets/42-esatic-abidjan/04-detecteur-de-cables.jpg",
-  "/etafat/evenement/projets/43-palais-presidentiel/01-maquette-bim.jpg",
   "/etafat/evenement/projets/43-palais-presidentiel/02-nuage-de-points.jpg",
-  "/etafat/evenement/projets/43-palais-presidentiel/03-plan-de-niveau.jpg",
-  "/etafat/evenement/projets/43-palais-presidentiel/04-facade.jpg",
-  "/etafat/evenement/projets/43-palais-presidentiel/05-planche-palais-presidentiel.jpg",
   "/etafat/evenement/projets/44-villa-lome/01-facades-1-et-2.jpg",
   "/etafat/evenement/projets/44-villa-lome/02-plans.jpg",
   "/etafat/evenement/projets/44-villa-lome/03-facades.jpg",
   "/etafat/evenement/projets/44-villa-lome/04-coupes.jpg",
+  "/etafat/evenement/projets/45-parc-expositions-abidjan/01-facade-scanner.jpg",
+  "/etafat/evenement/projets/45-parc-expositions-abidjan/02-scanner-faro.jpg",
+  "/etafat/evenement/projets/45-parc-expositions-abidjan/03-scan-sous-auvent.jpg",
+  "/etafat/evenement/projets/45-parc-expositions-abidjan/04-auvent-du-parc.jpg",
+  "/etafat/evenement/projets/45-parc-expositions-abidjan/05-ecran-scanner.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",
