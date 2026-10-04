@@ -33,6 +33,7 @@ export const PRESENCE: PresenceCountry[] = [
       { title: "Maquette BIM de l'hôtel Harmattan", place: "Bouaké" },
       { title: "PRESFOR — sécurisation foncière rurale", place: "Gontougo / Bafing" },
       { title: "Détection des réseaux enterrés, campus de l'ESATIC", place: "Abidjan" },
+      { title: "Maquette BIM du Palais présidentiel" },
     ],
   },
   {
@@ -76,7 +77,9 @@ export const PRESENCE: PresenceCountry[] = [
   { iso: 466, name: "Mali", region: "Afrique", projects: [] },
   { iso: 430, name: "Libéria", region: "Afrique", projects: [] },
   { iso: 288, name: "Ghana", region: "Afrique", projects: [] },
-  { iso: 768, name: "Togo", region: "Afrique", projects: [] },
+  { iso: 768, name: "Togo", region: "Afrique", projects: [
+    { title: "Villa 112 — plans, façades et coupes", place: "Lomé" },
+  ] },
   { iso: 566, name: "Nigéria", region: "Afrique", projects: [] },
   { iso: 266, name: "Gabon", region: "Afrique", projects: [] },
   { iso: 24, name: "Angola", region: "Afrique", projects: [] },

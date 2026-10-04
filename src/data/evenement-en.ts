@@ -57,6 +57,8 @@ export const PROJETS_EN: Record<string, ProjetEn> = {
   "acquisition-aerienne-et-restitution-pour-lamenagement-de-la-": { title: "Aerial acquisition and mapping for the development of the Bouregreg Valley", short: "Aerial acquisition for the Bouregreg Valley development", subThemes: ["Territorial development", "Aerial acquisition", "High-resolution orthophotography", "Terrain modelling"], description: "High-resolution aerial acquisition and mapping for the development of the Bouregreg Valley." },
   "sead-padcae-b-portails-public-et-interne-du-burundi": { title: "SEAD — Public & internal portals of PADCAE-B (Burundi)", short: "SEAD — PADCAE-B portals (Burundi)", subThemes: ["Public & internal GIS portal", "Agricultural monitoring and evaluation", "Land tenure security", "Real-time agricultural weather", "Agricultural markets & stakeholder directory"], description: "SEAD platform for PADCAE-B in Burundi: public portal (geolocated agricultural markets, weather by commune, stakeholder directory, financing) and internal portal (monitoring and evaluation, parcel-level land tenure security, land-use map, year-over-year comparison of SEAD reports)." },
   "detection-des-reseaux-enterres-du-campus-de-lesatic-a-abidjan": { title: "Underground network detection on the ESATIC campus in Abidjan", short: "Underground networks — ESATIC campus (Abidjan)", subThemes: ["Ground-penetrating radar", "Electromagnetic detection", "Manhole inspection", "Network mapping"], description: "Ground-penetrating radar and electromagnetic detection of the underground networks on the ESATIC campus in Abidjan, with manhole inspection and network mapping." },
+  "maquette-bim-du-palais-presidentiel-en-cote-divoire": { title: "BIM model of the Presidential Palace in Côte d’Ivoire", short: "BIM model of the Presidential Palace (Côte d’Ivoire)", subThemes: ["3D laser scanning", "Point cloud", "BIM modelling", "Plans and façades"], description: "Detailed 3D survey of the Presidential Palace and a BIM model for management, maintenance and decision-making, with floor plans and façades." },
+  "plans-facades-et-coupes-de-la-villa-112-a-lome-togo": { title: "Plans, façades and sections of Villa 112 in Lomé (Togo)", short: "Villa 112 — plans, façades and sections (Lomé)", subThemes: ["Floor plans", "Façades", "Sections", "Architectural drawing"], description: "Drawings of Villa 112 in Lomé: ground-floor, first-floor and roof plans, its four façades and its sections." },
 };
 
 // field applications (borne "Applications terrain" tile / VR apps panel)
@@ -89,6 +91,7 @@ export const PRESENCE_EN: Record<number, { name: string; projects?: { title: str
     { title: "BIM model of the Harmattan Hotel", place: "Bouaké" },
     { title: "PRESFOR — rural land tenure security", place: "Gontougo / Bafing" },
     { title: "Underground network detection, ESATIC campus", place: "Abidjan" },
+    { title: "BIM model of the Presidential Palace" },
   ] },
   686: { name: "Senegal", projects: [
     { title: "PROCASEF — cadastre and land tenure security", place: "Dakar (Mermoz / Sacré-Cœur)" },
@@ -100,7 +103,7 @@ export const PRESENCE_EN: Record<number, { name: string; projects?: { title: str
   854: { name: "Burkina Faso", projects: [{ title: "LiDAR DTM for flood monitoring" }] },
   178: { name: "Congo", projects: [{ title: "LiDAR surveys of Brazzaville and Pointe-Noire" }, { title: "LiDAR survey of the Liranga–Ngangania road" }] },
   148: { name: "Chad", projects: [{ title: "PILIER — aerial data and urban plans", place: "N’Djamena" }] },
-  788: { name: "Tunisia" }, 466: { name: "Mali" }, 430: { name: "Liberia" }, 288: { name: "Ghana" }, 768: { name: "Togo" },
+  788: { name: "Tunisia" }, 466: { name: "Mali" }, 430: { name: "Liberia" }, 288: { name: "Ghana" }, 768: { name: "Togo", projects: [{ title: "Villa 112 — plans, façades and sections", place: "Lomé" }] },
   566: { name: "Nigeria" }, 266: { name: "Gabon" }, 24: { name: "Angola" }, 180: { name: "Democratic Republic of the Congo" },
   508: { name: "Mozambique" }, 108: { name: "Burundi" }, 204: { name: "Benin" }, 270: { name: "Gambia" },
   250: { name: "France" }, 300: { name: "Greece" },
