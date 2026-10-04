@@ -32,6 +32,7 @@ export const PRESENCE: PresenceCountry[] = [
       { title: "PAGDS — cadastre de Daloa, Korhogo et Yamoussoukro" },
       { title: "Maquette BIM de l'hôtel Harmattan", place: "Bouaké" },
       { title: "PRESFOR — sécurisation foncière rurale", place: "Gontougo / Bafing" },
+      { title: "Détection des réseaux enterrés, campus de l'ESATIC", place: "Abidjan" },
     ],
   },
   {

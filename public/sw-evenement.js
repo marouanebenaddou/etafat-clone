@@ -4,7 +4,7 @@
    to the cached shell offline, which is how the borne runs). Media and immutable Next static chunks
    stay cache-first. Everything else passes through to the network so the main site is unaffected.
    Bump CACHE to force a full refresh + purge of the old cache. */
-const CACHE = "etafat-borne-v18";
+const CACHE = "etafat-borne-v19";
 const PRECACHE = [
   "/evenement/",
   "/evenement.webmanifest",
@@ -158,6 +158,29 @@ const PRECACHE = [
   "/etafat/evenement/projets/39-el-jadida/05-cite-3d-texture.jpg",
   "/etafat/evenement/projets/39-el-jadida/06-pilotage-drone.jpg",
   "/etafat/evenement/projets/40-bouregreg/01-vue-aerienne-bouregreg.jpg",
+  "/etafat/evenement/projets/28-radeej/01-reseau-assainissement-satellite.jpg",
+  "/etafat/evenement/projets/28-radeej/02-carte-assainissement.jpg",
+  "/etafat/evenement/projets/28-radeej/03-carte-aep.jpg",
+  "/etafat/evenement/projets/28-radeej/04-carte-mt-bt.jpg",
+  "/etafat/evenement/projets/28-radeej/05-reseau-mt-bt-supermap.jpg",
+  "/etafat/evenement/projets/28-radeej/06-reseau-aep-supermap.jpg",
+  "/etafat/evenement/projets/28-radeej/07-carte-assainissement-plan.jpg",
+  "/etafat/evenement/projets/28-radeej/08-modele-de-donnees-aep.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/01-geodngr-terrain-bureau.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/02-collecte-mobile.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/03-suivi-des-pistes.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/04-cartographie-interactive.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/05-analyses.jpg",
+  "/etafat/evenement/projets/21-dngr-guinee/06-tableau-de-bord.jpg",
+  "/etafat/evenement/projets/22-pamofor/01-type-de-borne.jpg",
+  "/etafat/evenement/projets/22-pamofor/02-delimitation-parcelle.jpg",
+  "/etafat/evenement/projets/22-pamofor/03-fiche-riverain.jpg",
+  "/etafat/evenement/projets/22-pamofor/04-riverain-naturel.jpg",
+  "/etafat/evenement/projets/22-pamofor/05-formulaire-demandeur.jpg",
+  "/etafat/evenement/projets/42-esatic-abidjan/01-detection-gpr-rue.jpg",
+  "/etafat/evenement/projets/42-esatic-abidjan/02-radar-gpr.jpg",
+  "/etafat/evenement/projets/42-esatic-abidjan/03-regard-detecteur.jpg",
+  "/etafat/evenement/projets/42-esatic-abidjan/04-detecteur-de-cables.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/statistiques.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/fiche-site.jpg",
   "/etafat/evenement/projets/25-barid-al-maghrib/procedurale.jpg",

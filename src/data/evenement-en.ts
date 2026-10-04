@@ -56,6 +56,7 @@ export const PROJETS_EN: Record<string, ProjetEn> = {
   "prises-de-vues-aeriennes-et-orthophotoplans-de-la-province-d": { title: "Aerial photography and orthophoto maps of the province of El Jadida", short: "Aerial photography and orthophoto maps of El Jadida", subThemes: ["Photogrammetry", "Orthophotography", "Elevation and surface models", "Urban mapping"], description: "Aerial photography and orthophoto maps of the province of El Jadida, with elevation and surface models." },
   "acquisition-aerienne-et-restitution-pour-lamenagement-de-la-": { title: "Aerial acquisition and mapping for the development of the Bouregreg Valley", short: "Aerial acquisition for the Bouregreg Valley development", subThemes: ["Territorial development", "Aerial acquisition", "High-resolution orthophotography", "Terrain modelling"], description: "High-resolution aerial acquisition and mapping for the development of the Bouregreg Valley." },
   "sead-padcae-b-portails-public-et-interne-du-burundi": { title: "SEAD — Public & internal portals of PADCAE-B (Burundi)", short: "SEAD — PADCAE-B portals (Burundi)", subThemes: ["Public & internal GIS portal", "Agricultural monitoring and evaluation", "Land tenure security", "Real-time agricultural weather", "Agricultural markets & stakeholder directory"], description: "SEAD platform for PADCAE-B in Burundi: public portal (geolocated agricultural markets, weather by commune, stakeholder directory, financing) and internal portal (monitoring and evaluation, parcel-level land tenure security, land-use map, year-over-year comparison of SEAD reports)." },
+  "detection-des-reseaux-enterres-du-campus-de-lesatic-a-abidjan": { title: "Underground network detection on the ESATIC campus in Abidjan", short: "Underground networks — ESATIC campus (Abidjan)", subThemes: ["Ground-penetrating radar", "Electromagnetic detection", "Manhole inspection", "Network mapping"], description: "Ground-penetrating radar and electromagnetic detection of the underground networks on the ESATIC campus in Abidjan, with manhole inspection and network mapping." },
 };
 
 // field applications (borne "Applications terrain" tile / VR apps panel)
@@ -87,6 +88,7 @@ export const PRESENCE_EN: Record<number, { name: string; projects?: { title: str
     { title: "PAGDS — cadastre of Daloa, Korhogo and Yamoussoukro" },
     { title: "BIM model of the Harmattan Hotel", place: "Bouaké" },
     { title: "PRESFOR — rural land tenure security", place: "Gontougo / Bafing" },
+    { title: "Underground network detection, ESATIC campus", place: "Abidjan" },
   ] },
   686: { name: "Senegal", projects: [
     { title: "PROCASEF — cadastre and land tenure security", place: "Dakar (Mermoz / Sacré-Cœur)" },
