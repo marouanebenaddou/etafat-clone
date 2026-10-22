@@ -7,6 +7,7 @@ import { VideoGate } from "@/components/VideoGate";
 import { VideoLightbox } from "@/components/VideoLightbox";
 import { Icon } from "@iconify/react";
 import { linkedinPosts } from "@/data/linkedin-posts";
+import { PresenceExplorer } from "@/components/PresenceExplorer";
 
 const PILLARS: {
   letter: string;
@@ -218,6 +219,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* NOTRE PRÉSENCE — interactive globe (projets phares per country) */}
+      <PresenceExplorer />
 
       {/* QUEL EST VOTRE BESOIN ? */}
       <section className="bg-[#f5f7f9] py-20 md:py-28">

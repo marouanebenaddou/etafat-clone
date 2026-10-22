@@ -5,6 +5,7 @@ import { CountUp } from "@/components/CountUp";
 import { ArrowRightIcon } from "@/components/icons";
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
+import { digitalProjets } from "@/data/projets-site";
 
 export const metadata: Metadata = {
   title: "Innovation - ETAFAT",
@@ -270,6 +271,36 @@ export default function InnovationPage() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </section>
+
+      {/* NOS SOLUTIONS DIGITALES — platforms built by ETAFAT (projets phares) */}
+      <section className="bg-[#f5f7f9] py-16 md:py-20">
+        <div className="container-etafat">
+          <Reveal>
+            <h2 className="mb-3 text-navy leading-tight">Nos solutions digitales</h2>
+            <p className="mb-10 max-w-3xl leading-relaxed text-body">
+              Plateformes SIG, applications web et mobiles et systèmes d&apos;information conçus par ETAFAT pour ses
+              clients : collecte terrain, gestion foncière, suivi agricole, patrimoine et réseaux.
+            </p>
+          </Reveal>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {digitalProjets().map((p, i) => (
+              <Reveal key={p.slug} delay={(i % 4) * 80}>
+                <Link href={p.href} className="group flex h-full flex-col overflow-hidden rounded-md border border-[#e5e7eb] bg-white transition-shadow hover:shadow-lg">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-[#eef3f8]">
+                    {p.photo && (
+                      <Image src={p.photo} alt={p.title} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                    )}
+                  </div>
+                  <div className="flex flex-1 flex-col p-5">
+                    <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-teal">{p.countryName}</p>
+                    <h3 className="text-base font-semibold leading-snug text-navy group-hover:text-[#00669d]">{p.title}</h3>
+                  </div>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </section>
 

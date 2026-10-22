@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHero } from "@/components/PageHero";
-import { posts, portfolio } from "@/lib/content";
+import { posts } from "@/lib/content";
+import { SITE_PROJETS } from "@/data/projets-site";
 import { domains, skills } from "@/lib/etafat";
 import type { Metadata } from "next";
 
@@ -44,7 +45,7 @@ export default function PlanDuSitePage() {
     },
     {
       title: "Références",
-      links: portfolio.map((p) => ({ label: p.title, href: p.path })),
+      links: SITE_PROJETS.map((p) => ({ label: p.title, href: p.href })),
     },
     {
       title: "Légal",

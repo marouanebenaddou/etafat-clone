@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 import { Icon } from "@iconify/react";
 import { cn } from "@/lib/utils";
+import { SITE_PROJETS, projetsForDomain, type DomainSlug, type SiteProjet } from "@/data/projets-site";
 
 type Project = {
   title: string;
@@ -358,7 +359,7 @@ const ALL: DomainData = {
     d.projects.map((p) => ({ ...p, icon: d.navIcon })),
   ),
   stats: [
-    { icon: "ph:globe-hemisphere-west-duotone", value: "+12", unit: "pays d'intervention", desc: "en Afrique, au Moyen-Orient et en Europe." },
+    { icon: "ph:globe-hemisphere-west-duotone", value: "29", unit: "pays d'intervention", desc: "sur 4 continents, en Afrique, en Europe, au Moyen-Orient, en Asie et en Amérique latine." },
     { icon: "ph:squares-four-duotone", value: "6", unit: "domaines d'activité", desc: "couverts par nos expertises géospatiales." },
     { icon: "ph:medal-duotone", value: "+40", unit: "ans d'expérience", desc: "au service des territoires et de leurs acteurs." },
   ],
@@ -369,13 +370,73 @@ const ALL: DomainData = {
 
 const TABS = [ALL, ...DOMAINS];
 
+// Hand-made cards already covered by a projet phare (which has its own page) — shown once, as the project.
+const COVERED_BY_PROJECT = new Set([
+  "PAMOFOR", "Immatriculation Foncière d'Ensemble", "Plans d'urbanisme de N'Djaména",
+  "SIG des opérations minières", "Pipeline PETROCI", "Détection de réseaux enterrés",
+  "Maquette BIM de l'usine Sidi Ali", "Bâtiments menaçant ruine", "Hôtel Harmattan", "Palais Présidentiel",
+  "Ligne de tramway T2 de Casablanca", "Plan topographique de Sousse", "Solution web MAMDA",
+]);
+
+function ProjectCard({ p, i }: { p: SiteProjet; i: number }) {
+  return (
+    <Reveal delay={(i % 4) * 80}>
+      <Link
+        href={p.href}
+        className="group flex h-full flex-col overflow-hidden rounded-md border border-[#e5e7eb] bg-white transition-shadow hover:shadow-lg"
+      >
+        <div className="relative aspect-[16/11] overflow-hidden bg-[#eef3f8]">
+          {p.photo && (
+            <Image
+              src={p.photo}
+              alt={p.title}
+              fill
+              sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          )}
+          <span className="absolute left-2 top-2 rounded-full bg-white/92 px-2 py-0.5 text-[10px] font-semibold text-navy shadow-sm sm:left-3 sm:top-3 sm:px-3 sm:py-1 sm:text-xs">
+            {p.countryName}
+          </span>
+        </div>
+        <div className="flex flex-1 flex-col p-3 sm:p-6">
+          <p className="mb-1.5 text-[10px] font-semibold uppercase leading-tight tracking-wider text-teal sm:mb-2 sm:text-xs">{p.domainLabel}</p>
+          <h3 className="text-sm font-semibold leading-tight text-navy group-hover:text-[#00669d] sm:mb-3 sm:text-lg">{p.title}</h3>
+          <p className="line-clamp-3 flex-1 text-sm leading-relaxed text-body max-sm:hidden">{p.description}</p>
+          <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[#00669d] max-sm:hidden">
+            Voir le projet
+            <Icon icon="ph:arrow-right-bold" width={16} height={16} className="transition-transform group-hover:translate-x-1" />
+          </span>
+        </div>
+      </Link>
+    </Reveal>
+  );
+}
+
 export function ReferencesExplorer() {
   const [active, setActive] = useState<string>("Tous");
   const data = useMemo(
     () => TABS.find((d) => d.key === active) ?? ALL,
     [active],
   );
-  const projects = data.projects.map((p) => ({ ...p, icon: p.icon ?? data.navIcon }));
+  // projets phares (own pages) first, then the other references not covered by one
+  const featured = data.domainSlug ? projetsForDomain(data.domainSlug as DomainSlug) : SITE_PROJETS;
+  const projects = data.projects
+    .filter((p) => !COVERED_BY_PROJECT.has(p.title))
+    .map((p) => ({ ...p, icon: p.icon ?? data.navIcon }));
+
+  // ?domaine=<slug> opens that tab (links from the domain pages); the tab is kept in the URL for sharing
+  useEffect(() => {
+    const slug = new URLSearchParams(window.location.search).get("domaine");
+    const d = slug && DOMAINS.find((x) => x.domainSlug === slug);
+    if (d) setActive(d.key);
+  }, []);
+  const pick = (key: string) => {
+    setActive(key);
+    const d = DOMAINS.find((x) => x.key === key);
+    const url = d ? `?domaine=${d.domainSlug}` : window.location.pathname;
+    window.history.replaceState(null, "", url);
+  };
 
   return (
     <>
@@ -432,7 +493,7 @@ export function ReferencesExplorer() {
                 <li key={d.key} className="shrink-0">
                   <button
                     type="button"
-                    onClick={() => setActive(d.key)}
+                    onClick={() => pick(d.key)}
                     aria-pressed={isActive}
                     className={cn(
                       "inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-medium transition-colors",
@@ -451,9 +512,26 @@ export function ReferencesExplorer() {
         </div>
       </div>
 
-      {/* PROJECT CARDS */}
+      {/* PROJETS PHARES — each with its own page */}
+      <section className="bg-white pt-14 md:pt-16">
+        <div className="container-etafat">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-3">
+            <h2 className="text-2xl font-semibold leading-tight text-navy md:text-3xl">Projets phares</h2>
+            <p className="text-sm text-body">{featured.length} projet{featured.length > 1 ? "s" : ""}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4">
+            {featured.map((p, i) => (
+              <ProjectCard key={`${data.key}-${p.slug}`} p={p} i={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* OTHER REFERENCES */}
+      {projects.length > 0 && (
       <section className="bg-white py-14 md:py-16">
         <div className="container-etafat">
+          <h2 className="mb-8 text-2xl font-semibold leading-tight text-navy md:text-3xl">Autres références</h2>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {projects.map((p, i) => (
               <Reveal key={`${data.key}-${p.title}`} delay={(i % 4) * 80}>
@@ -487,6 +565,7 @@ export function ReferencesExplorer() {
           </div>
         </div>
       </section>
+      )}
 
       {/* STATS */}
       <section className="bg-white pb-16 md:pb-20">

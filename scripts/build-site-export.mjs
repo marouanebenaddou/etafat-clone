@@ -17,8 +17,10 @@ if (!process.env.SKIP_BUILD) {
 }
 
 // event apps and what only they use (paths relative to out/)
+// The borne's project photos (etafat/evenement/projets, pool) and the globe's country banners are part of the
+// site since the Références / présence integration — only the kiosk app and the VR stay out.
 const EXCLUDE = [
-  "evenement", "xr", "etafat/evenement", "etafat/presence/banners", "vendor",
+  "evenement", "xr", "vendor",
   "sw-evenement.js", "evenement.webmanifest", ".well-known", // .well-known: the VR TWA's asset links (Vercel domain)
 ];
 // files in public/ that git doesn't track (films, Cité maquette, loose photos) never go online — as on Vercel

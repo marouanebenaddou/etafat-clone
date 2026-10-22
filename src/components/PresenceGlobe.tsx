@@ -97,6 +97,7 @@ export function PresenceGlobe({
   className,
   label,
   overlay,
+  embedded = false,
 }: {
   onSelect?: (c: PresenceCountry) => void;
   colors?: Partial<Colors>;
@@ -105,6 +106,8 @@ export function PresenceGlobe({
   label?: (c: PresenceCountry) => string;
   /** highlight layer (countries + route); null/undefined = none */
   overlay?: GlobeOverlay | null;
+  /** inside a scrolling web page: the mouse wheel and vertical swipes scroll the page instead of zooming/turning */
+  embedded?: boolean;
 }) {
   const colors = { ...DEFAULT_COLORS, ...colorsProp };
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -455,6 +458,7 @@ export function PresenceGlobe({
     };
 
     const onWheel = (e: WheelEvent) => {
+      if (embedded) return;
       handTurned = true;
       e.preventDefault();
       zoom = clamp(zoom * Math.exp(-e.deltaY * 0.0015), ZOOM_MIN, ZOOM_MAX);
@@ -481,10 +485,10 @@ export function PresenceGlobe({
       canvas.removeEventListener("pointercancel", endPointer);
       canvas.removeEventListener("wheel", onWheel);
     };
-  }, [active, colors.active, colors.activeStroke, colors.glow, colors.graticule, colors.hover, colors.label, colors.land, colors.landStroke, colors.marker, colors.ocean1, colors.ocean2]);
+  }, [active, embedded, colors.active, colors.activeStroke, colors.glow, colors.graticule, colors.hover, colors.label, colors.land, colors.landStroke, colors.marker, colors.ocean1, colors.ocean2]);
 
   return (
-    <div ref={wrapRef} className={className} style={{ width: "100%", height: "100%", touchAction: "none" }}>
+    <div ref={wrapRef} className={className} style={{ width: "100%", height: "100%", touchAction: embedded ? "pan-y" : "none" }}>
       <canvas ref={canvasRef} style={{ display: "block" }} />
     </div>
   );

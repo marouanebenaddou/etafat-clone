@@ -14,6 +14,9 @@ import {
   domainVideo,
 } from "@/lib/etafat";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { ProgrammesChiffres } from "@/components/ProgrammesChiffres";
+import { projetsForDomain, type DomainSlug } from "@/data/projets-site";
 
 export function generateStaticParams() {
   return domains.map((d) => ({ slug: d.slug }));
@@ -118,6 +121,8 @@ export default async function DomaineDetail({
     ? `/etafat/domaines/intro/${d.slug}.jpg`
     : introImage;
 
+  const phares = projetsForDomain(d.slug as DomainSlug);
+
   return (
     <>
       <PageHero
@@ -191,6 +196,51 @@ export default async function DomaineDetail({
           </Reveal>
         </div>
       </section>
+
+      {/* Projets phares of this domain (Références) */}
+      {phares.length > 0 && (
+        <section className="bg-white py-20 md:py-28">
+          <div className="container-etafat">
+            <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+              <Reveal variant="line" duration={1000}>
+                <h2 className="text-navy">Nos projets phares</h2>
+              </Reveal>
+              <Pill href={`/references/?domaine=${d.slug}`} variant="outline-teal" arrow="right">
+                Toutes les références
+              </Pill>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {phares.slice(0, 4).map((p, i) => (
+                <Reveal key={p.slug} delay={i * 80}>
+                  <Link href={p.href} className="group flex h-full flex-col overflow-hidden rounded-md border border-[#e5e7eb] bg-white transition-shadow hover:shadow-lg">
+                    <div className="relative aspect-[16/11] overflow-hidden bg-[#eef3f8]">
+                      {p.photo && (
+                        <Image src={p.photo} alt={p.title} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                      )}
+                    </div>
+                    <div className="flex flex-1 flex-col p-5">
+                      <p className="mb-1.5 text-xs font-semibold uppercase tracking-wider text-teal">{p.countryName}</p>
+                      <h3 className="text-base font-semibold leading-snug text-navy group-hover:text-[#00669d]">{p.title}</h3>
+                    </div>
+                  </Link>
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Land programmes in figures (PROCASEF, PAMOFOR · PRESFOR) — Foncier only */}
+      {d.slug === "foncier" && (
+        <section className="bg-[#f5f7f9] py-20 md:py-28">
+          <div className="container-etafat">
+            <Reveal variant="line" duration={1000}>
+              <h2 className="text-navy mb-12 text-center">Nos programmes fonciers en chiffres</h2>
+            </Reveal>
+            <ProgrammesChiffres />
+          </div>
+        </section>
+      )}
 
       <QuestionCTA />
     </>

@@ -10,6 +10,7 @@ import {
 import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 import { IdentiteSubNav } from "./IdentiteSubNav";
+import { PresenceExplorer } from "@/components/PresenceExplorer";
 
 export const metadata: Metadata = {
   title: "Notre identité - ETAFAT",
@@ -242,6 +243,10 @@ export default function IdentitePage() {
       </section>
 
       {/* HISTORIQUE — 43 ans d'évolution */}
+      <div id="presence" className="scroll-mt-[170px]">
+        <PresenceExplorer kicker="Notre présence dans le monde" />
+      </div>
+
       <section id="historique" className="relative overflow-hidden bg-white pt-20 md:pt-28 pb-40 md:pb-52 scroll-mt-[170px]">
         {/* misty landscape along the bottom edge */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 md:h-60" aria-hidden>
