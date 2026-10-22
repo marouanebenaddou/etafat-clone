@@ -8,6 +8,7 @@ import { VideoLightbox } from "@/components/VideoLightbox";
 import { Icon } from "@iconify/react";
 import { linkedinPosts } from "@/data/linkedin-posts";
 import { PresenceExplorer } from "@/components/PresenceExplorer";
+import { FilmPanel } from "@/components/FilmPanel";
 
 const PILLARS: {
   letter: string;
@@ -153,42 +154,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* CE QUI DONNE DU SENS */}
-      <section className="bg-[#f5f7f9] py-24 md:py-32">
-        <div className="container-etafat grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          <Reveal>
-            <h2 className="text-navy mb-8 leading-tight">
-              Ce qui guide
-              <br />notre expertise
-            </h2>
-            <p className="text-body mb-8 leading-relaxed max-w-md">
-              Nous plaçons l&apos;excellence, l&apos;innovation et la responsabilité au centre
-              de nos actions.
-            </p>
-            <Pill href="/identite/" variant="outline-teal" arrow="right">
-              Découvrir notre vision
-            </Pill>
-          </Reveal>
-          <Reveal delay={150} className="relative aspect-[16/10] rounded-md overflow-hidden">
-            <VideoLightbox
-              src="/etafat/videos/vision-etafat.mp4"
-              ariaLabel="Vidéo — Notre vision"
-              className="group relative block h-full w-full"
-            >
-              <Image
-                src="/etafat/videos/vision-aerial.jpg"
-                alt="Vidéo - Notre vision"
-                fill
-                sizes="(min-width:768px) 50vw, 100vw"
-                className="object-cover"
-              />
-              <span className="absolute inset-0 m-auto w-20 h-20 rounded-full bg-white/90 backdrop-blur text-[#00669d] transition-transform group-hover:scale-105 flex items-center justify-center">
-                <PlayIcon width={28} height={28} />
-              </span>
-            </VideoLightbox>
-          </Reveal>
-        </div>
-      </section>
+      {/* CE QUI GUIDE NOTRE EXPERTISE — institutional film panel */}
+      <FilmPanel />
 
       {/* DOMAINES */}
       <section className="bg-white py-24 md:py-32">

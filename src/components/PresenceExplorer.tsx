@@ -87,6 +87,7 @@ export function PresenceExplorer({ kicker = "Notre présence" }: { kicker?: stri
                   <Icon icon="ph:x-bold" width={14} height={14} />
                 </button>
               </div>
+              {(phares.length > 0 || sel.projects.length > 0) && (
               <div className="max-h-[340px] overflow-y-auto overscroll-contain p-5">
                 {phares.length > 0 && (
                   <>
@@ -103,7 +104,7 @@ export function PresenceExplorer({ kicker = "Notre présence" }: { kicker?: stri
                     </ul>
                   </>
                 )}
-                {sel.projects.length > 0 ? (
+                {sel.projects.length > 0 && (
                   <>
                     <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-teal">Nos références dans ce pays</p>
                     <ul className="space-y-1 text-sm leading-snug text-body">
@@ -115,10 +116,9 @@ export function PresenceExplorer({ kicker = "Notre présence" }: { kicker?: stri
                       ))}
                     </ul>
                   </>
-                ) : (
-                  phares.length === 0 && <p className="text-sm text-body">ETAFAT est intervenu dans ce pays ; la liste des projets sera bientôt disponible.</p>
                 )}
               </div>
+              )}
             </div>
           ) : (
             <p className="flex items-center gap-2 text-sm text-white/60">

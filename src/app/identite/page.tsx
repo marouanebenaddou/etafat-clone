@@ -11,6 +11,8 @@ import { Icon } from "@iconify/react";
 import type { Metadata } from "next";
 import { IdentiteSubNav } from "./IdentiteSubNav";
 import { PresenceExplorer } from "@/components/PresenceExplorer";
+import { VideoLightbox } from "@/components/VideoLightbox";
+import { PlayIcon } from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Notre identité - ETAFAT",
@@ -97,6 +99,36 @@ export default function IdentitePage() {
       />
 
       <IdentiteSubNav />
+
+      {/* FILM INSTITUTIONNEL */}
+      <section className="bg-white pt-20 md:pt-28">
+        <div className="container-etafat">
+          <Reveal>
+            <span className="mb-3 block text-sm font-semibold uppercase tracking-wider text-teal">Film institutionnel</span>
+            <h2 className="mb-10 max-w-3xl leading-tight text-navy">Révélons le potentiel de vos territoires</h2>
+          </Reveal>
+          <Reveal delay={120} className="relative aspect-video overflow-hidden rounded-md">
+            <VideoLightbox
+              src="/etafat/videos/film-institutionnel.mp4"
+              ariaLabel="Film institutionnel ETAFAT"
+              className="group relative block h-full w-full"
+            >
+              <Image
+                src="/etafat/videos/film-institutionnel-poster.jpg"
+                alt="Film institutionnel ETAFAT"
+                fill
+                sizes="(min-width:1280px) 1200px, 100vw"
+                className="object-cover"
+              />
+              <span className="absolute inset-0 bg-gradient-to-t from-[#0a1e30]/55 via-transparent to-transparent" />
+              <span className="absolute inset-0 m-auto flex h-24 w-24 items-center justify-center rounded-full bg-white/90 text-[#00669d] backdrop-blur transition-transform group-hover:scale-105">
+                <PlayIcon width={34} height={34} />
+              </span>
+              <span className="absolute bottom-5 left-6 text-base font-semibold text-white md:text-lg">ETAFAT · 2 min 10</span>
+            </VideoLightbox>
+          </Reveal>
+        </div>
+      </section>
 
       {/* NOTRE VISION */}
       <section id="vision" className="bg-white py-20 md:py-28 scroll-mt-[170px]">
