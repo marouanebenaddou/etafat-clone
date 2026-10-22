@@ -104,7 +104,6 @@ export default function IdentitePage() {
       <section className="bg-white pt-20 md:pt-28">
         <div className="container-etafat">
           <Reveal>
-            <span className="mb-3 block text-sm font-semibold uppercase tracking-wider text-teal">Film institutionnel</span>
             <h2 className="mb-10 max-w-3xl leading-tight text-navy">Révélons le potentiel de vos territoires</h2>
           </Reveal>
           <Reveal delay={120} className="relative aspect-video overflow-hidden rounded-md">
@@ -124,7 +123,6 @@ export default function IdentitePage() {
               <span className="absolute inset-0 m-auto flex h-24 w-24 items-center justify-center rounded-full bg-white/90 text-[#00669d] backdrop-blur transition-transform group-hover:scale-105">
                 <PlayIcon width={34} height={34} />
               </span>
-              <span className="absolute bottom-5 left-6 text-base font-semibold text-white md:text-lg">ETAFAT · 2 min 10</span>
             </VideoLightbox>
           </Reveal>
         </div>
