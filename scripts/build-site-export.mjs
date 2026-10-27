@@ -21,6 +21,7 @@ if (!process.env.SKIP_BUILD) {
 // site since the Références / présence integration — only the kiosk app and the VR stay out.
 const EXCLUDE = [
   "evenement", "xr", "vendor",
+  "signatures", "signature", // signature studio and its image: Vercel only, never on etafat.ma
   "sw-evenement.js", "evenement.webmanifest", ".well-known", // .well-known: the VR TWA's asset links (Vercel domain)
 ];
 // files in public/ that git doesn't track (films, Cité maquette, loose photos) never go online — as on Vercel
