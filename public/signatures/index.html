@@ -154,19 +154,19 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
         </div>
         <p class="hint" id="tplHint"></p>
       </fieldset>
-      <div class="field"><label for="name">Prénom Nom</label><input type="text" id="name" value="Salma El Idrissi"></div>
-      <div class="field"><label for="title">Poste</label><input type="text" id="title" value="Ingénieure topographe"></div>
+      <div class="field"><label for="name">Prénom Nom</label><input type="text" id="name" value="Marouane Ben Addou Idrissi"></div>
+      <div class="field"><label for="title">Poste</label><input type="text" id="title" value="Chef de projet"></div>
       <div class="field"><label for="dept">Service</label><input type="text" id="dept" value="Pôle Études &amp; Tracés"></div>
       <div class="row2">
         <div class="field"><label for="mobile">Mobile</label><input type="tel" id="mobile" value="+212 6 61 00 00 00"></div>
         <div class="field"><label for="phone">Standard</label><input type="tel" id="phone" value="+212 5 22 79 87 00"></div>
       </div>
-      <div class="field"><label for="email">Email</label><input type="email" id="email" value="s.elidrissi@etafat.ma"></div>
+      <div class="field"><label for="email">Email</label><input type="email" id="email" value="m.benaddou@etafat.ma"></div>
       <div class="row2">
         <div class="field"><label for="ctaLabel">Lien du moment</label><input type="text" id="ctaLabel" value="Nos références"></div>
         <div class="field"><label for="ctaUrl">Adresse du lien</label><input type="url" id="ctaUrl" value="https://etafat.ma"></div>
       </div>
-      <p class="hint">Exemple fictif. Laisser un champ vide le retire de la signature.</p>
+      <p class="hint">Exemple. Laisser un champ vide le retire de la signature.</p>
     </form>
 
     <div class="preview">
@@ -217,7 +217,7 @@ footer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);paddin
     <li data-n="3"><span class="when">Jour 2 · IT</span><h3>Installer GAM sur un poste administrateur</h3><p>Installer GAM7 depuis github.com/GAM-team/GAM, puis lancer <code>gam config</code> et autoriser le projet avec un compte super-administrateur (assistant guidé, environ 30 minutes).</p></li>
     <li data-n="4"><span class="when">Jour 2 · IT</span><h3>Tester sur deux comptes pilotes</h3><p>Pousser la signature sur deux personnes et vérifier : Gmail web, Gmail iPhone et Android, Outlook chez un client, mode sombre, images bloquées.</p>
 <pre><span class="c"># un seul compte</span>
-gam user s.elidrissi@etafat.ma signature file signature_etafat.html html \
+gam user m.benaddou@etafat.ma signature file signature_etafat.html html \
   replace Nom field:name.fullname replace Poste field:organization.title \
   replace Service field:organization.department replace Mobile field:phone.value.type.mobile \
   replace Email field:primaryemail</pre></li>
