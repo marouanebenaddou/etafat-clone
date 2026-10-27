@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/signatures", "destination": "/signatures/index.html" },
+    { "source": "/signatures/", "destination": "/signatures/index.html" }
+  ]
+}
